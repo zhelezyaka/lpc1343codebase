@@ -159,9 +159,9 @@ lm75bError_e lm75bInit(void)
 /*! 
     @brief  Reads the current temperature from the LM75B
 
-    @note   This method will assign a signed 32-bit value (N32) to 'temp',
+    @note   This method will assign a signed 32-bit value (int32) to 'temp',
             where each unit represents +/- 0.125°C.  To convert the numeric
-            value to degress celsius, you must divide the value of 'temp'
+            value to degrees celsius, you must divide the value of 'temp'
             by 8.  This conversion is not done automatically, since you may
             or may not want to use floating point math for the calculations.
 */
