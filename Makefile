@@ -81,7 +81,7 @@ firmware: $(OBJS) $(SYS_OBJS)
 	       "INCLUDE $(LD_SCRIPT)" > $(LD_TEMP)
 	$(LD) $(LDFLAGS) -T $(LD_TEMP) -o $(OUTFILE).elf $(OBJS)
 	-@echo ""
-	$(SIZE) $(OUTFILE).elf;
+	$(SIZE) $(OUTFILE).elf
 	-@echo ""
 	$(OBJCOPY) $(OCFLAGS) -O binary $(OUTFILE).elf $(OUTFILE).bin
 	$(OBJCOPY) $(OCFLAGS) -O ihex $(OUTFILE).elf $(OUTFILE).hex
