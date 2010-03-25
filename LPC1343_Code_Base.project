@@ -113,7 +113,7 @@
       <Linker Options="" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="" IntermediateDirectory="./Debug" Command="" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+      <Debugger IsRemote="yes" RemoteHostName="127.0.0.1" RemoteHostPort="2331" DebuggerPath="">
         <PostConnectCommands/>
         <StartupCommands/>
       </Debugger>
