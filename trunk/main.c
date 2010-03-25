@@ -128,12 +128,12 @@ int main (void)
     // Multiply value by 125 for fixed-point math (0.125°C per unit)
     temperature *= 125;
     // Use modulus operator to display decimal value
-    printf("Current Temperature: %d.%d C\r\n", temperature / 1000, temperature % 1000);
+    printf("Current Temperature: %ld.%ld C\r\n", temperature / 1000, temperature % 1000);
     #endif
 
     #ifdef CFG_CHIBI
     i++;
-    itoa(i, buf, 10);
+    sprintf(buf,"%ld",i);
     gpioSetValue (2, 10, 0);
     chb_write(0xFFFF, (uint8_t *)buf, 11);
     gpioSetValue (2, 10, 1);

@@ -5,7 +5,7 @@
 # The target, flash and ram of the LPC1xxx microprocessor.
 # Use for the target the value: LPC11xx, LPC13xx or LPC17xx
 TARGET = LPC13xx
-FLASH = 32K
+FLASH = 64K
 SRAM = 8K
 
 # For USB support the LPC1xxx reserves 384 bytes from the sram,
@@ -14,10 +14,15 @@ SRAM_USB = 384
 
 VPATH = 
 OBJS = main.o
-# VPATH += drivers/chibi
-# OBJS += chb.o chb_buf.o chb_drvr_at86rf212.o chb_eeprom.o chb_spi.o
+
+VPATH += drivers/chibi
+OBJS += chb.o chb_buf.o chb_drvr_at86rf212.o chb_eeprom.o chb_spi.o
+
 VPATH += drivers/eeprom/mcp24aa
 OBJS += mcp24aa.o
+
+VPATH += drivers/sensors/lm75b
+OBJS += lm75b.o
 
 ##########################################################################
 # Library files 

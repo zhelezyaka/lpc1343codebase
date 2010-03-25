@@ -69,6 +69,8 @@ SECTIONS
     *(COMMON)
     _ebss = .;
   } > sram
+  
+  end = .;
 
     /* For GDB compatibility we decrease the top with 16 bytes */
   stack_entry = sram_top - 16;

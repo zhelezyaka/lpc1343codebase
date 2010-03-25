@@ -87,7 +87,9 @@ extern volatile uint8_t   I2CMasterBuffer[I2C_BUFSIZE];
 extern volatile uint8_t   I2CSlaveBuffer[I2C_BUFSIZE];
 extern volatile uint32_t  I2CReadLength, I2CWriteLength;
 
+/* unused?
 static uint8_t lm75bAddress = LM75B_ADDRESS;
+*/
 
 uint32_t i;
 

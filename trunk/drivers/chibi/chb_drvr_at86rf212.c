@@ -562,10 +562,9 @@ void chb_set_short_addr(uint16_t addr)
 /**************************************************************************/
 uint16_t chb_get_short_addr()
 {
-    uint8_t addr[2];
-
-    chb_eeprom_read(CHB_EEPROM_SHORT_ADDR, addr, 2);
-    return *(uint16_t *)addr;
+    uint16_t addr;
+    chb_eeprom_read(CHB_EEPROM_SHORT_ADDR, (uint8_t*)&addr, 2);
+    return addr;
 }
 
 /**************************************************************************/
