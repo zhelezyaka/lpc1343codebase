@@ -38,9 +38,9 @@
  </TraceWindow>
  <Watch1>
   <Watches active="1" update="Each Second" >
-   <Watchpoint evalMode="1" linenumber="99" evalType="1" radix="16" name="value" expression="value" filename="c:/documents and settings/kevin/my documents/my dropbox/microbuilder/code/lpc1343/lpc1343_codebase_cw/drivers/sensors/lm75b/lm75b.c" />
-   <Watchpoint linenumber="33" radix="10" name="msTicks" expression="msTicks" filename="c:/documents and settings/kevin/my documents/my dropbox/microbuilder/code/lpc1343/lpc1343_minimal_cw/core/systick/systick.c" />
    <Watchpoint linenumber="70" radix="10" name="msTicks" expression="msTicks" filename="c:/documents and settings/kevin/my documents/my dropbox/microbuilder/code/lpc1343/lpc1343_codebase_cw/core/systick/systick.c" />
+   <Watchpoint linenumber="33" radix="10" name="msTicks" expression="msTicks" filename="c:/documents and settings/kevin/my documents/my dropbox/microbuilder/code/lpc1343/lpc1343_minimal_cw/core/systick/systick.c" />
+   <Watchpoint evalMode="1" linenumber="99" evalType="1" radix="16" name="value" expression="value" filename="c:/documents and settings/kevin/my documents/my dropbox/microbuilder/code/lpc1343/lpc1343_codebase_cw/drivers/sensors/lm75b/lm75b.c" />
   </Watches>
  </Watch1>
  <Watch2>
@@ -52,8 +52,6 @@
  <Watch4>
   <Watches active="0" update="Never" />
  </Watch4>
- <Files>
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="2" debugPath="C:\Documents and Settings\Kevin\My Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase_CW\main.c" y="35" path="C:\Documents and Settings\Kevin\My Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase_CW\main.c" left="0" selected="1" name="unnamed" top="16" />
- </Files>
+ <Files/>
  <ARMCrossStudioWindow activeProject="LPC1343_CodeBase_CW" autoConnectTarget="Segger J-Link" debugSearchFileMap="" fileDialogInitialDirectory="C:\Documents and Settings\Kevin\My Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase_CW" fileDialogDefaultFilter="*.c;*.h" autoConnectCapabilities="388991" debugSearchPath="" buildConfiguration="THUMB Flash Release" />
 </session>
