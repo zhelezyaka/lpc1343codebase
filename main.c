@@ -111,7 +111,7 @@ int main (void)
   while (1)
   {
     // Blink LED every 1 second
-    timer32DelayMS(0, 500);
+    timer32DelayMS(0, 2000);
     if (gpioGetValue(CFG_LED_PORT, CFG_LED_PIN))
     {
       // Enable LED (set low)
