@@ -13,7 +13,7 @@ SRAM = 8K
 SRAM_USB = 384
 
 VPATH = 
-OBJS = main.o syscalls.o
+OBJS = main.o
 
 # VPATH += drivers/chibi
 # OBJS += chb.o chb_buf.o chb_drvr_at86rf212.o chb_eeprom.o chb_spi.o
