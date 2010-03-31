@@ -15,8 +15,8 @@ SRAM_USB = 384
 VPATH = 
 OBJS = main.o
 
-VPATH += drivers/chibi
-OBJS += chb.o chb_buf.o chb_drvr_at86rf212.o chb_eeprom.o chb_spi.o
+# VPATH += drivers/chibi
+# OBJS += chb.o chb_buf.o chb_drvr_at86rf212.o chb_eeprom.o chb_spi.o
 
 VPATH += drivers/eeprom/mcp24aa
 OBJS += mcp24aa.o
@@ -36,7 +36,7 @@ OBJS += timer32.o uart.o usbconfig.o usbhid.o wdt.o
 ##########################################################################
 # GNU GCC compiler prefix and location
 ##########################################################################
-CROSS_COMPILE = arm-none-eabi-
+CROSS_COMPILE = arm-elf-
 AS = $(CROSS_COMPILE)gcc
 CC = $(CROSS_COMPILE)gcc
 LD = $(CROSS_COMPILE)gcc

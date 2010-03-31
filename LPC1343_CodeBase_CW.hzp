@@ -94,7 +94,6 @@
         </folder>
       </folder>
       <file file_name="nvic13xx.h"/>
-      <file file_name="nvic11xx.h"/>
       <file file_name="syscalls.h"/>
     </folder>
     <folder Name="System Files">
@@ -105,7 +104,7 @@
       </file>
       <file file_name="flash_placement.xml"/>
     </folder>
-    <configuration Name="Release" gcc_optimization_level="Optimize For Size"/>
+    <configuration Name="Release" build_debug_information="Yes" build_remove_unused_symbols="Yes" gcc_optimization_level="Level 2"/>
   </project>
   <configuration Name="THUMB Flash Debug" inherited_configurations="THUMB;Flash;Debug"/>
   <configuration Name="THUMB" Platform="ARM" arm_instruction_set="THUMB" arm_library_instruction_set="THUMB" c_preprocessor_definitions="__THUMB" hidden="Yes"/>
