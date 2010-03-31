@@ -95,7 +95,6 @@ uint32_t i;
 
 static lm75bError_e lm75bWrite8 (uint8_t reg, uint32_t value)
 {
-/*
   // Clear write buffers
   for ( i = 0; i < I2C_BUFSIZE; i++ )
   {
@@ -108,13 +107,11 @@ static lm75bError_e lm75bWrite8 (uint8_t reg, uint32_t value)
   I2CMasterBuffer[1] = reg;                       // Command register
   I2CMasterBuffer[2] = (value & 0xFF);            // Value to write
   i2cEngine();
-*/
   return LM75B_ERROR_OK;
 }
 
 static lm75bError_e lm75bRead16(uint8_t reg, int32_t *value)
 {
-/*
   // Clear write buffers
   for ( i = 0; i < I2C_BUFSIZE; i++ )
   {
@@ -138,7 +135,6 @@ static lm75bError_e lm75bRead16(uint8_t reg, int32_t *value)
     // Negative number
     *value |= 0xFFFFFC00;
   }
-*/
   return LM75B_ERROR_OK;
 }
 
