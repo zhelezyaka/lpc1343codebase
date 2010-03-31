@@ -40,9 +40,9 @@ SECTIONS
     *(.rodata*)
   } > flash
 
-    /*
-     * More information about Special Section Indexes is available in the
-     * free "ELF for the ARM Architecture" document from ARM Limited
+  /*
+   * More information about Special Section Indexes is available in the
+   * free "ELF for the ARM Architecture" document from ARM Limited
    * http://simplemachines.it/doc/aaelf.pdf
    *
    */
@@ -72,6 +72,6 @@ SECTIONS
   
   end = .;
 
-    /* For GDB compatibility we decrease the top with 16 bytes */
+  /* For GDB compatibility we decrease the top with 16 bytes */
   stack_entry = sram_top - 16;
 }

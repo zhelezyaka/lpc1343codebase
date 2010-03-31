@@ -13,7 +13,7 @@ SRAM = 8K
 SRAM_USB = 384
 
 VPATH = 
-OBJS = main.o
+OBJS = main.o syscalls.o
 
 # VPATH += drivers/chibi
 # OBJS += chb.o chb_buf.o chb_drvr_at86rf212.o chb_eeprom.o chb_spi.o
@@ -29,9 +29,9 @@ OBJS += lm75b.o
 ##########################################################################
 VPATH += core core/adc core/cpu core/gpio core/i2c core/pmu
 VPATH += core/ssp core/systick core/timer16 core/timer32 core/uart
-VPATH += core/usbhid-rom core/wdt
+VPATH += core/usbhid-rom core/libc core/wdt
 OBJS += adc.o cpu.o gpio.o i2c.o pmu.o ssp.o systick.o timer16.o
-OBJS += timer32.o uart.o usbconfig.o usbhid.o wdt.o
+OBJS += timer32.o uart.o usbconfig.o usbhid.o stdio.o string.o wdt.o
 
 ##########################################################################
 # GNU GCC compiler prefix and location
@@ -66,9 +66,9 @@ OBJS += $(TARGET)_handlers.o LPC1xxx_startup.o
 ##########################################################################
 # Compiler settings, parameters and flags
 ##########################################################################
-CFLAGS  = -c -O2 -I. -Wall -mthumb -ffunction-sections -fdata-sections -fmessage-length=0 -mcpu=$(CPU_TYPE) -DTARGET=$(TARGET)
-ASFLAGS = -c -O2 -I. -Wall -mthumb -ffunction-sections -fdata-sections -fmessage-length=0 -mcpu=$(CPU_TYPE) -D__ASSEMBLY__ -x assembler-with-cpp
-LDFLAGS = -nostartfiles -mcpu=$(CPU_TYPE) -mthumb -Wl,--gc-sections
+CFLAGS  = -c -Os -I. -Wall -mthumb -ffunction-sections -fdata-sections -fmessage-length=0 -mcpu=$(CPU_TYPE) -DTARGET=$(TARGET)
+ASFLAGS = -c -Os -I. -Wall -mthumb -ffunction-sections -fdata-sections -fmessage-length=0 -mcpu=$(CPU_TYPE) -D__ASSEMBLY__ -x assembler-with-cpp
+LDFLAGS = -nostartfiles -nostdlib -mcpu=$(CPU_TYPE) -mthumb -Wl,--gc-sections
 OCFLAGS = --strip-debug --strip-unneeded
 
 all: firmware
