@@ -174,27 +174,11 @@ void cpuInit (void)
 {
   gpioInit();
 
-  // Set all GPIO pin internal resistors to an appropriate state
-  // (The pull up resistors is enabled by default on most pins).
-  // If pins are set to output by default, this should probably
-  // be disabled to prevent power loss by competing internal and
-  // external pullup/down resistors.
-
-  /* Disable all internal pull-ups */
-  // IOCON_PIO2_6 &= ~(IOCON_COMMON_MODE_MASK);
-  // IOCON_PIO2_6 |= gpioPullupMode_Inactive;
-
-  /* Set all GPIOs outputs */
+  // Set all GPIO pins to input by default
   GPIO_GPIO0DIR &= ~(GPIO_IO_ALL);
   GPIO_GPIO1DIR &= ~(GPIO_IO_ALL);
   GPIO_GPIO2DIR &= ~(GPIO_IO_ALL);
   GPIO_GPIO3DIR &= ~(GPIO_IO_ALL);
-
-  /* Set all GPIOs low */
-  GPIO_GPIO0DATA &= ~(GPIO_IO_ALL);
-  GPIO_GPIO1DATA &= ~(GPIO_IO_ALL);
-  GPIO_GPIO2DATA &= ~(GPIO_IO_ALL);
-  GPIO_GPIO3DATA &= ~(GPIO_IO_ALL);
 
   // Setup PLL (etc.)
   cpuPllSetup(CPU_MULTIPLIER_6);

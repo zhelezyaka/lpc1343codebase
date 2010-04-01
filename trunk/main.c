@@ -61,6 +61,7 @@
 
 #ifdef CFG_CHIBI
 #include "drivers/chibi/chb.h"
+#include "drivers/chibi/chb_drvr_at86rf212.h"
 static chb_rx_data_t rx_data;
 #endif
 
@@ -106,12 +107,17 @@ int main (void)
   chb_init();
   uint32_t i = 0;
   char buf[11];
+  //  // Set address if necessary
+  //  uint8_t addr_ieee[8] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88 };
+  //  chb_set_ieee_addr(addr_ieee);
+  //  uint16_t addr_short = 0x1234;
+  //  chb_set_short_addr(addr_short);
   #endif
 
   while (1)
   {
     // Blink LED every 1 second
-    timer32DelayMS(0, 2000);
+    timer32DelayMS(0, 1000);
     if (gpioGetValue(CFG_LED_PORT, CFG_LED_PIN))
     {
       // Enable LED (set low)
@@ -125,7 +131,7 @@ int main (void)
 
     #ifdef CFG_LM75B
     lm75bGetTemperature(&temperature);
-    // Multiply value by 125 for fixed-point math (0.125Â°C per unit)
+    // Multiply value by 125 for fixed-point math (0.125°C per unit)
     temperature *= 125;
     // Use modulus operator to display decimal value
     printf("Current Temperature: %ld.%ld C\r\n", temperature / 1000, temperature % 1000);
@@ -137,17 +143,17 @@ int main (void)
     gpioSetValue (2, 10, 0);
     chb_write(0xFFFF, (uint8_t *)buf, 11);
     gpioSetValue (2, 10, 1);
-    if (pcb->data_rcv)
-    {
-        rx_data.len = chb_read(&rx_data);
-        // Enable LED (set low)
-        gpioSetValue (2, 10, 0);
-        // Output message to UART
-        printf("Message received from node %02X: %s (rssi=%d)\r\n", rx_data.src_addr, rx_data.data, pcb->ed);
-        // Disable LED (set high)
-        gpioSetValue (2, 10, 1);
-        pcb->data_rcv = FALSE;
-    }
+    // if (pcb->data_rcv)
+    // {
+    //     rx_data.len = chb_read(&rx_data);
+    //     // Enable LED (set low)
+    //     gpioSetValue (2, 10, 0);
+    //     // Output message to UART
+    //     printf("Message received from node %02X: %s (rssi=%d)\r\n", rx_data.src_addr, rx_data.data, pcb->ed);
+    //     // Disable LED (set high)
+    //     gpioSetValue (2, 10, 1);
+    //     pcb->data_rcv = FALSE;
+    // }
     #endif
   }
 }

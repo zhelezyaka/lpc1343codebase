@@ -130,7 +130,7 @@ mcp24aaError_e mcp24aaInit()
     @brief Reads the specified number of bytes from the supplied address.
 
     This function will read one or more bytes starting at the supplied
-    address.  A maximum of 4 bytes can be read in one operation.
+    address.  A maximum of 8 bytes can be read in one operation.
 
     @param[in]  address
                 The 16-bit address where the read will start.  The maximum
@@ -148,7 +148,7 @@ mcp24aaError_e mcp24aaReadBuffer (uint16_t address, uint8_t *buffer, uint32_t bu
     return MCP24AA_ERROR_ADDRERR;
   }
 
-  if (bufferLength > 4)
+  if (bufferLength > 8)
   {
     return MCP24AA_ERROR_BUFFEROVERFLOW;
   }
@@ -188,7 +188,7 @@ mcp24aaError_e mcp24aaReadBuffer (uint16_t address, uint8_t *buffer, uint32_t bu
     @brief Writes the supplied bytes at a specified address.
 
     This function will write one or more bytes starting at the supplied
-    address.  A maximum of 4 bytes can be written in one operation.
+    address.  A maximum of 8 bytes can be written in one operation.
 
     @param[in]  address
                 The 16-bit address where the write will start.  The
@@ -207,7 +207,7 @@ mcp24aaError_e mcp24aaWriteBuffer (uint16_t address, uint8_t *buffer, uint32_t b
     return MCP24AA_ERROR_ADDRERR;
   }
 
-  if (bufferLength > 4)
+  if (bufferLength > 8)
   {
     return MCP24AA_ERROR_BUFFEROVERFLOW;
   }
