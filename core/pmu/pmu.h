@@ -39,6 +39,8 @@
 #ifndef __PMU_H__
 #define __PMU_H__
 
+#include "projectconfig.h"
+
 void WAKEUP_IRQHandler( void );
 void pmuInit( void );
 void pmuSleep( void );

@@ -39,7 +39,7 @@
 #ifndef _MCP24AA_H_
 #define _MCP24AA_H_
 
-#include "sysdefs.h"
+#include "projectconfig.h"
 
 #define MCP24AA_ADDR    0xA0          // 10100000
 #define MCP24AA_RW      0x01

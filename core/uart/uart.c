@@ -57,7 +57,6 @@
 */
 /**************************************************************************/
 
-#include "lpc134x.h"
 #include "uart.h"
 
 volatile uint32_t UARTStatus;

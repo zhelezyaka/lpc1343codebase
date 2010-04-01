@@ -39,7 +39,7 @@
 #ifndef _ADC_H_
 #define _ADC_H_
 
-#include "lpc134x.h"
+#include "projectconfig.h"
 
 uint32_t   adcRead (uint8_t channelNum);
 void  adcInit (void);

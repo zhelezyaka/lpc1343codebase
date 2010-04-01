@@ -52,7 +52,6 @@
 */
 /**************************************************************************/
 
-#include "LPC134x.h"
 #include "i2c.h"
 
 volatile i2cState_t I2CMasterState = I2CSTATE_IDLE;

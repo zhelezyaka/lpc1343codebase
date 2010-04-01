@@ -41,7 +41,6 @@
 #include "core/usbhid-rom/rom_drivers.h"
 #include "core/gpio/gpio.h"
 
-#include "lpc134x.h"
 #include "usbhid.h"
 
 USB_DEV_INFO DeviceInfo;

@@ -39,7 +39,7 @@
 #ifndef __TIMER16_H__
 #define __TIMER16_H__
 
-#include "lpc134x.h"
+#include "projectconfig.h"
 
 #define TIMER16_DEFAULTINTERVAL	(0xFFFF)    // ~0.91mS @ 72MHz, ~1.37mS @ 48MHz
 

@@ -39,7 +39,7 @@
 #ifndef _LM75B_H_
 #define _LM75B_H_
 
-#include "sysdefs.h"
+#include "projectconfig.h"
 #include "core/i2c/i2c.h"
 
 #define LM75B_ADDRESS (0x90) // 100 1000 shifted left 1 bit = 0x90

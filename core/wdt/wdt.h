@@ -39,7 +39,7 @@
 #ifndef _WDT_H_
 #define _WDT_H_
 
-#include "lpc134x.h"
+#include "projectconfig.h"
 
 void wdtInit (void);
 void wdtFeed (void);

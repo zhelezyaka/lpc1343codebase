@@ -39,14 +39,14 @@
 #ifndef _SSP_H_
 #define _SSP_H_
 
-#include "lpc134x.h"
+#include "projectconfig.h"
 #include "core/gpio/gpio.h"
 
 #define SSP_FIFOSIZE            8       /* SPI read and write buffer size */
 #define SSP_MAX_TIMEOUT         0xFF
 
-#define SSP_CSPORT              0
-#define SSP_CSPIN               2
+#define SSP0_CSPORT             0
+#define SSP0_CSPIN              2
 
 /* Macro definitions to enable and disable SPI */
 #define ssp0Select()            do {gpioSetValue(SSP0_CSPORT, SSP0_CSPIN, 0);} while (0)
@@ -77,9 +77,9 @@ typedef enum sspClockPhase_e
 } 
 sspClockPhase_t;
 
-extern void SSP_IRQHandler (void);
-void sspInit (sspClockPolarity_t polarity, sspClockPhase_t phase);
-void sspSend (uint8_t *buf, uint32_t length);
-void sspReceive(uint8_t *buf, uint32_t length);
+extern void SSP0_IRQHandler (void);
+void sspInit (uint8_t portNum, sspClockPolarity_t polarity, sspClockPhase_t phase);
+void sspSend (uint8_t portNum, uint8_t *buf, uint32_t length);
+void sspReceive (uint8_t portNum, uint8_t *buf, uint32_t length);
 
 #endif
