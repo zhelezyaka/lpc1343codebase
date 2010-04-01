@@ -72,7 +72,6 @@
 
 #include "ssp.h"
 #include "core/gpio/gpio.h"
-#include "nvic13xx.h"
 
 /* Statistics for all interrupts */
 volatile uint32_t interruptRxStat = 0;

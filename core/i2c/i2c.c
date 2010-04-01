@@ -54,7 +54,6 @@
 
 #include "LPC134x.h"
 #include "i2c.h"
-#include "nvic13xx.h"
 
 volatile i2cState_t I2CMasterState = I2CSTATE_IDLE;
 volatile i2cState_t I2CSlaveState = I2CSTATE_IDLE;

@@ -41,7 +41,6 @@
 /**************************************************************************/
 
 #include "gpio.h"
-#include "nvic13xx.h"
 
 #ifdef CFG_CHIBI
 #include "drivers/chibi/chb_drvr_at86rf212.h"

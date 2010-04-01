@@ -76,7 +76,6 @@
 
 #include "lpc134x.h"
 #include "timer32.h"
-#include "nvic13xx.h"
 
 volatile uint32_t timer32_0_counter = 0;
 volatile uint32_t timer32_1_counter = 0;

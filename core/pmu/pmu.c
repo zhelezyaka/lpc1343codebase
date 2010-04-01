@@ -48,7 +48,6 @@
 
 #include "core/gpio/gpio.h"
 #include "pmu.h"
-#include "nvic13xx.h"
 
 volatile uint32_t pmu_counter = 0;
 
