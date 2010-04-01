@@ -52,7 +52,7 @@ typedef enum
   MCP24AA_ERROR_I2CINIT,              // Unable to initialise I2C
   MCP24AA_ERROR_I2CBUSY,              // I2C already in use
   MCP24AA_ERROR_ADDRERR,              // Address out of range
-  MCP24AA_ERROR_BUFFEROVERFLOW,       // Max 5 bytes can be read/written in one operation
+  MCP24AA_ERROR_BUFFEROVERFLOW,       // Max 8 bytes can be read/written in one operation
   MCP24AA_ERROR_LAST
 }
 mcp24aaError_e;

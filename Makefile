@@ -5,7 +5,7 @@
 # The target, flash and ram of the LPC1xxx microprocessor.
 # Use for the target the value: LPC11xx, LPC13xx or LPC17xx
 TARGET = LPC13xx
-FLASH = 64K
+FLASH = 32K
 SRAM = 8K
 
 # For USB support the LPC1xxx reserves 384 bytes from the sram,

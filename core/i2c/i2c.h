@@ -41,7 +41,7 @@
 
 #define I2C_FAST_MODE_PLUS      0
 
-#define I2C_BUFSIZE             7
+#define I2C_BUFSIZE             12
 #define I2C_MAX_TIMEOUT         0xFF
 
 #define I2C_SLAVEADDR           0xA0

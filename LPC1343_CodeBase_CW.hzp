@@ -53,7 +53,7 @@
         <folder Name="eeprom">
           <folder Name="at25040">
             <file file_name="drivers/eeprom/at25040/at25040.c">
-              <configuration Name="THUMB Flash Release" build_exclude_from_build="Yes"/>
+              <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
               <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
             </file>
           </folder>
@@ -65,24 +65,24 @@
         </folder>
         <folder Name="chibi" file_name="">
           <file file_name="drivers/chibi/chb.c">
-            <configuration Name="THUMB Flash Release" build_exclude_from_build="Yes"/>
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
           </file>
           <file file_name="drivers/chibi/chb_buf.c">
-            <configuration Name="THUMB Flash Release" build_exclude_from_build="Yes"/>
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
           </file>
           <file file_name="drivers/chibi/chb_drvr_at86rf212.c">
-            <configuration Name="THUMB Flash Release" build_exclude_from_build="Yes"/>
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
           </file>
           <file file_name="drivers/chibi/chb_eeprom.c">
-            <configuration Name="THUMB Flash Release" build_exclude_from_build="Yes"/>
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
           </file>
           <file file_name="drivers/chibi/chb_spi.c">
-            <configuration Name="THUMB Flash Release" build_exclude_from_build="Yes"/>
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
           </file>
         </folder>
         <folder Name="sensors">
@@ -94,7 +94,6 @@
         </folder>
       </folder>
       <file file_name="nvic13xx.h"/>
-      <file file_name="syscalls.h"/>
     </folder>
     <folder Name="System Files">
       <file file_name="$(StudioDir)/source/thumb_crt0.s"/>

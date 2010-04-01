@@ -88,6 +88,10 @@
       <File Name="core/wdt/wdt.h"/>
       <File Name="core/wdt/wdt.c"/>
     </VirtualDirectory>
+    <VirtualDirectory Name="libc">
+      <File Name="core/libc/stdio.c"/>
+      <File Name="core/libc/string.c"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <Description/>
   <Dependencies/>

@@ -39,6 +39,7 @@
 #include "chb_eeprom.h"
 
 #include "core/timer32/timer32.h"
+#include "drivers/eeprom/mcp24aa/mcp24aa.h"
 
 /**************************************************************************/
 /*!
@@ -738,6 +739,10 @@ chbError_t chb_drvr_init()
 
     // make sure gpio is initialised
     gpioInit();
+
+    // init eeprom
+    mcp24aaInit();
+    
 
     // Initialise 32-bit timer 0
     timer32Init(0, TIMER32_DEFAULTINTERVAL);
