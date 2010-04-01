@@ -59,7 +59,6 @@
 
 #include "lpc134x.h"
 #include "uart.h"
-#include "nvic13xx.h"
 
 volatile uint32_t UARTStatus;
 volatile uint8_t  UARTTxEmpty = 1;

@@ -93,7 +93,6 @@
           </folder>
         </folder>
       </folder>
-      <file file_name="nvic13xx.h"/>
     </folder>
     <folder Name="System Files">
       <file file_name="$(StudioDir)/source/thumb_crt0.s"/>

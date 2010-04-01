@@ -36,7 +36,6 @@
 
 #include "lpc134x.h"
 #include "sysdefs.h"
-#include "nvic13xx.h"
 #include "core/gpio/gpio.h"
 
 #define CHB_CHINA                   0

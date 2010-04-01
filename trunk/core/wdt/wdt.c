@@ -59,7 +59,6 @@
 /**************************************************************************/
 
 #include "wdt.h"
-#include "nvic13xx.h"
 
 #define WDT_FEED_VALUE		(0x003FFFFF)
 

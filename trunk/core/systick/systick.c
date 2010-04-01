@@ -62,7 +62,6 @@
 /**************************************************************************/
 
 #include "systick.h"
-#include "nvic13xx.h"
 
 volatile uint32_t msTicks;             // 1ms tick counter
 
