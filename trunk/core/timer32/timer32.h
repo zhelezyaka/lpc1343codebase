@@ -44,6 +44,8 @@
 #define TIMER32_DELAY_1S        (CFG_CPU_CCLK)
 #define TIMER32_DEFAULTINTERVAL	(TIMER32_DELAY_10MS)
 
+#include "projectconfig.h"
+
 void TIMER32_0_IRQHandler(void);
 void TIMER32_1_IRQHandler(void);
 

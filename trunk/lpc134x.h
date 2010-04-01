@@ -70,7 +70,7 @@
 #define SCB_MAINCLKUEN                            (*(pREG32 (0x40048074)))    // Main clock source update enable
 #define SCB_SYSAHBCLKDIV                          (*(pREG32 (0x40048078)))    // System AHB clock divider
 #define SCB_SYSAHBCLKCTRL                         (*(pREG32 (0x40048080)))    // System AHB clock control
-#define SCB_SSPCLKDIV                             (*(pREG32 (0x40048094)))    // SSP clock divider
+#define SCB_SSP0CLKDIV                            (*(pREG32 (0x40048094)))    // SSP0 clock divider
 #define SCB_UARTCLKDIV                            (*(pREG32 (0x40048098)))    // UART clock divider
 #define SCB_SYSTICKCLKDIV                         (*(pREG32 (0x400480B0)))    // System tick clock divider
 #define SCB_USBCLKSEL                             (*(pREG32 (0x400480C0)))    // USB clock source select
@@ -200,9 +200,9 @@
 
 /*  PRESETCTRL (Peripheral reset control register) */
 
-#define SCB_PRESETCTRL_SSP_RESETENABLED           ((unsigned int) 0x00000000)
-#define SCB_PRESETCTRL_SSP_RESETDISABLED          ((unsigned int) 0x00000001)
-#define SCB_PRESETCTRL_SSP_MASK                   ((unsigned int) 0x00000001)
+#define SCB_PRESETCTRL_SSP0_RESETENABLED          ((unsigned int) 0x00000000)
+#define SCB_PRESETCTRL_SSP0_RESETDISABLED         ((unsigned int) 0x00000001)
+#define SCB_PRESETCTRL_SSP0_MASK                  ((unsigned int) 0x00000001)
 #define SCB_PRESETCTRL_I2C_RESETENABLED           ((unsigned int) 0x00000000)
 #define SCB_PRESETCTRL_I2C_RESETDISABLED          ((unsigned int) 0x00000002)
 #define SCB_PRESETCTRL_I2C_MASK                   ((unsigned int) 0x00000002)
@@ -506,8 +506,8 @@
 #define SCB_SYSAHBCLKCTRL_CT32B0_MASK             ((unsigned int) 0x00000200)
 #define SCB_SYSAHBCLKCTRL_CT32B1                  ((unsigned int) 0x00000400) // Enables clock for 32-bit counter/timer 1
 #define SCB_SYSAHBCLKCTRL_CT32B1_MASK             ((unsigned int) 0x00000400)
-#define SCB_SYSAHBCLKCTRL_SSP                     ((unsigned int) 0x00000800) // Enables clock for SSP
-#define SCB_SYSAHBCLKCTRL_SSP_MASK                ((unsigned int) 0x00000800)
+#define SCB_SYSAHBCLKCTRL_SSP0                    ((unsigned int) 0x00000800) // Enables clock for SSP0
+#define SCB_SYSAHBCLKCTRL_SSP0_MASK               ((unsigned int) 0x00000800)
 #define SCB_SYSAHBCLKCTRL_UART                    ((unsigned int) 0x00001000) // Enables clock for UART.  UART pins must be configured
 #define SCB_SYSAHBCLKCTRL_UART_MASK               ((unsigned int) 0x00001000) // in the IOCON block before the UART clock can be enabled.
 #define SCB_SYSAHBCLKCTRL_ADC                     ((unsigned int) 0x00002000) // Enables clock for ADC
@@ -520,17 +520,17 @@
 #define SCB_SYSAHBCLKCTRL_IOCON_MASK              ((unsigned int) 0x00010000)
 #define SCB_SYSAHBCLKCTRL_ALL_MASK                ((unsigned int) 0x0001FFFF)
 
-/*  SSPCLKDIV (SSP clock divider register)
-    This register configures the SSP peripheral clock SSP_PCLK. The SSP_PCLK can be
+/*  SSP0CLKDIV (SSP0 clock divider register)
+    This register configures the SSP0 peripheral clock SSP_PCLK. The SSP_PCLK can be
     shut down by setting the DIV bits to 0x0.  It can be set from 1..255. */
 
-#define SCB_SSPCLKDIV_DISABLE                     ((unsigned int) 0x00000000)
-#define SCB_SSPCLKDIV_DIV1                        ((unsigned int) 0x00000001) // Divide SSP clock by 1 (can be set from 1..255)
-#define SCB_SSPCLKDIV_DIV2                        ((unsigned int) 0x00000002)
-#define SCB_SSPCLKDIV_DIV3                        ((unsigned int) 0x00000003)
-#define SCB_SSPCLKDIV_DIV4                        ((unsigned int) 0x00000004)
-#define SCB_SSPCLKDIV_DIV6                        ((unsigned int) 0x00000006)
-#define SCB_SSPCLKDIV_MASK                        ((unsigned int) 0x000000FF)
+#define SCB_SSP0CLKDIV_DISABLE                    ((unsigned int) 0x00000000)
+#define SCB_SSP0CLKDIV_DIV1                       ((unsigned int) 0x00000001) // Divide SSP0 clock by 1 (can be set from 1..255)
+#define SCB_SSP0CLKDIV_DIV2                       ((unsigned int) 0x00000002)
+#define SCB_SSP0CLKDIV_DIV3                       ((unsigned int) 0x00000003)
+#define SCB_SSP0CLKDIV_DIV4                       ((unsigned int) 0x00000004)
+#define SCB_SSP0CLKDIV_DIV6                       ((unsigned int) 0x00000006)
+#define SCB_SSP0CLKDIV_MASK                       ((unsigned int) 0x000000FF)
 
 /*  UARTCLKDIV (UART clock divider register)
     This register configures the UART peripheral. The UART_PCLK can be shut down by
@@ -1569,7 +1569,7 @@
 #define IOCON_PIO0_8                              (*(pREG32 (0x40044060)))
 #define IOCON_PIO0_8_FUNC_MASK                    ((unsigned int) 0x00000007)
 #define IOCON_PIO0_8_FUNC_GPIO                    ((unsigned int) 0x00000000)
-#define IOCON_PIO0_8_FUNC_MISO                    ((unsigned int) 0x00000001)
+#define IOCON_PIO0_8_FUNC_MISO0                   ((unsigned int) 0x00000001)
 #define IOCON_PIO0_8_FUNC_CT16B0_MAT0             ((unsigned int) 0x00000002)
 #define IOCON_PIO0_8_MODE_MASK                    ((unsigned int) 0x00000018)
 #define IOCON_PIO0_8_MODE_INACTIVE                ((unsigned int) 0x00000000)
@@ -1583,7 +1583,7 @@
 #define IOCON_PIO0_9                              (*(pREG32 (0x40044064)))
 #define IOCON_PIO0_9_FUNC_MASK                    ((unsigned int) 0x00000007)
 #define IOCON_PIO0_9_FUNC_GPIO                    ((unsigned int) 0x00000000)
-#define IOCON_PIO0_9_FUNC_MOSI                    ((unsigned int) 0x00000001)
+#define IOCON_PIO0_9_FUNC_MOSI0                   ((unsigned int) 0x00000001)
 #define IOCON_PIO0_9_FUNC_CT16B0_MAT1             ((unsigned int) 0x00000002)
 #define IOCON_PIO0_9_FUNC_SWO                     ((unsigned int) 0x00000003)
 #define IOCON_PIO0_9_MODE_MASK                    ((unsigned int) 0x00000018)
@@ -1630,7 +1630,7 @@
 #define IOCON_PIO2_11                             (*(pREG32 (0x40044070)))
 #define IOCON_PIO2_11_FUNC_MASK                   ((unsigned int) 0x00000007)
 #define IOCON_PIO2_11_FUNC_GPIO                   ((unsigned int) 0x00000000)
-#define IOCON_PIO2_11_FUNC_SCK                    ((unsigned int) 0x00000001)
+#define IOCON_PIO2_11_FUNC_SCK0                   ((unsigned int) 0x00000001)
 #define IOCON_PIO2_11_MODE_MASK                   ((unsigned int) 0x00000018)
 #define IOCON_PIO2_11_MODE_INACTIVE               ((unsigned int) 0x00000000)
 #define IOCON_PIO2_11_MODE_PULLDOWN               ((unsigned int) 0x00000008)
@@ -1946,7 +1946,7 @@ typedef enum IRQn
   TIMER_16_1_IRQn               = 42,       /*!< 16-bit Timer1 Interrupt                          */
   TIMER_32_0_IRQn               = 43,       /*!< 32-bit Timer0 Interrupt                          */
   TIMER_32_1_IRQn               = 44,       /*!< 32-bit Timer1 Interrupt                          */
-  SSP_IRQn                      = 45,       /*!< SSP Interrupt                                    */
+  SSP0_IRQn                     = 45,       /*!< SSP0 Interrupt                                   */
   UART_IRQn                     = 46,       /*!< UART Interrupt                                   */
   USB_IRQn                      = 47,       /*!< USB Regular Interrupt                            */
   USB_FIQn                      = 48,       /*!< USB Fast Interrupt                               */
@@ -2230,7 +2230,7 @@ static inline void NVIC_DisableIRQ(IRQn_t IRQn)
 ## SSP - Synchronous Serial Port
 ##############################################################################*/
 
-#define SSP_BASE_ADDRESS                          (0x40040000)
+#define SSP_SSP0_BASE_ADDRESS                     (0x40040000)
 
 #define SSP_SSP0CR0                               (*(pREG32 (0x40040000)))    // Control register 0
 #define SSP_SSP0CR1                               (*(pREG32 (0x40040004)))    // Control register 1

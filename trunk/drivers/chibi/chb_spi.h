@@ -42,7 +42,7 @@
 #ifndef CHB_SPI_H
 #define CHB_SPI_H
 
-#include "lpc134x.h"
+#include "projectconfig.h"
 #include "core/gpio/gpio.h"
 #define CHB_SSPORT      (0) // Port 0
 #define CHB_SSPIN       (2) // P0.2 = SSEL

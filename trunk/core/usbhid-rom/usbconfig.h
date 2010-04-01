@@ -56,6 +56,8 @@
 #define HID_DESC_SIZE               (sizeof(HID_DESCRIPTOR))
 #define HID_REPORT_DESC_SIZE        (sizeof(HID_ReportDescriptor))
 
+#include "projectconfig.h"
+
 extern const uint8_t USB_DeviceDescriptor[];
 extern const uint8_t USB_ConfigDescriptor[];
 extern const uint8_t USB_StringDescriptor[];

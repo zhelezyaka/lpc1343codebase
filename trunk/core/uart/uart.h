@@ -41,6 +41,8 @@
 
 #define BUFSIZE		0x40
 
+#include "projectconfig.h"
+
 void UART_IRQHandler(void);
 void uartInit(uint32_t Baudrate);
 void uartSend(uint8_t *BufferPtr, uint32_t Length);

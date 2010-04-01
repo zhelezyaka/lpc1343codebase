@@ -39,6 +39,8 @@
 #ifndef _USBCONFIG_H_
 #define _USBCONFIG_H_
 
+#include "projectconfig.h"
+
 void usbHIDGetInReport (uint8_t src[], uint32_t length);
 void usbHIDSetOutReport (uint8_t dst[], uint32_t length);
 void usbHIDInit (void);

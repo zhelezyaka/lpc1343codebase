@@ -34,8 +34,7 @@
 #ifndef CHIBI_DRVR_H
 #define CHIBI_DRVR_H
 
-#include "lpc134x.h"
-#include "sysdefs.h"
+#include "projectconfig.h"
 #include "core/gpio/gpio.h"
 
 #define CHB_CHINA                   0

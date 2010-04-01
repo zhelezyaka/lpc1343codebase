@@ -39,7 +39,7 @@
 #ifndef _SYSTICK_H_
 #define _SYSTICK_H_
 
-#include "lpc134x.h"
+#include "projectconfig.h"
 
 void systickInit (uint32_t delayMs);
 void systickDelay (uint32_t delayTicks) ;

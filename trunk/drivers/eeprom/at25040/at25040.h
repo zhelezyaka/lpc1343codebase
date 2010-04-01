@@ -40,7 +40,7 @@
 #ifndef _AT25040_H_
 #define _AT25040_H_
 
-#include "sysdefs.h"
+#include "projectconfig.h"
 
 #define AT25_RDSR_RDY       0x01
 #define AT25_RDSR_WEN       0x02

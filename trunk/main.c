@@ -39,7 +39,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "lpc134x.h"
+#include "projectconfig.h"
 
 #include "core/cpu/cpu.h"
 #include "core/gpio/gpio.h"
@@ -131,7 +131,7 @@ int main (void)
 
     #ifdef CFG_LM75B
     lm75bGetTemperature(&temperature);
-    // Multiply value by 125 for fixed-point math (0.125°C per unit)
+    // Multiply value by 125 for fixed-point math (0.125Â°C per unit)
     temperature *= 125;
     // Use modulus operator to display decimal value
     printf("Current Temperature: %ld.%ld C\r\n", temperature / 1000, temperature % 1000);

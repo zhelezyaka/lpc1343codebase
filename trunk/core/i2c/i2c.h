@@ -51,6 +51,8 @@
 #define I2C_SCLH_HS_SCLH        0x00000030  /* Fast Plus I2C SCL Duty Cycle High Reg */
 #define I2C_SCLL_HS_SCLL        0x00000030  /* Fast Plus I2C SCL Duty Cycle Low Reg */
 
+#include "projectconfig.h"
+
 typedef enum i2cMode_e
 {
   I2CMODE_MASTER              = 0x01,

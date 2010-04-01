@@ -50,7 +50,7 @@
 void chb_spi_init()
 {
     // initialise spi, high between frames and transition on trailing edge
-    sspInit(sspClockPolarity_High, sspClockPhase_FallingEdge);
+    sspInit(0, sspClockPolarity_High, sspClockPhase_FallingEdge);
 
     // set the slave select to idle
     CHB_SPI_DISABLE();

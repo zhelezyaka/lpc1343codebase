@@ -91,7 +91,6 @@
 */
 /**************************************************************************/
 
-#include "lpc134x.h"
 #include "at25040.h"
 #include "core/ssp/ssp.h"
 #include "core/gpio/gpio.h"
@@ -112,7 +111,7 @@ static void at25WriteEnable()
 {
   AT25_SELECT();
   src_addr[0] = AT25_WREN;
-  sspSend((uint8_t *)src_addr, 1);
+  sspSend(0, (uint8_t *)src_addr, 1);
   AT25_DESELECT();
 
   // Delay for at least 250nS (1nS @ 72MHz = ~0.0072 ticks)
@@ -130,8 +129,8 @@ static uint8_t at25GetRSR()
 {
   AT25_SELECT();
   src_addr[0] = AT25_RDSR;
-  sspSend((uint8_t *)src_addr, 1);
-  sspReceive((uint8_t *)dest_addr, 1);
+  sspSend(0, (uint8_t *)src_addr, 1);
+  sspReceive(0, (uint8_t *)dest_addr, 1);
   AT25_DESELECT();
   return dest_addr[0] & (AT25_RDSR_WEN | AT25_RDSR_RDY);
 }
@@ -144,7 +143,7 @@ static uint8_t at25GetRSR()
 /**************************************************************************/
 void at25Init (void)
 {
-  sspInit(sspClockPolarity_Low, sspClockPhase_RisingEdge);
+  sspInit(0, sspClockPolarity_Low, sspClockPhase_RisingEdge);
 }
 
 /**************************************************************************/
@@ -195,8 +194,8 @@ at25Error_e at25Read (uint16_t address, uint8_t *buffer, uint32_t bufferLength)
   // Read command (0x03), append A8 if > addr 256 bytes
   src_addr[0] = address > 0xFF ? AT25_READ | AT25_A8 : AT25_READ;
   src_addr[1] = (address);
-  sspSend((uint8_t *)src_addr, 2); 
-  sspReceive((uint8_t *)&dest_addr[2], bufferLength);
+  sspSend(0, (uint8_t *)src_addr, 2); 
+  sspReceive(0, (uint8_t *)&dest_addr[2], bufferLength);
   AT25_DESELECT();
 
   // Fill response buffer
@@ -265,7 +264,7 @@ at25Error_e at25Write (uint16_t address, uint8_t *buffer, uint32_t bufferLength)
   // Write command (0x02), append A8 if addr > 256 bytes
   src_addr[0] = address > 0xFF ? AT25_WRITE | AT25_A8 : AT25_WRITE;
   src_addr[1] = (address);
-  sspSend((uint8_t *)src_addr, bufferLength + 2);
+  sspSend(0, (uint8_t *)src_addr, bufferLength + 2);
   AT25_DESELECT();
 
   // Wait at least 3ms
@@ -277,8 +276,8 @@ at25Error_e at25Write (uint16_t address, uint8_t *buffer, uint32_t bufferLength)
     // Check status to see if write cycle is done or not
     AT25_SELECT();
     src_addr[0] = AT25_RDSR;
-    sspSend((uint8_t *)src_addr, 1);
-    sspReceive((uint8_t *)dest_addr, 1);
+    sspSend(0, (uint8_t *)src_addr, 1);
+    sspReceive(0, (uint8_t *)dest_addr, 1);
     AT25_DESELECT();
     // Wait until device is ready
     if ((dest_addr[0] & AT25_RDSR_RDY) == 0x00)

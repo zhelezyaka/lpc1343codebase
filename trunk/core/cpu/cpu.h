@@ -39,7 +39,7 @@
 #ifndef _CPU_H_
 #define _CPU_H_
 
-#include "lpc134x.h"
+#include "projectconfig.h"
 
 /**************************************************************************/
 /*! 
