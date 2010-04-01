@@ -42,6 +42,16 @@
 #include "lpc134x.h"
 #include "core/gpio/gpio.h"
 
+#define SSP_FIFOSIZE			8       /* SPI read and write buffer size */
+#define SSP_MAX_TIMEOUT         0xFF
+
+#define SSP0_CSPORT             0
+#define SSP0_CSPIN              2
+
+/* Macro definitions to enable and disable SPI */
+#define ssp0Select()       		do {gpioSetValue(SSP0_CSPORT, SSP0_CSPIN, 0);} while (0)
+#define ssp0Deselect()     		do {gpioSetValue(SSP0_CSPORT, SSP0_CSPIN, 1);} while (0)
+
 /**************************************************************************/
 /*! 
     Indicates whether the clock should be high or low between frames.
@@ -66,16 +76,6 @@ typedef enum sspClockPhase_e
   sspClockPhase_FallingEdge
 } 
 sspClockPhase_t;
-
-#define SSP_FIFOSIZE		8       /* SPI read and write buffer size */
-#define SSP_MAX_TIMEOUT		0xFF
-
-#define SSP_CSPORT              0
-#define SSP_CSPIN               2
-
-/* Macro definitions to enable and disable SPI */
-#define sspSelect()       do {gpioSetValue(SSP_CSPORT, SSP_CSPIN, 0);} while (0)
-#define sspDeselect()     do {gpioSetValue(SSP_CSPORT, SSP_CSPIN, 1);} while (0)
 
 extern void SSP_IRQHandler (void);
 void sspInit (sspClockPolarity_t polarity, sspClockPhase_t phase);
