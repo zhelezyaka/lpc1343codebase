@@ -1,84 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Session Name="C:\Documents and Settings\Kevin\My Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\build\codelite\LPC1343 Workspace.workspace">
-  <int Value="12" Name="m_selectedTab"/>
+  <int Value="0" Name="m_selectedTab"/>
   <wxString Value="C:\Documents and Settings\Kevin\My Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\build\codelite\LPC1343 Workspace.workspace" Name="m_workspaceName"/>
   <TabInfoArray Name="TabInfoArray">
     <TabInfo>
-      <wxString Value="C:\Documents and Settings\Kevin\My Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\drivers\chibi\chb_drvr_at86rf212.c" Name="FileName"/>
-      <int Value="0" Name="FirstVisibleLine"/>
-      <int Value="33" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="C:\Documents and Settings\Kevin\My Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\drivers\chibi\chb_drvr_at86rf212.h" Name="FileName"/>
-      <int Value="26" Name="FirstVisibleLine"/>
-      <int Value="37" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="C:\Documents and Settings\Kevin\My Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\drivers\chibi\chb_eeprom.c" Name="FileName"/>
-      <int Value="31" Name="FirstVisibleLine"/>
-      <int Value="40" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="C:\Documents and Settings\Kevin\My Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\drivers\chibi\chb_eeprom.h" Name="FileName"/>
-      <int Value="0" Name="FirstVisibleLine"/>
-      <int Value="40" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="C:\Documents and Settings\Kevin\My Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\drivers\chibi\chb_spi.c" Name="FileName"/>
-      <int Value="24" Name="FirstVisibleLine"/>
-      <int Value="40" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="C:\Documents and Settings\Kevin\My Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\drivers\chibi\chb_spi.h" Name="FileName"/>
-      <int Value="1" Name="FirstVisibleLine"/>
-      <int Value="45" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="C:\Documents and Settings\Kevin\My Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\drivers\eeprom\at25040\at25040.c" Name="FileName"/>
-      <int Value="83" Name="FirstVisibleLine"/>
-      <int Value="93" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="C:\Documents and Settings\Kevin\My Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\drivers\eeprom\at25040\at25040.h" Name="FileName"/>
-      <int Value="31" Name="FirstVisibleLine"/>
-      <int Value="43" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="C:\Documents and Settings\Kevin\My Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\drivers\eeprom\mcp24aa\mcp24aa.c" Name="FileName"/>
-      <int Value="224" Name="FirstVisibleLine"/>
-      <int Value="102" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="C:\Documents and Settings\Kevin\My Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\drivers\eeprom\mcp24aa\mcp24aa.h" Name="FileName"/>
-      <int Value="13" Name="FirstVisibleLine"/>
-      <int Value="42" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="C:\Documents and Settings\Kevin\My Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\drivers\sensors\lm75b\lm75b.c" Name="FileName"/>
-      <int Value="76" Name="FirstVisibleLine"/>
-      <int Value="83" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="C:\Documents and Settings\Kevin\My Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\drivers\sensors\lm75b\lm75b.h" Name="FileName"/>
-      <int Value="17" Name="FirstVisibleLine"/>
-      <int Value="42" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-    </TabInfo>
-    <TabInfo>
       <wxString Value="C:\Documents and Settings\Kevin\My Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\main.c" Name="FileName"/>
-      <int Value="31" Name="FirstVisibleLine"/>
-      <int Value="41" Name="CurrentLine"/>
+      <int Value="0" Name="FirstVisibleLine"/>
+      <int Value="36" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
     </TabInfo>
   </TabInfoArray>

@@ -48,7 +48,7 @@
 
 #define CFG_USBHID
 #define CFG_I2CEEPROM
-#define CFG_LM75B
+// #define CFG_LM75B
 // #define CFG_CHIBI
 
 #define CFG_LED_PORT  2
