@@ -1946,7 +1946,7 @@ typedef enum IRQn
   TIMER_16_1_IRQn               = 42,       /*!< 16-bit Timer1 Interrupt                          */
   TIMER_32_0_IRQn               = 43,       /*!< 32-bit Timer0 Interrupt                          */
   TIMER_32_1_IRQn               = 44,       /*!< 32-bit Timer1 Interrupt                          */
-  SSP0_IRQn                     = 45,       /*!< SSP0 Interrupt                                   */
+  SSP_IRQn                      = 45,       /*!< SSP Interrupt                                    */
   UART_IRQn                     = 46,       /*!< UART Interrupt                                   */
   USB_IRQn                      = 47,       /*!< USB Regular Interrupt                            */
   USB_FIQn                      = 48,       /*!< USB Fast Interrupt                               */

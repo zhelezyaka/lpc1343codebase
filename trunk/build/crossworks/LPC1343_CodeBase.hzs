@@ -19,8 +19,6 @@
   <ProjectSessionItem path="LPC1343_CodeBase" name="unnamed" />
   <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase" name="unnamed" />
   <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files" name="unnamed" />
-  <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files;core" name="unnamed" />
-  <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files;core;ssp" name="unnamed" />
  </Project>
  <Register1>
   <RegisterWindow openNodes="" binaryNodes="" unsignedNodes="" visibleGroups="" decimalNodes="" octalNodes="" asciiNodes="" />
@@ -51,7 +49,8 @@
   <Watches active="0" update="Never" />
  </Watch4>
  <Files>
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="2" debugPath="C:\Documents and Settings\Kevin\My Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\core\ssp\ssp.c" y="23" path="C:\Documents and Settings\Kevin\My Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\core\ssp\ssp.c" left="0" selected="1" name="unnamed" top="3" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="35" debugPath="C:\Documents and Settings\Kevin\My Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\main.c" y="36" path="C:\Documents and Settings\Kevin\My Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\main.c" left="0" selected="1" name="unnamed" top="15" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\Documents and Settings\Kevin\My Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\projectconfig.h" y="49" path="C:\Documents and Settings\Kevin\My Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\projectconfig.h" left="0" selected="0" name="unnamed" top="30" />
  </Files>
- <ARMCrossStudioWindow activeProject="LPC1343_CodeBase" autoConnectTarget="" debugSearchFileMap="" fileDialogInitialDirectory="C:\Documents and Settings\Kevin\My Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\build\crossworks" fileDialogDefaultFilter="*.*" autoConnectCapabilities="0" debugSearchPath="" buildConfiguration="THUMB Flash Release" />
+ <ARMCrossStudioWindow activeProject="LPC1343_CodeBase" autoConnectTarget="Segger J-Link" debugSearchFileMap="" fileDialogInitialDirectory="C:\Documents and Settings\Kevin\My Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\build\crossworks" fileDialogDefaultFilter="*.*" autoConnectCapabilities="388991" debugSearchPath="" buildConfiguration="THUMB Flash Release" />
 </session>

@@ -84,7 +84,7 @@ volatile uint32_t interruptRxTimeoutStat = 0;
     This will maximize the use of both FIFOs and performance.
 */
 /**************************************************************************/
-void SSP0_IRQHandler (void)
+void SSP_IRQHandler (void)
 {
   uint32_t regValue;
 
@@ -151,8 +151,8 @@ void sspInit (uint8_t portNum, sspClockPolarity_t polarity, sspClockPhase_t phas
     /* Enable AHB clock to the SSP domain. */
     SCB_SYSAHBCLKCTRL |= (SCB_SYSAHBCLKCTRL_SSP0);
   
-    /* Divide by 2 (SSPCLKDIV also enables to SSP CLK) */
-    SCB_SSP0CLKDIV = SCB_SSP0CLKDIV_DIV2;
+    /* Divide by 1 (SSPCLKDIV also enables to SSP CLK) */
+    SCB_SSP0CLKDIV = SCB_SSP0CLKDIV_DIV1;
   
     /* Set P0.8 to SSP MISO */
     IOCON_PIO0_8 &= ~IOCON_PIO0_8_FUNC_MASK;
@@ -162,9 +162,9 @@ void sspInit (uint8_t portNum, sspClockPolarity_t polarity, sspClockPhase_t phas
     IOCON_PIO0_9 &= ~IOCON_PIO0_9_FUNC_MASK;
     IOCON_PIO0_9 |= IOCON_PIO0_9_FUNC_MOSI0;
   
-    /* Set 0.6 to SSP SCK (2.11 and 0.10 can also be used) */
-    IOCON_SCKLOC = IOCON_SCKLOC_SCKPIN_PIO0_6;
-    IOCON_PIO0_6 = IOCON_PIO0_6_FUNC_SCK;
+    /* Set 2.11 to SSP SCK (0.6 and 0.10 can also be used) */ 
+    IOCON_SCKLOC = IOCON_SCKLOC_SCKPIN_PIO2_11; 
+    IOCON_PIO2_11 = IOCON_PIO2_11_FUNC_SCK0;  
   
     /* Set P0.2/SSEL to GPIO output and high */
     IOCON_PIO0_2 &= ~IOCON_PIO0_2_FUNC_MASK;
@@ -173,7 +173,7 @@ void sspInit (uint8_t portNum, sspClockPolarity_t polarity, sspClockPhase_t phas
     gpioSetValue(SSP0_CSPORT, SSP0_CSPIN, 1);
     gpioSetPullup(&IOCON_PIO0_2, gpioPullupMode_Inactive);  // Board has external pull-up
   
-    /* (PCLK / (CPSDVSR × [SCR+1])) = (24000000 / (2 x [8 + 1])) = 1.33 MHz */
+    /* (PCLK / (CPSDVSR × [SCR+1])) = (72000000 / (2 x [8 + 1])) = 4.0 MHz */
     uint32_t configReg = ( SSP_SSP0CR0_DSS_8BIT    // Data size = 8-bit
                   | SSP_SSP0CR0_FRF_SPI       // Frame format = SPI
                   | SSP_SSP0CR0_SCR_8);       // Serial clock rate = 8
@@ -204,7 +204,7 @@ void sspInit (uint8_t portNum, sspClockPolarity_t polarity, sspClockPhase_t phas
     }
   
     /* Enable the SSP Interrupt */
-    NVIC_EnableIRQ(SSP0_IRQn);
+    NVIC_EnableIRQ(SSP_IRQn);
   
     /* Set SSPINMS registers to enable interrupts
      * enable all error related interrupts        */
