@@ -46,12 +46,24 @@
 // core clock speed, you need to modify "core/cpu/cpu.c"
 #define CFG_CPU_CCLK  72000000
 
+#define CFG_LED_PORT  2
+#define CFG_LED_PIN   10
+
 #define CFG_USBHID
 #define CFG_I2CEEPROM
 // #define CFG_LM75B
-// #define CFG_CHIBI
 
-#define CFG_LED_PORT  2
-#define CFG_LED_PIN   10
+#define CFG_CHIBI
+#define CFG_CHIBI_TRANSMITTER
+// #define CFG_CHIBI_RECEIVER
+
+// #####################
+// Config error-handling
+// #####################
+#ifdef CFG_CHIBI
+  #if defined CFG_CHIBI_TRANSMITTER && defined CFG_CHIBI_RECEIVER
+    #error "CFG_CHIBI_TRANSMITTER and CFG_CHIBI_RECEIVER can not both be defined at once"
+  #endif
+#endif
 
 #endif

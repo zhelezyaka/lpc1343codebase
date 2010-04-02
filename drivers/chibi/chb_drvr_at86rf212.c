@@ -743,7 +743,6 @@ chbError_t chb_drvr_init()
     // init eeprom
     mcp24aaInit();
     
-
     // Initialise 32-bit timer 0
     timer32Init(0, TIMER32_DEFAULTINTERVAL);
     timer32Enable(0);

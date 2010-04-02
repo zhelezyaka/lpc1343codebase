@@ -116,44 +116,48 @@ int main (void)
 
   while (1)
   {
-    // Blink LED every 1 second
-    timer32DelayMS(0, 1000);
-    if (gpioGetValue(CFG_LED_PORT, CFG_LED_PIN))
-    {
-      // Enable LED (set low)
-      gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, 0);
-    }
-    else
-    {
-      // Disable LED (set high)
-      gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, 1);
-    }
-
-    #ifdef CFG_LM75B
-    lm75bGetTemperature(&temperature);
-    // Multiply value by 125 for fixed-point math (0.125°C per unit)
-    temperature *= 125;
-    // Use modulus operator to display decimal value
-    printf("Current Temperature: %ld.%ld C\r\n", temperature / 1000, temperature % 1000);
-    #endif
-
     #ifdef CFG_CHIBI
-    i++;
-    sprintf(buf,"%ld",i);
-    gpioSetValue (2, 10, 0);
-    chb_write(0xFFFF, (uint8_t *)buf, 11);
-    gpioSetValue (2, 10, 1);
-    // if (pcb->data_rcv)
-    // {
-    //     rx_data.len = chb_read(&rx_data);
-    //     // Enable LED (set low)
-    //     gpioSetValue (2, 10, 0);
-    //     // Output message to UART
-    //     printf("Message received from node %02X: %s (rssi=%d)\r\n", rx_data.src_addr, rx_data.data, pcb->ed);
-    //     // Disable LED (set high)
-    //     gpioSetValue (2, 10, 1);
-    //     pcb->data_rcv = FALSE;
-    // }
+      #ifdef CFG_CHIBI_TRANSMITTER
+        i++;
+        sprintf(buf,"%ld",i);
+        gpioSetValue (2, 10, 0);
+        chb_write(0xFFFF, (uint8_t *)buf, 11);
+        gpioSetValue (2, 10, 1);
+        timer32DelayMS(0, 1000);
+      #endif
+      #ifdef CFG_CHIBI_RECEIVER
+        if (pcb->data_rcv)
+        {
+          rx_data.len = chb_read(&rx_data);
+          // Enable LED (set low)
+          gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, 0);
+          // Output message to UART
+          printf("Message received from node %02X: %s (rssi=%d)\r\n", rx_data.src_addr, rx_data.data, pcb->ed);
+          // Disable LED (set high)
+          gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, 1);
+          pcb->data_rcv = FALSE;
+        }
+      #endif
+    #else
+      // Blink LED every 1 second
+      timer32DelayMS(0, 1000);
+      if (gpioGetValue(CFG_LED_PORT, CFG_LED_PIN))
+      {
+        // Enable LED (set low)
+        gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, 0);
+      }
+      else
+      {
+        // Disable LED (set high)
+        gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, 1);
+      }
+      #ifdef CFG_LM75B
+        lm75bGetTemperature(&temperature);
+        // Multiply value by 125 for fixed-point math (0.125°C per unit)
+        temperature *= 125;
+        // Use modulus operator to display decimal value
+        printf("Current Temperature: %ld.%ld C\r\n", temperature / 1000, temperature % 1000);
+      #endif
     #endif
   }
 }
