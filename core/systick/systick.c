@@ -102,6 +102,7 @@ void systickDelay (uint32_t delayTicks)
 {
   uint32_t curTicks;
 
+  // ToDo: Modify this to handle overflow
   curTicks = msTicks;
   while ((msTicks - curTicks) < delayTicks);
 }
