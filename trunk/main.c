@@ -68,8 +68,8 @@ static chb_rx_data_t rx_data;
 int main (void)
 {
   cpuInit();
-  systickInit(10);
-  uartInit(57600);
+  systickInit(CFG_SYSTICK_DELAY_MS);
+  uartInit(CFG_UART_BAUDRATE);
 
   printf("CPU Initialised (72MHz).......\r\n");
 
@@ -133,6 +133,8 @@ int main (void)
           gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, 0);
           // Output message to UART
           printf("Message received from node %02X: %s (rssi=%d)\r\n", rx_data.src_addr, rx_data.data, pcb->ed);
+          // clear the rx flag and reset the buffer
+          chb_clr();
           // Disable LED (set high)
           gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, 1);
           pcb->data_rcv = FALSE;
