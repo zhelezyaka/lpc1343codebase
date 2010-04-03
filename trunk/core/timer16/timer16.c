@@ -225,7 +225,7 @@ void timer16DelayUS(uint8_t timerNum, uint16_t delayInUS)
     /* Set the prescaler to zero */
     TMR_TMR16B0PR  = 0x00;
 
-    TMR_TMR16B0MR0 = delayInUS * ((CFG_CPU_CCLK/SCB_SYSAHBCLKDIV)/100);
+    TMR_TMR16B0MR0 = delayInUS * ((CFG_CPU_CCLK/SCB_SYSAHBCLKDIV)/1000000);
 
     /* Reset all interrupts */
     TMR_TMR16B0IR  = TMR_TMR16B0IR_MASK_ALL;
@@ -248,7 +248,7 @@ void timer16DelayUS(uint8_t timerNum, uint16_t delayInUS)
     /* Set the prescaler to zero */
     TMR_TMR16B1PR  = 0x00;
 
-    TMR_TMR16B1MR0 = delayInUS * ((CFG_CPU_CCLK/SCB_SYSAHBCLKDIV)/100);
+    TMR_TMR16B1MR0 = delayInUS * ((CFG_CPU_CCLK/SCB_SYSAHBCLKDIV)/1000000);
 
     /* Reset all interrupts */
     TMR_TMR16B1IR  = TMR_TMR16B1IR_MASK_ALL;
