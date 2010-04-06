@@ -7,23 +7,14 @@
 
     @section DESCRIPTION
 	
-    Generic code for 32-bit timers.
+    Generic code for 32-bit timers.  By default, the timers are configured
+    to generate an interrupt once every 10 microseconds, incrementing a
+    global variable once per tick.
 
     @warning  Please note that the ROM-based USB drivers on the LPC1343
               require the use of 32-bit Timer 1.  If you plan on using the
               ROM-based USB functionality, you should restrict your timer
               usage to 32-bit timer 0.              
-
-    @warning  Using one of the blocking delay functions (timer32DelayUS
-              or timer32DelayMS) will cause the timers to reset, and will
-              stop the rolling counter variables from incrementing
-              (timer32_0_counter and timer32_1_counter).  Only one type of
-              functionality can be used at a time.  If you wish to use the
-              blocking delay functions as well as have a rolling counter,
-              you need to use either the systick timer for the rolling
-              counter or use timer32_0 and timer32_1 seperately for the
-              two functions, restricting timer32_0 to the blocking delay
-              functions and allowing timer32_1 to keep a rolling counter.
 
     @section Example
 
@@ -33,14 +24,14 @@
     ...
     cpuInit();
 
-    // Initialise 32-bit timer 0
+    // Initialise 32-bit timer 0 with 10uS ticks
     timer32Init(0, TIMER32_DEFAULTINTERVAL);
 
     // Enable timer 0
     timer32Enable(0);
 
     // Cause a blocking delay for 1 second (1000mS)
-    timer32DelayMS(0, 1000);
+    timer32Delay(0, TIMER32_DELAY_1MS * 1000);
     @endcode
 	
     @section LICENSE
@@ -82,136 +73,51 @@ volatile uint32_t timer32_1_counter = 0;
 /**************************************************************************/
 /*! 
     @brief      Causes a blocking delay for the specified number of
-                microseconds
+                timer ticks.  The duration of each 'tick' is determined by
+                the 'timerInterval' property supplied to timer32Init.
             
-    @warning    The maximum delay in uS will depend on the clock speed,
-                but running at 72MHz the maximum delay (MR = 0xFFFFFFFF)
-                would be 59,652,323 uS (0xFFFFFFFF / 72 = 59652323 uS),
-                or roughly 59 seconds
-
     @param[in]  timerNum
                 The 32-bit timer to user (0..1)
-    @param[in]  delayInUs
-                The number of microseconds to wait
+    @param[in]  delay
+                The number of counter increments to wait
 */
 /**************************************************************************/
-void timer32DelayUS(uint8_t timerNum, uint32_t delayInUS)
+void timer32Delay(uint8_t timerNum, uint32_t delay)
 {
-  // ToDo: Check if the appropriate timer is enabled first?
+  uint32_t curTicks;
 
   if (timerNum == 0)
   {
-    /* Reset the timer */
-    TMR_TMR32B0TCR = TMR_TMR32B0TCR_COUNTERRESET_ENABLED;
-
-    /* Set the prescaler to zero */
-    TMR_TMR32B0PR  = 0x00;
-
-    TMR_TMR32B0MR0 = delayInUS * ((CFG_CPU_CCLK/SCB_SYSAHBCLKDIV)/1000000);
-
-    /* Reset all interrupts */
-    TMR_TMR32B0IR  = TMR_TMR32B0IR_MASK_ALL;
-
-    /* Stop timer on match (MR0) */
-    TMR_TMR32B0MCR = TMR_TMR32B0MCR_MR0_STOP_ENABLED;
-
-    /* Start timer */
-    TMR_TMR32B0TCR = TMR_TMR32B0TCR_COUNTERENABLE_ENABLED;
-
-    /* Wait until the delay time has elapsed */
-    while (TMR_TMR32B0TCR & TMR_TMR32B0TCR_COUNTERENABLE_ENABLED);
+    curTicks = timer32_0_counter;
+    if (curTicks > 0xFFFFFFFF - delay)
+    {
+      // Rollover will occur during delay
+      while (timer32_0_counter >= curTicks)
+      {
+        while (timer32_0_counter < (delay - (0xFFFFFFFF - curTicks)));
+      }      
+    }
+    else
+    {
+      while ((timer32_0_counter - curTicks) < delay);
+    }
   }
 
   else if (timerNum == 1)
   {
-    /* Reset the timer */
-    TMR_TMR32B1TCR = TMR_TMR32B1TCR_COUNTERRESET_ENABLED;
-
-    /* Set the prescaler to zero */
-    TMR_TMR32B1PR  = 0x00;
-
-    TMR_TMR32B1MR0 = delayInUS * ((CFG_CPU_CCLK/SCB_SYSAHBCLKDIV)/1000000);
-
-    /* Reset all interrupts */
-    TMR_TMR32B1IR  = TMR_TMR32B1IR_MASK_ALL;
-
-    /* Stop timer on match (MR0) */
-    TMR_TMR32B1MCR = TMR_TMR32B1MCR_MR0_STOP_ENABLED;
-
-    /* Start timer */
-    TMR_TMR32B1TCR = TMR_TMR32B1TCR_COUNTERENABLE_ENABLED;
-
-    /* Wait until the delay time has elapsed */
-    while (TMR_TMR32B1TCR & TMR_TMR32B1TCR_COUNTERENABLE_ENABLED);
-  }
-
-  return;
-}
-
-/**************************************************************************/
-/*! 
-    @brief      Causes a blocking delay for the specified number of
-                milliseconds
-            
-    @warning    The maximum delay in mS will depend on the clock speed,
-                but running at 72MHz the maximum delay (MR = 0xFFFFFFFF)
-                would be 59,652 mS (0xFFFFFFFF / 72000 = 59652 mS), or 
-                roughly 59 seconds.
-
-    @param[in]  timerNum
-                The 32-bit timer to user (0..1)
-    @param[in]  delayInMS
-                The number of milliseconds to wait
-*/
-/**************************************************************************/
-void timer32DelayMS(uint8_t timerNum, uint32_t delayInMS)
-{
-  // ToDo: Check if the appropriate timer is enabled first?
-
-  if (timerNum == 0)
-  {
-    /* Reset the timer */
-    TMR_TMR32B0TCR = TMR_TMR32B0TCR_COUNTERRESET_ENABLED;
-
-    /* Set the prescaler to zero */
-    TMR_TMR32B0PR  = 0x00;
-
-    TMR_TMR32B0MR0 = delayInMS * ((CFG_CPU_CCLK/SCB_SYSAHBCLKDIV)/1000);
-
-    /* Reset all interrupts */
-    TMR_TMR32B0IR  = TMR_TMR32B0IR_MASK_ALL;
-
-    /* Stop timer on match (MR0) */
-    TMR_TMR32B0MCR = TMR_TMR32B0MCR_MR0_STOP_ENABLED;
-
-    /* Start timer */
-    TMR_TMR32B0TCR = TMR_TMR32B0TCR_COUNTERENABLE_ENABLED;
-
-    /* Wait until the delay time has elapsed */
-    while (TMR_TMR32B0TCR & TMR_TMR32B0TCR_COUNTERENABLE_ENABLED);
-  }
-
-  else if (timerNum == 1)
-  {
-    /* Reset the timer */
-    TMR_TMR32B1TCR = TMR_TMR32B1TCR_COUNTERRESET_ENABLED;
-
-    /* Set the prescaler to zero */
-    TMR_TMR32B1PR  = 0x00;
-
-    TMR_TMR32B1MR0 = delayInMS * ((CFG_CPU_CCLK/SCB_SYSAHBCLKDIV)/1000);
-
-    /* Reset all interrupts */
-    TMR_TMR32B1IR  = TMR_TMR32B1IR_MASK_ALL;
-
-    /* Stop timer on match (MR0) */
-    TMR_TMR32B1MCR = TMR_TMR32B1MCR_MR0_STOP_ENABLED;
-
-    /* Start timer */
-    TMR_TMR32B1TCR = TMR_TMR32B1TCR_COUNTERENABLE_ENABLED;
-
-    /* Wait until the delay time has elapsed */
-    while (TMR_TMR32B1TCR & TMR_TMR32B1TCR_COUNTERENABLE_ENABLED);
+    curTicks = timer32_1_counter;
+    if (curTicks > 0xFFFFFFFF - delay)
+    {
+      // Rollover will occur during delay
+      while (timer32_1_counter >= curTicks)
+      {
+        while (timer32_1_counter < (delay - (0xFFFFFFFF - curTicks)));
+      }      
+    }
+    else
+    {
+      while ((timer32_1_counter - curTicks) < delay);
+    }
   }
 
   return;

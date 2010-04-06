@@ -39,22 +39,26 @@
 #ifndef __TIMER32_H__ 
 #define __TIMER32_H__
 
-#define TIMER32_DELAY_1US       (CFG_CPU_CCLK / 1000000)
-#define TIMER32_DELAY_10US      (CFG_CPU_CCLK / 100000)
-#define TIMER32_DELAY_100US     (CFG_CPU_CCLK / 10000)
-#define TIMER32_DELAY_1MS       (CFG_CPU_CCLK / 1000)
-#define TIMER32_DELAY_10MS      (CFG_CPU_CCLK / 100)
-#define TIMER32_DELAY_100MS     (CFG_CPU_CCLK / 10)
-#define TIMER32_DELAY_1S        (CFG_CPU_CCLK)
-#define TIMER32_DEFAULTINTERVAL	(TIMER32_DELAY_10MS)
-
 #include "projectconfig.h"
+
+#define TIMER32_CCLK_1US        ((CFG_CPU_CCLK/SCB_SYSAHBCLKDIV) / 1000000)
+#define TIMER32_CCLK_10US       ((CFG_CPU_CCLK/SCB_SYSAHBCLKDIV) / 100000)
+#define TIMER32_CCLK_100US      ((CFG_CPU_CCLK/SCB_SYSAHBCLKDIV) / 10000)
+#define TIMER32_CCLK_1MS        ((CFG_CPU_CCLK/SCB_SYSAHBCLKDIV) / 1000)
+#define TIMER32_CCLK_10MS       ((CFG_CPU_CCLK/SCB_SYSAHBCLKDIV) / 100)
+#define TIMER32_CCLK_100MS      ((CFG_CPU_CCLK/SCB_SYSAHBCLKDIV) / 10)
+#define TIMER32_CCLK_1S         (CFG_CPU_CCLK/SCB_SYSAHBCLKDIV)
+#define TIMER32_DEFAULTINTERVAL	(TIMER32_CCLK_10US)
+
+#define TIMER32_DELAY_10US      (1)             // 10uS delay = 1 tick
+#define TIMER32_DELAY_100US     (10)            // 100uS delay = 10 ticks
+#define TIMER32_DELAY_1MS       (100)           // 1mS delay = 100 ticks
+#define TIMER32_DELAY_1S        (100000)        // 1S delay = 100000 ticks
 
 void TIMER32_0_IRQHandler(void);
 void TIMER32_1_IRQHandler(void);
 
-void timer32DelayUS(uint8_t timerNum, uint32_t delayInUS);
-void timer32DelayMS(uint8_t timerNum, uint32_t delayInMS);
+void timer32Delay(uint8_t timerNum, uint32_t delay);
 void timer32Enable(uint8_t timerNum);
 void timer32Disable(uint8_t timerNum);
 void timer32Reset(uint8_t timerNum);

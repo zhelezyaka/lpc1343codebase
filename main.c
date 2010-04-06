@@ -78,7 +78,7 @@ int main (void)
   gpioSetValue(CFG_LED_PORT, CFG_LED_PIN, 1);
 
   // Initialise 32-bit timer 0 with default delay 
-  printf("Initialising 32-bit Timer 0...\r\n");
+  printf("Initialising 32-bit Timer 0 with 10 uS delay...\r\n");
   timer32Init(0, TIMER32_DEFAULTINTERVAL);
   timer32Enable(0);
 
@@ -123,7 +123,7 @@ int main (void)
         gpioSetValue (2, 10, 0);
         chb_write(0xFFFF, (uint8_t *)buf, 11);
         gpioSetValue (2, 10, 1);
-        timer32DelayMS(0, 1000);
+        timer32Delay(0, TIMER32_DELAY_1MS * 1000);
       #endif
       #ifdef CFG_CHIBI_RECEIVER
         if (pcb->data_rcv)
@@ -142,7 +142,7 @@ int main (void)
       #endif
     #else
       // Blink LED every 1 second
-      timer32DelayMS(0, 1000);
+      timer32Delay(0, TIMER32_DELAY_1MS * 1000);
       if (gpioGetValue(CFG_LED_PORT, CFG_LED_PIN))
       {
         // Enable LED (set low)

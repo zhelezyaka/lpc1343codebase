@@ -101,8 +101,18 @@ void systickInit (uint32_t delayMs)
 void systickDelay (uint32_t delayTicks) 
 {
   uint32_t curTicks;
-
-  // ToDo: Modify this to handle overflow
   curTicks = msTicks;
-  while ((msTicks - curTicks) < delayTicks);
+
+  if (curTicks > 0x00FFFFFF - delayTicks)
+  {
+    // Rollover will occur during delay
+    while (msTicks >= curTicks)
+    {
+      while (msTicks < (delayTicks - (0x00FFFFFF - curTicks)));
+    }      
+  }
+  else
+  {
+    while ((msTicks - curTicks) < delayTicks);
+  }
 }

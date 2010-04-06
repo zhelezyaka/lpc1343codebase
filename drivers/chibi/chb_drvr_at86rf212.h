@@ -70,10 +70,10 @@
     
 #define CHB_ENTER_CRIT()            __disable_irq() // Requires CMSIS (core_cm3.h)
 #define CHB_LEAVE_CRIT()            __enable_irq()  // Requires CMSIS (core_cm3.h)
-#define CHB_RST_ENABLE()            do {gpioSetValue(CHB_RSTPORT, CHB_RSTPIN, 0); timer32DelayUS(0, 500);} while (0)
-#define CHB_RST_DISABLE()           do {gpioSetValue(CHB_RSTPORT, CHB_RSTPIN, 1); timer32DelayUS(0, 500);} while (0)
-#define CHB_SLPTR_ENABLE()          do {gpioSetValue(CHB_SLPTRPORT, CHB_SLPTRPIN, 1); timer32DelayUS(0, 500);} while (0)
-#define CHB_SLPTR_DISABLE()         do {gpioSetValue(CHB_SLPTRPORT, CHB_SLPTRPIN, 0); timer32DelayUS(0, 500);} while (0)
+#define CHB_RST_ENABLE()            do {gpioSetValue(CHB_RSTPORT, CHB_RSTPIN, 0); timer32Delay(0, TIMER32_DELAY_100US * 5);} while (0)
+#define CHB_RST_DISABLE()           do {gpioSetValue(CHB_RSTPORT, CHB_RSTPIN, 1); timer32Delay(0, TIMER32_DELAY_100US * 5);} while (0)
+#define CHB_SLPTR_ENABLE()          do {gpioSetValue(CHB_SLPTRPORT, CHB_SLPTRPIN, 1); timer32Delay(0, TIMER32_DELAY_100US * 5);} while (0)
+#define CHB_SLPTR_DISABLE()         do {gpioSetValue(CHB_SLPTRPORT, CHB_SLPTRPIN, 0); timer32Delay(0, TIMER32_DELAY_100US * 5);} while (0)
 
 #define CHB_INIT_MAXRETRIES         (50)  /**< Maximum number of attempts to get RX_AACK_ON status in Init */
 

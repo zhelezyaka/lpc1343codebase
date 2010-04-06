@@ -235,7 +235,7 @@ mcp24aaError_e mcp24aaWriteBuffer (uint16_t address, uint8_t *buffer, uint32_t b
   i2cEngine();
 
   // Wait at least 3ms
-  timer32DelayMS(0, 3);
+  timer32Delay(0, (uint32_t)TIMER32_DELAY_1MS * 3);
   
   return MCP24AA_ERROR_OK;
 }
