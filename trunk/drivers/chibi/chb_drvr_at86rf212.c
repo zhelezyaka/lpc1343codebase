@@ -68,7 +68,15 @@ static uint8_t chb_get_status()
 /**************************************************************************/
 static void chb_delay_us(uint32_t usec)
 {
-  timer32DelayUS(0, usec);
+  if (usec < 10)
+  {
+    // Requested delay is smaller the the minimum possible delay
+    timer32Delay(0, TIMER32_DELAY_10US);
+  }
+  else
+  {
+    timer32Delay(0, (usec / 10) + 1);
+  }
 }
 
 /**************************************************************************/

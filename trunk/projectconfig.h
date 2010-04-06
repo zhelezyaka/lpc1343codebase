@@ -43,8 +43,11 @@
 #include "sysdefs.h"
 
 #define CFG_CPU_CCLK            (72000000)    // Ref. only.  Clock speed actually set in "core/cpu/cpu.c"
-#define CFG_SYSTICK_DELAY_MS    (10)          // The number of ms between each tick of the systick timer
+
+#define CFG_SYSTICK_DELAY_MS    (10)          // The number of milliseconds between each tick of the systick timer
+
 #define CFG_UART_BAUDRATE       (57600)       // Default UART speed
+
 #define CFG_LED_PORT            (2)
 #define CFG_LED_PIN             (10)
 
