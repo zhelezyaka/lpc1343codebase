@@ -34,7 +34,7 @@
 #ifndef CHIBI_H
 #define CHIBI_H
 
-#include "sysdefs.h"
+#include "types.h"
 
 #define CHB_HDR_SZ        9    // FCF + seq + pan_id + dest_addr + src_addr (1 + 2 + 1 + 2 + 2 + 2)
 #define CHB_FCS_LEN       2
@@ -66,34 +66,33 @@ enum
 
 typedef struct
 {
-    uint16_t src_addr;
-    uint8_t seq;
-    volatile BOOL data_rcv;
-    volatile BOOL tx_end;
+    U16 src_addr;
+    U8 seq;
+    volatile bool data_rcv;
+    volatile bool tx_end;
 
     // stats
-    uint16_t rcvd_xfers;
-    uint16_t txd_success;
-    uint16_t txd_noack;
-    uint16_t txd_channel_fail;
-    uint16_t underrun;
-    uint8_t battlow;
-    uint8_t ed;
-    uint8_t crc;
+    U16 rcvd_xfers;
+    U16 txd_success;
+    U16 txd_noack;
+    U16 txd_channel_fail;
+    U16 underrun;
+    U8 battlow;
+    U8 ed;
+    U8 crc;
 } pcb_t;
 
 typedef struct
 {
-    uint8_t len;
-    uint16_t src_addr;
-    uint16_t dest_addr;
-    uint8_t data[CHB_MAX_PAYLOAD];
+    U8 len;
+    U16 src_addr;
+    U16 dest_addr;
+    U8 data[CHB_MAX_PAYLOAD];
 } chb_rx_data_t;
 
 void chb_init();
 pcb_t *chb_get_pcb();
-uint8_t chb_write(uint16_t addr, uint8_t *data, uint8_t len);
-uint8_t chb_read(chb_rx_data_t *rx);
-void chb_clr();
+U8 chb_write(U16 addr, U8 *data, U8 len);
+U8 chb_read(chb_rx_data_t *rx);
 
 #endif

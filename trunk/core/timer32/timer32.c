@@ -8,7 +8,7 @@
     @section DESCRIPTION
 	
     Generic code for 32-bit timers.  By default, the timers are configured
-    to generate an interrupt once every 10 microseconds, incrementing a
+    to generate an interrupt once every 100 microseconds, incrementing a
     global variable once per tick.
 
     @warning  Please note that the ROM-based USB drivers on the LPC1343
@@ -24,7 +24,7 @@
     ...
     cpuInit();
 
-    // Initialise 32-bit timer 0 with 10uS ticks
+    // Initialise 32-bit timer 0 with 100uS ticks
     timer32Init(0, TIMER32_DEFAULTINTERVAL);
 
     // Enable timer 0

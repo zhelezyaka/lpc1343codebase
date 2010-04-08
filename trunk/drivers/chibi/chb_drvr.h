@@ -34,22 +34,24 @@
 #ifndef CHIBI_DRVR_H
 #define CHIBI_DRVR_H
 
+#include "types.h"
 #include "projectconfig.h"
 #include "core/gpio/gpio.h"
 
-#define CHB_CHINA                   0
-#define CHB_EEPROM_IEEE_ADDR        0x00
-#define CHB_EEPROM_SHORT_ADDR       0x09
-#define CHB_AT86RF212_VER_NUM       0x01
-#define CHB_AT86RF212_PART_NUM      0x07
+#define CHB_CHINA               0
+#define CHB_EEPROM_IEEE_ADDR    0x00
+#define CHB_EEPROM_SHORT_ADDR   0x09
+#define CHB_AT86RF212_VER_NUM   0x01
+#define CHB_AT86RF212_PART_NUM  0x07
+// #define CHB_BPSK                0       // set to 1 if want to use BPSK rather than OQPSK
 
-#define CHB_SPI_CMD_RW              0xC0  /**<  Register Write (short mode). */
-#define CHB_SPI_CMD_RR              0x80  /**<  Register Read (short mode). */
-#define CHB_SPI_CMD_FW              0x60  /**<  Frame Transmit Mode (long mode). */
-#define CHB_SPI_CMD_FR              0x20  /**<  Frame Receive Mode (long mode). */
-#define CHB_SPI_CMD_SW              0x40  /**<  SRAM Write. */
-#define CHB_SPI_CMD_SR              0x00  /**<  SRAM Read. */
-#define CHB_SPI_CMD_RADDRM          0x7F  /**<  Register Address Mask. */
+#define CHB_SPI_CMD_RW      0xC0    /**<  Register Write (short mode). */
+#define CHB_SPI_CMD_RR      0x80    /**<  Register Read (short mode). */
+#define CHB_SPI_CMD_FW      0x60    /**<  Frame Transmit Mode (long mode). */
+#define CHB_SPI_CMD_FR      0x20    /**<  Frame Receive Mode (long mode). */
+#define CHB_SPI_CMD_SW      0x40    /**<  SRAM Write. */
+#define CHB_SPI_CMD_SR      0x00    /**<  SRAM Read. */
+#define CHB_SPI_CMD_RADDRM  0x7F    /**<  Register Address Mask. */
 
 #define CHB_IRQ_BAT_LOW_MASK        0x80  /**< Mask for the BAT_LOW interrupt. */
 #define CHB_IRQ_TRX_UR_MASK         0x40  /**< Mask for the TRX_UR interrupt. */
@@ -58,24 +60,27 @@
 #define CHB_IRQ_PLL_UNLOCK_MASK     0x02  /**< Mask for the PLL_UNLOCK interrupt. */
 #define CHB_IRQ_PLL_LOCK_MASK       0x01  /**< Mask for the PLL_LOCK interrupt. */
 
-#define CHB_EINTPORT                (1)
-#define CHB_EINTPIN                 (8)             /** Interrupt on GPIO1.8 **/
-#define CHB_EINTPIN_IOCONREG        (IOCON_PIO1_8)  /** Required to disable internal pull-up/down resistor **/
-#define CHB_RSTPORT                 (2)
-#define CHB_RSTPIN                  (9)             /** Sleep Pin **/
-#define CHB_RSTPIN_IOCONREG         (IOCON_PIO2_9)  /** Required to disable internal pull-up/down resistor **/
-#define CHB_SLPTRPORT               (1)
-#define CHB_SLPTRPIN                (9)             /** Reset Pin **/
-#define CHB_SLPTRPIN_IOCONREG       (IOCON_PIO1_9)  /** Required to disable internal pull-up/down resistor **/
-    
-#define CHB_ENTER_CRIT()            __disable_irq() // Requires CMSIS (core_cm3.h)
-#define CHB_LEAVE_CRIT()            __enable_irq()  // Requires CMSIS (core_cm3.h)
-#define CHB_RST_ENABLE()            do {gpioSetValue(CHB_RSTPORT, CHB_RSTPIN, 0); timer32Delay(0, TIMER32_DELAY_100US * 5);} while (0)
-#define CHB_RST_DISABLE()           do {gpioSetValue(CHB_RSTPORT, CHB_RSTPIN, 1); timer32Delay(0, TIMER32_DELAY_100US * 5);} while (0)
-#define CHB_SLPTR_ENABLE()          do {gpioSetValue(CHB_SLPTRPORT, CHB_SLPTRPIN, 1); timer32Delay(0, TIMER32_DELAY_100US * 5);} while (0)
-#define CHB_SLPTR_DISABLE()         do {gpioSetValue(CHB_SLPTRPORT, CHB_SLPTRPIN, 0); timer32Delay(0, TIMER32_DELAY_100US * 5);} while (0)
+#define CHB_EINTPORT          1
+#define CHB_EINTPIN           8
+#define CHB_EINTPIN_IOCONREG  IOCON_PIO1_8
+#define CHB_RSTPORT           1
+#define CHB_RSTPIN            9
+#define CHB_RSTPIN_IOCONREG   IOCON_PIO1_9
+#define CHB_SLPTRPORT         1
+#define CHB_SLPTRPIN          10
+#define CHB_SLPTRPIN_IOCONREG IOCON_PIO1_10
 
-#define CHB_INIT_MAXRETRIES         (50)  /**< Maximum number of attempts to get RX_AACK_ON status in Init */
+//#define CHB_DDR_SLPTR       DDRF
+//#define CHB_DDR_RST         DDRF
+//#define CHB_RADIO_IRQ       INT6_vect
+//#define CHB_RADIO_IRQ_PIN   INT6
+    
+#define CHB_ENTER_CRIT()    __disable_irq()
+#define CHB_LEAVE_CRIT()    __enable_irq()
+#define CHB_RST_ENABLE()    do {gpioSetValue(CHB_RSTPORT, CHB_RSTPIN, 0); timer32Delay(0, TIMER32_DELAY_100US * 5);} while (0)
+#define CHB_RST_DISABLE()   do {gpioSetValue(CHB_RSTPORT, CHB_RSTPIN, 1); timer32Delay(0, TIMER32_DELAY_100US * 5);} while (0)
+#define CHB_SLPTR_ENABLE()  do {gpioSetValue(CHB_SLPTRPORT, CHB_SLPTRPIN, 1); timer32Delay(0, TIMER32_DELAY_100US * 5);} while (0)
+#define CHB_SLPTR_DISABLE() do {gpioSetValue(CHB_SLPTRPORT, CHB_SLPTRPIN, 0); timer32Delay(0, TIMER32_DELAY_100US * 5);} while (0)
 
 // CCA constants
 enum
@@ -104,55 +109,56 @@ enum
     CHB_FRM_VER             = 1         // accept 802.15.4 ver 0 or 1 frames
 };
 
+// register addresses
 enum
 {
-    TRX_STATUS      = 0x01,
-    TRX_STATE       = 0x02,
-    TRX_CTRL_0      = 0x03,
-    TRX_CTRL_1      = 0x04,
-    PHY_TX_PWR      = 0x05,
-    PHY_RSSI        = 0x06,
-    PHY_ED_LEVEL    = 0x07,
-    PHY_CC_CCA      = 0x08,
-    CCA_THRES       = 0x09,
-    RX_CTRL         = 0x0a,
-    SFD_VALUE       = 0x0b,
-    TRX_CTRL_2      = 0x0c,
-    ANT_DIV         = 0x0d,
-    IRQ_MASK        = 0x0e,
-    IRQ_STATUS      = 0x0f,
-    VREG_CTRL       = 0x10,
-    BATMON          = 0x11,
-    XOSC_CTRL       = 0x12,
-    CC_CTRL_0       = 0x13,
-    CC_CTRL_1       = 0x14,
-    RX_SYN          = 0x15,
-    RF_CTRL_0       = 0x16,
-    XAH_CTRL_1      = 0x17,
-    FTN_CTRL        = 0x18,
-    RF_CTRL_1       = 0x19,
-    PLL_CF          = 0x1a,
-    PLL_DCU         = 0x1b,
-    PART_NUM        = 0x1c,
-    VERSION_NUM     = 0x1d,
-    MAN_ID_0        = 0x1e,
-    MAN_ID_1        = 0x1f,
-    SHORT_ADDR_0    = 0x20,
-    SHORT_ADDR_1    = 0x21,
-    PAN_ID_0        = 0x22,
-    PAN_ID_1        = 0x23,
-    IEEE_ADDR_0     = 0x24,
-    IEEE_ADDR_1     = 0x25,
-    IEEE_ADDR_2     = 0x26,
-    IEEE_ADDR_3     = 0x27,
-    IEEE_ADDR_4     = 0x28,
-    IEEE_ADDR_5     = 0x29,
-    IEEE_ADDR_6     = 0x2a,
-    IEEE_ADDR_7     = 0x2b,
-    XAH_CTRL_0      = 0x2c,
-    CSMA_SEED_0     = 0x2d,
-    CSMA_SEED_1     = 0x2e,
-    CSMA_BE         = 0x2f
+    TRX_STATUS              = 0x01,
+    TRX_STATE               = 0x02,
+    TRX_CTRL_0              = 0x03,
+    TRX_CTRL_1              = 0x04,
+    PHY_TX_PWR              = 0x05,
+    PHY_RSSI                = 0x06,
+    PHY_ED_LEVEL            = 0x07,
+    PHY_CC_CCA              = 0x08,
+    CCA_THRES               = 0x09,
+    RX_CTRL                 = 0x0a,
+    SFD_VALUE               = 0x0b,
+    TRX_CTRL_2              = 0x0c,
+    ANT_DIV                 = 0x0d,
+    IRQ_MASK                = 0x0e,
+    IRQ_STATUS              = 0x0f,
+    VREG_CTRL               = 0x10,
+    BATMON                  = 0x11,
+    XOSC_CTRL               = 0x12,
+    CC_CTRL_0               = 0x13,
+    CC_CTRL_1               = 0x14,
+    RX_SYN                  = 0x15,
+    RF_CTRL_0               = 0x16,
+    XAH_CTRL_1              = 0x17,
+    FTN_CTRL                = 0x18,
+    RF_CTRL_1               = 0x19,
+    PLL_CF                  = 0x1a,
+    PLL_DCU                 = 0x1b,
+    PART_NUM                = 0x1c,
+    VERSION_NUM             = 0x1d,
+    MAN_ID_0                = 0x1e,
+    MAN_ID_1                = 0x1f,
+    SHORT_ADDR_0            = 0x20,
+    SHORT_ADDR_1            = 0x21,
+    PAN_ID_0                = 0x22,
+    PAN_ID_1                = 0x23,
+    IEEE_ADDR_0             = 0x24,
+    IEEE_ADDR_1             = 0x25,
+    IEEE_ADDR_2             = 0x26,
+    IEEE_ADDR_3             = 0x27,
+    IEEE_ADDR_4             = 0x28,
+    IEEE_ADDR_5             = 0x29,
+    IEEE_ADDR_6             = 0x2a,
+    IEEE_ADDR_7             = 0x2b,
+    XAH_CTRL_0              = 0x2c,
+    CSMA_SEED_0             = 0x2d,
+    CSMA_SEED_1             = 0x2e,
+    CSMA_BE                 = 0x2f
 };
 
 // random defines
@@ -173,8 +179,7 @@ enum
 };
 
 // transceiver timing
-enum
-{
+enum{
     TIME_RST_PULSE_WIDTH        = 1, 
     TIME_P_ON_TO_CLKM_AVAIL     = 380,
     TIME_SLEEP_TO_TRX_OFF       = 240,
@@ -194,8 +199,7 @@ enum
 };
 
 // trac status
-enum
-{
+enum{
     TRAC_SUCCESS               = 0,
     TRAC_SUCCESS_DATA_PENDING  = 1,
     TRAC_WAIT_FOR_ACK          = 2,
@@ -205,8 +209,7 @@ enum
 };
 
 // radio statuses
-enum
-{
+enum{
     RADIO_SUCCESS = 0x40,                       /**< The requested service was performed successfully. */
     RADIO_UNSUPPORTED_DEVICE,                   /**< The connected device is not an Atmel AT86RF212. */
     RADIO_INVALID_ARGUMENT,                     /**< One or more of the supplied function arguments are invalid. */
@@ -227,35 +230,35 @@ enum
 // transceiver commands
 enum
 {
-    CMD_NOP                  = 0x00,
-    CMD_TX_START             = 0x02,
-    CMD_FORCE_TRX_OFF        = 0x03,
-    CMD_FORCE_PLL_ON         = 0x04,
-    CMD_RX_ON                = 0x06,
-    CMD_TRX_OFF              = 0x08,
-    CMD_PLL_ON               = 0x09,
-    CMD_RX_AACK_ON           = 0x16, // 22
-    CMD_TX_ARET_ON           = 0x19  // 25
+    CMD_NOP                 = 0,
+    CMD_TX_START            = 2,
+    CMD_FORCE_TRX_OFF       = 3,
+    CMD_FORCE_PLL_ON        = 4,
+    CMD_RX_ON               = 6,
+    CMD_TRX_OFF             = 8,
+    CMD_PLL_ON              = 9,
+    CMD_RX_AACK_ON          = 22,
+    CMD_TX_ARET_ON          = 25
 };
 
 // transceiver states
 enum
 {
-    P_ON                = 0x00,
-    BUSY_RX             = 0x01,
-    BUSY_TX             = 0x02,
-    RX_ON               = 0x06,
-    TRX_OFF             = 0x08,
-    PLL_ON              = 0x09,
-    SLEEP               = 0x0F, // 15
-    BUSY_RX_AACK        = 0x11, // 17
-    BUSY_TX_ARET        = 0x12, // 18
-    RX_AACK_ON          = 0x16, // 22
-    TX_ARET_ON          = 0x19, // 25
-    RX_ON_NOCLK         = 0x1C, // 28
-    RX_AACK_ON_NOCLK    = 0x1D, // 29
-    BUSY_RX_AACK_NOCLK  = 0x1E, // 30
-    TRANS_IN_PROG       = 31
+    P_ON               = 0,
+    BUSY_RX            = 1,
+    BUSY_TX            = 2,
+    RX_ON              = 6,
+    TRX_OFF            = 8,
+    PLL_ON             = 9,
+    SLEEP              = 15,
+    BUSY_RX_AACK       = 17,
+    BUSY_TX_ARET       = 18,
+    RX_AACK_ON         = 22,
+    TX_ARET_ON         = 25,
+    RX_ON_NOCLK        = 28,
+    RX_AACK_ON_NOCLK   = 29,
+    BUSY_RX_AACK_NOCLK = 30,
+    TRANS_IN_PROG      = 31
 };
 
 // transceiver interrupt register
@@ -277,17 +280,11 @@ enum
     OQPSK_868MHZ    = 0,
     OQPSK_915MHZ    = 1,
     OQPSK_780MHZ    = 2,
-    BPSK20_915MHZ   = 3
+    BPSK40_915MHZ   = 3
 };
 
-typedef enum
-{
-  CHB_ERROR_NOERROR     = 0,
-  CHB_ERROR_INITTIMEOUT = 1     // Init timed out waiting for AACK
-} chbError_t;
-
 // See Table 7-15 for details
-typedef enum
+enum
 {
   CHB_PWR_EU1_2DBM   = 0x63,    // EU (868MHz) Linearized PA mode
   CHB_PWR_EU1_1DBM   = 0x64,    // Note: BPSK 20kbit/s only!
@@ -315,39 +312,43 @@ typedef enum
   CHB_PWR_CHINA_2DBM = 0xEA,
   CHB_PWR_CHINA_1DBM = 0xCA,
   CHB_PWR_CHINA_0DBM = 0xAA
-} chbPower_t;
+};
 
 // init 
-chbError_t chb_drvr_init();
+void chb_drvr_init();
 
 // data access
-uint8_t chb_reg_read(uint8_t addr);
-uint16_t chb_reg_read16(uint8_t addr);
-void chb_reg_write(uint8_t addr, uint8_t val);
-void chb_reg_write16(uint8_t addr, uint16_t val);
-void chb_reg_write64(uint8_t addr, uint8_t *val);
-void chb_reg_read_mod_write(uint8_t addr, uint8_t val, uint8_t mask);
-void chb_frame_write(uint8_t *hdr, uint8_t hdr_len, uint8_t *data, uint8_t data_len);
+U8 chb_reg_read(U8 addr);
+U16 chb_reg_read16(U8 addr);
+void chb_reg_write(U8 addr, U8 val);
+void chb_reg_write16(U8 addr, U16 val);
+void chb_reg_write64(U8 addr, U8 *val);
+void chb_reg_read_mod_write(U8 addr, U8 val, U8 mask);
+void chb_frame_write(U8 *hdr, U8 hdr_len, U8 *data, U8 data_len);
 
 // general configuration
-void chb_set_mode(uint8_t mode);
-uint8_t chb_set_channel(uint8_t channel);
-void chb_set_pwr(uint8_t val);
-void chb_set_ieee_addr(uint8_t *addr);
-void chb_get_ieee_addr(uint8_t *addr);
-void chb_set_short_addr(uint16_t addr);
-uint16_t chb_get_short_addr();
-uint8_t chb_set_state(uint8_t state);
+void chb_set_mode(U8 mode);
+U8 chb_set_channel(U8 channel);
+void chb_set_pwr(U8 val);
+void chb_set_ieee_addr(U8 *addr);
+void chb_get_ieee_addr(U8 *addr);
+void chb_set_short_addr(U16 addr);
+U16 chb_get_short_addr();
+U8 chb_set_state(U8 state);
+
+// Power management
+U8 chb_radio_sleep(void);
 
 // data transmit
-uint8_t chb_tx(uint8_t *hdr, uint8_t *data, uint8_t len);
+U8 chb_tx(U8 *hdr, U8 *data, U8 len);
 
 #ifdef CHB_DEBUG
 // sram access
-void chb_sram_read(uint8_t addr, uint8_t len, uint8_t *data);
-void chb_sram_write(uint8_t addr, uint8_t len, uint8_t *data);
+void chb_sram_read(U8 addr, U8 len, U8 *data);
+void chb_sram_write(U8 addr, U8 len, U8 *data);
 #endif
 
 void chb_ISR_Handler (void);
+
 #endif
 

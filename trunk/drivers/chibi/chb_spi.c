@@ -40,8 +40,8 @@
 /**************************************************************************/
 #include "chb.h"
 #include "chb_spi.h"
-
 #include "core/ssp/ssp.h"
+
 /**************************************************************************/
 /*!
 
@@ -63,7 +63,7 @@ void chb_spi_init()
     data is read byte val.
 */
 /**************************************************************************/
-uint8_t chb_xfer_byte(uint8_t data)
+U8 chb_xfer_byte(U8 data)
 {
     /* Move on only if NOT busy and TX FIFO not full */
     while ((SSP_SSP0SR & (SSP_SSP0SR_TNF_MASK | SSP_SSP0SR_BSY_MASK)) != SSP_SSP0SR_TNF_NOTFULL);

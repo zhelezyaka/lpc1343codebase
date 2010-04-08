@@ -29,34 +29,26 @@
 
     Originally written by Christopher Wang aka Akiba.
     Please post support questions to the FreakLabs forum.
-
 *******************************************************************/
 /*!
-    \file 
-    \ingroup
-
-
+    \file types.h
+    \ingroup usb
 */
-/**************************************************************************/
+/*******************************************************************/
+#ifndef TYPES_H
+#define TYPES_H
 
-#ifndef CHB_SPI_H
-#define CHB_SPI_H
+#include <stdbool.h>
+#include <stdint.h>
 
-#include "projectconfig.h"
-#include "core/gpio/gpio.h"
+// Standard data types
+typedef uint8_t     U8;     /// Generic 8 bit unsigned data type
+typedef uint16_t    U16;    /// Generic 16 bit unsigned data type
+typedef uint32_t    U32;    /// Generic 32 bit unsigned data type
+typedef uint64_t    U64;    /// Generic 64 bit unsigned data type
 
-#define CHB_SSPORT          (0) // P0.2 = SSEL
-#define CHB_SSPIN           (2)
-
-#define CHB_SPI_ENABLE()    do {gpioSetValue(CHB_SSPORT, CHB_SSPIN, 0);} while (0)  // Drive SSEL low
-#define CHB_SPI_DISABLE()   do {gpioSetValue(CHB_SSPORT, CHB_SSPIN, 1);} while (0)  // Drive SSEL high
-
-#define CHB_SPIPORT     0
-#define CHB_SCK         1                 // PB.1 - Output: SPI Serial Clock (SCLK)
-#define CHB_MOSI        2                 // PB.2 - Output: SPI Master out - slave in (MOSI)
-#define CHB_MISO        3                 // PB.3 - Input:  SPI Master in - slave out (MISO)
-
-void chb_spi_init();
-U8 chb_xfer_byte(U8 data);
+typedef int8_t     S8;     /// Generic 8 bit signed data type
+typedef int16_t    S16;    /// Generic 16 bit signed data type
+typedef int32_t    S32;    /// Generic 32 bit signed data type
 
 #endif

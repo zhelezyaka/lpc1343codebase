@@ -43,7 +43,7 @@
 #include "gpio.h"
 
 #ifdef CFG_CHIBI
-#include "drivers/chibi/chb_drvr_at86rf212.h"
+#include "drivers/chibi/chb_drvr.h"
 volatile uint32_t chibi_counter  = 0;
 #endif
 
