@@ -45,9 +45,11 @@
 /**************************************************************************/
 
 #include "core/gpio/gpio.h"
+#include "core/cpu/cpu.h"
+#include "core/timer32/timer32.h"
 #include "pmu.h"
 
-volatile uint32_t pmu_counter = 0;
+#define PMU_WDTCLOCKSPEED_HZ 10000
 
 /**************************************************************************/
 /*! 
@@ -58,18 +60,23 @@ void WAKEUP_IRQHandler(void)
 {
   uint32_t regVal;
 
-  /* This handler takes care all the port pins if they
+  // Disable the deep sleep timer
+  TMR_TMR32B0TCR = TMR_TMR32B0TCR_COUNTERENABLE_DISABLED;
+
+  /* This handler takes care of all the port pins if they
   are configured as wakeup source. */
   regVal = SCB_STARTSRP0;
   if (regVal != 0)
   {
     SCB_STARTRSRP0CLR = regVal;
   }
-  regVal = SCB_STARTSRP1;
-  if ( regVal != 0 )
-  {
-    SCB_STARTRSRP1CLR = regVal;
-  }
+
+  // Reconfigure system clock/PLL
+  cpuPllSetup(CPU_MULTIPLIER_6);
+
+  // Reconfigure CT32B0
+  timer32Init(0, TIMER32_DEFAULTINTERVAL);
+  timer32Enable(0);
 
   /* See tracker for bug report. */
   __asm volatile ("NOP");
@@ -79,15 +86,45 @@ void WAKEUP_IRQHandler(void)
 
 /**************************************************************************/
 /*! 
+    Setup the clock for the watchdog timer.  The default setting is 10kHz.
+*/
+/**************************************************************************/
+static void pmuWDTClockInit (void)
+{
+  /* Configure watchdog clock */
+  /* Freq. = 0.5MHz, div = 50: WDT_OSC = 10kHz  */
+  SCB_WDTOSCCTRL = SCB_WDTOSCCTRL_FREQSEL_0_5MHZ | 
+                   SCB_WDTOSCCTRL_DIVSEL_DIV50;
+
+  /* Set clock source (use internal oscillator) */
+  // SCB_WDTCLKSEL = SCB_WDTCLKSEL_SOURCE_INPUTCLOCK;
+  SCB_WDTCLKSEL = SCB_WDTCLKSEL_SOURCE_INTERNALOSC;
+  SCB_WDTCLKUEN = SCB_WDTCLKUEN_UPDATE;
+  SCB_WDTCLKUEN = SCB_WDTCLKUEN_DISABLE;
+  SCB_WDTCLKUEN = SCB_WDTCLKUEN_UPDATE;
+
+  /* Wait until updated */
+  while (!(SCB_WDTCLKUEN & SCB_WDTCLKUEN_UPDATE));
+
+  /* Set divider */
+  SCB_WDTCLKDIV = SCB_WDTCLKDIV_DIV1;
+
+  /* Enable WDT clock */
+  SCB_PDRUNCFG &= ~(SCB_PDRUNCFG_WDTOSC);
+
+  // Switch main clock to WDT output
+  SCB_MAINCLKSEL = SCB_MAINCLKSEL_SOURCE_WDTOSC;
+  SCB_MAINCLKUEN = SCB_MAINCLKUEN_UPDATE;       // Update clock source
+  SCB_MAINCLKUEN = SCB_MAINCLKUEN_DISABLE;      // Toggle update register once
+  SCB_MAINCLKUEN = SCB_MAINCLKUEN_UPDATE;
+
+  // Wait until the clock is updated
+  while (!(SCB_MAINCLKUEN & SCB_MAINCLKUEN_UPDATE));
+}
+
+/**************************************************************************/
+/*! 
     @brief Initialises the power management unit
-
-    Initialise the power management unit, and configure pin 0.1 to act as
-    a wakeup source from sleep or deep-sleep mode.
-
-    For sleep and deep-sleep modes -- entered via pmuSleep() -- any I/O pin
-    can be used as a wakeup source.  For deep power-down mode -- entered
-    via pmuPowerDown() -- only a low level on pin 1.4 (WAKEUP) can wake the
-    device up.
 */
 /**************************************************************************/
 void pmuInit( void )
@@ -97,65 +134,6 @@ void pmuInit( void )
                     SCB_PDRUNCFG_SYSOSC_MASK | 
                     SCB_PDRUNCFG_ADC_MASK);
 
-  /* Enable wakeup interrupts (any I/O pin can be used as a wakeup source) */
-  //NVIC_EnableIRQ(WAKEUP0_IRQn);    // P0.0
-  NVIC_EnableIRQ(WAKEUP1_IRQn);    // P0.1
-  //NVIC_EnableIRQ(WAKEUP2_IRQn);    // P0.2
-  //NVIC_EnableIRQ(WAKEUP3_IRQn);    // P0.3
-  //NVIC_EnableIRQ(WAKEUP4_IRQn);    // P0.4
-  //NVIC_EnableIRQ(WAKEUP5_IRQn);    // P0.5
-  //NVIC_EnableIRQ(WAKEUP6_IRQn);    // P0.6
-  //NVIC_EnableIRQ(WAKEUP7_IRQn);    // P0.7
-  //NVIC_EnableIRQ(WAKEUP8_IRQn);    // P0.8
-  //NVIC_EnableIRQ(WAKEUP9_IRQn);    // P0.9
-  //NVIC_EnableIRQ(WAKEUP10_IRQn);   // P0.10
-  //NVIC_EnableIRQ(WAKEUP11_IRQn);   // P0.11
-  //NVIC_EnableIRQ(WAKEUP12_IRQn);   // P1.0
-  //NVIC_EnableIRQ(WAKEUP13_IRQn);   // P1.1
-  //NVIC_EnableIRQ(WAKEUP14_IRQn);   // P1.2
-  //NVIC_EnableIRQ(WAKEUP15_IRQn);   // P1.3
-  //NVIC_EnableIRQ(WAKEUP16_IRQn);   // P1.4
-  //NVIC_EnableIRQ(WAKEUP17_IRQn);   // P1.5
-  //NVIC_EnableIRQ(WAKEUP18_IRQn);   // P1.6
-  //NVIC_EnableIRQ(WAKEUP19_IRQn);   // P1.7
-  //NVIC_EnableIRQ(WAKEUP20_IRQn);   // P1.8
-  //NVIC_EnableIRQ(WAKEUP21_IRQn);   // P1.9
-  //NVIC_EnableIRQ(WAKEUP22_IRQn);   // P1.10
-  //NVIC_EnableIRQ(WAKEUP23_IRQn);   // P1.11
-  //NVIC_EnableIRQ(WAKEUP24_IRQn);   // P2.0
-  //NVIC_EnableIRQ(WAKEUP25_IRQn);   // P2.1
-  //NVIC_EnableIRQ(WAKEUP26_IRQn);   // P2.2
-  //NVIC_EnableIRQ(WAKEUP27_IRQn);   // P2.3
-  //NVIC_EnableIRQ(WAKEUP28_IRQn);   // P2.4
-  //NVIC_EnableIRQ(WAKEUP29_IRQn);   // P2.5
-  //NVIC_EnableIRQ(WAKEUP30_IRQn);   // P2.6
-  //NVIC_EnableIRQ(WAKEUP31_IRQn);   // P2.7
-  //NVIC_EnableIRQ(WAKEUP32_IRQn);   // P2.8
-  //NVIC_EnableIRQ(WAKEUP33_IRQn);   // P2.9
-  //NVIC_EnableIRQ(WAKEUP34_IRQn);   // P2.10
-  //NVIC_EnableIRQ(WAKEUP35_IRQn);   // P2.11
-  //NVIC_EnableIRQ(WAKEUP36_IRQn);   // P3.0
-  //NVIC_EnableIRQ(WAKEUP37_IRQn);   // P3.1
-  //NVIC_EnableIRQ(WAKEUP38_IRQn);   // P3.2
-  //NVIC_EnableIRQ(WAKEUP39_IRQn);   // P3.3
-
-  /* Use pin 0.1 as wakeup source and set it as an i/o pin */
-  IOCON_PIO0_1 &= ~IOCON_PIO0_1_FUNC_MASK;
-  IOCON_PIO0_1 |= (IOCON_PIO0_1_FUNC_GPIO |
-                   IOCON_PIO0_1_HYS_ENABLE);
-
-  /* Set pin to input for wakeup */
-  gpioSetDir( 0, 1, 0 );	
-
-  /* Only edge trigger. activation polarity on P0.1 is FALLING EDGE. */
-  SCB_STARTAPRP0 = ~SCB_STARTAPRP0_MASK;  // 0x00000000
-
-  /* Clear all wakeup source */ 
-  SCB_STARTRSRP0CLR = SCB_STARTRSRP0CLR_MASK;
-  SCB_STARTRSRP1CLR = SCB_STARTRSRP1CLR_MASK;
-
-  /* Enable Port 0.1 as wakeup source. */
-  SCB_STARTERP0 = SCB_STARTERP0_ERPIO0_1;
   return;
 }
 
@@ -188,47 +166,147 @@ void pmuSleep()
 
 /**************************************************************************/
 /*! 
-    @brief Puts select peripherals in deep-sleep mode.
+    @brief  Turns off select peripherals and puts the device in deep-sleep
+            mode.
 
-    This function will put the device into deep-sleep mode.  Any gpio
-    pins can be used to wake the device up, but the pins must first be
-    configured for this in pmuInit.
+    The device can be configured to wakeup from deep-sleep mode after a
+    specified delay by supplying a non-zero value to the wakeupSeconds
+    parameter.  This will configure CT32B0 to toggle pin 0.1 (CT32B0_MAT2)
+    after x seconds, waking the device up.  The timer will be configured
+    to run off the WDT OSC while in deep-sleep mode, meaning that WDTOSC
+    should not be powered off (using the sleepCtrl parameter) when a
+    wakeup delay is specified.
 
     The sleepCtrl parameter is used to indicate which peripherals should
-    be put in sleep mode (see the SCB_PDSLEEPCFG register for details).  
+    be put in sleep mode (see the SCB_PDSLEEPCFG register for details).
     
     @param[in]  sleepCtrl  
                 The bits to set in the SCB_PDSLEEPCFG register.  This
                 controls which peripherals will be put in sleep mode.
-
-    @section Example
+    @param[in]  wakeupSeconds
+                The number of seconds to wait until the device will
+                wakeup.  If you do not wish to wakeup after a specific
+                delay, enter a value of 0.
 
     @code 
     uint32_t pmuRegVal;
   
-    // Configure wakeup sources before going into sleep/deep-sleep.
-    // By default, pin 0.1 is configured as wakeup source (falling edge)
+    // Initialise power management unit
     pmuInit();
   
     // Put peripherals into sleep mode
-    pmuRegVal = SCB_PDSLEEPCFG_USBPLL_PD |
-              SCB_PDSLEEPCFG_SYSPLL_PD |
-              SCB_PDSLEEPCFG_WDTOSC_PD |
-              SCB_PDSLEEPCFG_ADC_PD |
-              SCB_PDSLEEPCFG_BOD_PD;
-
-    // Enter deep sleep mode
-    pmuDeepSleep(pmuRegVal);
+    pmuRegVal = SCB_PDSLEEPCFG_IRCOUT_PD |
+                SCB_PDSLEEPCFG_IRC_PD |
+                SCB_PDSLEEPCFG_FLASH_PD |
+                SCB_PDSLEEPCFG_USBPLL_PD |
+                SCB_PDSLEEPCFG_SYSPLL_PD |
+                SCB_PDSLEEPCFG_SYSOSC_PD |
+                SCB_PDSLEEPCFG_ADC_PD |
+                SCB_PDSLEEPCFG_BOD_PD;
+  
+    // Enter deep sleep mode (wakeup after 5 seconds)
+    // By default, pin 0.1 is configured as wakeup source
+    pmuDeepSleep(pmuRegVal, 5);
     @endcode
 */
 /**************************************************************************/
-void pmuDeepSleep(uint32_t sleepCtrl)
+void pmuDeepSleep(uint32_t sleepCtrl, uint32_t wakeupSeconds)
 {
   SCB_PDAWAKECFG = SCB_PDRUNCFG;
-  // According to the datasheet, bits 9 and 11 must be set to 1 for DS
   sleepCtrl |= (1 << 9) | (1 << 11);
   SCB_PDSLEEPCFG = sleepCtrl;
   SCB_SCR |= SCB_SCR_SLEEPDEEP;
+
+  /* Configure system to run from WDT and set TMR32B0 for wakeup          */
+  if (wakeupSeconds > 0)
+  {
+    // Make sure WDTOSC isn't disabled in PDSLEEPCFG
+    SCB_PDSLEEPCFG &= ~(SCB_PDSLEEPCFG_WDTOSC_PD);
+
+    // Disable 32-bit timer 0 if currently in use
+    TMR_TMR32B0TCR = TMR_TMR32B0TCR_COUNTERENABLE_DISABLED;
+
+    // Disable internal pullup on 0.1
+    gpioSetPullup(&IOCON_PIO0_1, gpioPullupMode_Inactive);
+
+    // Reconfigure clock to run from WDTOSC
+    pmuWDTClockInit();
+
+    /* Enable the clock for CT32B0 */
+    SCB_SYSAHBCLKCTRL |= (SCB_SYSAHBCLKCTRL_CT32B0);
+  
+    /* Configure 0.1 as Timer0_32 MAT2 */
+    IOCON_PIO0_1 &= ~IOCON_PIO0_1_FUNC_MASK;
+    IOCON_PIO0_1 |= IOCON_PIO0_1_FUNC_CT32B0_MAT2;
+
+    /* Set appropriate timer delay */
+    TMR_TMR32B0MR0 = PMU_WDTCLOCKSPEED_HZ * wakeupSeconds;
+  
+    /* Configure match control register to raise an interrupt and reset on MR0 */
+    TMR_TMR32B0MCR |= (TMR_TMR32B0MCR_MR0_INT_ENABLED | TMR_TMR32B0MCR_MR0_RESET_ENABLED);
+  
+    /* Configure external match register to set 0.1 high on match */
+    TMR_TMR32B0EMR &= ~(0xFF<<4);                   // Clear EMR config bits
+    TMR_TMR32B0EMR |= TMR_TMR32B0EMR_EMC2_HIGH;     // Set MR2 (0.1) high on match
+  
+    /* Use RISING EDGE for wakeup detection. */
+    SCB_STARTAPRP0 |= SCB_STARTAPRP0_APRPIO0_1;
+  
+    /* Clear all wakeup sources */ 
+    SCB_STARTRSRP0CLR = SCB_STARTRSRP0CLR_MASK;
+
+    /* Enable Port 0.1 as wakeup source. */
+    SCB_STARTERP0 |= SCB_STARTERP0_ERPIO0_1;
+
+    /* Enable wakeup interrupts (any I/O pin can be used as a wakeup source) */
+    //NVIC_EnableIRQ(WAKEUP0_IRQn);    // P0.0
+    NVIC_EnableIRQ(WAKEUP1_IRQn);      // P0.1    (CT32B0_MAT2)
+    //NVIC_EnableIRQ(WAKEUP2_IRQn);    // P0.2
+    //NVIC_EnableIRQ(WAKEUP3_IRQn);    // P0.3
+    //NVIC_EnableIRQ(WAKEUP4_IRQn);    // P0.4
+    //NVIC_EnableIRQ(WAKEUP5_IRQn);    // P0.5
+    //NVIC_EnableIRQ(WAKEUP6_IRQn);    // P0.6
+    //NVIC_EnableIRQ(WAKEUP7_IRQn);    // P0.7
+    //NVIC_EnableIRQ(WAKEUP8_IRQn);    // P0.8
+    //NVIC_EnableIRQ(WAKEUP9_IRQn);    // P0.9
+    //NVIC_EnableIRQ(WAKEUP10_IRQn);   // P0.10
+    //NVIC_EnableIRQ(WAKEUP11_IRQn);   // P0.11
+    //NVIC_EnableIRQ(WAKEUP12_IRQn);   // P1.0
+    //NVIC_EnableIRQ(WAKEUP13_IRQn);   // P1.1
+    //NVIC_EnableIRQ(WAKEUP14_IRQn);   // P1.2
+    //NVIC_EnableIRQ(WAKEUP15_IRQn);   // P1.3
+    //NVIC_EnableIRQ(WAKEUP16_IRQn);   // P1.4
+    //NVIC_EnableIRQ(WAKEUP17_IRQn);   // P1.5
+    //NVIC_EnableIRQ(WAKEUP18_IRQn);   // P1.6
+    //NVIC_EnableIRQ(WAKEUP19_IRQn);   // P1.7
+    //NVIC_EnableIRQ(WAKEUP20_IRQn);   // P1.8
+    //NVIC_EnableIRQ(WAKEUP21_IRQn);   // P1.9
+    //NVIC_EnableIRQ(WAKEUP22_IRQn);   // P1.10
+    //NVIC_EnableIRQ(WAKEUP23_IRQn);   // P1.11
+    //NVIC_EnableIRQ(WAKEUP24_IRQn);   // P2.0
+    //NVIC_EnableIRQ(WAKEUP25_IRQn);   // P2.1
+    //NVIC_EnableIRQ(WAKEUP26_IRQn);   // P2.2
+    //NVIC_EnableIRQ(WAKEUP27_IRQn);   // P2.3
+    //NVIC_EnableIRQ(WAKEUP28_IRQn);   // P2.4
+    //NVIC_EnableIRQ(WAKEUP29_IRQn);   // P2.5
+    //NVIC_EnableIRQ(WAKEUP30_IRQn);   // P2.6
+    //NVIC_EnableIRQ(WAKEUP31_IRQn);   // P2.7
+    //NVIC_EnableIRQ(WAKEUP32_IRQn);   // P2.8
+    //NVIC_EnableIRQ(WAKEUP33_IRQn);   // P2.9
+    //NVIC_EnableIRQ(WAKEUP34_IRQn);   // P2.10
+    //NVIC_EnableIRQ(WAKEUP35_IRQn);   // P2.11
+    //NVIC_EnableIRQ(WAKEUP36_IRQn);   // P3.0
+    //NVIC_EnableIRQ(WAKEUP37_IRQn);   // P3.1
+    //NVIC_EnableIRQ(WAKEUP38_IRQn);   // P3.2
+    //NVIC_EnableIRQ(WAKEUP39_IRQn);   // P3.3
+  
+    /* Enable the TIMER0 interrupt */
+    NVIC_EnableIRQ(TIMER_32_0_IRQn);
+
+    /* Start the timer */
+    TMR_TMR32B0TCR = TMR_TMR32B0TCR_COUNTERENABLE_ENABLED;
+  }
+
   __asm volatile ("WFI");
   return;
 }

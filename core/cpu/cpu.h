@@ -43,6 +43,22 @@
 
 /**************************************************************************/
 /*! 
+    @brief Indicates the value for the PLL multiplier
+*/
+/**************************************************************************/
+typedef enum
+{
+  CPU_MULTIPLIER_1 = 0,
+  CPU_MULTIPLIER_2,
+  CPU_MULTIPLIER_3,
+  CPU_MULTIPLIER_4,
+  CPU_MULTIPLIER_5,
+  CPU_MULTIPLIER_6
+}
+cpuMultiplier_t;
+
+/**************************************************************************/
+/*! 
     @brief Indicates the value returned by the DEVICEID register
 */
 /**************************************************************************/
@@ -56,6 +72,7 @@ typedef enum
 }
 cpuDeviceID_t;
 
+void cpuPllSetup (cpuMultiplier_t multiplier);
 void cpuInit (void);
 cpuDeviceID_t cpuGetDeviceID (void);
 

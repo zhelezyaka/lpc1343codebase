@@ -63,22 +63,6 @@
 
 /**************************************************************************/
 /*! 
-    @brief Indicates the value for the PLL multiplier
-*/
-/**************************************************************************/
-typedef enum
-{
-  CPU_MULTIPLIER_1 = 0,
-  CPU_MULTIPLIER_2,
-  CPU_MULTIPLIER_3,
-  CPU_MULTIPLIER_4,
-  CPU_MULTIPLIER_5,
-  CPU_MULTIPLIER_6
-}
-cpuMultiplier_t;
-
-/**************************************************************************/
-/*! 
     @brief Configures the main clock/PLL
     
     The speed at which the MCU operates is set here using the SCB_PLLCTRL
@@ -91,7 +75,7 @@ cpuMultiplier_t;
 
 */
 /**************************************************************************/
-static void cpuPllSetup (cpuMultiplier_t multiplier)
+void cpuPllSetup (cpuMultiplier_t multiplier)
 {
   uint32_t i;
 
