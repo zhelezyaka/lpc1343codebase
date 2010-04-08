@@ -16,7 +16,7 @@ VPATH =
 OBJS = main.o
 
 VPATH += drivers/chibi
-OBJS += chb.o chb_buf.o chb_drvr_at86rf212.o chb_eeprom.o chb_spi.o
+OBJS += chb.o chb_buf.o chb_drvr.o chb_eeprom.o chb_spi.o
 
 VPATH += drivers/eeprom/mcp24aa
 OBJS += mcp24aa.o
