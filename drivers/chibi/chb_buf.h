@@ -34,13 +34,13 @@
 #ifndef CHB_BUF_H
 #define CHB_BUF_H
 
-#include "sysdefs.h"
+#include "types.h"
 
 #define CHB_BUF_SZ 128
 
 void chb_buf_init();
-void chb_buf_write(uint8_t data);
-uint8_t chb_buf_read();
-uint8_t chb_buf_get_len();
+void chb_buf_write(U8 data);
+U8 chb_buf_read();
+U8 chb_buf_get_len();
 
 #endif

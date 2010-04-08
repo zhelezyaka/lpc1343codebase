@@ -61,9 +61,10 @@
 
 #ifdef CFG_CHIBI
 #include "drivers/chibi/chb.h"
-#include "drivers/chibi/chb_drvr_at86rf212.h"
+#include "drivers/chibi/chb_drvr.h"
 static chb_rx_data_t rx_data;
 #endif
+
 
 int main (void)
 {
@@ -78,7 +79,7 @@ int main (void)
   gpioSetValue(CFG_LED_PORT, CFG_LED_PIN, 1);
 
   // Initialise 32-bit timer 0 with default delay 
-  printf("Initialising 32-bit Timer 0 with 10 uS delay...\r\n");
+  printf("Initialising 32-bit Timer 0 with 100 uS delay...\r\n");
   timer32Init(0, TIMER32_DEFAULTINTERVAL);
   timer32Enable(0);
 
@@ -123,26 +124,24 @@ int main (void)
         gpioSetValue (2, 10, 0);
         chb_write(0xFFFF, (uint8_t *)buf, 11);
         gpioSetValue (2, 10, 1);
-        timer32Delay(0, TIMER32_DELAY_1MS * 1000);
+        timer32Delay(0, TIMER32_DELAY_1S);
       #endif
       #ifdef CFG_CHIBI_RECEIVER
         if (pcb->data_rcv)
         {
-          rx_data.len = chb_read(&rx_data);
           // Enable LED (set low)
           gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, 0);
+          // get the length of the data
+          rx_data.len = chb_read(&rx_data);
           // Output message to UART
-          printf("Message received from node %02X: %s (rssi=%d)\r\n", rx_data.src_addr, rx_data.data, pcb->ed);
-          // clear the rx flag and reset the buffer
-          chb_clr();
+          printf("Message received from node %02X: %s, len=%d, rssi=%02X.\n", rx_data.src_addr, rx_data.data, rx_data.len, pcb->ed);
           // Disable LED (set high)
           gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, 1);
-          pcb->data_rcv = FALSE;
         }
       #endif
     #else
       // Blink LED every 1 second
-      timer32Delay(0, TIMER32_DELAY_1MS * 1000);
+      timer32Delay(0, TIMER32_DELAY_1S);
       if (gpioGetValue(CFG_LED_PORT, CFG_LED_PIN))
       {
         // Enable LED (set low)

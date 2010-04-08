@@ -33,20 +33,19 @@
 *******************************************************************/
 #include <stdio.h>
 #include "chb.h"
-#include "chb_drvr_at86rf212.h"
+#include "chb_drvr.h"
 #include "chb_buf.h"
 #include "chb_spi.h"
 #include "chb_eeprom.h"
 
 #include "core/timer32/timer32.h"
-#include "drivers/eeprom/mcp24aa/mcp24aa.h"
 
 /**************************************************************************/
 /*!
 
 */
 /**************************************************************************/
-static uint8_t chb_get_state()
+static U8 chb_get_state()
 {
     return chb_reg_read(TRX_STATUS) & 0x1f;
 }
@@ -56,7 +55,7 @@ static uint8_t chb_get_state()
 
 */
 /**************************************************************************/
-static uint8_t chb_get_status()
+static U8 chb_get_status()
 {
     return chb_reg_read(TRX_STATE) >> CHB_TRAC_STATUS_POS;
 }
@@ -66,17 +65,16 @@ static uint8_t chb_get_status()
     Cause a blocking delay for x microseconds
 */
 /**************************************************************************/
-static void chb_delay_us(uint32_t usec)
+static void chb_delay_us(U16 usec)
 {
-  if (usec < 10)
+  U8 ticks = CFG_CPU_CCLK / 1000000;
+  do
   {
-    // Requested delay is smaller the the minimum possible delay
-    timer32Delay(0, TIMER32_DELAY_10US);
-  }
-  else
-  {
-    timer32Delay(0, (usec / 10) + 1);
-  }
+    do 
+    {
+      __asm volatile("nop");
+    } while (--ticks);
+  } while (--usec);
 }
 
 /**************************************************************************/
@@ -88,7 +86,7 @@ void chb_reset()
 {
     CHB_RST_DISABLE();
     CHB_SLPTR_DISABLE();
-	
+
     // wait a bit while transceiver wakes up
     chb_delay_us(TIME_P_ON_TO_CLKM_AVAIL);
 
@@ -96,6 +94,7 @@ void chb_reset()
     CHB_RST_ENABLE();
     chb_delay_us(TIME_RST_PULSE_WIDTH);
     CHB_RST_DISABLE();
+
     // check that we have the part number that we're expecting
     while (1)
     {
@@ -108,14 +107,15 @@ void chb_reset()
         }
     }
 }
+
 /**************************************************************************/
 /*!
 
 */
 /**************************************************************************/
-uint8_t chb_reg_read(uint8_t addr)
+U8 chb_reg_read(U8 addr)
 {
-    uint8_t val = 0;
+    U8 val = 0;
 
     /* Add the register read command to the register address. */
     addr |= 0x80;
@@ -138,10 +138,10 @@ uint8_t chb_reg_read(uint8_t addr)
  
 */
 /**************************************************************************/
-uint16_t chb_reg_read16(uint8_t addr)
+U16 chb_reg_read16(U8 addr)
 {
-    uint8_t i;
-    uint16_t val = 0;
+    U8 i;
+    U16 val = 0;
 
     for (i=0; i<2; i++)
     {
@@ -155,9 +155,9 @@ uint16_t chb_reg_read16(uint8_t addr)
 
 */
 /**************************************************************************/
-void chb_reg_write(uint8_t addr, uint8_t val)
+void chb_reg_write(U8 addr, U8 val)
 {
-    uint8_t dummy; 
+    U8 dummy; 
 
     /* Add the Register Write command to the address. */
     addr |= 0xC0;
@@ -178,9 +178,9 @@ void chb_reg_write(uint8_t addr, uint8_t val)
 
 */
 /**************************************************************************/
-void chb_reg_write16(uint8_t addr, uint16_t val)
+void chb_reg_write16(U8 addr, U16 val)
 {
-    uint8_t i;
+    U8 i;
 
     for (i=0; i<2; i++)
     {
@@ -193,9 +193,9 @@ void chb_reg_write16(uint8_t addr, uint16_t val)
 
 */
 /**************************************************************************/
-void chb_reg_write64(uint8_t addr, uint8_t *val)
+void chb_reg_write64(U8 addr, U8 *val)
 {
-    uint8_t i;
+    U8 i;
 
     for (i=0; i<8; i++)
     {
@@ -208,9 +208,9 @@ void chb_reg_write64(uint8_t addr, uint8_t *val)
 
 */
 /**************************************************************************/
-void chb_reg_read_mod_write(uint8_t addr, uint8_t val, uint8_t mask)
+void chb_reg_read_mod_write(U8 addr, U8 val, U8 mask)
 {
-    uint8_t tmp;
+    U8 tmp;
 
     tmp = chb_reg_read(addr);
     val &= mask;                // mask off stray bits from val
@@ -224,9 +224,9 @@ void chb_reg_read_mod_write(uint8_t addr, uint8_t val, uint8_t mask)
 
 */
 /**************************************************************************/
-void chb_frame_write(uint8_t *hdr, uint8_t hdr_len, uint8_t *data, uint8_t data_len)
+void chb_frame_write(U8 *hdr, U8 hdr_len, U8 *data, U8 data_len)
 {
-    uint8_t i, dummy;
+    U8 i, dummy;
 
     // dont allow transmission longer than max frame size
     if ((hdr_len + data_len) > 127)
@@ -265,7 +265,7 @@ void chb_frame_write(uint8_t *hdr, uint8_t hdr_len, uint8_t *data, uint8_t data_
 /**************************************************************************/
 static void chb_frame_read()
 {
-    uint8_t i, len, data;
+    U8 i, len, data;
 
     CHB_ENTER_CRIT();
     CHB_SPI_ENABLE();
@@ -301,9 +301,9 @@ static void chb_frame_read()
 */
 /**************************************************************************/
 #ifdef CHB_DEBUG
-void chb_sram_read(uint8_t addr, uint8_t len, uint8_t *data)
+void chb_sram_read(U8 addr, U8 len, U8 *data)
 {
-    uint8_t i, dummy;
+    U8 i, dummy;
 
     CHB_ENTER_CRIT();
     CHB_SPI_ENABLE();
@@ -328,9 +328,9 @@ void chb_sram_read(uint8_t addr, uint8_t len, uint8_t *data)
 
 */
 /**************************************************************************/
-void chb_sram_write(uint8_t addr, uint8_t len, uint8_t *data)
+void chb_sram_write(U8 addr, U8 len, U8 *data)
 {    
-    uint8_t i, dummy;
+    U8 i, dummy;
 
     CHB_ENTER_CRIT();
     CHB_SPI_ENABLE();
@@ -356,7 +356,7 @@ void chb_sram_write(uint8_t addr, uint8_t len, uint8_t *data)
     Set the channel mode, BPSK, OQPSK, etc...
 */
 /**************************************************************************/
-void chb_set_mode(uint8_t mode)
+void chb_set_mode(U8 mode)
 {
     switch (mode)
     {
@@ -372,9 +372,9 @@ void chb_set_mode(uint8_t mode)
         chb_reg_read_mod_write(TRX_CTRL_2, 0x1c, 0x3f);                 // 802.15.4-2006, channel page 5, channel 0-3 (780 MHz, China)
         chb_reg_read_mod_write(RF_CTRL_0, CHB_OQPSK_TX_OFFSET, 0x3);    // this is according to table 7-16 in at86rf212 datasheet
         break;
-    case BPSK20_915MHZ:
-        chb_reg_read_mod_write(TRX_CTRL_2, 0x00, 0x3f);                  // 802.15.4-2006, BPSK, 20 kbps
-        chb_reg_read_mod_write(RF_CTRL_0, CHB_BPSK_TX_OFFSET, 0x3);      // this is according to table 7-16 in at86rf212 datasheet
+    case BPSK40_915MHZ:
+        chb_reg_read_mod_write(TRX_CTRL_2, 0x00, 0x3f);                 // 802.15.4-2006, BPSK, 40 kbps
+        chb_reg_read_mod_write(RF_CTRL_0, CHB_BPSK_TX_OFFSET, 0x3);     // this is according to table 7-16 in at86rf212 datasheet
         break;
     }
 }
@@ -384,9 +384,9 @@ void chb_set_mode(uint8_t mode)
 
 */
 /**************************************************************************/
-uint8_t chb_set_channel(uint8_t channel)
+U8 chb_set_channel(U8 channel)
 {
-    uint8_t state;
+    U8 state;
     
 #if (CHB_CHINA == 1)
 
@@ -453,7 +453,7 @@ uint8_t chb_set_channel(uint8_t channel)
     Set the power level
 */
 /**************************************************************************/
-void chb_set_pwr(uint8_t val)
+void chb_set_pwr(U8 val)
 {
     chb_reg_write(PHY_TX_PWR, val);
 }
@@ -465,9 +465,9 @@ void chb_set_pwr(uint8_t val)
     machine and manipulations.
 */
 /**************************************************************************/
-uint8_t chb_set_state(uint8_t state)
+U8 chb_set_state(U8 state)
 {
-    uint8_t curr_state, delay;
+    U8 curr_state, delay;
 
     // if we're sleeping then don't allow transition
     if (gpioGetValue(CHB_SLPTRPORT, CHB_SLPTRPIN))
@@ -533,7 +533,7 @@ uint8_t chb_set_state(uint8_t state)
  
 */
 /**************************************************************************/
-void chb_set_ieee_addr(uint8_t *addr)
+void chb_set_ieee_addr(U8 *addr)
 {
     chb_eeprom_write(CHB_EEPROM_IEEE_ADDR, addr, 8); 
     chb_reg_write64(IEEE_ADDR_0, addr); 
@@ -544,7 +544,7 @@ void chb_set_ieee_addr(uint8_t *addr)
 
 */
 /**************************************************************************/
-void chb_get_ieee_addr(uint8_t *addr)
+void chb_get_ieee_addr(U8 *addr)
 {
     chb_eeprom_read(CHB_EEPROM_IEEE_ADDR, addr, 8);
 }
@@ -554,9 +554,9 @@ void chb_get_ieee_addr(uint8_t *addr)
 
 */
 /**************************************************************************/
-void chb_set_short_addr(uint16_t addr)
+void chb_set_short_addr(U16 addr)
 {
-    uint8_t *addr_ptr = (uint8_t *)&addr;
+    U8 *addr_ptr = (U8 *)&addr;
     pcb_t *pcb = chb_get_pcb();
 
     chb_eeprom_write(CHB_EEPROM_SHORT_ADDR, addr_ptr, 2);
@@ -569,11 +569,12 @@ void chb_set_short_addr(uint16_t addr)
 
 */
 /**************************************************************************/
-uint16_t chb_get_short_addr()
+U16 chb_get_short_addr()
 {
-    uint16_t addr;
-    chb_eeprom_read(CHB_EEPROM_SHORT_ADDR, (uint8_t*)&addr, 2);
-    return addr;
+    U8 addr[2];
+
+    chb_eeprom_read(CHB_EEPROM_SHORT_ADDR, addr, 2);
+    return *(U16 *)addr;
 }
 
 /**************************************************************************/
@@ -582,9 +583,9 @@ uint16_t chb_get_short_addr()
     and return the status of the transmission attempt.
 */
 /**************************************************************************/
-uint8_t chb_tx(uint8_t *hdr, uint8_t *data, uint8_t len)
+U8 chb_tx(U8 *hdr, U8 *data, U8 len)
 {
-    uint8_t state = chb_get_state();
+    U8 state = chb_get_state();
     pcb_t *pcb = chb_get_pcb();
 
     if ((state == BUSY_TX) || (state == BUSY_TX_ARET))
@@ -604,7 +605,7 @@ uint8_t chb_tx(uint8_t *hdr, uint8_t *data, uint8_t len)
 
     // TEST - check data in buffer
     //{
-    //    uint8_t i, len, tmp[30];
+    //    U8 i, len, tmp[30];
     //    
     //    len = 1 + CHB_HDR_SZ + len;
     //    chb_sram_read(0, len, tmp);
@@ -624,7 +625,7 @@ uint8_t chb_tx(uint8_t *hdr, uint8_t *data, uint8_t len)
 
     // wait for the transmission to end, signalled by the TRX END flag
     while (!pcb->tx_end);
-    pcb->tx_end = FALSE;
+    pcb->tx_end = false;
 
     // check the status of the transmission
     return chb_get_status();
@@ -635,9 +636,9 @@ uint8_t chb_tx(uint8_t *hdr, uint8_t *data, uint8_t len)
 
 */
 /**************************************************************************/
-static chbError_t chb_radio_init()
+static void chb_radio_init()
 {
-    uint8_t ieee_addr[8];
+    U8 ieee_addr[8];
 
     // reset chip
     chb_reset();
@@ -647,13 +648,14 @@ static chbError_t chb_radio_init()
 
     // force transceiver off while we configure the intps
     chb_reg_read_mod_write(TRX_STATE, CMD_FORCE_TRX_OFF, 0x1F);
+
     // make sure the transceiver is in the off state before proceeding
     while ((chb_reg_read(TRX_STATUS) & 0x1f) != TRX_OFF);
+
     // set radio cfg parameters
     // **note** uncomment if these will be set to something other than default
     //chb_reg_read_mod_write(XAH_CTRL_0, CHB_MAX_FRAME_RETRIES << CHB_MAX_FRAME_RETRIES_POS, 0xF << CHB_MAX_FRAME_RETRIES_POS);
     //chb_reg_read_mod_write(XAH_CTRL_0, CHB_MAX_CSMA_RETRIES << CHB_MAX_CSMA_RETIRES_POS, 0x7 << CHB_MAX_CSMA_RETIRES_POS);
-
     //chb_reg_read_mod_write(CSMA_SEED_1, CHB_CSMA_SEED1 << CHB_CSMA_SEED1_POS, 0x7 << CHB_CSMA_SEED1_POS);
     //chb_ret_write(CSMA_SEED0, CHB_CSMA_SEED0);     
     //chb_reg_read_mod_write(PHY_CC_CCA, CHB_CCA_MODE << CHB_CCA_MODE_POS,0x3 << CHB_CCA_MODE_POS);
@@ -665,8 +667,6 @@ static chbError_t chb_radio_init()
     // set interrupt mask
     // re-enable intps while we config the radio
     chb_reg_write(IRQ_MASK, (1<<IRQ_RX_START) | (1<<IRQ_TRX_END));
-
-
 
     // set autocrc mode
     chb_reg_read_mod_write(TRX_CTRL_1, 1 << CHB_AUTO_CRC_POS, 1 << CHB_AUTO_CRC_POS);
@@ -712,28 +712,7 @@ static chbError_t chb_radio_init()
     gpioIntEnable (CHB_EINTPORT,
                    CHB_EINTPIN); 
 
-    // Check for AACK and throw a timeout after a fixed delay
-    uint32_t timeout = 0;
-    while ( timeout < CHB_INIT_MAXRETRIES )
-    {
-      // Wait until the device is ready
-      uint8_t status = chb_get_state();
-      if (status == RX_AACK_ON)
-      {
-        break;
-      }
-      timeout++;
-    }
-    if ( timeout == CHB_INIT_MAXRETRIES )
-    {
-      return CHB_ERROR_INITTIMEOUT;
-    }
-
-    // while (chb_get_state() != RX_AACK_ON);
-    // return error;
-
-    // Return with NOERROR status
-    return CHB_ERROR_NOERROR;
+    while (chb_get_state() != RX_AACK_ON);
 }
 
 /**************************************************************************/
@@ -741,21 +720,12 @@ static chbError_t chb_radio_init()
 
 */
 /**************************************************************************/
-chbError_t chb_drvr_init()
+void chb_drvr_init()
 {
-    chbError_t error = CHB_ERROR_NOERROR;
+    // ToDo: Make sure gpioInit has been called
+    // ToDo: Make sure CT32B0 has been initialised and enabled
 
-    // make sure gpio is initialised
-    gpioInit();
-
-    // init eeprom
-    mcp24aaInit();
-    
-    // Initialise 32-bit timer 0
-    timer32Init(0, TIMER32_DEFAULTINTERVAL);
-    timer32Enable(0);
-
-    // config SPI for at86rf212 access
+    // config SPI for at86rf230 access
     chb_spi_init();
 
     // Set sleep and reset as output
@@ -771,10 +741,39 @@ chbError_t chb_drvr_init()
     gpioSetPullup (&CHB_RSTPIN_IOCONREG, gpioPullupMode_Inactive);
 
     // config radio
-    error = chb_radio_init();
+    chb_radio_init();
+}
 
-    // return OK is everything initialised properly, otherwise error msg
-    return error;
+/**************************************************************************/
+/*!
+
+*/
+/**************************************************************************/
+U8 chb_radio_sleep(void)
+{
+  uint32_t timeout = 0;
+
+  // Set mode to TRX_OFF
+  while ( timeout < 10 )
+  {
+    uint8_t status = chb_set_state(TRX_OFF);
+    if (status == RADIO_SUCCESS)
+    {
+      break;
+    }
+    timeout++;
+  }
+
+  if ( timeout == 10 )
+  {
+    return 1;
+  }
+  else
+  {
+    // Set SLP_TR high to enter sleep mode (stops after 35 clock cycles)
+    CHB_SLPTR_ENABLE();
+    return 0;
+  }
 }
 
 /**************************************************************************/
@@ -784,13 +783,13 @@ chbError_t chb_drvr_init()
 /**************************************************************************/
 void chb_ISR_Handler (void)
 {
-    uint8_t dummy, state, intp_src = 0;
+    U8 dummy, state, intp_src = 0;
     pcb_t *pcb = chb_get_pcb();
 
     CHB_ENTER_CRIT();
 
     /*Read Interrupt source.*/
-    CHB_SPI_ENABLE();
+    CHB_SPI_ENABLE();   
 
     /*Send Register address and read register content.*/
     dummy = chb_xfer_byte(IRQ_STATUS | CHB_SPI_CMD_RR);
@@ -800,7 +799,7 @@ void chb_ISR_Handler (void)
 
     while (intp_src)
     {
-        /*Handle the incoming interrupt. Prioritized.*/
+        /*Handle the incomming interrupt. Prioritized.*/
         if ((intp_src & CHB_IRQ_RX_START_MASK))
         {
             intp_src &= ~CHB_IRQ_RX_START_MASK;
@@ -823,12 +822,12 @@ void chb_ISR_Handler (void)
                     // get the data
                     chb_frame_read();
                     pcb->rcvd_xfers++;
-                    pcb->data_rcv = TRUE;
+                    pcb->data_rcv = true;
                 }
             }
             else
             {
-                pcb->tx_end = TRUE;
+                pcb->tx_end = true;
             }
             intp_src &= ~CHB_IRQ_TRX_END_MASK;
             while (chb_set_state(RX_AACK_ON) != RADIO_SUCCESS);

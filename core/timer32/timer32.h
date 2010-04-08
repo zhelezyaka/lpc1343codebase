@@ -48,12 +48,11 @@
 #define TIMER32_CCLK_10MS       ((CFG_CPU_CCLK/SCB_SYSAHBCLKDIV) / 100)
 #define TIMER32_CCLK_100MS      ((CFG_CPU_CCLK/SCB_SYSAHBCLKDIV) / 10)
 #define TIMER32_CCLK_1S         (CFG_CPU_CCLK/SCB_SYSAHBCLKDIV)
-#define TIMER32_DEFAULTINTERVAL	(TIMER32_CCLK_10US)
+#define TIMER32_DEFAULTINTERVAL	(TIMER32_CCLK_100US)
 
-#define TIMER32_DELAY_10US      (1)             // 10uS delay = 1 tick
-#define TIMER32_DELAY_100US     (10)            // 100uS delay = 10 ticks
-#define TIMER32_DELAY_1MS       (100)           // 1mS delay = 100 ticks
-#define TIMER32_DELAY_1S        (100000)        // 1S delay = 100000 ticks
+#define TIMER32_DELAY_100US     (1)            // 100uS delay = 1 tick
+#define TIMER32_DELAY_1MS       (10)           // 1mS delay = 10 ticks
+#define TIMER32_DELAY_1S        (10000)        // 1S delay = 10000 ticks
 
 void TIMER32_0_IRQHandler(void);
 void TIMER32_1_IRQHandler(void);

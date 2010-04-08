@@ -34,8 +34,8 @@
 #include <stdio.h>
 #include "chb_buf.h"
 
-static uint8_t chb_buf[CHB_BUF_SZ];
-static uint8_t rd_ptr, wr_ptr, len;
+static U8 chb_buf[CHB_BUF_SZ];
+static U8 rd_ptr, wr_ptr, len;
 
 /**************************************************************************/
 /*!
@@ -54,7 +54,7 @@ void chb_buf_init()
 
 */
 /**************************************************************************/
-void chb_buf_write(uint8_t data)
+void chb_buf_write(U8 data)
 {
     chb_buf[wr_ptr] = data;
     wr_ptr = (wr_ptr + 1) % CHB_BUF_SZ;
@@ -66,9 +66,9 @@ void chb_buf_write(uint8_t data)
 
 */
 /**************************************************************************/
-uint8_t chb_buf_read()
+U8 chb_buf_read()
 {
-    uint8_t data;
+    U8 data;
 
     data = chb_buf[rd_ptr];
     rd_ptr = (rd_ptr + 1) % CHB_BUF_SZ;
@@ -81,7 +81,7 @@ uint8_t chb_buf_read()
 
 */
 /**************************************************************************/
-uint8_t chb_buf_get_len()
+U8 chb_buf_get_len()
 {
     return len;
 }

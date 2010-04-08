@@ -32,11 +32,10 @@
 
 *******************************************************************/
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "chb.h"
-#include "chb_drvr_at86rf212.h"
+#include "chb_drvr.h"
 #include "chb_buf.h"
 
 static pcb_t pcb;
@@ -50,20 +49,7 @@ void chb_init()
 {
     memset(&pcb, 0, sizeof(pcb_t));
     pcb.src_addr = chb_get_short_addr();
-
-    chbError_t error;
-    if (chb_drvr_init() != CHB_ERROR_NOERROR)
-    {
-        // ToDo: Handle error
-        switch (error)
-        {
-          case CHB_ERROR_INITTIMEOUT:
-            // Initialisation timed out
-            break;
-          default:
-            break;
-        }
-    }
+    chb_drvr_init();
 }
 
 /**************************************************************************/
@@ -82,9 +68,9 @@ pcb_t *chb_get_pcb()
     Returns the length of the hdr. 
 */
 /**************************************************************************/
-static uint8_t chb_gen_hdr(uint8_t *hdr, uint16_t addr, uint8_t len)
+static U8 chb_gen_hdr(U8 *hdr, U16 addr, U8 len)
 {
-    uint8_t *hdr_ptr = hdr;
+    U8 *hdr_ptr = hdr;
 
     // calc frame size and put in 0 position of array
     // frame size = hdr sz + payload len + fcs len
@@ -98,12 +84,12 @@ static uint8_t chb_gen_hdr(uint8_t *hdr, uint16_t addr, uint8_t len)
     *hdr_ptr++ = pcb.seq++;
 
     // fill out dest pan ID, dest addr, src addr
-    *(uint16_t *)hdr_ptr = CHB_PAN_ID;
-    hdr_ptr += sizeof(uint16_t);
-    *(uint16_t *)hdr_ptr = addr;
-    hdr_ptr += sizeof(uint16_t);
-    *(uint16_t *)hdr_ptr = pcb.src_addr;
-    hdr_ptr += sizeof(uint16_t);
+    *(U16 *)hdr_ptr = CHB_PAN_ID;
+    hdr_ptr += sizeof(U16);
+    *(U16 *)hdr_ptr = addr;
+    hdr_ptr += sizeof(U16);
+    *(U16 *)hdr_ptr = pcb.src_addr;
+    hdr_ptr += sizeof(U16);
     
     // return the len of the header
     return hdr_ptr - hdr;
@@ -114,9 +100,9 @@ static uint8_t chb_gen_hdr(uint8_t *hdr, uint16_t addr, uint8_t len)
 
 */
 /**************************************************************************/
-uint8_t chb_write(uint16_t addr, uint8_t *data, uint8_t len)
+U8 chb_write(U16 addr, U8 *data, U8 len)
 {
-    uint8_t status, frm_len, hdr_len, hdr[CHB_HDR_SZ + 1];
+    U8 status, frm_len, hdr_len, hdr[CHB_HDR_SZ + 1];
     
     while (len > 0)
     {
@@ -169,9 +155,9 @@ uint8_t chb_write(uint16_t addr, uint8_t *data, uint8_t len)
     the frm payload. It will then return the len of the payload.
 */
 /**************************************************************************/
-uint8_t chb_read(chb_rx_data_t *rx)
+U8 chb_read(chb_rx_data_t *rx)
 {
-    uint8_t i, len, *data_ptr;
+    U8 i, len, *data_ptr;
 
     data_ptr = rx->data;
 
@@ -196,35 +182,21 @@ uint8_t chb_read(chb_rx_data_t *rx)
 
     // parse the buffer and extract the dest and src addresses
     data_ptr = rx->data + 6;                // location of dest addr
-    rx->dest_addr = *(uint16_t *)data_ptr;
-    data_ptr += sizeof(uint16_t);
-    rx->src_addr = *(uint16_t *)data_ptr;
-    data_ptr += sizeof(uint16_t);
+    rx->dest_addr = *(U16 *)data_ptr;
+    data_ptr += sizeof(U16);
+    rx->src_addr = *(U16 *)data_ptr;
+    data_ptr += sizeof(U16);
 
     // move the payload down to the beginning of the data buffer
     memmove(rx->data, data_ptr, len - CHB_HDR_SZ);
 
+    // if the data in the rx buf is 0, then clear the rx_flag. otherwise, keep it raised
+    if (!chb_buf_get_len())
+    {
+        pcb.data_rcv = false;
+    }
+
     // finally, return the len of the payload
     return len - CHB_HDR_SZ - CHB_FCS_LEN;
-}
-
-/**************************************************************************/
-/*!
-    This clears the data_rcv flag and also restarts the buffer from 0. This
-    is because there is a corner case where if a frame arrives right before
-    the flag is cleared, it will get stuck in the buffer. Also, if a frame
-    arrives before the previous one is processed, it will also get stuck in
-    the buffer.
-    The downside to this workaround is that any previous frames stuck in the
-    buffer will be lost. To get around this, the frame buffer needs to be composed of
-    a linked list of frames which would also require a smarter memory allocation
-    system to prevent memory fragmentation. I'll leave it as TODO item for this
-    stack since I've implemented something similar in the Zigbee stack.
-*/
-/**************************************************************************/
-void chb_clr()
-{
-    chb_buf_init();
-    pcb.data_rcv = FALSE;
 }
 

@@ -44,6 +44,7 @@
         <folder Name="i2c">
           <file file_name="../../core/i2c/i2c.c"/>
         </folder>
+        <folder Name="isp"/>
       </folder>
       <file file_name="../../lpc134x.h"/>
       <file file_name="../../projectconfig.h"/>
@@ -64,26 +65,11 @@
           </folder>
         </folder>
         <folder Name="chibi" file_name="">
-          <file file_name="../../drivers/chibi/chb.c">
-            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
-          </file>
-          <file file_name="../../drivers/chibi/chb_buf.c">
-            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
-          </file>
-          <file file_name="../../drivers/chibi/chb_drvr_at86rf212.c">
-            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
-          </file>
-          <file file_name="../../drivers/chibi/chb_eeprom.c">
-            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
-          </file>
-          <file file_name="../../drivers/chibi/chb_spi.c">
-            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
-          </file>
+          <file file_name="../../drivers/chibi/chb.c"/>
+          <file file_name="../../drivers/chibi/chb_buf.c"/>
+          <file file_name="../../drivers/chibi/chb_drvr.c"/>
+          <file file_name="../../drivers/chibi/chb_eeprom.c"/>
+          <file file_name="../../drivers/chibi/chb_spi.c"/>
         </folder>
         <folder Name="sensors">
           <folder Name="lm75b">

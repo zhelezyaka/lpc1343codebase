@@ -41,9 +41,10 @@
 #ifndef CHB_EEPROM_H
 #define CHB_EEPROM_H
 
-#include "sysdefs.h"
+#include "projectconfig.h"
+#include "types.h"
 
-void chb_eeprom_write(uint16_t addr, uint8_t *buf, uint16_t size);
-void chb_eeprom_read(uint16_t addr, uint8_t *buf, uint16_t size);
+void chb_eeprom_write(U16 addr, U8 *buf, U16 size);
+void chb_eeprom_read(U16 addr, U8 *buf, U16 size);
 
 #endif

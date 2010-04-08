@@ -82,3 +82,4 @@ void chb_eeprom_read(uint16_t addr, uint8_t *buf, uint16_t size)
     // ToDo: Handle any errors
   }
 }
+
