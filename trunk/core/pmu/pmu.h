@@ -44,7 +44,7 @@
 void WAKEUP_IRQHandler( void );
 void pmuInit( void );
 void pmuSleep( void );
-void pmuDeepSleep( uint32_t sleepCtrl );
+void pmuDeepSleep(uint32_t sleepCtrl, uint32_t wakeupSeconds);
 void pmuPowerDown( void );
 
 #endif

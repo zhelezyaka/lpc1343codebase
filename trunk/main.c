@@ -46,6 +46,7 @@
 #include "core/uart/uart.h"
 #include "core/systick/systick.h"
 #include "core/timer32/timer32.h"
+#include "core/pmu/pmu.h"
 
 #ifdef CFG_USBHID
 #include "core/usbhid-rom/usbhid.h"
