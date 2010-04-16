@@ -54,7 +54,7 @@
 
 // #define CFG_CHIBI
 // #define CFG_CHIBI_TRANSMITTER
-// #define CFG_CHIBI_RECEIVER
+#define CFG_CHIBI_RECEIVER
 
 // #####################
 // Config error-handling
