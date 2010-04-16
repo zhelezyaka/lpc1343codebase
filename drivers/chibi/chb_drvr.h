@@ -280,7 +280,8 @@ enum
     OQPSK_868MHZ    = 0,
     OQPSK_915MHZ    = 1,
     OQPSK_780MHZ    = 2,
-    BPSK40_915MHZ   = 3
+    BPSK40_915MHZ   = 3,
+    BPSK20_868MHZ   = 4
 };
 
 // See Table 7-15 for details

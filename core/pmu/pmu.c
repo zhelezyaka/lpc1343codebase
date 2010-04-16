@@ -247,7 +247,7 @@ void pmuDeepSleep(uint32_t sleepCtrl, uint32_t wakeupSeconds)
   
     /* Configure external match register to set 0.1 high on match */
     TMR_TMR32B0EMR &= ~(0xFF<<4);                   // Clear EMR config bits
-    TMR_TMR32B0EMR |= TMR_TMR32B0EMR_EMC2_HIGH;     // Set MR2 (0.1) high on match
+    TMR_TMR32B0EMR |= TMR_TMR32B0EMR_EMC2_HIGH;     // Set MAT2 (0.1) high on match
   
     /* Use RISING EDGE for wakeup detection. */
     SCB_STARTAPRP0 |= SCB_STARTAPRP0_APRPIO0_1;

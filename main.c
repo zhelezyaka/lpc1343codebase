@@ -116,6 +116,20 @@ int main (void)
   //  chb_set_short_addr(addr_short);
   #endif
 
+//  // Wait 10 seconds before entering deep sleep
+//  timer32Delay(0, TIMER32_DELAY_1S * 10);
+//  pmuInit();
+//  // Enter deep sleep and wakeup after 5 seconds
+//  uint32_t pmuRegVal = SCB_PDSLEEPCFG_IRCOUT_PD |
+//                SCB_PDSLEEPCFG_IRC_PD |
+//                SCB_PDSLEEPCFG_FLASH_PD |
+//                SCB_PDSLEEPCFG_USBPLL_PD |
+//                SCB_PDSLEEPCFG_SYSPLL_PD |
+//                SCB_PDSLEEPCFG_SYSOSC_PD |
+//                SCB_PDSLEEPCFG_ADC_PD |
+//                SCB_PDSLEEPCFG_BOD_PD;
+//  pmuDeepSleep(pmuRegVal, 5);
+
   while (1)
   {
     #ifdef CFG_CHIBI
