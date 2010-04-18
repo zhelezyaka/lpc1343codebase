@@ -2037,6 +2037,177 @@ static inline void NVIC_DisableIRQ(IRQn_t IRQn)
 ##############################################################################*/
 
 /* USB registers are defined in USB code */
+#define USB_BASE_ADDRESS                          (0x40020000)
+
+/* USB Device Interrupt Status Register */
+#define USB_DEVINTST                              (*(pREG32 (0x40020000)))
+#define USB_DEVINTST_FRAME_MASK                   ((unsigned int) 0x00000001) 
+#define USB_DEVINTST_FRAME                        ((unsigned int) 0x00000001) // Frame interrupt
+#define USB_DEVINTST_EP0_MASK                     ((unsigned int) 0x00000002) 
+#define USB_DEVINTST_EP0                          ((unsigned int) 0x00000002) // USB core interrupt for EP0
+#define USB_DEVINTST_EP1_MASK                     ((unsigned int) 0x00000004) 
+#define USB_DEVINTST_EP1                          ((unsigned int) 0x00000004) // USB core interrupt for EP1
+#define USB_DEVINTST_EP2_MASK                     ((unsigned int) 0x00000008) 
+#define USB_DEVINTST_EP2                          ((unsigned int) 0x00000008) // USB core interrupt for EP2
+#define USB_DEVINTST_EP3_MASK                     ((unsigned int) 0x00000010)
+#define USB_DEVINTST_EP3                          ((unsigned int) 0x00000010) // USB core interrupt for EP3
+#define USB_DEVINTST_EP4_MASK                     ((unsigned int) 0x00000020)
+#define USB_DEVINTST_EP4                          ((unsigned int) 0x00000020) // USB core interrupt for EP4
+#define USB_DEVINTST_EP5_MASK                     ((unsigned int) 0x00000040)
+#define USB_DEVINTST_EP5                          ((unsigned int) 0x00000040) // USB core interrupt for EP5
+#define USB_DEVINTST_EP6_MASK                     ((unsigned int) 0x00000080)
+#define USB_DEVINTST_EP6                          ((unsigned int) 0x00000080) // USB core interrupt for EP6
+#define USB_DEVINTST_EP7_MASK                     ((unsigned int) 0x00000100)
+#define USB_DEVINTST_EP7                          ((unsigned int) 0x00000100) // USB core interrupt for EP7
+#define USB_DEVINTST_DEV_START_MASK               ((unsigned int) 0x00000200)
+#define USB_DEVINTST_DEV_START                    ((unsigned int) 0x00000200)
+#define USB_DEVINTST_CC_EMPTY_MASK                ((unsigned int) 0x00000400)
+#define USB_DEVINTST_CC_EMPTY                     ((unsigned int) 0x00000400)
+#define USB_DEVINTST_CD_FULL_MASK                 ((unsigned int) 0x00000800)
+#define USB_DEVINTST_CD_FULL                      ((unsigned int) 0x00000800)
+#define USB_DEVINTST_RxENDPKT_MASK                ((unsigned int) 0x00001000)
+#define USB_DEVINTST_RxENDPKT                     ((unsigned int) 0x00001000)
+#define USB_DEVINTST_TxENDPKT_MASK                ((unsigned int) 0x00002000)
+#define USB_DEVINTST_TxENDPKT                     ((unsigned int) 0x00002000)
+
+/* USB Device Interrupt Enable Register  */
+#define USB_DEVINTEN                              (*(pREG32 (0x40020004)))
+#define USB_DEVINTEN_FRAME_MASK                   ((unsigned int) 0x00000001)
+#define USB_DEVINTEN_FRAME                        ((unsigned int) 0x00000001)
+#define USB_DEVINTEN_EP0_MASK                     ((unsigned int) 0x00000002)
+#define USB_DEVINTEN_EP0                          ((unsigned int) 0x00000002)
+#define USB_DEVINTEN_EP1_MASK                     ((unsigned int) 0x00000004)
+#define USB_DEVINTEN_EP1                          ((unsigned int) 0x00000004)
+#define USB_DEVINTEN_EP2_MASK                     ((unsigned int) 0x00000008)
+#define USB_DEVINTEN_EP2                          ((unsigned int) 0x00000008)
+#define USB_DEVINTEN_EP3_MASK                     ((unsigned int) 0x00000010)
+#define USB_DEVINTEN_EP3                          ((unsigned int) 0x00000010)
+#define USB_DEVINTEN_EP4_MASK                     ((unsigned int) 0x00000020)
+#define USB_DEVINTEN_EP4                          ((unsigned int) 0x00000020)
+#define USB_DEVINTEN_EP5_MASK                     ((unsigned int) 0x00000040)
+#define USB_DEVINTEN_EP5                          ((unsigned int) 0x00000040)
+#define USB_DEVINTEN_EP6_MASK                     ((unsigned int) 0x00000080)
+#define USB_DEVINTEN_EP6                          ((unsigned int) 0x00000080)
+#define USB_DEVINTEN_EP7_MASK                     ((unsigned int) 0x00000100)
+#define USB_DEVINTEN_EP7                          ((unsigned int) 0x00000100)
+#define USB_DEVINTEN_DEV_START_MASK               ((unsigned int) 0x00000200)
+#define USB_DEVINTEN_DEV_START                    ((unsigned int) 0x00000200)
+#define USB_DEVINTEN_CC_EMPTY_MASK                ((unsigned int) 0x00000400)
+#define USB_DEVINTEN_CC_EMPTY                     ((unsigned int) 0x00000400)
+#define USB_DEVINTEN_CD_FULL_MASK                 ((unsigned int) 0x00000800)
+#define USB_DEVINTEN_CD_FULL                      ((unsigned int) 0x00000800)
+#define USB_DEVINTEN_RxENDPKT_MASK                ((unsigned int) 0x00001000)
+#define USB_DEVINTEN_RxENDPKT                     ((unsigned int) 0x00001000)
+#define USB_DEVINTEN_TxENDPKT_MASK                ((unsigned int) 0x00002000)
+#define USB_DEVINTEN_TxENDPKT                     ((unsigned int) 0x00002000)
+
+/* USB Device Interrupt Clear Register  */
+#define USB_DEVINTCLR                             (*(pREG32 (0x40020008)))
+#define USB_DEVINTCLR_FRAME_MASK                  ((unsigned int) 0x00000001)
+#define USB_DEVINTCLR_FRAME                       ((unsigned int) 0x00000001)
+#define USB_DEVINTCLR_EP0_MASK                    ((unsigned int) 0x00000002)
+#define USB_DEVINTCLR_EP0                         ((unsigned int) 0x00000002)
+#define USB_DEVINTCLR_EP1_MASK                    ((unsigned int) 0x00000004)
+#define USB_DEVINTCLR_EP1                         ((unsigned int) 0x00000004)
+#define USB_DEVINTCLR_EP2_MASK                    ((unsigned int) 0x00000008)
+#define USB_DEVINTCLR_EP2                         ((unsigned int) 0x00000008)
+#define USB_DEVINTCLR_EP3_MASK                    ((unsigned int) 0x00000010)
+#define USB_DEVINTCLR_EP3                         ((unsigned int) 0x00000010)
+#define USB_DEVINTCLR_EP4_MASK                    ((unsigned int) 0x00000020)
+#define USB_DEVINTCLR_EP4                         ((unsigned int) 0x00000020)
+#define USB_DEVINTCLR_EP5_MASK                    ((unsigned int) 0x00000040)
+#define USB_DEVINTCLR_EP5                         ((unsigned int) 0x00000040)
+#define USB_DEVINTCLR_EP6_MASK                    ((unsigned int) 0x00000080)
+#define USB_DEVINTCLR_EP6                         ((unsigned int) 0x00000080)
+#define USB_DEVINTCLR_EP7_MASK                    ((unsigned int) 0x00000100)
+#define USB_DEVINTCLR_EP7                         ((unsigned int) 0x00000100)
+#define USB_DEVINTCLR_DEV_START_MASK              ((unsigned int) 0x00000200)
+#define USB_DEVINTCLR_DEV_START                   ((unsigned int) 0x00000200)
+#define USB_DEVINTCLR_CC_EMPTY_MASK               ((unsigned int) 0x00000400)
+#define USB_DEVINTCLR_CC_EMPTY                    ((unsigned int) 0x00000400)
+#define USB_DEVINTCLR_CD_FULL_MASK                ((unsigned int) 0x00000800)
+#define USB_DEVINTCLR_CD_FULL                     ((unsigned int) 0x00000800)
+#define USB_DEVINTCLR_RxENDPKT_MASK               ((unsigned int) 0x00001000)
+#define USB_DEVINTCLR_RxENDPKT                    ((unsigned int) 0x00001000)
+#define USB_DEVINTCLR_TxENDPKT_MASK               ((unsigned int) 0x00002000)
+#define USB_DEVINTCLR_TxENDPKT                    ((unsigned int) 0x00002000)
+
+/* USB Device Interrupt Set Register  */
+#define USB_DEVINTSET                             (*(pREG32 (0x4002000C)))
+#define USB_DEVINTSET_FRAME_MASK                  ((unsigned int) 0x00000001)
+#define USB_DEVINTSET_FRAME                       ((unsigned int) 0x00000001)
+#define USB_DEVINTSET_EP0_MASK                    ((unsigned int) 0x00000002)
+#define USB_DEVINTSET_EP0                         ((unsigned int) 0x00000002)
+#define USB_DEVINTSET_EP1_MASK                    ((unsigned int) 0x00000004)
+#define USB_DEVINTSET_EP1                         ((unsigned int) 0x00000004)
+#define USB_DEVINTSET_EP2_MASK                    ((unsigned int) 0x00000008)
+#define USB_DEVINTSET_EP2                         ((unsigned int) 0x00000008)
+#define USB_DEVINTSET_EP3_MASK                    ((unsigned int) 0x00000010)
+#define USB_DEVINTSET_EP3                         ((unsigned int) 0x00000010)
+#define USB_DEVINTSET_EP4_MASK                    ((unsigned int) 0x00000020)
+#define USB_DEVINTSET_EP4                         ((unsigned int) 0x00000020)
+#define USB_DEVINTSET_EP5_MASK                    ((unsigned int) 0x00000040)
+#define USB_DEVINTSET_EP5                         ((unsigned int) 0x00000040)
+#define USB_DEVINTSET_EP6_MASK                    ((unsigned int) 0x00000080)
+#define USB_DEVINTSET_EP6                         ((unsigned int) 0x00000080)
+#define USB_DEVINTSET_EP7_MASK                    ((unsigned int) 0x00000100)
+#define USB_DEVINTSET_EP7                         ((unsigned int) 0x00000100)
+#define USB_DEVINTSET_DEV_START_MASK              ((unsigned int) 0x00000200)
+#define USB_DEVINTSET_DEV_START                   ((unsigned int) 0x00000200)
+#define USB_DEVINTSET_CC_EMPTY_MASK               ((unsigned int) 0x00000400)
+#define USB_DEVINTSET_CC_EMPTY                    ((unsigned int) 0x00000400)
+#define USB_DEVINTSET_CD_FULL_MASK                ((unsigned int) 0x00000800)
+#define USB_DEVINTSET_CD_FULL                     ((unsigned int) 0x00000800)
+#define USB_DEVINTSET_RxENDPKT_MASK               ((unsigned int) 0x00001000)
+#define USB_DEVINTSET_RxENDPKT                    ((unsigned int) 0x00001000)
+#define USB_DEVINTSET_TxENDPKT_MASK               ((unsigned int) 0x00002000)
+#define USB_DEVINTSET_TxENDPKT                    ((unsigned int) 0x00002000)
+
+/* USB Command Code Register */
+#define USB_CMDCODE                               (*(pREG32 (0x40020010)))
+#define USB_CMDCODE_CMD_PHASE_READ                ((unsigned int) 0x00000100)
+#define USB_CMDCODE_CMD_PHASE_WRITE               ((unsigned int) 0x00000200)
+#define USB_CMDCODE_CMD_PHASE_COMMAND             ((unsigned int) 0x00000500)
+#define USB_CMDCODE_CMD_PHASE_MASK                ((unsigned int) 0x0000FF00)
+#define USB_CMDCODE_CMD_CODE_MASK                 ((unsigned int) 0x00FF0000)
+#define USB_CMDCODE_CMD_WDATA_MASK                ((unsigned int) 0x00FF0000)
+
+/* USB Command Data Register */
+#define USB_CMDDATA                               (*(pREG32 (0x40020014)))
+#define USB_CMDDATA_CMD_RDATA_MASK                ((unsigned int) 0x000000FF)
+
+/* USB Receive Data Register */
+#define USB_RXDATA                                (*(pREG32 (0x40020018)))
+
+/* USB Transmit Data Register */
+#define USB_TXDATA                                (*(pREG32 (0x4002001C)))
+
+/* USB Receive Packet Length Register */
+#define USB_RXPLEN                                (*(pREG32 (0x40020020)))
+#define USB_RXPLEN_PKT_LNGTH_MASK                 ((unsigned int) 0x000003FF)
+#define USB_RXPLEN_DV_MASK                        ((unsigned int) 0x00000400)
+#define USB_RXPLEN_DV                             ((unsigned int) 0x00000400)
+
+/* USB Transmit Packet Length Register */
+#define USB_TXPLEN                                (*(pREG32 (0x40020024)))
+#define USB_TXPLEN_PKT_LNGTH_MASK 0x3FF
+
+/* USB Control Register */
+#define USB_CTRL                                  (*(pREG32 (0x40020028)))
+#define USB_CTRL_RD_EN_MASK                       ((unsigned int) 0x00000001)
+#define USB_CTRL_RD_EN                            ((unsigned int) 0x00000001)
+#define USB_CTRL_WR_EN_MASK                       ((unsigned int) 0x00000002)
+#define USB_CTRL_WR_EN                            ((unsigned int) 0x00000002)
+#define USB_CTRL_LOG_ENDPOINT_MASK                ((unsigned int) 0x0000003C)
+
+/* USB Device FIQ Select Register */
+#define USB_DEVFIQSEL                             (*(pREG32 (0x4002002C)))
+#define USB_DEVFIQSEL_FRAME_MASK                  ((unsigned int) 0x00000001)
+#define USB_DEVFIQSEL_FRAME                       ((unsigned int) 0x00000001)
+#define USB_DEVFIQSEL_BULKOUT_MASK                ((unsigned int) 0x00000002)
+#define USB_DEVFIQSEL_BULKOUT                     ((unsigned int) 0x00000002)
+#define USB_DEVFIQSEL_BULKIN_MASK                 ((unsigned int) 0x00000004)
+#define USB_DEVFIQSEL_BULKIN                      ((unsigned int) 0x00000004)
 
 /*##############################################################################
 ## UART

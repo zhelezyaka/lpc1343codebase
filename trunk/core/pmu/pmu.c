@@ -248,15 +248,6 @@ void pmuDeepSleep(uint32_t sleepCtrl, uint32_t wakeupSeconds)
     /* Configure external match register to set 0.1 high on match */
     TMR_TMR32B0EMR &= ~(0xFF<<4);                   // Clear EMR config bits
     TMR_TMR32B0EMR |= TMR_TMR32B0EMR_EMC2_HIGH;     // Set MAT2 (0.1) high on match
-  
-    /* Use RISING EDGE for wakeup detection. */
-    SCB_STARTAPRP0 |= SCB_STARTAPRP0_APRPIO0_1;
-  
-    /* Clear all wakeup sources */ 
-    SCB_STARTRSRP0CLR = SCB_STARTRSRP0CLR_MASK;
-
-    /* Enable Port 0.1 as wakeup source. */
-    SCB_STARTERP0 |= SCB_STARTERP0_ERPIO0_1;
 
     /* Enable wakeup interrupts (any I/O pin can be used as a wakeup source) */
     //NVIC_EnableIRQ(WAKEUP0_IRQn);    // P0.0
@@ -299,6 +290,15 @@ void pmuDeepSleep(uint32_t sleepCtrl, uint32_t wakeupSeconds)
     //NVIC_EnableIRQ(WAKEUP37_IRQn);   // P3.1
     //NVIC_EnableIRQ(WAKEUP38_IRQn);   // P3.2
     //NVIC_EnableIRQ(WAKEUP39_IRQn);   // P3.3
+  
+    /* Use RISING EDGE for wakeup detection. */
+    SCB_STARTAPRP0 |= SCB_STARTAPRP0_APRPIO0_1;
+  
+    /* Clear all wakeup sources */ 
+    SCB_STARTRSRP0CLR = SCB_STARTRSRP0CLR_MASK;
+
+    /* Enable Port 0.1 as wakeup source. */
+    SCB_STARTERP0 |= SCB_STARTERP0_ERPIO0_1;
   
     /* Start the timer */
     TMR_TMR32B0TCR = TMR_TMR32B0TCR_COUNTERENABLE_ENABLED;
