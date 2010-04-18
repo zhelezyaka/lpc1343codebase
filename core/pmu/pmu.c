@@ -300,9 +300,6 @@ void pmuDeepSleep(uint32_t sleepCtrl, uint32_t wakeupSeconds)
     //NVIC_EnableIRQ(WAKEUP38_IRQn);   // P3.2
     //NVIC_EnableIRQ(WAKEUP39_IRQn);   // P3.3
   
-    /* Enable the TIMER0 interrupt */
-    NVIC_EnableIRQ(TIMER_32_0_IRQn);
-
     /* Start the timer */
     TMR_TMR32B0TCR = TMR_TMR32B0TCR_COUNTERENABLE_ENABLED;
   }
