@@ -36,7 +36,7 @@ OBJS += timer32.o uart.o usbconfig.o usbhid.o stdio.o string.o wdt.o
 ##########################################################################
 # GNU GCC compiler prefix and location
 ##########################################################################
-CROSS_COMPILE = arm-elf-
+CROSS_COMPILE = arm-none-eabi-
 AS = $(CROSS_COMPILE)gcc
 CC = $(CROSS_COMPILE)gcc
 LD = $(CROSS_COMPILE)gcc
