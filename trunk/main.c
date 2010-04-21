@@ -155,8 +155,8 @@ int main (void)
         }
       #endif
     #else
-      // Blink LED every 1 second
-      timer32Delay(0, TIMER32_DELAY_1S);
+      // Blink LED every 3 seconds
+      timer32Delay(0, TIMER32_DELAY_1S * 3);
       if (gpioGetValue(CFG_LED_PORT, CFG_LED_PIN))
       {
         // Enable LED (set low)
@@ -169,7 +169,7 @@ int main (void)
       }
       #ifdef CFG_LM75B
         lm75bGetTemperature(&temperature);
-        // Multiply value by 125 for fixed-point math (0.125°C per unit)
+        // Multiply value by 125 for fixed-point math (0.125Â°C per unit)
         temperature *= 125;
         // Use modulus operator to display decimal value
         printf("Current Temperature: %ld.%ld C\r\n", temperature / 1000, temperature % 1000);
