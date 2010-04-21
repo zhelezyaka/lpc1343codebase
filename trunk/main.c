@@ -155,8 +155,8 @@ int main (void)
         }
       #endif
     #else
-      // Blink LED every 3 seconds
-      timer32Delay(0, TIMER32_DELAY_1S * 3);
+      // Blink LED every second
+      timer32Delay(0, TIMER32_DELAY_1S * 1);
       if (gpioGetValue(CFG_LED_PORT, CFG_LED_PIN))
       {
         // Enable LED (set low)
