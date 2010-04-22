@@ -132,10 +132,8 @@ load "../../firmware.elf"
 monitor reg r13 = (0x00000000)
 monitor reg pc = (0x00000004)
 
-# Start execution
-# monitor reset
-# monitor go
-</PostConnectCommands>
+# Reset device and start execution
+monitor reset</PostConnectCommands>
         <StartupCommands/>
       </Debugger>
       <PreBuild/>
