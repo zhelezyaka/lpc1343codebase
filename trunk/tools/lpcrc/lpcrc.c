@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
   }
   
   // Try to open the supplied firmware
-  if ((pf = fopen(argv[1],"r+")) == NULL)
+  if ((pf = fopen(argv[1],"rb+")) == NULL)
   {
     printf("error: could not open file [%s] with write access\n",argv[1]);
     return 1;
