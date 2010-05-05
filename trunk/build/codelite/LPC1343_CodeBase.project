@@ -140,8 +140,8 @@ monitor reset</PostConnectCommands>
       <PostBuild/>
       <CustomBuild Enabled="yes">
         <RebuildCommand/>
-        <CleanCommand>make clean</CleanCommand>
-        <BuildCommand>make</BuildCommand>
+        <CleanCommand>cs-make clean</CleanCommand>
+        <BuildCommand>cs-make</BuildCommand>
         <PreprocessFileCommand/>
         <SingleFileCommand/>
         <MakefileGenerationCommand/>
