@@ -122,15 +122,13 @@ monitor interface SWD
 monitor speed 1000
 # Set device ID to LPC1343
 monitor flash device = LPC1343
-# Enable unlimited flash break points (may require license)
-monitor flash breakpoints = 1
+# Set monitor to little endian
+monitor endian little
 # Enable flash download
 monitor flash download = 1
+
 # Transfer the firmware to the device
 load "../../firmware.elf"
-# Initialise PC and stack pointer
-monitor reg r13 = (0x00000000)
-monitor reg pc = (0x00000004)
 
 # Reset device and start execution
 monitor reset</PostConnectCommands>
