@@ -5,8 +5,8 @@
   <TabInfoArray Name="TabInfoArray">
     <TabInfo>
       <wxString Value="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\Makefile" Name="FileName"/>
-      <int Value="58" Name="FirstVisibleLine"/>
-      <int Value="79" Name="CurrentLine"/>
+      <int Value="63" Name="FirstVisibleLine"/>
+      <int Value="84" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
     </TabInfo>
   </TabInfoArray>
