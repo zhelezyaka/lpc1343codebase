@@ -49,7 +49,7 @@
 #define CFG_LED_PIN             10
 
 #define CFG_USBHID
-#define CFG_I2CEEPROM
+// #define CFG_I2CEEPROM
 // #define CFG_LM75B
 
 // #define CFG_CHIBI
