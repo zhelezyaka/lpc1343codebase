@@ -34,6 +34,7 @@
         <folder Name="usbhid-rom">
           <file file_name="../../core/usbhid-rom/usbconfig.c"/>
           <file file_name="../../core/usbhid-rom/usbhid.c"/>
+          <file file_name="../../core/usbhid-rom/hidexample.c"/>
         </folder>
         <folder Name="wdt">
           <file file_name="../../core/wdt/wdt.c"/>

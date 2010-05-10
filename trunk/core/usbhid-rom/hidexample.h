@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*! 
-    @file     projectconfig.h
+    @file     hidexample.h
     @author   K. Townsend (microBuilder.eu)
     @date     22 March 2010
     @version  0.10
@@ -36,34 +36,16 @@
 */
 /**************************************************************************/
 
-#ifndef _PROJECTCONFIG_H_
-#define _PROJECTCONFIG_H_
+#ifndef _HIDEXAMPLE_H_
+#define _HIDEXAMPLE_H_
 
-#include "lpc134x.h"
-#include "sysdefs.h"
+#include "projectconfig.h"
 
-#define CFG_CPU_CCLK            72000000    // Ref. only.  Clock speed actually set in "core/cpu/cpu.c"
-#define CFG_SYSTICK_DELAY_MS    10          // The number of milliseconds between each tick of the systick timer
-#define CFG_UART_BAUDRATE       57600       // Default UART speed
-#define CFG_LED_PORT            2
-#define CFG_LED_PIN             10
+enum uint8_t
+{
+  USB_COMMAND_SETLEDSTATE   = 0x01
+} usbCommand_e;
 
-#define CFG_USBHID
-#define CFG_USBHID_EXAMPLE      // Leave this defined for HID demo code
-// #define CFG_I2CEEPROM
-// #define CFG_LM75B
-
-// #define CFG_CHIBI
-// #define CFG_CHIBI_TRANSMITTER
-// #define CFG_CHIBI_RECEIVER
-
-// #####################
-// Config error-handling
-// #####################
-#ifdef CFG_CHIBI
-  #if defined CFG_CHIBI_TRANSMITTER && defined CFG_CHIBI_RECEIVER
-    #error "CFG_CHIBI_TRANSMITTER and CFG_CHIBI_RECEIVER can not both be defined at once"
-  #endif
-#endif
+void usbParseCommand(uint8_t cmd, uint8_t value);
 
 #endif
