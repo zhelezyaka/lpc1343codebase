@@ -32,6 +32,7 @@ VPATH += core/ssp core/systick core/timer16 core/timer32 core/uart
 VPATH += core/usbhid-rom core/libc core/wdt
 OBJS += adc.o cpu.o gpio.o i2c.o pmu.o ssp.o systick.o timer16.o
 OBJS += timer32.o uart.o usbconfig.o usbhid.o stdio.o string.o wdt.o
+OBJS += hidexample.o
 
 ##########################################################################
 # GNU GCC compiler prefix and location
