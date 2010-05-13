@@ -64,7 +64,7 @@ void usbHIDGetInReport (uint8_t src[], uint32_t length)
   // ToDo: Move this logic elsewhere to keep code 'generic'
 
   // If LED enabled set bit 0 to 1
-  if (!gpioGetValue(2, 10))
+  if (!gpioGetValue(CFG_LED_PORT, CFG_LED_PIN))
   {
     PCInReportData |= 1<<0;
   }
@@ -89,12 +89,12 @@ void usbHIDSetOutReport (uint8_t dst[], uint32_t length)
     if (PCOutReportData & (1<<0))
     {
       // Enable LED (set low)
-      gpioSetValue (2, 10, 0);
+      gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, 0);
     }
     else
     {
       // Disable LED (set high)
-      gpioSetValue (2, 10, 1);
+      gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, 1);
     }
   #endif
 
@@ -148,8 +148,13 @@ void usbHIDInit (void)
   HidDevInfo.idProduct = USB_PROD_ID;
   HidDevInfo.bcdDevice = USB_DEVICE; 
   HidDevInfo.StrDescPtr = (uint32_t)&USB_StringDescriptor[0];
+  #ifdef CFG_USBHID_EXAMPLE  
   HidDevInfo.InReportCount = 2;
   HidDevInfo.OutReportCount = 2;
+  #else
+  HidDevInfo.InReportCount = 1;
+  HidDevInfo.OutReportCount = 1;
+  #endif
   HidDevInfo.SampleInterval = 0x20;
   HidDevInfo.InReport = usbHIDGetInReport;
   HidDevInfo.OutReport = usbHIDSetOutReport;

@@ -59,6 +59,8 @@
       <File Name="../../core/usbhid-rom/usbconfig.h"/>
       <File Name="../../core/usbhid-rom/usbhid.c"/>
       <File Name="../../core/usbhid-rom/usbhid.h"/>
+      <File Name="../../core/usbhid-rom/hidexample.c"/>
+      <File Name="../../core/usbhid-rom/hidexample.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="wdt">
       <File Name="../../core/wdt/wdt.c"/>
