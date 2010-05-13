@@ -49,7 +49,7 @@
 #define CFG_LED_PIN             10
 
 #define CFG_USBHID
-#define CFG_USBHID_EXAMPLE      // Leave this defined for HID demo code
+// #define CFG_USBHID_EXAMPLE
 // #define CFG_I2CEEPROM
 // #define CFG_LM75B
 
