@@ -137,7 +137,9 @@ monitor reset</PostConnectCommands>
         <StartupCommands/>
       </Debugger>
       <PreBuild/>
-      <PostBuild/>
+      <PostBuild>
+        <Command Enabled="yes">lpcrc firmware.bin</Command>
+      </PostBuild>
       <CustomBuild Enabled="yes">
         <RebuildCommand/>
         <CleanCommand>cs-make clean</CleanCommand>
