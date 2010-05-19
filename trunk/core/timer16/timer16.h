@@ -43,6 +43,9 @@
 
 #define TIMER16_DEFAULTINTERVAL	(0xFFFF)    // ~0.91mS @ 72MHz, ~1.37mS @ 48MHz
 
+#define TIMER16_CCLK_100US      ((CFG_CPU_CCLK/SCB_SYSAHBCLKDIV) / 10000)
+#define TIMER16_CCLK_1MS        ((CFG_CPU_CCLK/SCB_SYSAHBCLKDIV) / 1000)
+
 void TIMER16_0_IRQHandler(void);
 void TIMER16_1_IRQHandler(void);
 
