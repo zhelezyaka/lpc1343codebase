@@ -45,7 +45,6 @@
 #include "core/gpio/gpio.h"
 #include "core/uart/uart.h"
 #include "core/systick/systick.h"
-#include "core/timer32/timer32.h"
 
 #ifdef CFG_USBHID
 #include "core/usbhid-rom/usbhid.h"
@@ -60,8 +59,8 @@ int main (void)
   // Setup the cpu and core clock
   cpuInit();
 
-  // Initialise the systick timer with a 1ms delay
-  systickInit(CFG_SYSTICK_DELAY_MS * 1);
+  // Initialise the systick timer (delay set in projectconfig.h))
+  systickInit(CFG_SYSTICK_DELAY_IN_MS);
 
   // Initialise UART with the default baud rate (set in projectconfig.h)
   // (Required since printf is redirected to UART)
@@ -72,11 +71,6 @@ int main (void)
   // Set LED pin as output and turn off
   gpioSetDir(CFG_LED_PORT, CFG_LED_PIN, 1);
   gpioSetValue(CFG_LED_PORT, CFG_LED_PIN, 1);
-
-  // Initialise 32-bit timer 0 with default delay 
-  printf("Initialising 32-bit Timer 0 with 100 uS delay...\r\n");
-  timer32Init(0, TIMER32_DEFAULTINTERVAL);
-  timer32Enable(0);
 
   // Initialise USB HID
   #ifdef CFG_USBHID
@@ -96,7 +90,7 @@ int main (void)
   while (1)
   {
     // Blink LED every second
-    timer32Delay(0, TIMER32_DELAY_1S * 1);
+    systickDelay(1000 / CFG_SYSTICK_DELAY_IN_MS);
     if (gpioGetValue(CFG_LED_PORT, CFG_LED_PIN))
     {
       // Enable LED (set low)

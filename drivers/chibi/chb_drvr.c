@@ -38,7 +38,7 @@
 #include "chb_spi.h"
 #include "chb_eeprom.h"
 
-#include "core/timer32/timer32.h"
+#include "core/systick/systick.h"
 
 /**************************************************************************/
 /*!

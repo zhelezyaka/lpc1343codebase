@@ -26,7 +26,9 @@
           <file file_name="../../core/timer16/timer16.c"/>
         </folder>
         <folder Name="timer32">
-          <file file_name="../../core/timer32/timer32.c"/>
+          <file file_name="../../core/timer32/timer32.c">
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
+          </file>
         </folder>
         <folder Name="uart">
           <file file_name="../../core/uart/uart.c"/>

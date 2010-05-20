@@ -103,6 +103,9 @@ void systickDelay (uint32_t delayTicks)
   uint32_t curTicks;
   curTicks = msTicks;
 
+  // Make sure delay is at least 1 tick in case of division, etc.
+  if (delayTicks == 0) delayTicks = 1;
+
   if (curTicks > 0x00FFFFFF - delayTicks)
   {
     // Rollover will occur during delay
