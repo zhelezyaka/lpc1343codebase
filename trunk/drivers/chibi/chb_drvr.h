@@ -77,10 +77,10 @@
     
 #define CHB_ENTER_CRIT()    __disable_irq()
 #define CHB_LEAVE_CRIT()    __enable_irq()
-#define CHB_RST_ENABLE()    do {gpioSetValue(CHB_RSTPORT, CHB_RSTPIN, 0); timer32Delay(0, TIMER32_DELAY_100US * 5);} while (0)
-#define CHB_RST_DISABLE()   do {gpioSetValue(CHB_RSTPORT, CHB_RSTPIN, 1); timer32Delay(0, TIMER32_DELAY_100US * 5);} while (0)
-#define CHB_SLPTR_ENABLE()  do {gpioSetValue(CHB_SLPTRPORT, CHB_SLPTRPIN, 1); timer32Delay(0, TIMER32_DELAY_100US * 5);} while (0)
-#define CHB_SLPTR_DISABLE() do {gpioSetValue(CHB_SLPTRPORT, CHB_SLPTRPIN, 0); timer32Delay(0, TIMER32_DELAY_100US * 5);} while (0)
+#define CHB_RST_ENABLE()    do {gpioSetValue(CHB_RSTPORT, CHB_RSTPIN, 0); systickDelay(1 / CFG_SYSTICK_DELAY_IN_MS);} while (0)
+#define CHB_RST_DISABLE()   do {gpioSetValue(CHB_RSTPORT, CHB_RSTPIN, 1); systickDelay(1 / CFG_SYSTICK_DELAY_IN_MS);} while (0)
+#define CHB_SLPTR_ENABLE()  do {gpioSetValue(CHB_SLPTRPORT, CHB_SLPTRPIN, 1); systickDelay(1 / CFG_SYSTICK_DELAY_IN_MS);} while (0)
+#define CHB_SLPTR_DISABLE() do {gpioSetValue(CHB_SLPTRPORT, CHB_SLPTRPIN, 0); systickDelay(1 / CFG_SYSTICK_DELAY_IN_MS);} while (0)
 
 // CCA constants
 enum
