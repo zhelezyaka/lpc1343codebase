@@ -1,9 +1,16 @@
 /**************************************************************************/
 /*! 
-    @file     uart.h
+    @file     commands.c
     @author   K. Townsend (microBuilder.eu)
     @date     22 March 2010
     @version  0.10
+
+    @brief    Entry point for all commands in the 'core/cmd' command-line
+              interpretter.  Every menu item defined in cmd_tbl.h points
+              to a method that should be located here for convenience
+              sake.  (The only exception is the 'help', which exists in
+              any project and is handled directly by core/cmd/cmd.c). All
+              methods have exactly the same signature (argc + argv).
 
     @section LICENSE
 
@@ -36,41 +43,48 @@
 */
 /**************************************************************************/
 
-#ifndef __UART_H__ 
-#define __UART_H__
+#include <stdio.h>
 
-#include "projectconfig.h"
+#include "core/cmd/cmd.h"
 
-// Buffer used for circular fifo
-typedef struct _uart_buffer_t
-{
-  uint8_t ep_dir;
-  volatile uint8_t len;
-  volatile uint8_t wr_ptr;
-  volatile uint8_t rd_ptr;
-  uint8_t buf[CFG_UART_BUFSIZE];
-} uart_buffer_t;
-
-// UART Protocol control block
-typedef struct _uart_pcb_t
-{
-  BOOL initialised;
-  uint32_t status;
-  uint32_t pending_tx_data;
-  uart_buffer_t rxfifo;
-} uart_pcb_t;
-
-void UART_IRQHandler(void);
-uart_pcb_t *uartGetPCB();
-void uartInit(uint32_t Baudrate);
-void uartSend(uint8_t *BufferPtr, uint32_t Length);
-void uartSendByte (uint8_t byte);
-
-// Rx Buffer access control
-void uartRxBufferInit();
-uint8_t uartRxBufferRead();
-void uartRxBufferWrite(uint8_t data);
-void uartRxBufferClearFIFO();
-uint8_t uartRxBufferDataPending();
-
+#ifdef CFG_CHIBI
+  #include "drivers/chibi/chb.h"
 #endif
+
+/**************************************************************************/
+/*! 
+    'hello' command handler
+*/
+/**************************************************************************/
+void cmd_hello(uint8_t argc, char **argv)
+{
+  if (argc > 0)
+  {
+    printf("Hello %s", argv[0]);
+  }
+  else
+  {
+    printf("Hello World!%s", CFG_INTERFACE_NEWLINE);
+  }
+}
+
+/**************************************************************************/
+/*! 
+    'sysinfo' command handler
+*/
+/**************************************************************************/
+void cmd_sysinfo(uint8_t argc, char **argv)
+{
+  printf("%-30s : %d Hz %s", "Core System Clock", CFG_CPU_CCLK, CFG_INTERFACE_NEWLINE);
+  printf("%-30s : %d mS %s", "Systick Timer Delay", CFG_SYSTICK_DELAY_IN_MS, CFG_INTERFACE_NEWLINE);
+  printf("%-30s : %d BPS %s", "UART Baud Rate", CFG_UART_BAUDRATE, CFG_INTERFACE_NEWLINE);
+
+  #ifdef CFG_CHIBI
+    chb_pcb_t *pcb = chb_get_pcb();
+    printf("%-30s : %s%s", "Wireless Frequency", "868 MHz", CFG_INTERFACE_NEWLINE);
+    printf("%-30s : 0x%04X%s", "Wireless Node Address", pcb->src_addr, CFG_INTERFACE_NEWLINE);
+  #endif
+
+  // printf("%-30s : %s", "<Property Name>", CFG_INTERFACE_NEWLINE);
+}
+

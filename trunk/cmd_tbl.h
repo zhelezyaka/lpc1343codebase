@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*! 
-    @file     uart.h
+    @file     cmd_tbl.h
     @author   K. Townsend (microBuilder.eu)
     @date     22 March 2010
     @version  0.10
@@ -36,41 +36,33 @@
 */
 /**************************************************************************/
 
-#ifndef __UART_H__ 
-#define __UART_H__
+#ifndef __CMD_TBL_H__ 
+#define __CMD_TBL_H__
 
-#include "projectconfig.h"
+#include <stdio.h>
+#include <stdlib.h>
 
-// Buffer used for circular fifo
-typedef struct _uart_buffer_t
+#ifdef CFG_INTERFACE_UART
+#include "core/uart/uart.h"
+#endif
+
+// A full list of function prototypes for the command table
+void cmd_help(uint8_t argc, char **argv);         // Mandatory - handled by cmd.c
+void cmd_hello(uint8_t argc, char **argv);
+void cmd_sysinfo(uint8_t argc, char **argv);
+
+/**************************************************************************/
+/*! 
+    Command list for the command-line interpreter and the name of the
+    corresponding method that handles the command
+*/
+/**************************************************************************/
+cmd_t cmd_tbl[] = 
 {
-  uint8_t ep_dir;
-  volatile uint8_t len;
-  volatile uint8_t wr_ptr;
-  volatile uint8_t rd_ptr;
-  uint8_t buf[CFG_UART_BUFSIZE];
-} uart_buffer_t;
-
-// UART Protocol control block
-typedef struct _uart_pcb_t
-{
-  BOOL initialised;
-  uint32_t status;
-  uint32_t pending_tx_data;
-  uart_buffer_t rxfifo;
-} uart_pcb_t;
-
-void UART_IRQHandler(void);
-uart_pcb_t *uartGetPCB();
-void uartInit(uint32_t Baudrate);
-void uartSend(uint8_t *BufferPtr, uint32_t Length);
-void uartSendByte (uint8_t byte);
-
-// Rx Buffer access control
-void uartRxBufferInit();
-uint8_t uartRxBufferRead();
-void uartRxBufferWrite(uint8_t data);
-void uartRxBufferClearFIFO();
-uint8_t uartRxBufferDataPending();
+  { "help",        0, 0, cmd_help        , "Displays a list of all available commands",       "'help' has no parameters" },
+  { "hello",       0, 1, cmd_hello       , "Displays 'Hello World!'",                         "'hello [<name>]'" },
+  { "sysinfo",     0, 0, cmd_sysinfo     , "Displays current system configuration settings",  "'sysinfo' has no parameters" },
+  { NULL,          0, 0, NULL            , NULL,                                              NULL }
+};
 
 #endif

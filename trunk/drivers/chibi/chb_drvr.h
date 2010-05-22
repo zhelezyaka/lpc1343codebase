@@ -39,8 +39,8 @@
 #include "core/gpio/gpio.h"
 
 #define CHB_CHINA               0
-#define CHB_EEPROM_IEEE_ADDR    0x00
-#define CHB_EEPROM_SHORT_ADDR   0x09
+#define CHB_EEPROM_IEEE_ADDR    CFG_CHIBI_EEPROM_IEEEADDR
+#define CHB_EEPROM_SHORT_ADDR   CFG_CHIBI_EEPROM_SHORTADDR
 #define CHB_AT86RF212_VER_NUM   0x01
 #define CHB_AT86RF212_PART_NUM  0x07
 // #define CHB_BPSK                0       // set to 1 if want to use BPSK rather than OQPSK

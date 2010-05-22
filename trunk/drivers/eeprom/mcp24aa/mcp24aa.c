@@ -234,8 +234,8 @@ mcp24aaError_e mcp24aaWriteBuffer (uint16_t address, uint8_t *buffer, uint32_t b
   // Transmit command
   i2cEngine();
 
-  // Wait at least 3ms
-  systickDelay(3 / CFG_SYSTICK_DELAY_IN_MS);
+  // Wait at least 10ms
+  systickDelay(10 / CFG_SYSTICK_DELAY_IN_MS);
   
   return MCP24AA_ERROR_OK;
 }

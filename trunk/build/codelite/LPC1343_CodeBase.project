@@ -51,6 +51,7 @@
     <VirtualDirectory Name="uart">
       <File Name="../../core/uart/uart.c"/>
       <File Name="../../core/uart/uart.h"/>
+      <File Name="../../core/uart/uart_buf.c"/>
     </VirtualDirectory>
     <VirtualDirectory Name="usbhid-rom">
       <File Name="../../core/usbhid-rom/rom_drivers.h"/>
@@ -65,6 +66,10 @@
     <VirtualDirectory Name="wdt">
       <File Name="../../core/wdt/wdt.c"/>
       <File Name="../../core/wdt/wdt.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="cmd">
+      <File Name="../../core/cmd/cmd.c"/>
+      <File Name="../../core/cmd/cmd.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="drivers">
@@ -108,6 +113,8 @@
     <File Name="../../Makefile"/>
     <File Name="../../projectconfig.h"/>
     <File Name="../../sysdefs.h"/>
+    <File Name="../../cmd_tbl.h"/>
+    <File Name="../../commands.c"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <Configuration Name="Debug" CompilerType="gnu gcc" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
