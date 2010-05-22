@@ -123,10 +123,10 @@ void usbHIDInit (void)
   SCB_USBPLLCLKUEN = SCB_USBPLLCLKUEN_DISABLE;        // Toggle Update Register
   SCB_USBPLLCLKUEN = SCB_USBPLLCLKUEN_UPDATE;
 
-  // Wait until the clock is updated
+  // Wait until the USB clock is updated
   while (!(SCB_USBPLLCLKUEN & SCB_USBPLLCLKUEN_UPDATE));
 
-  // Set clock to 48MHz (12MHz x 4)
+  // Set USB clock to 48MHz (12MHz x 4)
   SCB_USBPLLCTRL = (SCB_USBPLLCTRL_MULT_4);
   while (!(SCB_USBPLLSTAT & SCB_USBPLLSTAT_LOCK));    // Wait Until PLL Locked
   SCB_USBCLKSEL = SCB_USBCLKSEL_SOURCE_USBPLLOUT;

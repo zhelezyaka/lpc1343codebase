@@ -93,7 +93,7 @@ void SysTick_Handler(void)      WEAK_ALIAS(fault_undefined);
  *****************************************************************************/
 
 // Prototype the entry values, which are handled by the linker script
-extern void stack_entry;
+extern void* stack_entry;
 extern void boot_entry(void);
 
 // Defined irq vectors using simple c code following the description in a white 
@@ -102,7 +102,7 @@ extern void boot_entry(void);
 const void *vectors[] SECTION(".irq_vectors") =
 {
   // Stack and program reset entry point
-  (void*)&stack_entry,   // The initial stack pointer
+  &stack_entry,          // The initial stack pointer
   boot_entry,            // The reset handler
 
   // Various fault handlers

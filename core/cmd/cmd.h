@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*! 
-    @file     uart.h
+    @file     cmd.h
     @author   K. Townsend (microBuilder.eu)
     @date     22 March 2010
     @version  0.10
@@ -36,41 +36,24 @@
 */
 /**************************************************************************/
 
-#ifndef __UART_H__ 
-#define __UART_H__
+#ifndef __CMD_H__ 
+#define __CMD_H__
 
 #include "projectconfig.h"
 
-// Buffer used for circular fifo
-typedef struct _uart_buffer_t
+typedef struct
 {
-  uint8_t ep_dir;
-  volatile uint8_t len;
-  volatile uint8_t wr_ptr;
-  volatile uint8_t rd_ptr;
-  uint8_t buf[CFG_UART_BUFSIZE];
-} uart_buffer_t;
+  char *command;
+  uint8_t minArgs;
+  uint8_t maxArgs;
+  void (*func)(uint8_t argc, char **argv);
+  const char *description;
+  const char *parameters;
+} cmd_t;
 
-// UART Protocol control block
-typedef struct _uart_pcb_t
-{
-  BOOL initialised;
-  uint32_t status;
-  uint32_t pending_tx_data;
-  uart_buffer_t rxfifo;
-} uart_pcb_t;
-
-void UART_IRQHandler(void);
-uart_pcb_t *uartGetPCB();
-void uartInit(uint32_t Baudrate);
-void uartSend(uint8_t *BufferPtr, uint32_t Length);
-void uartSendByte (uint8_t byte);
-
-// Rx Buffer access control
-void uartRxBufferInit();
-uint8_t uartRxBufferRead();
-void uartRxBufferWrite(uint8_t data);
-void uartRxBufferClearFIFO();
-uint8_t uartRxBufferDataPending();
+void cmdPoll();
+void cmdRx(uint8_t c);
+void cmdParse(char *cmd);
+void cmdInit();
 
 #endif

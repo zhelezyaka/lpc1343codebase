@@ -44,76 +44,149 @@
 #include "core/cpu/cpu.h"
 #include "core/gpio/gpio.h"
 #include "core/uart/uart.h"
+#include "core/pmu/pmu.h"
 #include "core/systick/systick.h"
 
+#ifdef CFG_INTERFACE
+  #include "core/cmd/cmd.h"
+#endif
+
+#ifdef CFG_CHIBI
+  #include "drivers/chibi/chb.h"
+  volatile static chb_rx_data_t rx_data;
+#endif
+
 #ifdef CFG_USBHID
-#include "core/usbhid-rom/usbhid.h"
+  #include "core/usbhid-rom/usbhid.h"
 #endif
 
 #ifdef CFG_I2CEEPROM
-#include "drivers/eeprom/mcp24aa/mcp24aa.h"
+  #include "drivers/eeprom/mcp24aa/mcp24aa.h"
 #endif
 
-int main (void)
+/**************************************************************************/
+/*! 
+    Configures the core system clock and sets up any mandatory
+    peripherals like the systick timer, UART for printf, etc.
+
+    This function should set the HW to the default state you wish to be
+    in coming out of reset/startup, such as disabling or enabling LEDs,
+    setting specific pin states, etc.
+*/
+/**************************************************************************/
+static void systemInit()
 {
   // Setup the cpu and core clock
   cpuInit();
 
-  // Initialise the systick timer (delay set in projectconfig.h))
+  // Initialise the systick timer (delay set in projectconfig.h)
   systickInit(CFG_SYSTICK_DELAY_IN_MS);
 
   // Initialise UART with the default baud rate (set in projectconfig.h)
-  // (Required since printf is redirected to UART)
   uartInit(CFG_UART_BAUDRATE);
 
-  printf("CPU Initialised (72MHz).......\r\n");
+  // Note: Printf can now be used
 
-  // Set LED pin as output and turn off
+  // Initialise GPIO
+  gpioInit();
+
+  // Initialise power management unit
+  pmuInit();
+
+  // Set LED pin as output and turn LED off
   gpioSetDir(CFG_LED_PORT, CFG_LED_PIN, 1);
-  gpioSetValue(CFG_LED_PORT, CFG_LED_PIN, 1);
+  gpioSetPullup(&IOCON_PIO3_5, gpioPullupMode_Inactive);
+  gpioSetValue(CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF);
+
+  // Initialise EEPROM (if requested)
+  #ifdef CFG_I2CEEPROM
+    mcp24aaInit();
+  #endif
+
+  // Initialise Chibi (if requested)
+  #ifdef CFG_CHIBI
+    // Write addresses to EEPROM for the first time if necessary
+    // uint16_t addr_short = 0x0000;
+    // uint64_t addr_ieee =  0x0000000000000000;
+    // mcp24aaWriteBuffer(CFG_CHIBI_EEPROM_SHORTADDR, (uint8_t *)&addr_short, 2);
+    // mcp24aaWriteBuffer(CFG_CHIBI_EEPROM_IEEEADDR, (uint8_t *)&addr_ieee, 8);
+
+    chb_init();
+    chb_pcb_t *pcb = chb_get_pcb();
+    printf("%-40s : 0x%04X%s", "Chibi Initialised", pcb->src_addr, CFG_INTERFACE_NEWLINE);
+  #endif
 
   // Initialise USB HID
   #ifdef CFG_USBHID
-  printf("Initialising USB (HID)........\r\n");
-  usbHIDInit();
+    printf("Initialising USB (HID)%s", CFG_INTERFACE_NEWLINE);
+    usbHIDInit();
   #endif
+}
 
-  // Initialise EEPROM
-  #ifdef CFG_I2CEEPROM
-  printf("Initialising I2C EEPROM.......\r\n");
-  mcp24aaInit();
-  // uint8_t buffer[1] = { 0x00 };
-  // mcp24aaWriteByte(0x0000, 0xEE);
-  // mcp24aaReadByte(0x0000, buffer);
+/**************************************************************************/
+/*! 
+    Main program entry point.  After reset, normal code execution will
+    begin here.
+*/
+/**************************************************************************/
+int main (void)
+{
+  // Configure cpu and mandatory peripherals
+  systemInit();
+
+  // Start the command line (if requested)
+  #ifdef CFG_INTERFACE
+    printf("%sType 'help' for a list of available commands%s", CFG_INTERFACE_NEWLINE, CFG_INTERFACE_NEWLINE);
+    cmdInit();
   #endif
 
   while (1)
   {
-    // Blink LED every second
-    systickDelay(1000 / CFG_SYSTICK_DELAY_IN_MS);
-    if (gpioGetValue(CFG_LED_PORT, CFG_LED_PIN))
-    {
-      // Enable LED (set low)
-      gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, 0);
-    }
-    else
-    {
-      // Disable LED (set high)
-      gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, 1);
-    }
+    #ifdef CFG_INTERFACE
+      // Handle any incoming command line input
+      cmdPoll();
+    #else
+      // Blink LED every second
+      systickDelay(1000 / CFG_SYSTICK_DELAY_IN_MS);
+      if (gpioGetValue(CFG_LED_PORT, CFG_LED_PIN))
+      {
+        // Enable LED (set low)
+        gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_ON);
+      }
+      else
+      {
+        // Disable LED (set high)
+        gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF);
+      }
+    #endif
   }
 }
 
 /**************************************************************************/
 /*! 
-    Redirect printf output to UART0
+    @brief Sends a single byte to a pre-determined end point (UART, etc.).
+
+    @param[in]  byte
+                Byte value to send
 */
 /**************************************************************************/
 void __putchar(char c) 
 {
-  uartSendByte(c);
+  #ifdef CFG_INTERFACE_UART
+    uartSendByte(c);
+  #else
+    // Send printf output to another endpoint
+  #endif
 }
 
+/**************************************************************************/
+/*! 
+    @brief Sends a string to a pre-determined end point (UART, etc.).
+
+    @param[in]  str
+                Text to send
+*/
+/**************************************************************************/
 int puts ( const char * str )
 {
   while(*str++) __putchar(*str);
