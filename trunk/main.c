@@ -170,7 +170,7 @@ int main (void)
                 Byte value to send
 */
 /**************************************************************************/
-void __putchar(char c) 
+void _putc(const char c) 
 {
   #ifdef CFG_INTERFACE_UART
     uartSendByte(c);
@@ -187,8 +187,8 @@ void __putchar(char c)
                 Text to send
 */
 /**************************************************************************/
-int puts ( const char * str )
+int puts(const char * str)
 {
-  while(*str++) __putchar(*str);
+  while(*str) _putc(*str++);
   return 0;
 }

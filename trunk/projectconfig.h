@@ -57,17 +57,17 @@
 #define CFG_INTERFACE
 #define CFG_INTERFACE_UART                      // Use UART for the command-line interface
 #define CFG_INTERFACE_MAXMSGSIZE  (80)          // The maximum number of bytes to accept for a command
-#define CFG_INTERFACE_NEWLINE     "\n" 		    // This should be either \r\n (Windows-style) or \n (Unix-style)
+#define CFG_INTERFACE_NEWLINE     "\r\n"        // This should be either \r\n (Windows-style) or \n (Unix-style)
 #define CFG_INTERFACE_PROMPT      "LPC1343 >> "
 
-// #define CFG_USBHID
+ #define CFG_USBHID
 // #define CFG_USBHID_EXAMPLE
 
-#define CFG_I2CEEPROM
+//#define CFG_I2CEEPROM
 
 // #define CFG_LM75B
 
-#define CFG_CHIBI
+//#define CFG_CHIBI
 #define CFG_CHIBI_EEPROM_IEEEADDR   (0x00)        // Start location in EEPROM for the full IEEE address
 #define CFG_CHIBI_EEPROM_SHORTADDR  (0x09)        // Start location in EEPROM for the short address
 

@@ -96,7 +96,6 @@ void cmdRx(uint8_t c)
   switch (c)
   {
     case '\n':
-    case '\r':
         // terminate the msg and reset the msg ptr. then send
         // it to the handler for processing.
         *msg_ptr = '\0';
@@ -106,7 +105,7 @@ void cmdRx(uint8_t c)
         break;
     
     case '\b':
-        printf("%c", c);
+        printf("%c",c);
         if (msg_ptr > msg)
         {
             msg_ptr--;
@@ -114,7 +113,7 @@ void cmdRx(uint8_t c)
         break;
 
     default:
-        printf("%c", c);
+        printf("%c",c);
         *msg_ptr++ = c;
         break;
   }
@@ -145,7 +144,7 @@ static void cmdMenu()
 /**************************************************************************/
 void cmdParse(char *cmd)
 {
-  uint8_t argc, i = 0;
+  size_t argc, i = 0;
   char *argv[30];
 
   argv[i] = strtok(cmd, " ");
@@ -155,7 +154,7 @@ void cmdParse(char *cmd)
   } while ((i < 30) && (argv[i] != NULL));
   
   argc = i;
-  for (i=0; cmd_tbl[i].command != NULL; i++)
+  for (i=0; i < CMD_COUNT; i++)
   {
       if (!strcmp(argv[0], cmd_tbl[i].command))
       {
@@ -221,15 +220,15 @@ void cmdInit()
 /**************************************************************************/
 void cmd_help(uint8_t argc, char **argv)
 {
-  int i;
+  size_t i;
 
   printf("Command                Description%s", CFG_INTERFACE_NEWLINE);
   printf("-------                -----------%s", CFG_INTERFACE_NEWLINE);
 
   // Display full command list
-  for (i=0; cmd_tbl[i].command != NULL; i++)
+  for (i=0; i < CMD_COUNT; i++)
   {
-    printf ("%-20s - %s%s", cmd_tbl[i].command, cmd_tbl[i].description, CFG_INTERFACE_NEWLINE);
+    printf ("%-20s   %s%s", cmd_tbl[i].command, cmd_tbl[i].description, CFG_INTERFACE_NEWLINE);
   }
 
   printf("%sCommand parameters can be seen by entering: <command-name> ?%s", CFG_INTERFACE_NEWLINE, CFG_INTERFACE_NEWLINE);
