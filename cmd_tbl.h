@@ -62,7 +62,8 @@ cmd_t cmd_tbl[] =
   { "help",        0, 0, cmd_help        , "Displays a list of all available commands",       "'help' has no parameters" },
   { "hello",       0, 1, cmd_hello       , "Displays 'Hello World!'",                         "'hello [<name>]'" },
   { "sysinfo",     0, 0, cmd_sysinfo     , "Displays current system configuration settings",  "'sysinfo' has no parameters" },
-  { NULL,          0, 0, NULL            , NULL,                                              NULL }
 };
+
+#define CMD_COUNT (sizeof(cmd_tbl)/sizeof(cmd_t))
 
 #endif
