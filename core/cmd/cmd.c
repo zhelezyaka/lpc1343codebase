@@ -100,7 +100,7 @@ void cmdRx(uint8_t c)
         // terminate the msg and reset the msg ptr. then send
         // it to the handler for processing.
         *msg_ptr = '\0';
-        printf("\r\n");
+        printf("%s", CFG_INTERFACE_NEWLINE);
         cmdParse((char *)msg);
         msg_ptr = msg;
         break;

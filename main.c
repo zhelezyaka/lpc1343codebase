@@ -53,7 +53,7 @@
 
 #ifdef CFG_CHIBI
   #include "drivers/chibi/chb.h"
-  volatile static chb_rx_data_t rx_data;
+  static chb_rx_data_t rx_data;
 #endif
 
 #ifdef CFG_USBHID
@@ -121,6 +121,12 @@ static void systemInit()
     printf("Initialising USB (HID)%s", CFG_INTERFACE_NEWLINE);
     usbHIDInit();
   #endif
+
+  // Start the command line (if requested)
+  #ifdef CFG_INTERFACE
+    printf("%sType 'help' for a list of available commands%s", CFG_INTERFACE_NEWLINE, CFG_INTERFACE_NEWLINE);
+    cmdInit();
+  #endif
 }
 
 /**************************************************************************/
@@ -134,30 +140,42 @@ int main (void)
   // Configure cpu and mandatory peripherals
   systemInit();
 
-  // Start the command line (if requested)
-  #ifdef CFG_INTERFACE
-    printf("%sType 'help' for a list of available commands%s", CFG_INTERFACE_NEWLINE, CFG_INTERFACE_NEWLINE);
-    cmdInit();
-  #endif
-
   while (1)
   {
+    #ifdef CFG_CHIBI
+      chb_pcb_t *pcb = chb_get_pcb();
+
+      // Send message over Chibi every 500mS
+      systickDelay(500 / CFG_SYSTICK_DELAY_IN_MS);
+      gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_ON);
+      char *text = "Test";
+      chb_write(0xFFFF, text, sizeof(text));
+      gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF);
+
+      // Check for incoming messages
+      // if (pcb->data_rcv)
+      // {
+      //   rx_data.len = chb_read(&rx_data);
+      //   // Enable LED to indicate message reception (set low)
+      //   gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_ON);
+      //   // Output message to UART
+      //   printf("Message received from node %02X: %s (rssi=%d)%s", rx_data.src_addr, rx_data.data, pcb->ed, CFG_INTERFACE_NEWLINE);
+      //   // Disable LED (set high)
+      //   gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF);
+      //   pcb->data_rcv = FALSE;
+      // }
+    #endif
+
     #ifdef CFG_INTERFACE
       // Handle any incoming command line input
       cmdPoll();
     #else
-      // Blink LED every second
-      systickDelay(1000 / CFG_SYSTICK_DELAY_IN_MS);
-      if (gpioGetValue(CFG_LED_PORT, CFG_LED_PIN))
-      {
-        // Enable LED (set low)
+      // Toggle LED @ 1 Hz
+      systickDelay(1000);
+      if (gpioGetValue(CFG_LED_PORT, CFG_LED_PIN))  
         gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_ON);
-      }
-      else
-      {
-        // Disable LED (set high)
+      else 
         gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF);
-      }
     #endif
   }
 }
@@ -177,6 +195,12 @@ void _putc(const char c)
   #else
     // Send printf output to another endpoint
   #endif
+}
+
+// Required for Crossworks
+void __putchar(char c)
+{
+  _putc(c);
 }
 
 /**************************************************************************/
