@@ -46,6 +46,7 @@
 #include <stdio.h>
 
 #include "core/cmd/cmd.h"
+#include "core/gpio/gpio.h"
 
 #ifdef CFG_CHIBI
   #include "drivers/chibi/chb.h"
@@ -87,4 +88,3 @@ void cmd_sysinfo(uint8_t argc, char **argv)
 
   // printf("%-30s : %s", "<Property Name>", CFG_INTERFACE_NEWLINE);
 }
-
