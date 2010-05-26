@@ -95,6 +95,7 @@ void cmdRx(uint8_t c)
   // read out the data in the buffer and echo it back to the host. 
   switch (c)
   {
+    case '\r':
     case '\n':
         // terminate the msg and reset the msg ptr. then send
         // it to the handler for processing.
@@ -127,7 +128,7 @@ void cmdRx(uint8_t c)
 /**************************************************************************/
 static void cmdMenu()
 {
-  printf("\n");
+  printf(CFG_INTERFACE_NEWLINE);
   printf(CFG_INTERFACE_PROMPT);
 }
 

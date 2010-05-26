@@ -60,7 +60,7 @@ void cmd_hello(uint8_t argc, char **argv)
 {
   if (argc > 0)
   {
-    printf("Hello %s", argv[0]);
+    printf("Hello %s%s", argv[0],CFG_INTERFACE_NEWLINE);
   }
   else
   {
