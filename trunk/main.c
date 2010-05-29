@@ -188,19 +188,13 @@ int main (void)
                 Byte value to send
 */
 /**************************************************************************/
-void _putc(const char c) 
+void __putchar(const char c) 
 {
   #ifdef CFG_INTERFACE_UART
     uartSendByte(c);
   #else
     // Send printf output to another endpoint
   #endif
-}
-
-// Required for Crossworks
-void __putchar(char c)
-{
-  _putc(c);
 }
 
 /**************************************************************************/
@@ -213,6 +207,6 @@ void __putchar(char c)
 /**************************************************************************/
 int puts(const char * str)
 {
-  while(*str) _putc(*str++);
+  while(*str) __putchar(*str++);
   return 0;
 }
