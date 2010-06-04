@@ -88,8 +88,8 @@
           </folder>
         </folder>
       </folder>
-      <file file_name="../../cmd_tbl.h"/>
       <file file_name="../../commands.c"/>
+      <file file_name="../../cmd_tbl.h"/>
     </folder>
     <folder Name="System Files">
       <file file_name="$(StudioDir)/source/thumb_crt0.s"/>
