@@ -106,8 +106,8 @@ static void systemInit()
   // Initialise Chibi (if requested)
   #ifdef CFG_CHIBI
     // Write addresses to EEPROM for the first time if necessary
-    // uint16_t addr_short = 0x0000;
-    // uint64_t addr_ieee =  0x0000000000000000;
+    // uint16_t addr_short = 0x0001;
+    // uint64_t addr_ieee =  0x0000000000000001;
     // mcp24aaWriteBuffer(CFG_CHIBI_EEPROM_SHORTADDR, (uint8_t *)&addr_short, 2);
     // mcp24aaWriteBuffer(CFG_CHIBI_EEPROM_IEEEADDR, (uint8_t *)&addr_ieee, 8);
 
@@ -142,30 +142,6 @@ int main (void)
 
   while (1)
   {
-    #ifdef CFG_CHIBI
-      chb_pcb_t *pcb = chb_get_pcb();
-
-      // Send message over Chibi every 500mS
-      systickDelay(500 / CFG_SYSTICK_DELAY_IN_MS);
-      gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_ON);
-      char *text = "Test";
-      chb_write(0xFFFF, text, sizeof(text));
-      gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF);
-
-      // Check for incoming messages
-      // if (pcb->data_rcv)
-      // {
-      //   rx_data.len = chb_read(&rx_data);
-      //   // Enable LED to indicate message reception (set low)
-      //   gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_ON);
-      //   // Output message to UART
-      //   printf("Message received from node %02X: %s (rssi=%d)%s", rx_data.src_addr, rx_data.data, pcb->ed, CFG_INTERFACE_NEWLINE);
-      //   // Disable LED (set high)
-      //   gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF);
-      //   pcb->data_rcv = FALSE;
-      // }
-    #endif
-
     #ifdef CFG_INTERFACE
       // Handle any incoming command line input
       cmdPoll();
@@ -210,3 +186,31 @@ int puts(const char * str)
   while(*str) __putchar(*str++);
   return 0;
 }
+
+
+
+// ToDo: Cleanup
+
+//    #ifdef CFG_CHIBI
+//      chb_pcb_t *pcb = chb_get_pcb();
+//
+//      // Send message over Chibi every 500mS
+//      systickDelay(500 / CFG_SYSTICK_DELAY_IN_MS);
+//      gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_ON);
+//      char *text = "Test";
+//      chb_write(0xFFFF, text, sizeof(text));
+//      gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF);
+//
+//      // Check for incoming messages
+//      // if (pcb->data_rcv)
+//      // {
+//      //   rx_data.len = chb_read(&rx_data);
+//      //   // Enable LED to indicate message reception (set low)
+//      //   gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_ON);
+//      //   // Output message to UART
+//      //   printf("Message received from node %02X: %s (rssi=%d)%s", rx_data.src_addr, rx_data.data, pcb->ed, CFG_INTERFACE_NEWLINE);
+//      //   // Disable LED (set high)
+//      //   gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF);
+//      //   pcb->data_rcv = FALSE;
+//      // }
+//    #endif
