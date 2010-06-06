@@ -8,7 +8,7 @@
     @brief    Entry point for all commands in the 'core/cmd' command-line
               interpretter.  Every menu item defined in cmd_tbl.h points
               to a method that should be located here for convenience
-              sake.  (The only exception is the 'help', which exists in
+              sake.  (The only exception is 'help', which exists in
               any project and is handled directly by core/cmd/cmd.c). All
               methods have exactly the same signature (argc + argv).
 
@@ -45,7 +45,6 @@
 
 #include <stdio.h>
 #include <string.h>   // memset
-#include <stdlib.h>   // strtol
 #include <ctype.h>    // isdigit, isspace, etc.
 
 #include "core/cmd/cmd.h"
@@ -56,41 +55,9 @@
   #include "drivers/chibi/chb_drvr.h"
 #endif
 
-/**************************************************************************/
-/*! 
-    Determines whether the supplied string consists solely of decimal
-    characters (0-9)
-
-    @param[in]  s
-                Input string
-
-    @section Example
-
-    @code
-    char *test = "1234567890";
-
-    // Check if the value contains only decimal characters
-    if (isDecimalString(test))
-    {
-      // String contains only decimal characters
-      ...
-    }
-    else
-    {
-      // Supplied string contains non-decimal characters
-    }
-
-    @endcode
-*/
-/**************************************************************************/
-static int isDecimalString (char *s)
-{
-  while (*s)
-    if (!isdigit (*s++))
-      return 0;
-
-  return 1;
-}
+#ifdef CFG_I2CEEPROM
+  #include "drivers/eeprom/mcp24aa/mcp24aa.h"
+#endif
 
 /**************************************************************************/
 /*!
@@ -195,7 +162,7 @@ void cmd_sysinfo(uint8_t argc, char **argv)
   #ifdef CFG_CHIBI
     chb_pcb_t *pcb = chb_get_pcb();
     printf("%-30s : %s%s", "Wireless Frequency", "868 MHz", CFG_INTERFACE_NEWLINE);
-    printf("%-30s : %04X%s", "Wireless Node Address", pcb->src_addr, CFG_INTERFACE_NEWLINE);
+    printf("%-30s : 0x%04X%s", "Wireless Node Address", pcb->src_addr, CFG_INTERFACE_NEWLINE);
   #endif
 
   // printf("%-30s : %s", "<Property Name>", CFG_INTERFACE_NEWLINE);
@@ -206,37 +173,25 @@ void cmd_sysinfo(uint8_t argc, char **argv)
 /**************************************************************************/
 /*! 
     Gets or sets the 16-bit sensor node address.  This value can be 
-    anything between 1-65534, and in decimal or hexadecimal notation.
-    All hexadecimal values must be preceded by '0x' or '0X' and use all
-    four hexadecimal characters (ex. 0x0001) to be properly interpreted.
+    anything between 1-65534 (0x0001-0xFFFE), and in decimal or
+    hexadecimal notation.  All hexadecimal values must be preceded by
+    '0x' or '0X' to be properly interpreted (ex. 0x009F).
 */
 /**************************************************************************/
-void cmd_chibi_shortaddr(uint8_t argc, char **argv)
+void cmd_chibi_addr(uint8_t argc, char **argv)
 {
   if (argc > 0)
   {
-    // Check for decimal input
-    if (isDecimalString(argv[1]))
-    {
-      // Make sure decimal value is 16-bit or less
-      uint32_t test = strtol(argv[1], NULL, 32);
-      if (test >= 0xFFFF || test == 0)
-      {
-        printf("Invalid Address: Valid 16-bit value required (1-65534).%s", CFG_INTERFACE_NEWLINE);
-        return;
-      }
-    }
-
     // Make sure hexadecimal values are 16-bit or less
-    if ((strlen (argv[1]) > 2) && (!strncmp (argv[1], "0x", 2) || !strncmp (argv[1], "0X", 2)) && (strlen (argv[1]) != 6))
+    if ((strlen (argv[0]) > 2) && (!strncmp (argv[0], "0x", 2) || !strncmp (argv[0], "0X", 2)) && (strlen (argv[0]) > 6))
     {
-      printf("Invalid Address: Full 16-bit hexadecimal value required (ex. '0x12EF').%s", CFG_INTERFACE_NEWLINE);
+      printf("Invalid Address: 16-bit hexadecimal value required (ex. '0x12EF').%s", CFG_INTERFACE_NEWLINE);
       return;
     }
 
     // Try to convert supplied value to an integer
     int32_t addr;
-    getNumber (argv[1], &addr);
+    getNumber (argv[0], &addr);
     
     // Check for invalid values (getNumber may complain about this as well)
     if (addr <= 0 || addr > 0xFFFF)
@@ -250,140 +205,204 @@ void cmd_chibi_shortaddr(uint8_t argc, char **argv)
       return;
     }
 
-    // Update address
+    // Write address to EEPROM and update peripheral control block
     chb_set_short_addr((uint16_t)addr);
     chb_pcb_t *pcb = chb_get_pcb();
-    printf("Address set to: 0x%4X%s", pcb->src_addr, CFG_INTERFACE_NEWLINE);
+    printf("Address set to: 0x%04X%s", pcb->src_addr, CFG_INTERFACE_NEWLINE);
   }
   else
   {
+    // Display the current address
     chb_pcb_t *pcb = chb_get_pcb();
-    printf("0x%4X%s", pcb->src_addr, CFG_INTERFACE_NEWLINE);
+    printf("0x%04X%s", pcb->src_addr, CFG_INTERFACE_NEWLINE);
   }
 }
 
-void cmd_chibi_ieeeaddr(uint8_t argc, char **argv)
-{
-  // ToDo: Validate input!
-  uint8_t  i, addr[8];
-
-  if (argc > 0)
-  {
-    memset(addr, 0, 8);
-    for (i=0; i<argc-1; i++)
-    {
-        addr[i] = strtol(argv[i+1], NULL, 16);
-    }
-    chb_set_ieee_addr(addr);
-    printf ("IEEE address set to: 0x");
-    for (i=8; i>0; i--)
-    {
-      printf("%02X", addr[i-1]);
-    }
-    printf("%s", CFG_INTERFACE_NEWLINE);
-  }
-  else
-  {
-    chb_get_ieee_addr(addr);
+/**************************************************************************/
+/*! 
     
-    printf("0x");
-    for (i=8; i>0; i--)
-    {
-      printf("%02X", addr[i-1]);
-    }
-    printf("%s", CFG_INTERFACE_NEWLINE);
-  }
-}
-
+*/
+/**************************************************************************/
 void cmd_chibi_tx(uint8_t argc, char **argv)
 {
-  // ToDo: Validate input!
   uint8_t i, len, *data_ptr, data[50];
   uint16_t addr;
 
-  addr = strtol(argv[1], NULL, 16);
+  // Make sure hexadecimal address values are 16-bit or less
+  if ((strlen (argv[0]) > 2) && (!strncmp (argv[0], "0x", 2) || !strncmp (argv[0], "0X", 2)) && (strlen (argv[0]) > 6))
+  {
+    printf("Invalid Address: 16-bit hexadecimal value required (ex. '0x12EF').%s", CFG_INTERFACE_NEWLINE);
+    return;
+  }
 
+  // Try to convert supplied address to an integer
+  int32_t addr32;
+  getNumber (argv[0], &addr32);
+  
+  // Check for invalid values (getNumber may complain about this as well)
+  if (addr32 <= 0 || addr32 > 0xFFFF)
+  {
+    printf("Invalid Address: Value from 1-65534 or 0x0001-0xFFFE required.%s", CFG_INTERFACE_NEWLINE);
+    return;
+  }
+
+  // Address seems to be OK
+  addr = (uint16_t)addr32;
+
+  // Get message contents
   data_ptr = data;
   for (i=0; i<argc-2; i++)
   {
-    len = strlen(argv[i+2]);
-    strcpy((char *)data_ptr, (char *)argv[i+2]);
+    len = strlen(argv[i+1]);
+    strcpy((char *)data_ptr, (char *)argv[i+1]);
     data_ptr += len;
     *data_ptr++ = ' ';
   }
   *data_ptr++ = '\0';
 
+  // Send message
   chb_write(addr, data, data_ptr - data);
-}
-
-void cmd_chibi_mode(uint8_t argc, char **argv)
-{
-  if (argc > 0)
-  {
-    // ToDo: Validate input!
-    uint8_t mode = strtol(argv[1], NULL, 10);
-  
-    chb_set_state(TRX_OFF);
-  
-    chb_set_mode(mode);
-    chb_set_channel(1);
-  
-    chb_set_state(RX_AACK_ON);
-  }
-  else
-  {
-    printf("ToDo%s", CFG_INTERFACE_NEWLINE);
-  }
-}
-
-void cmd_chibi_power(uint8_t argc, char **argv)
-{
-  if (argc > 0)
-  {
-    // ToDo: Validate input!
-    uint8_t pwr = strtol(argv[1], NULL, 10);
-    uint8_t val;
-  
-    switch (pwr)
-    {
-      case 10: val = 0xc0; break;
-      case 9: val = 0xa1; break;
-      case 8: val = 0x81; break;
-      case 7: val = 0x82; break;
-      case 6: val = 0x83; break;
-      case 5: val = 0x60; break;
-      case 4: val = 0x61; break;
-      case 3: val = 0x41; break;
-      case 2: val = 0x42; break;
-      case 1: val = 0x22; break;
-      case 0: val = 0x23; break;
-      default: return;
-    }
-  
-    chb_set_pwr(val);
-  }
-  else
-  {
-    printf("ToDo%s", CFG_INTERFACE_NEWLINE);
-  }
 }
 
 #endif
 
 #ifdef CFG_I2CEEPROM
 
+/**************************************************************************/
+/*! 
+    Reads a single byte at the supplied EEPROM address
+*/
+/**************************************************************************/
 void cmd_i2ceeprom_read(uint8_t argc, char **argv)
 {
+  uint16_t addr;
+  uint8_t value; // buffer[1] = { 0x00 };
+
+  // Make sure hexadecimal address value is 16-bit or less
+  if ((strlen (argv[0]) > 2) && (!strncmp (argv[0], "0x", 2) || !strncmp (argv[0], "0X", 2)) && (strlen (argv[0]) > 6))
+  {
+    printf("Invalid Address: 16-bit hexadecimal value required (ex. '0x00EF').%s", CFG_INTERFACE_NEWLINE);
+    return;
+  }
+
+  // Try to convert supplied address to an integer
+  int32_t addr32;
+  getNumber (argv[0], &addr32);
+  
+  // Check for invalid values (getNumber may complain about this as well)
+  if (addr32 < 0 || addr32 > MCP24AA_MAXADDR)
+  {
+    printf("Address out of range: Value from 0-%d or 0x0000-0x%04X required.%s", MCP24AA_MAXADDR, MCP24AA_MAXADDR, CFG_INTERFACE_NEWLINE);
+    return;
+  }
+
+  // Address seems to be OK
+  addr = (uint16_t)addr32;
+  mcp24aaReadByte(addr, &value);
+
+  printf("0x%02X%s", value, CFG_INTERFACE_NEWLINE);
 }
 
+/**************************************************************************/
+/*! 
+    Writes a single byte at the supplied EEPROM address
+*/
+/**************************************************************************/
 void cmd_i2ceeprom_write(uint8_t argc, char **argv)
 {
+  uint16_t addr;
+  uint8_t val;
+
+  // Make sure hexadecimal address value is 16-bit or less
+  if ((strlen (argv[0]) > 2) && (!strncmp (argv[0], "0x", 2) || !strncmp (argv[0], "0X", 2)) && (strlen (argv[0]) > 6))
+  {
+    printf("Invalid Address: 16-bit hexadecimal value required (ex. '0x00EF').%s", CFG_INTERFACE_NEWLINE);
+    return;
+  }
+
+  // Try to convert supplied address to an integer
+  int32_t addr32;
+  getNumber (argv[0], &addr32);
+  
+  // Check for invalid values (getNumber may complain about this as well)
+  if (addr32 < 0 || addr32 > MCP24AA_MAXADDR)
+  {
+    printf("Address out of range: Value from 0-%d or 0x0000-0x%04X required.%s", MCP24AA_MAXADDR, MCP24AA_MAXADDR, CFG_INTERFACE_NEWLINE);
+    return;
+  }
+
+  // If Chibi is enabled, make sure we are not overwriting the short or IEEE address in EEPROM
+  #ifdef CFG_CHIBI
+  if ((addr32 >= CFG_CHIBI_EEPROM_IEEEADDR) && (addr32 <= CFG_CHIBI_EEPROM_IEEEADDR + 7))
+  {
+    printf("Reserved Address: 0x%04X to 0x%04X is reserved for Chibi IEEE address%s", CFG_CHIBI_EEPROM_IEEEADDR, CFG_CHIBI_EEPROM_IEEEADDR + 7, CFG_INTERFACE_NEWLINE);
+    return;
+  }
+  if ((addr32 >= CFG_CHIBI_EEPROM_SHORTADDR) && (addr32 <= CFG_CHIBI_EEPROM_SHORTADDR + 1))
+  {
+    printf("Reserved Address: 0x%04X to 0x%04X is reserved for Chibi address%s", CFG_CHIBI_EEPROM_SHORTADDR, CFG_CHIBI_EEPROM_SHORTADDR + 1, CFG_INTERFACE_NEWLINE);
+    return;
+  }
+  #endif
+
+  // Address seems to be OK
+  addr = (uint16_t)addr32;
+
+  // Make sure hexadecimal data is 8-bit or less
+  if ((strlen (argv[1]) > 2) && (!strncmp (argv[1], "0x", 2) || !strncmp (argv[1], "0X", 2)) && (strlen (argv[1]) > 4))
+  {
+    printf("Invalid Data: 8-bit hexadecimal value required (ex. '0xEF').%s", CFG_INTERFACE_NEWLINE);
+    return;
+  }
+
+  // Try to convert supplied data to an integer
+  int32_t val32;
+  getNumber (argv[1], &val32);
+  
+  // Check for invalid values (getNumber may complain about this as well)
+  if (val32 < 0 || val32 > 0xFF)
+  {
+    printf("Invalid Data: Value from 0-255 or 0x00-0xFF required.%s", CFG_INTERFACE_NEWLINE);
+    return;
+  }
+
+  // Data seems to be OK
+  val = (uint8_t)val32;
+
+  // Instantiate error message placeholder
+  mcp24aaError_e error = MCP24AA_ERROR_OK;
+
+  // Write data at supplied address
+  error = mcp24aaWriteByte(addr, val);
+  if (error)
+  {
+    // Handle any errors
+    switch (error)
+    {
+      case (MCP24AA_ERROR_I2CINIT):
+        printf("Error: Unable to initialised I2C%s", CFG_INTERFACE_NEWLINE);
+        return;
+      case (MCP24AA_ERROR_ADDRERR):
+        printf("Error: Supplied address is out of range%s", CFG_INTERFACE_NEWLINE);
+        return;
+      default:
+        break;
+    }
+  }
+
+  // Write successful
+  printf("EEPROM: 0x%02X written at address 0x%04X%s", val, addr, CFG_INTERFACE_NEWLINE);
 }
 
 #endif
 
 #ifdef CFG_LM75B
 
+/**************************************************************************/
+/*! 
+    Gets the current temperature in degrees celsius from the LM75B
+*/
+/**************************************************************************/
 void cmd_lm75b_gettemp(uint8_t argc, char **argv)
 {
 }

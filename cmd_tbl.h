@@ -42,30 +42,24 @@
 #define CMD_COUNT (sizeof(cmd_tbl)/sizeof(cmd_t))
 
 #include <stdio.h>
-#include <stdlib.h>
 
 #ifdef CFG_INTERFACE_UART
 #include "core/uart/uart.h"
 #endif
 
 // Function prototypes for the command table
-void cmd_help(uint8_t argc, char **argv);         // mandatory: handled by core/cmd/cmd.c
+void cmd_help(uint8_t argc, char **argv);         // handled by core/cmd/cmd.c
 void cmd_hello(uint8_t argc, char **argv);
 void cmd_sysinfo(uint8_t argc, char **argv);
-
 #ifdef CFG_CHIBI
-void cmd_chibi_shortaddr(uint8_t argc, char **argv);
+void cmd_chibi_addr(uint8_t argc, char **argv);
 void cmd_chibi_ieeeaddr(uint8_t argc, char **argv);
 void cmd_chibi_tx(uint8_t argc, char **argv);
-void cmd_chibi_mode(uint8_t argc, char **argv);
-void cmd_chibi_power(uint8_t argc, char **argv);
 #endif
-
 #ifdef CFG_I2CEEPROM
 void cmd_i2ceeprom_read(uint8_t argc, char **argv);
 void cmd_i2ceeprom_write(uint8_t argc, char **argv);
 #endif
-
 #ifdef CFG_LM75B
 void cmd_lm75b_gettemp(uint8_t argc, char **argv);
 #endif
@@ -73,7 +67,10 @@ void cmd_lm75b_gettemp(uint8_t argc, char **argv);
 /**************************************************************************/
 /*! 
     Command list for the command-line interpreter and the name of the
-    corresponding method that handles the command
+    corresponding method that handles the command.
+
+    Note that a trailing ',' is required on the last entry, which will
+    cause a NULL entry to be appended to the end of the table.
 */
 /**************************************************************************/
 cmd_t cmd_tbl[] = 
@@ -84,11 +81,8 @@ cmd_t cmd_tbl[] =
   { "sysinfo",        0, 0, cmd_sysinfo           , "Displays current system configuration settings"      , "'sysinfo' has no parameters" },
 
   #ifdef CFG_CHIBI
-  { "chb-shortaddr",  0, 1, cmd_chibi_shortaddr   , "Chibi - Gets/sets the 16-bit address"                , "'chb-shortaddr [<1-65534>|<OxFFFE>]'" },
-  { "chb-ieeeaddr",   0, 1, cmd_chibi_ieeeaddr    , "Chibi - Gets/sets the 64-bit IEEE address"           , "'chb-ieeeaddr [<FFFFFFFFFFFFFFFF>]'" },
-  { "chb-tx",         2, 2, cmd_chibi_tx          , "Chibi - Transmits the supplied text/characters"      , "'chb-tx <shortaddr> <message>'" },
-  { "chb-mode",       0, 1, cmd_chibi_mode        , "Chibi - Gets/sets the AT86RF212's transceiver mode"  , "'chb-mode [<mode>]'" },
-  { "chb-power",      0, 1, cmd_chibi_power       , "Chibi - Gets/sets the AT86RF212's tranmist power"    , "'chb-power [<power>]'" },
+  { "chb-addr",       0, 1, cmd_chibi_addr        , "Chibi - Gets/sets the 16-bit address"                , "'chb-addr [<1-65534>|<OxFFFE>]'" },
+  { "chb-send",       2, 2, cmd_chibi_tx          , "Chibi - Transmits the supplied text/value"           , "'chb-tx <destaddr> <message>'" },
   #endif
 
   #ifdef CFG_I2CEEPROM
@@ -99,8 +93,6 @@ cmd_t cmd_tbl[] =
   #ifdef CFG_LM75B
   { "lm75b-gettemp",  0, 0, cmd_lm75b_gettemp     , "LM75B - Current temperature in degrees celsius"      , "'lm75b-gettemp'" },
   #endif
-
-  { NULL,             0, 0, NULL                  , NULL                                                  , NULL },
 };
 
 #endif
