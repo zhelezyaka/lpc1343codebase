@@ -208,7 +208,10 @@ int puts(const char * str)
 //      //   // Enable LED to indicate message reception (set low)
 //      //   gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_ON);
 //      //   // Output message to UART
-//      //   printf("Message received from node %02X: %s (rssi=%d)%s", rx_data.src_addr, rx_data.data, pcb->ed, CFG_INTERFACE_NEWLINE);
+//      //   printf("Message received from node %04X: %s (rssi=%d)%s", rx_data.src_addr, rx_data.data, pcb->ed, CFG_INTERFACE_NEWLINE);
+//      //   #ifdef CFG_INTERFACE
+//      //   printf(CFG_INTERFACE_PROMPT);
+//      //   #endif
 //      //   // Disable LED (set high)
 //      //   gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF);
 //      //   pcb->data_rcv = FALSE;
