@@ -41,6 +41,7 @@
 
 #include "lpc134x.h"
 #include "sysdefs.h"
+#include "drivers/chibi/chb_drvr.h"
 
 #define CFG_CPU_CCLK              (72000000)    // Ref. only.  Clock speed actually set in "core/cpu/cpu.c"
 
@@ -68,8 +69,10 @@
 // #define CFG_LM75B
 
 // #define CFG_CHIBI
-#define CFG_CHIBI_EEPROM_IEEEADDR   (0x00)        // Start location in EEPROM for the full IEEE address
-#define CFG_CHIBI_EEPROM_SHORTADDR  (0x08)        // Start location in EEPROM for the short address
+#define CFG_CHIBI_MODE              (BPSK20_868MHZ)         // See chb_drvr.h for possible values
+#define CFG_CHIBI_POWER             (CHB_PWR_EU2_5DBM)      // See chb_drvr.h for possible values
+#define CFG_CHIBI_EEPROM_IEEEADDR   (uint16_t)(0x0000)      // Start location in EEPROM for the full IEEE address
+#define CFG_CHIBI_EEPROM_SHORTADDR  (uint16_t)(0x0009)      // Start location in EEPROM for the short (16-bit) address
 
 // #####################
 // Config error-handling
