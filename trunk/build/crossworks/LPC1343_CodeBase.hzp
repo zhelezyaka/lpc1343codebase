@@ -26,9 +26,7 @@
           <file file_name="../../core/timer16/timer16.c"/>
         </folder>
         <folder Name="timer32">
-          <file file_name="../../core/timer32/timer32.c">
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
-          </file>
+          <file file_name="../../core/timer32/timer32.c"/>
         </folder>
         <folder Name="uart">
           <file file_name="../../core/uart/uart.c"/>
@@ -37,7 +35,6 @@
         <folder Name="usbhid-rom">
           <file file_name="../../core/usbhid-rom/usbconfig.c"/>
           <file file_name="../../core/usbhid-rom/usbhid.c"/>
-          <file file_name="../../core/usbhid-rom/hidexample.c"/>
         </folder>
         <folder Name="wdt">
           <file file_name="../../core/wdt/wdt.c"/>
@@ -52,39 +49,47 @@
         <folder Name="cmd">
           <file file_name="../../core/cmd/cmd.c"/>
         </folder>
+        <folder Name="usbcdc">
+          <file file_name="../../core/usbcdc/cdcuser.c"/>
+          <file file_name="../../core/usbcdc/usbcore.c"/>
+          <file file_name="../../core/usbcdc/usbdesc.c"/>
+          <file file_name="../../core/usbcdc/usbhw.c"/>
+          <file file_name="../../core/usbcdc/usbuser.c"/>
+        </folder>
       </folder>
       <file file_name="../../lpc134x.h"/>
       <file file_name="../../projectconfig.h"/>
-      <file file_name="../../main.c">
-        <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
-      </file>
+      <file file_name="../../main.c"/>
       <file file_name="../../sysdefs.h"/>
       <folder Name="drivers">
         <folder Name="eeprom">
           <folder Name="at25040">
-            <file file_name="../../drivers/eeprom/at25040/at25040.c">
-              <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
-              <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
-            </file>
+            <file file_name="../../drivers/eeprom/at25040/at25040.c"/>
           </folder>
           <folder Name="mcp24aa">
-            <file file_name="../../drivers/eeprom/mcp24aa/mcp24aa.c">
-              <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
-            </file>
+            <file file_name="../../drivers/eeprom/mcp24aa/mcp24aa.c"/>
           </folder>
         </folder>
         <folder Name="chibi" file_name="">
-          <file file_name="../../drivers/chibi/chb.c"/>
-          <file file_name="../../drivers/chibi/chb_buf.c"/>
-          <file file_name="../../drivers/chibi/chb_drvr.c"/>
-          <file file_name="../../drivers/chibi/chb_eeprom.c"/>
-          <file file_name="../../drivers/chibi/chb_spi.c"/>
+          <file file_name="../../drivers/chibi/chb.c">
+            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+          </file>
+          <file file_name="../../drivers/chibi/chb_buf.c">
+            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+          </file>
+          <file file_name="../../drivers/chibi/chb_drvr.c">
+            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+          </file>
+          <file file_name="../../drivers/chibi/chb_eeprom.c">
+            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+          </file>
+          <file file_name="../../drivers/chibi/chb_spi.c">
+            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+          </file>
         </folder>
         <folder Name="sensors">
           <folder Name="lm75b">
-            <file file_name="../../drivers/sensors/lm75b/lm75b.c">
-              <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
-            </file>
+            <file file_name="../../drivers/sensors/lm75b/lm75b.c"/>
           </folder>
         </folder>
       </folder>
@@ -99,13 +104,13 @@
       </file>
       <file file_name="flash_placement.xml"/>
     </folder>
-    <configuration Name="Release" build_debug_information="Yes" build_remove_unused_symbols="Yes" gcc_optimization_level="Level 2"/>
+    <configuration Name="Release"/>
   </project>
   <configuration Name="THUMB Flash Debug" inherited_configurations="THUMB;Flash;Debug"/>
   <configuration Name="THUMB" Platform="ARM" arm_instruction_set="THUMB" arm_library_instruction_set="THUMB" c_preprocessor_definitions="__THUMB" hidden="Yes"/>
   <configuration Name="Flash" c_preprocessor_definitions="__FLASH_BUILD" hidden="Yes"/>
   <configuration Name="Debug" build_debug_information="Yes" c_preprocessor_definitions="DEBUG" gcc_optimization_level="None" hidden="Yes" link_include_startup_code="No"/>
   <configuration Name="THUMB Flash Release" inherited_configurations="THUMB;Flash;Release"/>
-  <configuration Name="Release" build_debug_information="No" c_additional_options="-g1" c_preprocessor_definitions="NDEBUG;STARTUP_FROM_RESET" gcc_optimization_level="Level 2" hidden="Yes" link_include_startup_code="No"/>
+  <configuration Name="Release" build_debug_information="No" build_remove_unused_symbols="Yes" c_additional_options="-g1" c_preprocessor_definitions="NDEBUG;STARTUP_FROM_RESET" gcc_optimization_level="Level 1" hidden="Yes" link_include_startup_code="No"/>
   <configuration Name="Common" arm_linker_stack_size="1024" c_user_include_directories="$(ProjectDir)/../../" linker_printf_fp_enabled="No"/>
 </solution>

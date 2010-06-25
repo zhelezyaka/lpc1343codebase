@@ -43,10 +43,6 @@
 
 #include "usbhid.h"
 
-#ifdef CFG_USBHID_EXAMPLE
-#include "hidexample.h"
-#endif
-
 USB_DEV_INFO DeviceInfo;
 HID_DEVICE_INFO HidDevInfo;
 ROM ** rom = (ROM **)0x1fff1ff8;
@@ -80,24 +76,19 @@ void usbHIDGetInReport (uint8_t src[], uint32_t length)
 /**************************************************************************/
 void usbHIDSetOutReport (uint8_t dst[], uint32_t length)
 {
-  #ifdef CFG_USBHID_EXAMPLE
-    usbParseCommand(dst[0], dst[1]);
-  #else
-    uint8_t PCOutReportData = dst[0];
-    // Check bit 0 in the incoming report to determine is LED should
-    // be enabled or disabled (1 = enabled, 0 = disabled)
-    if (PCOutReportData & (1<<0))
-    {
-      // Enable LED (set low)
-      gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, 0);
-    }
-    else
-    {
-      // Disable LED (set high)
-      gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, 1);
-    }
-  #endif
-
+  uint8_t PCOutReportData = dst[0];
+  // Check bit 0 in the incoming report to determine is LED should
+  // be enabled or disabled (1 = enabled, 0 = disabled)
+  if (PCOutReportData & (1<<0))
+  {
+    // Enable LED (set low)
+    gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, 0);
+  }
+  else
+  {
+    // Disable LED (set high)
+    gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, 1);
+  }
 }
 
 /**************************************************************************/
@@ -147,7 +138,7 @@ void usbHIDInit (void)
   HidDevInfo.idVendor = USB_VENDOR_ID;
   HidDevInfo.idProduct = USB_PROD_ID;
   HidDevInfo.bcdDevice = USB_DEVICE; 
-  HidDevInfo.StrDescPtr = (uint32_t)&USB_StringDescriptor[0];
+  HidDevInfo.StrDescPtr = (uint32_t)&USB_HIDStringDescriptor[0];
   #ifdef CFG_USBHID_EXAMPLE  
   HidDevInfo.InReportCount = 2;
   HidDevInfo.OutReportCount = 2;
@@ -181,8 +172,10 @@ void usbHIDInit (void)
     @brief Passes the USB interrupt to the internal ROM-based handler
 */
 /**************************************************************************/
+#ifdef CFG_USBHID
 void USB_IRQHandler()
 {
   (*rom)->pUSBD->isr();
 }
+#endif
 

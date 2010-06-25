@@ -43,9 +43,12 @@
 
 #include "core/cpu/cpu.h"
 #include "core/gpio/gpio.h"
-#include "core/uart/uart.h"
 #include "core/pmu/pmu.h"
 #include "core/systick/systick.h"
+
+#ifdef CFG_PRINTF_UART
+  #include "core/uart/uart.h"
+#endif
 
 #ifdef CFG_INTERFACE
   #include "core/cmd/cmd.h"
@@ -58,6 +61,13 @@
 
 #ifdef CFG_USBHID
   #include "core/usbhid-rom/usbhid.h"
+#endif
+
+#ifdef CFG_USBCDC
+  #include "core/usbcdc/usb.h"
+  #include "core/usbcdc/usbcore.h"
+  #include "core/usbcdc/usbhw.h"
+  #include "core/usbcdc/cdcuser.h"
 #endif
 
 #ifdef CFG_I2CEEPROM
@@ -82,13 +92,13 @@ static void systemInit()
   // Initialise the systick timer (delay set in projectconfig.h)
   systickInit(CFG_SYSTICK_DELAY_IN_MS);
 
-  // Initialise UART with the default baud rate (set in projectconfig.h)
-  uartInit(CFG_UART_BAUDRATE);
-
-  // Note: Printf can now be used
-
   // Initialise GPIO
   gpioInit();
+
+  #ifdef CFG_PRINTF_UART
+    // Initialise UART with the default baud rate (set in projectconfig.h)
+    uartInit(CFG_UART_BAUDRATE);
+  #endif
 
   // Initialise power management unit
   pmuInit();
@@ -98,31 +108,38 @@ static void systemInit()
   gpioSetPullup(&IOCON_PIO3_5, gpioPullupMode_Inactive);
   gpioSetValue(CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF);
 
-  // Initialise EEPROM (if requested)
+  // Initialise USB HID
+  #ifdef CFG_USBHID
+    usbHIDInit();
+  #endif
+
+  // Initialise USB CDC
+  #ifdef CFG_USBCDC
+    USB_Init();                               // USB Initialization
+    USB_Connect(TRUE);                        // USB Connect
+    while (!USB_Configuration) ;              // wait until USB is configured
+  #endif
+
+  // Printf can now be used with either UART or USBCDC
+
+  // Initialise EEPROM
   #ifdef CFG_I2CEEPROM
     mcp24aaInit();
   #endif
 
-  // Initialise Chibi (if requested)
+  // Initialise Chibi
   #ifdef CFG_CHIBI
     // Write addresses to EEPROM for the first time if necessary
     // uint16_t addr_short = 0x0001;
     // uint64_t addr_ieee =  0x0000000000000001;
     // mcp24aaWriteBuffer(CFG_CHIBI_EEPROM_SHORTADDR, (uint8_t *)&addr_short, 2);
     // mcp24aaWriteBuffer(CFG_CHIBI_EEPROM_IEEEADDR, (uint8_t *)&addr_ieee, 8);
-
     chb_init();
     chb_pcb_t *pcb = chb_get_pcb();
     printf("%-40s : 0x%04X%s", "Chibi Initialised", pcb->src_addr, CFG_INTERFACE_NEWLINE);
   #endif
 
-  // Initialise USB HID
-  #ifdef CFG_USBHID
-    printf("Initialising USB (HID)%s", CFG_INTERFACE_NEWLINE);
-    usbHIDInit();
-  #endif
-
-  // Start the command line (if requested)
+  // Start the command line interface (if requested)
   #ifdef CFG_INTERFACE
     printf("%sType 'help' for a list of available commands%s", CFG_INTERFACE_NEWLINE, CFG_INTERFACE_NEWLINE);
     cmdInit();
@@ -158,7 +175,7 @@ int main (void)
 
 /**************************************************************************/
 /*! 
-    @brief Sends a single byte to a pre-determined end point (UART, etc.).
+    @brief Sends a single byte to a pre-determined peripheral (UART, etc.).
 
     @param[in]  byte
                 Byte value to send
@@ -166,10 +183,17 @@ int main (void)
 /**************************************************************************/
 void __putchar(const char c) 
 {
-  #ifdef CFG_INTERFACE_UART
+  #if defined CFG_PRINTF_UART
+    // Send output to UART
     uartSendByte(c);
-  #else
-    // Send printf output to another endpoint
+  #endif
+
+  #if defined CFG_PRINTF_USBCDC
+    usbcdcSendByte(c);
+  #endif
+
+  #if defined CFG_PRINTF_NONE
+    // Ignore output
   #endif
 }
 

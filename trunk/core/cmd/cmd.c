@@ -54,8 +54,13 @@
 #include "cmd.h"
 #include "cmd_tbl.h"
 
-#ifdef CFG_INTERFACE_UART
+#ifdef CFG_PRINTF_UART
 #include "core/uart/uart.h"
+#endif
+
+#ifdef CFG_PRINTF_USBCDC
+  #include "core/usbcdc/cdcuser.h"
+  static char usbcdcBuf [32];
 #endif
 
 static uint8_t msg[CFG_INTERFACE_MAXMSGSIZE];
@@ -69,12 +74,28 @@ static uint8_t *msg_ptr;
 /**************************************************************************/
 void cmdPoll()
 {
-  #ifdef CFG_INTERFACE_UART
+  #if defined CFG_PRINTF_UART
   while (uartRxBufferDataPending())
   {
     uint8_t c = uartRxBufferRead();
     cmdRx(c);
   }
+  #endif
+
+  #if defined CFG_PRINTF_USBCDC
+    int  numBytesToRead, numBytesRead, numAvailByte;
+  
+    CDC_OutBufAvailChar (&numAvailByte);
+    if (numAvailByte > 0) 
+    {
+        numBytesToRead = numAvailByte > 32 ? 32 : numAvailByte; 
+        numBytesRead = CDC_RdOutBuf (&usbcdcBuf[0], &numBytesToRead);
+		int i;
+        for (i = numBytesToRead; i > 0; --i)
+        {
+          cmdRx(usbcdcBuf[i-1]);
+        }
+    }
   #endif
 }
 
@@ -198,7 +219,7 @@ void cmdParse(char *cmd)
 /**************************************************************************/
 void cmdInit()
 {
-  #ifdef CFG_INTERFACE_UART
+  #if defined CFG_INTERFACE && defined CFG_INTERFACE_UART
   // Check if UART is already initialised
   uart_pcb_t *pcb = uartGetPCB();
   if (!pcb->initialised)

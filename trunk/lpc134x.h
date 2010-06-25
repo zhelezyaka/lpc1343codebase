@@ -1409,7 +1409,7 @@
 #define IOCON_PIO2_1_HYS_DISABLE                  ((unsigned int) 0x00000000)
 #define IOCON_PIO2_1_HYS_ENABLE                   ((unsigned int) 0x00000020)
 
-#define IOCON_PIO0_3 (*(pREG32 (0x4004402C)))
+#define IOCON_PIO0_3                              (*(pREG32 (0x4004402C)))
 #define IOCON_PIO0_3_FUNC_MASK                    ((unsigned int) 0x00000007)
 #define IOCON_PIO0_3_FUNC_GPIO                    ((unsigned int) 0x00000000)
 #define IOCON_PIO0_3_FUNC_USB_VBUS                ((unsigned int) 0x00000001)
@@ -1501,7 +1501,7 @@
 #define IOCON_PIO3_5_HYS_DISABLE                  ((unsigned int) 0x00000000)
 #define IOCON_PIO3_5_HYS_ENABLE                   ((unsigned int) 0x00000020)
 
-#define IOCON_PIO0_6 (*(pREG32 (0x4004404C)))
+#define IOCON_PIO0_6                              (*(pREG32 (0x4004404C)))
 #define IOCON_PIO0_6_FUNC_MASK                    ((unsigned int) 0x00000007)
 #define IOCON_PIO0_6_FUNC_GPIO                    ((unsigned int) 0x00000000)
 #define IOCON_PIO0_6_FUNC_USB_CONNECT             ((unsigned int) 0x00000001)

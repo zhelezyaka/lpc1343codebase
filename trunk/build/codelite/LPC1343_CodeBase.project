@@ -2,7 +2,7 @@
 <CodeLite_Project Name="LPC1343_CodeBase" InternalType="">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00010001N0005Debug000000000000]]>
+      <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
     </Plugin>
   </Plugins>
   <Description/>
@@ -70,6 +70,23 @@
     <VirtualDirectory Name="cmd">
       <File Name="../../core/cmd/cmd.c"/>
       <File Name="../../core/cmd/cmd.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="usbcdc">
+      <File Name="../../core/usbcdc/cdc.h"/>
+      <File Name="../../core/usbcdc/cdcuser.c"/>
+      <File Name="../../core/usbcdc/cdcuser.h"/>
+      <File Name="../../core/usbcdc/config.h"/>
+      <File Name="../../core/usbcdc/usb.h"/>
+      <File Name="../../core/usbcdc/usbcfg.h"/>
+      <File Name="../../core/usbcdc/usbcore.c"/>
+      <File Name="../../core/usbcdc/usbcore.h"/>
+      <File Name="../../core/usbcdc/usbdesc.c"/>
+      <File Name="../../core/usbcdc/usbdesc.h"/>
+      <File Name="../../core/usbcdc/usbhw.c"/>
+      <File Name="../../core/usbcdc/usbhw.h"/>
+      <File Name="../../core/usbcdc/usbreg.h"/>
+      <File Name="../../core/usbcdc/usbuser.c"/>
+      <File Name="../../core/usbcdc/usbuser.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="drivers">
