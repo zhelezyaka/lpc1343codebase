@@ -55,14 +55,17 @@
 #define CFG_LED_ON                (0)           // The pin state to turn the LED on (0 = low, 1 = High)
 #define CFG_LED_OFF               (1)           // The pin state to turn the LED off (0 = low, 1 = High)
 
+// #define CFG_USBHID
+#define CFG_USBCDC                              // Defaults to 115200 8N1
+
+// #define CFG_PRINTF_NONE                      // Ignore all printf output
+// #define CFG_PRINTF_UART                      // Use UART for printf output
+#define CFG_PRINTF_USBCDC                       // Use USB CDC for printf output
+
 #define CFG_INTERFACE
-#define CFG_INTERFACE_UART                      // Use UART for the command-line interface
 #define CFG_INTERFACE_MAXMSGSIZE  (80)          // The maximum number of bytes to accept for a command
 #define CFG_INTERFACE_NEWLINE     "\r\n"        // This should be either \r\n (Windows-style) or \n (Unix-style)
 #define CFG_INTERFACE_PROMPT      "LPC1343 >> "
-
-#define CFG_USBHID
-// #define CFG_USBHID_EXAMPLE
 
 #define CFG_I2CEEPROM
 
@@ -74,12 +77,36 @@
 #define CFG_CHIBI_EEPROM_IEEEADDR   (uint16_t)(0x0000)      // Start location in EEPROM for the full IEEE address
 #define CFG_CHIBI_EEPROM_SHORTADDR  (uint16_t)(0x0009)      // Start location in EEPROM for the short (16-bit) address
 
+// #define CFG_TESTBED
+
 // #####################
-// Config error-handling
+// Config error-checking
 // #####################
+#if !defined CFG_PRINTF_NONE
+  #if defined CFG_PRINTF_USBCDC && defined CFG_PRINTF_UART
+    #error "CFG_PRINTF_UART or CFG_PRINTF_USBCDC cannot both be defined at once"
+  #endif
+  #if defined CFG_PRINTF_USBCDC && !defined CFG_USBCDC
+    #error "CFG_PRINTF_CDC requires CFG_USBCDC to be defined as well"
+  #endif
+#endif
+#if defined CFG_PRINTF_NONE && defined CFG_PRINTF_UART
+  #error "CFG_PRINTF_NONE and CFG_PRINTF_UART can not be defined at the same time"
+#endif
+#if defined CFG_PRINTF_NONE && defined CFG_PRINTF_USBCDC
+  #error "CFG_PRINTF_NONE and CFG_PRINTF_USBCDC can not be defined at the same time"
+#endif
+
+#if defined CFG_USBCDC && defined CFG_USBHID
+  #error "Only one USB class can be defined at a time (CFG_USBCDC or CFG_USBHID)"
+#endif
+
 #ifdef CFG_INTERFACE
-  #if defined CFG_INTERFACE && !defined CFG_INTERFACE_UART
-    #error "No endpoint defined for CFG_INTERFACE (ex: CFG_INTERFACE_UART)"
+  #if defined CFG_PRINTF_NONE
+    #error "CFG_INTERFACE can not be defined with CFG_PRINTF_NONE"
+  #endif
+  #if !defined CFG_PRINTF_UART && !defined CFG_PRINTF_USBCDC
+    #error "CFG_PRINTF_UART or CFG_PRINTF_USBCDC must be defined for for CFG_INTERFACE Input/Output"
   #endif
 #endif
 

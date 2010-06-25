@@ -428,3 +428,55 @@ void cmd_lm75b_gettemp(uint8_t argc, char **argv)
 }
 
 #endif
+
+#ifdef CFG_TESTBED
+
+/**************************************************************************/
+/*! 
+    Executes a series of automatic tests using a dedicated testbed.
+*/
+/**************************************************************************/
+void cmd_testbed_test(uint8_t argc, char **argv)
+{
+  printf("Starting Testbed Checks%s%s", CFG_INTERFACE_NEWLINE, CFG_INTERFACE_NEWLINE);
+
+  // ToDo: Test ADC3
+  printf("%-30s : ", "ADC Input");
+  printf("ToDo%s", CFG_INTERFACE_NEWLINE);
+
+  // ToDo: Test EEPROM
+  printf("%-30s : ", "EEPROM (I2C)");
+  printf("ToDo%s", CFG_INTERFACE_NEWLINE);
+
+  // ToDo: Enable LED
+  printf("%-30s : ", "LED");
+  printf("ToDo%s", CFG_INTERFACE_NEWLINE);
+
+  #ifdef CFG_LM75B
+  // ToDo: Test Temperature Sensor
+  printf("%-30s : ", "LM75B Temp. Sensor");
+  printf("ToDo%s", CFG_INTERFACE_NEWLINE);
+  #endif
+
+  #ifdef CFG_CHIBI
+  // ToDo: Test Chibi Presence
+  printf("%-30s : ", "AT86RF212 Presence");
+  printf("ToDo%s", CFG_INTERFACE_NEWLINE);
+
+  // ToDo: Test Chibi TX
+  printf("%-30s : ", "Chibi TX (3s)");
+  printf(".");
+  printf(".");
+  printf(".");
+  printf("ToDo%s", CFG_INTERFACE_NEWLINE);
+  
+  // ToDo: Test Chibi RX
+  printf("%-30s : ", "Chibi RX (3s)");
+  printf(".");
+  printf(".");
+  printf(".");
+  printf("ToDo%s", CFG_INTERFACE_NEWLINE);
+  #endif
+}
+
+#endif

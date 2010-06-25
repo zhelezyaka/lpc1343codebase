@@ -40,7 +40,7 @@
 #include "usbconfig.h"
 
 /* USB String Descriptor (optional) */
-const uint8_t USB_StringDescriptor[] = 
+const uint8_t USB_HIDStringDescriptor[] = 
 {
   /* Index 0x00: LANGID Codes */
   0x04,                              /* bLength */

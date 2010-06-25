@@ -63,6 +63,9 @@ void cmd_i2ceeprom_write(uint8_t argc, char **argv);
 #ifdef CFG_LM75B
 void cmd_lm75b_gettemp(uint8_t argc, char **argv);
 #endif
+#ifdef CFG_TESTBED
+void cmd_testbed_test(uint8_t argc, char **argv);
+#endif
 
 /**************************************************************************/
 /*! 
@@ -81,17 +84,21 @@ cmd_t cmd_tbl[] =
   { "sysinfo",        0, 0,   cmd_sysinfo           , "Displays current system configuration settings"      , "'sysinfo' has no parameters" },
 
   #ifdef CFG_CHIBI
-  { "chb-addr",       0, 1,   cmd_chibi_addr        , "Chibi - Gets/sets the 16-bit address"                , "'chb-addr [<1-65534>|<OxFFFE>]'" },
+  { "chb-addr",       0, 1,   cmd_chibi_addr        , "Chibi - Gets/sets the 16-bit node address"           , "'chb-addr [<1-65534>|<OxFFFE>]'" },
   { "chb-send",       2, 99,  cmd_chibi_tx          , "Chibi - Transmits the supplied text/value"           , "'chb-send <destaddr> <message>'" },
   #endif
 
   #ifdef CFG_I2CEEPROM
-  { "eeprom-read",    1, 1,   cmd_i2ceeprom_read    , "EEPROM - Reads one byte from the specified address"  , "'eeprom-read <addr>'" },
-  { "eeprom-write",   2, 2,   cmd_i2ceeprom_write   , "EEPROM - Writes one byte to the specified address"   , "'eeprom-write <addr> <value>'" },
+  { "eeprom-read",    1, 1,   cmd_i2ceeprom_read    , "Reads one byte from the specified EEPROM address"    , "'eeprom-read <addr>'" },
+  { "eeprom-write",   2, 2,   cmd_i2ceeprom_write   , "Writes one byte to the specified EEPROM address"     , "'eeprom-write <addr> <value>'" },
   #endif
 
   #ifdef CFG_LM75B
-  { "lm75b-gettemp",  0, 0,   cmd_lm75b_gettemp     , "LM75B - Current temperature in degrees celsius"      , "'lm75b-gettemp'" },
+  { "lm75b-read",     0, 0,   cmd_lm75b_gettemp     , "Gets the current temperature in degrees celsius"     , "'lm75b-read' has no parameters" },
+  #endif
+
+  #ifdef CFG_TESTBED
+  { "test",           0, 0,   cmd_testbed_test      , "Executes all testbed tests"                          , "'test' has no parameters" },
   #endif
 };
 
