@@ -90,7 +90,7 @@ void cmdPoll()
     {
         numBytesToRead = numAvailByte > 32 ? 32 : numAvailByte; 
         numBytesRead = CDC_RdOutBuf (&usbcdcBuf[0], &numBytesToRead);
-		int i;
+        int i;
         for (i = numBytesToRead; i > 0; --i)
         {
           cmdRx(usbcdcBuf[i-1]);

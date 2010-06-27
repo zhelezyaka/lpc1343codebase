@@ -59,7 +59,7 @@ extern unsigned short CDC_GetSerialState (void);
 /* flow control */
 extern unsigned short CDC_DepInEmpty;         // DataEndPoint IN empty
 
-extern void usbcdcSendByte(const char c);
+extern void usbcdcSendByte(uint8_t c);
 
 #endif  /* __CDCUSER_H__ */
 

@@ -115,9 +115,11 @@ static void systemInit()
 
   // Initialise USB CDC
   #ifdef CFG_USBCDC
-    USB_Init();                               // USB Initialization
-    USB_Connect(TRUE);                        // USB Connect
-    while (!USB_Configuration) ;              // wait until USB is configured
+    CDC_Init();                   // Initialise VCOM
+    USB_Init();                   // USB Initialization
+    USB_Connect(TRUE);            // USB Connect
+    // ToDo: Why does the below line not work with GCC optimisation enabled (value always 0)?
+    // while (!USB_Configuration);   // wait until USB is configured
   #endif
 
   // Printf can now be used with either UART or USBCDC
@@ -183,12 +185,12 @@ int main (void)
 /**************************************************************************/
 void __putchar(const char c) 
 {
-  #if defined CFG_PRINTF_UART
+  #ifdef CFG_PRINTF_UART
     // Send output to UART
     uartSendByte(c);
   #endif
 
-  #if defined CFG_PRINTF_USBCDC
+  #ifdef CFG_PRINTF_USBCDC
     usbcdcSendByte(c);
   #endif
 
