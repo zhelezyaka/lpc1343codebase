@@ -352,13 +352,15 @@ void CDC_NotificationIn (void)
   USB_WriteEP (CDC_CEP_IN, &NotificationBuf[0], 10);   // send notification
 }
 
-extern void usbcdcSendByte(const char c)
+extern void usbcdcSendByte(uint8_t c)
 {
   USB_WriteEP (CDC_DEP_IN, (unsigned char *)&c, 1);
   CDC_DepInEmpty = 1;
-  // Ugly delay!!
-  uint32_t i;
-  for ( i = 0; i < 1500; i++ )
+
+  // Ugly delay required ... there's obviously a better way to do this! :-)
+  uint32_t i, delay;
+  delay = ((CFG_CPU_CCLK/SCB_SYSAHBCLKDIV) / 10000);   // ~100uS delay
+  for ( i = 0; i < delay; i++ )
   {
     __asm("nop");
   }

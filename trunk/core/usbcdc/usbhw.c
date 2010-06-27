@@ -26,7 +26,6 @@
 #include "usbhw.h"
 #include "usbcore.h"
 #include "usbuser.h"
-#include "cdcuser.h"
 
 
 /*    
@@ -178,9 +177,6 @@ void USB_Init (void)
 {
   // Setup USB clock and pins
   USBIOClkConfig();  
-
-  // Initialise VCOM
-  CDC_Init();
 
 #if USB_FIQ_EVENT
   /* It's important that only BULK and FRAME(ISO) can be routed
