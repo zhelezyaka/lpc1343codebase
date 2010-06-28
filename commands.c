@@ -163,6 +163,10 @@ void cmd_sysinfo(uint8_t argc, char **argv)
   printf("%-30s : %d mS %s", "Systick Timer Delay", CFG_SYSTICK_DELAY_IN_MS, CFG_INTERFACE_NEWLINE);
   printf("%-30s : %d BPS %s", "UART Baud Rate", CFG_UART_BAUDRATE, CFG_INTERFACE_NEWLINE);
 
+  #ifdef CFG_USBCDC
+    printf("%-30s : %d BPS %s", "USB CDC Baud Rate", 115200, CFG_INTERFACE_NEWLINE);
+  #endif
+
   #ifdef CFG_LM75B
     int32_t temp = 0;
     lm75bGetTemperature(&temp);
