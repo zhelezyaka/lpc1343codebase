@@ -61,7 +61,7 @@ extern MSC_CSW CSW;
 
 uint16_t  USB_DeviceStatus;
 uint8_t  USB_DeviceAddress;
-uint8_t  USB_Configuration;
+volatile uint8_t  USB_Configuration;
 uint32_t USB_EndPointMask;
 uint32_t USB_EndPointHalt;
 uint32_t USB_EndPointStall;                         /* EP must stay stalled */
@@ -373,7 +373,8 @@ static inline uint32_t USB_ReqGetConfiguration (void) {
 
   switch (SetupPacket.bmRequestType.BM.Recipient) {
     case REQUEST_TO_DEVICE:
-      EP0Data.pData = &USB_Configuration;
+      // Added cast to avoid warnings due to USB_Configuration being volatile (KTownsend)
+      EP0Data.pData = (uint8_t *)&USB_Configuration;
       break;
     default:
       return (FALSE);

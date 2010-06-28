@@ -118,8 +118,7 @@ static void systemInit()
     CDC_Init();                   // Initialise VCOM
     USB_Init();                   // USB Initialization
     USB_Connect(TRUE);            // USB Connect
-    // ToDo: Why does the below line not work with GCC optimisation enabled (value always 0)?
-    // while (!USB_Configuration);   // wait until USB is configured
+    while (!USB_Configuration);   // wait until USB is configured
   #endif
 
   // Printf can now be used with either UART or USBCDC
