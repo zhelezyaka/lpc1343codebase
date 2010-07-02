@@ -124,6 +124,7 @@
         <folder Name="lcd">
           <file file_name="../../drivers/lcd/CFAF240320TTS.c">
             <configuration Name="THUMB Flash Release" build_exclude_from_build="Yes"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
           </file>
           <file file_name="../../drivers/lcd/fonts.c"/>
           <file file_name="../../drivers/lcd/ILI9325.c"/>
