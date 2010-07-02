@@ -70,6 +70,10 @@
   #include "core/usbcdc/cdcuser.h"
 #endif
 
+#ifdef CFG_LCD_ILI9325
+  #include "drivers/lcd/lcd.h"
+#endif
+
 #ifdef CFG_I2CEEPROM
   #include "drivers/eeprom/mcp24aa/mcp24aa.h"
 #endif
@@ -138,6 +142,11 @@ static void systemInit()
     chb_init();
     chb_pcb_t *pcb = chb_get_pcb();
     printf("%-40s : 0x%04X%s", "Chibi Initialised", pcb->src_addr, CFG_INTERFACE_NEWLINE);
+  #endif
+
+  // Initialise LCD Display
+  #ifdef CFG_LCD_ILI9325
+    lcdInit();
   #endif
 
   // Start the command line interface (if requested)
@@ -212,33 +221,3 @@ int puts(const char * str)
   return 0;
 }
 
-
-
-// ToDo: Cleanup
-
-//    #ifdef CFG_CHIBI
-//      chb_pcb_t *pcb = chb_get_pcb();
-//
-//      // Send message over Chibi every 500mS
-//      systickDelay(500 / CFG_SYSTICK_DELAY_IN_MS);
-//      gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_ON);
-//      char *text = "Test";
-//      chb_write(0xFFFF, text, sizeof(text));
-//      gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF);
-//
-//      // Check for incoming messages
-//      // if (pcb->data_rcv)
-//      // {
-//      //   rx_data.len = chb_read(&rx_data);
-//      //   // Enable LED to indicate message reception (set low)
-//      //   gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_ON);
-//      //   // Output message to UART
-//      //   printf("Message received from node %04X: %s (rssi=%d)%s", rx_data.src_addr, rx_data.data, pcb->ed, CFG_INTERFACE_NEWLINE);
-//      //   #ifdef CFG_INTERFACE
-//      //   printf(CFG_INTERFACE_PROMPT);
-//      //   #endif
-//      //   // Disable LED (set high)
-//      //   gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF);
-//      //   pcb->data_rcv = FALSE;
-//      // }
-//    #endif
