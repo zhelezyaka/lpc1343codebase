@@ -42,6 +42,7 @@ void lcdInit(void)
   while (1)
   {
     lcdTest();
+    // lcdDrawString(200, 310, BLACK, "TEST", Font_System7x8);
     frames++;
     lcdTest2();
     frames++;
@@ -86,14 +87,14 @@ void lcdTest2(void)
       else if(i>159)lcdWriteData(CYAN);
       else if(i>119)lcdWriteData(GREEN);
       else if(i>79)lcdWriteData(BLUE);
-      else if(i>39)lcdWriteData(WHITE);
-      else lcdWriteData(BLACK);
+      else if(i>39)lcdWriteData(BLACK);
+      else lcdWriteData(WHITE);
     }
   }
 }
 
 /*************************************************/
-// Provide for convenience sake ... shouldn't be used
+// Provided for convenience sake ... shouldn't be used
 // in critical sections since it adds an extra
 // branch, etc.
 void lcdCommand(uint16_t command, uint16_t data)
@@ -107,12 +108,10 @@ void lcdWriteCmd(uint16_t command)
 {
   CLR_CS_CD;      // Saves 7 commands compared to "CLR_CS; CLR_CD;"
   SET_RD_WR;      // Saves 7 commands compared to "SET_RD; SET_WR;"
-  GPIO_GPIO2DATA &= ~LCD_DATA_MASK;             // clear
-  GPIO_GPIO2DATA |= command >> LCD_DATA_OFFSET; // set
+  LCD_GPIO2DATA_DATA = (command >> (8 - LCD_DATA_OFFSET));
   CLR_WR;
   SET_WR;
-  GPIO_GPIO2DATA &= ~LCD_DATA_MASK;             // clear
-  GPIO_GPIO2DATA |= (command & LCD_DATA_MASK);  // set
+  LCD_GPIO2DATA_DATA = command << LCD_DATA_OFFSET;
   CLR_WR;
   SET_WR_CS;      // Saves 7 commands compared to "SET_WR; SET_CS;"
 }
@@ -122,12 +121,10 @@ void lcdWriteData(uint16_t data)
 {
   CLR_CS;
   SET_CD_RD_WR;   // Saves 14 commands compared to "SET_CD; SET_RD; SET_WR"
-  GPIO_GPIO2DATA &= ~LCD_DATA_MASK;             // clear
-  GPIO_GPIO2DATA |= data >> LCD_DATA_OFFSET; // set
+  LCD_GPIO2DATA_DATA = (data >> (8 - LCD_DATA_OFFSET));
   CLR_WR;
   SET_WR;
-  GPIO_GPIO2DATA &= ~LCD_DATA_MASK;             // clear
-  GPIO_GPIO2DATA |= (data & LCD_DATA_MASK);  // set
+  LCD_GPIO2DATA_DATA = data << LCD_DATA_OFFSET;
   CLR_WR;
   SET_WR_CS;      // Saves 7 commands compared to "SET_WR, SET_CS;"
 }
@@ -168,19 +165,14 @@ void lcdInitDisplay(void)
 
   lcdCommand(0x0001, 0x0100);     // Driver Output Control Register (R01h)
   lcdCommand(0x0002, 0x0700);     // LCD Driving Waveform Control (R02h)
-  
-  // Entry Mode (R03h)
-  lcdCommand(0x0003, 0x1030);
-  
+  lcdCommand(0x0003, 0x1030);     // Entry Mode (R03h)  
   lcdCommand(0x0008, 0x0302);
   lcdCommand(0x0009, 0x0000);
-
   lcdCommand(0x0010, 0x0000);     // Power Control 1 (R10h)
   lcdCommand(0x0011, 0x0007);     // Power Control 2 (R11h)  
   lcdCommand(0x0012, 0x0000);     // Power Control 3 (R12h)
   lcdCommand(0x0013, 0x0000);     // Power Control 4 (R13h)
   lcdDelay(1000);  
-
   lcdCommand(0x0010, 0x14B0);     // Power Control 1 (R10h)  
   lcdDelay(500);  
   lcdCommand(0x0011, 0x0007);     // Power Control 2 (R11h)  
@@ -189,7 +181,6 @@ void lcdInitDisplay(void)
   lcdCommand(0x0013, 0x0C00);     // Power Control 4 (R13h)
   lcdCommand(0x0029, 0x0015);     // NVM read data 2 (R29h)
   lcdDelay(500);
-  
   lcdCommand(0x0030, 0x0000);     // Gamma Control 1
   lcdCommand(0x0031, 0x0107);     // Gamma Control 2
   lcdCommand(0x0032, 0x0000);     // Gamma Control 3
@@ -200,15 +191,12 @@ void lcdInitDisplay(void)
   lcdCommand(0x0039, 0x0000);     // Gamma Control 10
   lcdCommand(0x003C, 0x0203);     // Gamma Control 13
   lcdCommand(0x003D, 0x0403);     // Gamma Control 14
-
   lcdCommand(0x0050, 0x0000);     // Window Horizontal RAM Address Start (R50h)
   lcdCommand(0x0051, 0x00EF);     // Window Horizontal RAM Address End (R51h)
   lcdCommand(0x0052, 0X0000);     // Window Vertical RAM Address Start (R52h)
   lcdCommand(0x0053, 0x013F);     // Window Vertical RAM Address End (R53h)
-  
   lcdCommand(0x0060, 0xa700);     // Driver Output Control (R60h)
   lcdCommand(0x0061, 0x0001);     // Driver Output Control (R61h)
-
   lcdCommand(0x0090, 0X0029);     // Panel Interface Control 1 (R90h)
 
   // Display On
