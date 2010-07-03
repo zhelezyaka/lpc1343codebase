@@ -1,5 +1,5 @@
-#ifndef __LCD__
-#define __LCD__
+#ifndef __LCD_H__
+#define __LCD_H__
 
 #include "projectconfig.h"
 #include "core/gpio/gpio.h"
@@ -44,10 +44,8 @@
 // For single operation bit clear/set (see 1343 UM 8.5.1)
 #define LCD_GPIO2DATA_DATA      (*(pREG32 (GPIO_GPIO2_BASE + (LCD_DATA_MASK << 2))))
 #define LCD_GPIO1DATA_WR        (*(pREG32 (GPIO_GPIO1_BASE + ((1 << LCD_WR_PIN) << 2))))
-
 #define LCD_GPIO1DATA_CD        (*(pREG32 (GPIO_GPIO1_BASE + ((1 << LCD_CD_PIN) << 2))))
 #define LCD_GPIO1DATA_CS        (*(pREG32 (GPIO_GPIO1_BASE + ((1 << LCD_CS_PIN) << 2))))
-#define LCD_GPIO1DATA_WR        (*(pREG32 (GPIO_GPIO1_BASE + ((1 << LCD_WR_PIN) << 2))))
 #define LCD_GPIO1DATA_RD        (*(pREG32 (GPIO_GPIO1_BASE + ((1 << LCD_RD_PIN) << 2))))
 #define LCD_GPIO3DATA_RES       (*(pREG32 (GPIO_GPIO3_BASE + ((1 << LCD_RES_PIN) << 2))))
 #define LCD_GPIO1DATA_CS_CD     (*(pREG32 (GPIO_GPIO1_BASE + ((LCD_CS_CD_PINS) << 2))))
@@ -67,17 +65,12 @@
 #define CLR_RESET       LCD_GPIO3DATA_RES = (0)
 #define SET_RESET       LCD_GPIO3DATA_RES = (1 << LCD_RES_PIN)
 
+// The following macros are defined to improve code optimization by
+// reducing the number of instructions in heavily used functions
 #define CLR_CS_CD       LCD_GPIO1DATA_CS_CD = (0);
 #define SET_RD_WR       LCD_GPIO1DATA_RD_WR = (LCD_RD_WR_PINS);
 #define SET_WR_CS       LCD_GPIO1DATA_WR_CS = (LCD_WR_CS_PINS);
 #define SET_CD_RD_WR    LCD_GPIO1DATA_CD_RD_WR = (LCD_CD_RD_WR_PINS);
-
-// The following macros are defined to improve code optimization by
-// reducing the number of instructions in heavily used functions
-//#define CLR_CS_CD       GPIO_GPIO1DATA &= ~((1 << LCD_CD_PIN) | (1 << LCD_CS_PIN)); 
-//#define SET_RD_WR       GPIO_GPIO1DATA |= ((1 << LCD_RD_PIN) | (1 << LCD_WR_PIN)); 
-//#define SET_WR_CS       GPIO_GPIO1DATA |= ((1 << LCD_WR_PIN) | (1 << LCD_CS_PIN)); 
-//#define SET_CD_RD_WR    GPIO_GPIO1DATA |= ((1 << LCD_CD_PIN) | (1 << LCD_RD_PIN) | (1 << LCD_WR_PIN)); 
 
 // Color definitions
 #define	BLACK		0x0000
@@ -89,21 +82,28 @@
 #define YELLOW		0xFFE0
 #define WHITE		0xFFFF
 
+typedef struct RGB24Bit_s
+{
+  uint8_t r;
+  uint8_t g;
+  uint8_t b;
+} RGB24Bit_t;
+
 // Method prototypes
-void lcdInit(void);
-void lcdTest(void);
-void lcdTest2(void);
-void lcdCommand(uint16_t command, uint16_t data);
-void lcdWriteCmd(uint16_t command);
-void lcdWriteData(uint16_t data);
-void lcdDelay(unsigned int t);
-void lcdInitDisplay(void);
-void lcdHome(void);
-void lcdSetWindow(uint16_t x, uint16_t y, uint16_t x1, uint16_t y1);
-void lcdSetCursor(uint16_t x, uint16_t y);
-void lcdFillRGB(uint16_t data);
-void lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color);
-void lcdDrawChar(uint16_t x, uint16_t y, uint16_t color, uint8_t c, struct FONT_DEF font);
-void lcdDrawString(uint16_t x, uint16_t y, uint16_t color, char* text, struct FONT_DEF font);
+extern void lcdInit(void);
+extern void lcdTest(void);
+extern void lcdTest2(void);
+extern void lcdCommand(uint16_t command, uint16_t data);
+extern void lcdWriteCmd(uint16_t command);
+extern void lcdWriteData(uint16_t data);
+extern void lcdDelay(unsigned int t);
+extern void lcdInitDisplay(void);
+extern void lcdHome(void);
+extern void lcdSetWindow(uint16_t x, uint16_t y, uint16_t x1, uint16_t y1);
+extern void lcdSetCursor(uint16_t x, uint16_t y);
+extern void lcdFillRGB(uint16_t data);
+extern void lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color);
+
+extern uint16_t lcdRGB24toRGB565(RGB24Bit_t *in);
 
 #endif

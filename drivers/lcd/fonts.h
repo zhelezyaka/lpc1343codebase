@@ -20,12 +20,12 @@ extern const struct FONT_DEF Font_System3x6;
 extern const struct FONT_DEF Font_System5x8;
 extern const struct FONT_DEF Font_System7x8;
 extern const struct FONT_DEF Font_8x8;
-extern const struct FONT_DEF Font_8x8thin;
+extern const struct FONT_DEF Font_8x8Thin;
 
 extern const uint8_t au8FontSystem3x6[];
 extern const uint8_t au8FontSystem5x8[];
 extern const uint8_t au8FontSystem7x8[];
 extern const uint8_t au8Font8x8[];
-extern const uint8_t au8Font8x8thin[];
+extern const uint8_t au8Font8x8Thin[];
 
 #endif

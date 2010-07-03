@@ -10,7 +10,7 @@ const struct FONT_DEF Font_System3x6    = {3, 6, 32, 96,  au8FontSystem3x6};
 const struct FONT_DEF Font_System5x8    = {5, 8, 32, 128, au8FontSystem5x8};
 const struct FONT_DEF Font_System7x8    = {7, 8, 32, 128, au8FontSystem7x8};
 const struct FONT_DEF Font_8x8          = {8, 8, 32, 128, au8Font8x8};
-const struct FONT_DEF Font_8x8thin      = {8, 8, 32, 128, au8Font8x8thin};
+const struct FONT_DEF Font_8x8Thin      = {8, 8, 32, 128, au8Font8x8Thin};
 
 /* System 3x6 - UPPER CASE ONLY */
 const uint8_t au8FontSystem3x6[]= {
@@ -388,7 +388,7 @@ const uint8_t au8Font8x8[]= {
 };
 
 /* 8x8 Thin */
-const uint8_t au8Font8x8thin[]= {
+const uint8_t au8Font8x8Thin[]= {
     0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
     0x00,0x00,0x00,0x5F,0x00,0x00,0x00,0x00,
     0x00,0x00,0x07,0x00,0x00,0x07,0x00,0x00,

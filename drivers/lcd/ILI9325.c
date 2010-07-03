@@ -1,9 +1,5 @@
 #include "lcd.h"
 
-#include <string.h>
-
-uint32_t frames;
-
 /*************************************************/
 void lcdInit(void)
 {
@@ -30,23 +26,8 @@ void lcdInit(void)
   // Initialize the display
   lcdInitDisplay();
 
-  frames = 0;
-
-//  lcdTest();
-//  lcdDrawString(10, 10, WHITE, "LINE 1 (3X6 SYSTEM)", Font_System3x6);  
-//  lcdDrawString(10, 20, WHITE, "Line 2 (5x8 SYSTEM)", Font_System5x8);  
-//  lcdDrawString(10, 30, WHITE, "Line 3 (7x8 SYSTEM)", Font_System7x8);  
-//  lcdDrawString(10, 50, BLACK, "Line 4 (8x8)", Font_8x8);  
-//  lcdDrawString(10, 60, BLACK, "Line 6 (8x8 Thin)", Font_8x8thin);  
-
-  while (1)
-  {
-    lcdTest();
-    // lcdDrawString(200, 310, BLACK, "TEST", Font_System7x8);
-    frames++;
-    lcdTest2();
-    frames++;
-  }
+  // Fill black
+  lcdFillRGB(BLACK);
 }
 
 /*************************************************/
@@ -143,8 +124,6 @@ void lcdDelay(unsigned int t)
 /*************************************************/
 void lcdInitDisplay(void)
 {
-  uint16_t i = 0x0000;
-
   // Clear data line
   GPIO_GPIO2DATA &= ~LCD_DATA_MASK;
     
@@ -254,50 +233,14 @@ void lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color)
 }
 
 /*************************************************/
-void lcdDrawChar(uint16_t x, uint16_t y, uint16_t color, uint8_t c, struct FONT_DEF font)
+//    RGB24Bit_t rgb24;
+//    rgb24.r = 64;
+//    rgb24.g = 64;
+//    rgb24.b = 128;
+//    lcdFillRGB(lcdRGB24toRGB565(&rgb24));
+
+uint16_t lcdRGB24toRGB565(RGB24Bit_t *in)
 {
-  uint8_t col, column[font.u8Width];
-
-  // Check if the requested character is available
-  if ((c >= font.u8FirstChar) && (c <= font.u8LastChar))
-  {
-    // Retrieve appropriate columns from font data
-    for (col = 0; col < font.u8Width; col++)
-    {
-      column[col] = font.au8FontTable[((c - 32) * font.u8Width) + col];    // Get first column of appropriate character
-    }
-  }
-  else
-  {    
-    // Requested character is not available in this font ... send a space instead
-    for (col = 0; col < font.u8Width; col++)
-    {
-      column[col] = 0xFF;    // Send solid space
-    }
-  }
-
-  // Render each column
-  uint16_t xoffset, yoffset;
-  for (xoffset = 0; xoffset < font.u8Width; xoffset++)
-  {
-    for (yoffset = 0; yoffset < (font.u8Height + 1); yoffset++)
-    {
-      uint8_t bit = 0x00;
-      bit = (column[xoffset] << (8 - (yoffset + 1)));     // Shift current row bit left
-      bit = (bit >> 7);                     // Shift current row but right (results in 0x01 for black, and 0x00 for white)
-      if (bit)
-      {
-        lcdDrawPixel(x + xoffset, y + yoffset, color);
-      }
-    }
-  }
+  return ((in->r / 8) << 11) | ((in->g / 4) << 5) | (in->b / 8);
 }
 
-/*************************************************/
-void lcdDrawString(uint16_t x, uint16_t y, uint16_t color, char* text, struct FONT_DEF font)
-{
-  for (U8 l = 0; l < strlen(text); l++)
-  {
-    lcdDrawChar(x + (l * (font.u8Width + 1)), y, color, text[l], font);
-  }
-}

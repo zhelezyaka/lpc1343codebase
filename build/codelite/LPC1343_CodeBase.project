@@ -118,6 +118,22 @@
         <File Name="../../drivers/sensors/lm75b/lm75b.h"/>
       </VirtualDirectory>
     </VirtualDirectory>
+    <VirtualDirectory Name="lcd">
+      <File Name="../../drivers/lcd/drawing.c"/>
+      <File Name="../../drivers/lcd/drawing.h"/>
+      <File Name="../../drivers/lcd/fonts.c"/>
+      <File Name="../../drivers/lcd/fonts.h"/>
+      <File Name="../../drivers/lcd/ILI9325.c"/>
+      <File Name="../../drivers/lcd/lcd.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="fatfs">
+      <File Name="../../drivers/fatfs/diskio.c"/>
+      <File Name="../../drivers/fatfs/diskio.h"/>
+      <File Name="../../drivers/fatfs/ff.c"/>
+      <File Name="../../drivers/fatfs/ff.h"/>
+      <File Name="../../drivers/fatfs/ffconf.h"/>
+      <File Name="../../drivers/fatfs/integer.h"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="lpc1xxx">
     <File Name="../../lpc1xxx/linkscript.ld"/>
