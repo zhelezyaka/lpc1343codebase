@@ -146,7 +146,9 @@ lm75bError_e lm75bInit(void)
   {
     return LM75B_ERROR_I2CINIT;    /* Fatal error */
   }
-
+  
+  return LM75B_ERROR_OK;
+  
   // Set device to shutdown mode by default (saves power)
   // return lm75bConfigWrite (LM75B_CONFIG_SHUTDOWN_SHUTDOWN);
 }

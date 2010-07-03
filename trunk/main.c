@@ -70,12 +70,17 @@
   #include "core/usbcdc/cdcuser.h"
 #endif
 
-#ifdef CFG_LCD_ILI9325
+#ifdef CFG_LCD
   #include "drivers/lcd/lcd.h"
+  #include "drivers/lcd/fonts.h"
+  #include "drivers/lcd/drawing.h"
 #endif
 
 #ifdef CFG_I2CEEPROM
   #include "drivers/eeprom/mcp24aa/mcp24aa.h"
+#endif
+
+#ifdef CFG_SDCARD
 #endif
 
 /**************************************************************************/
@@ -132,6 +137,16 @@ static void systemInit()
     mcp24aaInit();
   #endif
 
+  // Initialise LCD Display
+  #ifdef CFG_LCD
+    lcdInit();
+    drawFill(BLACK);
+    drawString(1,  1, WHITE, "1234567890123456789012345678901234567890", Font_System5x8); // 40 chars
+    drawString(1, 10, WHITE, "123456789012345678901234567890", Font_System7x8);           // 30 chars
+    drawString(1, 20, WHITE, "123456789012345678901234567", Font_8x8);                    // 27 chars
+    drawString(1, 30, WHITE, "123456789012345678901234567", Font_8x8Thin);                // 27 chars
+  #endif
+
   // Initialise Chibi
   #ifdef CFG_CHIBI
     // Write addresses to EEPROM for the first time if necessary
@@ -142,11 +157,6 @@ static void systemInit()
     chb_init();
     chb_pcb_t *pcb = chb_get_pcb();
     printf("%-40s : 0x%04X%s", "Chibi Initialised", pcb->src_addr, CFG_INTERFACE_NEWLINE);
-  #endif
-
-  // Initialise LCD Display
-  #ifdef CFG_LCD_ILI9325
-    lcdInit();
   #endif
 
   // Start the command line interface (if requested)

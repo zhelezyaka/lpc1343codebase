@@ -55,6 +55,8 @@
 #define CFG_LED_ON                (0)           // The pin state to turn the LED on (0 = low, 1 = High)
 #define CFG_LED_OFF               (1)           // The pin state to turn the LED off (0 = low, 1 = High)
 
+#define CFG_SDCARD
+
 // #define CFG_USBHID
 #define CFG_USBCDC                              // Defaults to 115200 8N1
 
@@ -77,7 +79,7 @@
 #define CFG_CHIBI_EEPROM_IEEEADDR   (uint16_t)(0x0000)      // Start location in EEPROM for the full IEEE address
 #define CFG_CHIBI_EEPROM_SHORTADDR  (uint16_t)(0x0009)      // Start location in EEPROM for the short (16-bit) address
 
-#define CFG_LCD_ILI9325
+#define CFG_LCD
 
 // #define CFG_TESTBED
 
