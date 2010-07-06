@@ -119,11 +119,23 @@
       </VirtualDirectory>
     </VirtualDirectory>
     <VirtualDirectory Name="lcd">
+      <VirtualDirectory Name="hw">
+        <File Name="../../drivers/lcd/hw/ILI9325.c"/>
+        <File Name="../../drivers/lcd/hw/ILI9325.h"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="fonts">
+        <File Name="../../drivers/lcd/fonts/bitmapfonts.h"/>
+        <File Name="../../drivers/lcd/fonts/consolas9.c"/>
+        <File Name="../../drivers/lcd/fonts/consolas9.h"/>
+        <File Name="../../drivers/lcd/fonts/consolas11.c"/>
+        <File Name="../../drivers/lcd/fonts/consolas11.h"/>
+        <File Name="../../drivers/lcd/fonts/consolas16.c"/>
+        <File Name="../../drivers/lcd/fonts/consolas16.h"/>
+        <File Name="../../drivers/lcd/fonts/smallfonts.c"/>
+        <File Name="../../drivers/lcd/fonts/smallfonts.h"/>
+      </VirtualDirectory>
       <File Name="../../drivers/lcd/drawing.c"/>
       <File Name="../../drivers/lcd/drawing.h"/>
-      <File Name="../../drivers/lcd/fonts.c"/>
-      <File Name="../../drivers/lcd/fonts.h"/>
-      <File Name="../../drivers/lcd/ILI9325.c"/>
       <File Name="../../drivers/lcd/lcd.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="fatfs">
@@ -148,6 +160,9 @@
     <File Name="../../sysdefs.h"/>
     <File Name="../../cmd_tbl.h"/>
     <File Name="../../commands.c"/>
+    <File Name="../../main.h"/>
+    <File Name="../../sysinit.c"/>
+    <File Name="../../sysinit.h"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <Configuration Name="Debug" CompilerType="gnu gcc" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">

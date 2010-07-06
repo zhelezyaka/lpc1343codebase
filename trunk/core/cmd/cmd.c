@@ -250,9 +250,11 @@ void cmd_help(uint8_t argc, char **argv)
   // Display full command list
   for (i=0; i < CMD_COUNT; i++)
   {
-    printf ("%-20s   %s%s", cmd_tbl[i].command, cmd_tbl[i].description, CFG_INTERFACE_NEWLINE);
+    if (!cmd_tbl[i].hidden) 
+    {
+      printf ("%-20s   %s%s", cmd_tbl[i].command, cmd_tbl[i].description, CFG_INTERFACE_NEWLINE);
+    }
   }
 
   printf("%sCommand parameters can be seen by entering: <command-name> ?%s", CFG_INTERFACE_NEWLINE, CFG_INTERFACE_NEWLINE);
-
 }

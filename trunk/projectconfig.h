@@ -43,43 +43,46 @@
 #include "sysdefs.h"
 #include "drivers/chibi/chb_drvr.h"
 
-#define CFG_CPU_CCLK              (72000000)    // Ref. only.  Clock speed actually set in "core/cpu/cpu.c"
+#define CFG_CPU_CCLK                (72000000)    // Ref. only.  Clock speed actually set in "core/cpu/cpu.c"
 
-#define CFG_SYSTICK_DELAY_IN_MS   (1)           // The number of milliseconds between each tick of the systick timer
+#define CFG_SYSTICK_DELAY_IN_MS     (1)           // The number of milliseconds between each tick of the systick timer
 
-#define CFG_UART_BAUDRATE         (57600)       // Default UART speed
-#define CFG_UART_BUFSIZE          (80)          // RX FIFO buffer size (the maximum number of received chars to store)
+#define CFG_UART_BAUDRATE           (57600)       // Default UART speed
+#define CFG_UART_BUFSIZE            (80)          // RX FIFO buffer size (the maximum number of received chars to store)
 
-#define CFG_LED_PORT              (2)
-#define CFG_LED_PIN               (10)
-#define CFG_LED_ON                (0)           // The pin state to turn the LED on (0 = low, 1 = High)
-#define CFG_LED_OFF               (1)           // The pin state to turn the LED off (0 = low, 1 = High)
+#define CFG_LED_PORT                (2)
+#define CFG_LED_PIN                 (10)
+#define CFG_LED_ON                  (0)           // The pin state to turn the LED on (0 = low, 1 = High)
+#define CFG_LED_OFF                 (1)           // The pin state to turn the LED off (0 = low, 1 = High)
 
 #define CFG_SDCARD
 
 // #define CFG_USBHID
-#define CFG_USBCDC                              // Defaults to 115200 8N1
+#define CFG_USBCDC                                // Defaults to 115200 8N1
 
-// #define CFG_PRINTF_NONE                      // Ignore all printf output
-// #define CFG_PRINTF_UART                      // Use UART for printf output
-#define CFG_PRINTF_USBCDC                       // Use USB CDC for printf output
+// #define CFG_PRINTF_NONE                        // Ignore all printf output
+// #define CFG_PRINTF_UART                        // Use UART for printf output
+#define CFG_PRINTF_USBCDC                         // Use USB CDC for printf output
 
-// #define CFG_INTERFACE
-#define CFG_INTERFACE_MAXMSGSIZE  (80)          // The maximum number of bytes to accept for a command
-#define CFG_INTERFACE_NEWLINE     "\r\n"        // This should be either \r\n (Windows-style) or \n (Unix-style)
-#define CFG_INTERFACE_PROMPT      "LPC1343 >> "
+#define CFG_INTERFACE
+#define CFG_INTERFACE_MAXMSGSIZE    (80)          // The maximum number of bytes to accept for a command
+#define CFG_INTERFACE_NEWLINE       "\r\n"        // This should be either \r\n (Windows-style) or \n (Unix-style)
+#define CFG_INTERFACE_PROMPT        "LPC1343 >> " // The command-prompt text to display before each command
 
-// #define CFG_I2CEEPROM
+#define CFG_I2CEEPROM
 
 // #define CFG_LM75B
 
 // #define CFG_CHIBI
-#define CFG_CHIBI_MODE              (BPSK20_868MHZ)         // See chb_drvr.h for possible values
-#define CFG_CHIBI_POWER             (CHB_PWR_EU2_5DBM)      // See chb_drvr.h for possible values
-#define CFG_CHIBI_EEPROM_IEEEADDR   (uint16_t)(0x0000)      // Start location in EEPROM for the full IEEE address
-#define CFG_CHIBI_EEPROM_SHORTADDR  (uint16_t)(0x0009)      // Start location in EEPROM for the short (16-bit) address
+#define CFG_CHIBI_MODE              (BPSK20_868MHZ)     // See chb_drvr.h for possible values
+#define CFG_CHIBI_POWER             (CHB_PWR_EU2_5DBM)  // See chb_drvr.h for possible values
+#define CFG_CHIBI_EEPROM_IEEEADDR   (uint16_t)(0x0000)  // Start location in EEPROM for the full IEEE address
+#define CFG_CHIBI_EEPROM_SHORTADDR  (uint16_t)(0x0009)  // Start location in EEPROM for the short (16-bit) address
 
 #define CFG_LCD
+#define CFG_LCD_INCLUDESMALLFONTS   (0)           // 1 to include 'smallfont' support
+#define CFG_LCD_WIDTH               (240)         // LCD width in pixels
+#define CFG_LCD_HEIGHT              (320)         // LCD height in pixels
 
 // #define CFG_TESTBED
 

@@ -63,6 +63,11 @@
   #include "drivers/sensors/lm75b/lm75b.h"
 #endif
 
+#ifdef CFG_LCD
+  #include "drivers/lcd/lcd.h"
+  #include "drivers/lcd/drawing.h"
+#endif
+
 /**************************************************************************/
 /*!
     @brief  Attempts to convert the supplied decimal or hexadecimal
@@ -182,6 +187,42 @@ void cmd_sysinfo(uint8_t argc, char **argv)
   // printf("%-30s : %s", "<Property Name>", CFG_INTERFACE_NEWLINE);
 }
 
+#ifdef CFG_LCD
+
+/**************************************************************************/
+/*! 
+    Displays a test pattern on the LCD.
+*/
+/**************************************************************************/
+void cmd_lcd_test(uint8_t argc, char **argv)
+{
+  drawTestPattern();
+}
+
+/**************************************************************************/
+/*! 
+    Fills the LCD screen with the specified color.
+*/
+/**************************************************************************/
+void cmd_lcd_fill(uint8_t argc, char **argv)
+{
+  // Try to convert supplied value to an integer
+  int32_t col;
+  getNumber (argv[0], &col);
+  
+  // Check for invalid values (getNumber may complain about this as well)
+  if (col < 0 || col > 0xFFFF)
+  {
+    printf("Invalid Color: Value from 0x0000-0xFFFF required.%s", CFG_INTERFACE_NEWLINE);
+    return;
+  }
+
+  // Fill the screen
+  drawFill((uint16_t)col);
+}
+
+#endif
+
 #ifdef CFG_CHIBI
 
 /**************************************************************************/
@@ -196,13 +237,6 @@ void cmd_chibi_addr(uint8_t argc, char **argv)
 {
   if (argc > 0)
   {
-    // Make sure hexadecimal values are 16-bit or less
-    if ((strlen (argv[0]) > 2) && (!strncmp (argv[0], "0x", 2) || !strncmp (argv[0], "0X", 2)) && (strlen (argv[0]) > 6))
-    {
-      printf("Invalid Address: 16-bit hexadecimal value required (ex. '0x12EF').%s", CFG_INTERFACE_NEWLINE);
-      return;
-    }
-
     // Try to convert supplied value to an integer
     int32_t addr;
     getNumber (argv[0], &addr);
@@ -234,20 +268,13 @@ void cmd_chibi_addr(uint8_t argc, char **argv)
 
 /**************************************************************************/
 /*! 
-    
+    Sends text or data via Chibi
 */
 /**************************************************************************/
 void cmd_chibi_tx(uint8_t argc, char **argv)
 {
   uint8_t i, len, *data_ptr, data[50];
   uint16_t addr;
-
-  // Make sure hexadecimal address values are 16-bit or less
-  if ((strlen (argv[0]) > 2) && (!strncmp (argv[0], "0x", 2) || !strncmp (argv[0], "0X", 2)) && (strlen (argv[0]) > 6))
-  {
-    printf("Invalid Address: 16-bit hexadecimal value required (ex. '0x12EF').%s", CFG_INTERFACE_NEWLINE);
-    return;
-  }
 
   // Try to convert supplied address to an integer
   int32_t addr32;
@@ -292,13 +319,6 @@ void cmd_i2ceeprom_read(uint8_t argc, char **argv)
   uint16_t addr;
   uint8_t value; // buffer[1] = { 0x00 };
 
-  // Make sure hexadecimal address value is 16-bit or less
-  if ((strlen (argv[0]) > 2) && (!strncmp (argv[0], "0x", 2) || !strncmp (argv[0], "0X", 2)) && (strlen (argv[0]) > 6))
-  {
-    printf("Invalid Address: 16-bit hexadecimal value required (ex. '0x00EF').%s", CFG_INTERFACE_NEWLINE);
-    return;
-  }
-
   // Try to convert supplied address to an integer
   int32_t addr32;
   getNumber (argv[0], &addr32);
@@ -327,13 +347,6 @@ void cmd_i2ceeprom_write(uint8_t argc, char **argv)
   uint16_t addr;
   uint8_t val;
 
-  // Make sure hexadecimal address value is 16-bit or less
-  if ((strlen (argv[0]) > 2) && (!strncmp (argv[0], "0x", 2) || !strncmp (argv[0], "0X", 2)) && (strlen (argv[0]) > 6))
-  {
-    printf("Invalid Address: 16-bit hexadecimal value required (ex. '0x00EF').%s", CFG_INTERFACE_NEWLINE);
-    return;
-  }
-
   // Try to convert supplied address to an integer
   int32_t addr32;
   getNumber (argv[0], &addr32);
@@ -361,13 +374,6 @@ void cmd_i2ceeprom_write(uint8_t argc, char **argv)
 
   // Address seems to be OK
   addr = (uint16_t)addr32;
-
-  // Make sure hexadecimal data is 8-bit or less
-  if ((strlen (argv[1]) > 2) && (!strncmp (argv[1], "0x", 2) || !strncmp (argv[1], "0X", 2)) && (strlen (argv[1]) > 4))
-  {
-    printf("Invalid Data: 8-bit hexadecimal value required (ex. '0xEF').%s", CFG_INTERFACE_NEWLINE);
-    return;
-  }
 
   // Try to convert supplied data to an integer
   int32_t val32;
