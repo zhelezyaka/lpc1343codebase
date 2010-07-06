@@ -1,76 +1,44 @@
+/**************************************************************************/
+/*! 
+    @file     lcd.h
+    @author   K. Townsend (microBuilder.eu)
+    @date     22 March 2010
+    @version  0.10
+
+    @section LICENSE
+
+    Software License Agreement (BSD License)
+
+    Copyright (c) 2010, microBuilder SARL
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
+    1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+    2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+    3. Neither the name of the copyright holders nor the
+    names of its contributors may be used to endorse or promote products
+    derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ''AS IS'' AND ANY
+    EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+    ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+/**************************************************************************/
 #ifndef __LCD_H__
 #define __LCD_H__
 
 #include "projectconfig.h"
-#include "core/gpio/gpio.h"
-#include "fonts.h"
-
-// Control pins
-#define LCD_CS_PORT     1     // CS (LCD Pin 7)
-#define LCD_CS_PIN      8
-#define LCD_CD_PORT     1     // CS/RS (LCD Pin 8)
-#define LCD_CD_PIN      9
-#define LCD_WR_PORT     1     // WR (LCD Pin 9)
-#define LCD_WR_PIN      10
-#define LCD_RD_PORT     1     // RD (LCD Pin 10)
-#define LCD_RD_PIN      11
-#define LCD_RES_PORT    3     // LCD Reset  (LCD Pin 31)
-#define LCD_RES_PIN     3
-#define LCD_BL_PORT     0     // Backlight Enable (LCD Pin 16)
-#define LCD_BL_PIN      8
-
-// These pin definitions are for optimisation purposes only
-// If the pins values above are modified the bit equivalents
-// below will also need to be updated
-#define LCD_CS_CD_PINS      0x300   // 8 + 9
-#define LCD_RD_WR_PINS      0xC00   // 11 + 10
-#define LCD_WR_CS_PINS      0x500   // 10 + 8
-#define LCD_CD_RD_WR_PINS   0xE00   // 9 + 11 + 10
-
-// Data pins
-// Note: data pins must be consecutive and on the same port
-#define LCD_DATA_PORT   2     // 8-Pin Data Port
-#define LCD_DATA_PIN1   1
-#define LCD_DATA_PIN2   2
-#define LCD_DATA_PIN3   3
-#define LCD_DATA_PIN4   4
-#define LCD_DATA_PIN5   5
-#define LCD_DATA_PIN6   6
-#define LCD_DATA_PIN7   7
-#define LCD_DATA_PIN8   8
-#define LCD_DATA_MASK   0x000001FE
-#define LCD_DATA_OFFSET 1     // Offset = PIN1
-
-// For single operation bit clear/set (see 1343 UM 8.5.1)
-#define LCD_GPIO2DATA_DATA      (*(pREG32 (GPIO_GPIO2_BASE + (LCD_DATA_MASK << 2))))
-#define LCD_GPIO1DATA_WR        (*(pREG32 (GPIO_GPIO1_BASE + ((1 << LCD_WR_PIN) << 2))))
-#define LCD_GPIO1DATA_CD        (*(pREG32 (GPIO_GPIO1_BASE + ((1 << LCD_CD_PIN) << 2))))
-#define LCD_GPIO1DATA_CS        (*(pREG32 (GPIO_GPIO1_BASE + ((1 << LCD_CS_PIN) << 2))))
-#define LCD_GPIO1DATA_RD        (*(pREG32 (GPIO_GPIO1_BASE + ((1 << LCD_RD_PIN) << 2))))
-#define LCD_GPIO3DATA_RES       (*(pREG32 (GPIO_GPIO3_BASE + ((1 << LCD_RES_PIN) << 2))))
-#define LCD_GPIO1DATA_CS_CD     (*(pREG32 (GPIO_GPIO1_BASE + ((LCD_CS_CD_PINS) << 2))))
-#define LCD_GPIO1DATA_RD_WR     (*(pREG32 (GPIO_GPIO1_BASE + ((LCD_RD_WR_PINS) << 2))))
-#define LCD_GPIO1DATA_WR_CS     (*(pREG32 (GPIO_GPIO1_BASE + ((LCD_WR_CS_PINS) << 2))))
-#define LCD_GPIO1DATA_CD_RD_WR  (*(pREG32 (GPIO_GPIO1_BASE + ((LCD_CD_RD_WR_PINS) << 2))))
-
-// Macros for control lines
-#define CLR_CD          LCD_GPIO1DATA_CD = (0)
-#define SET_CD          LCD_GPIO1DATA_CD = (1 << LCD_CD_PIN)
-#define CLR_CS          LCD_GPIO1DATA_CS = (0)
-#define SET_CS          LCD_GPIO1DATA_CS = (1 << LCD_CS_PIN)
-#define CLR_WR          LCD_GPIO1DATA_WR = (0)
-#define SET_WR          LCD_GPIO1DATA_WR = (1 << LCD_WR_PIN)
-#define CLR_RD          LCD_GPIO1DATA_RD = (0)
-#define SET_RD          LCD_GPIO1DATA_RD = (1 << LCD_RD_PIN)
-#define CLR_RESET       LCD_GPIO3DATA_RES = (0)
-#define SET_RESET       LCD_GPIO3DATA_RES = (1 << LCD_RES_PIN)
-
-// The following macros are defined to improve code optimization by
-// reducing the number of instructions in heavily used functions
-#define CLR_CS_CD       LCD_GPIO1DATA_CS_CD = (0);
-#define SET_RD_WR       LCD_GPIO1DATA_RD_WR = (LCD_RD_WR_PINS);
-#define SET_WR_CS       LCD_GPIO1DATA_WR_CS = (LCD_WR_CS_PINS);
-#define SET_CD_RD_WR    LCD_GPIO1DATA_CD_RD_WR = (LCD_CD_RD_WR_PINS);
 
 // Color definitions
 #define	BLACK		0x0000
@@ -82,28 +50,15 @@
 #define YELLOW		0xFFE0
 #define WHITE		0xFFFF
 
-typedef struct RGB24Bit_s
-{
-  uint8_t r;
-  uint8_t g;
-  uint8_t b;
-} RGB24Bit_t;
-
 // Method prototypes
+
+// Any LCD needs to implement these common methods, which allow the low-level
+// initialisation and pixel-setting details to be abstracted away from the
+// higher level drawing and graphics code.
+
 extern void lcdInit(void);
-extern void lcdTest(void);
-extern void lcdTest2(void);
-extern void lcdCommand(uint16_t command, uint16_t data);
-extern void lcdWriteCmd(uint16_t command);
-extern void lcdWriteData(uint16_t data);
-extern void lcdDelay(unsigned int t);
-extern void lcdInitDisplay(void);
-extern void lcdHome(void);
-extern void lcdSetWindow(uint16_t x, uint16_t y, uint16_t x1, uint16_t y1);
-extern void lcdSetCursor(uint16_t x, uint16_t y);
 extern void lcdFillRGB(uint16_t data);
 extern void lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color);
-
-extern uint16_t lcdRGB24toRGB565(RGB24Bit_t *in);
+extern void lcdTest(void);
 
 #endif
