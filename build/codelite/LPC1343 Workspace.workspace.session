@@ -23,8 +23,8 @@
     </TabInfo>
     <TabInfo>
       <wxString Value="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\projectconfig.h" Name="FileName"/>
-      <int Value="54" Name="FirstVisibleLine"/>
-      <int Value="67" Name="CurrentLine"/>
+      <int Value="57" Name="FirstVisibleLine"/>
+      <int Value="72" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
     </TabInfo>
   </TabInfoArray>
