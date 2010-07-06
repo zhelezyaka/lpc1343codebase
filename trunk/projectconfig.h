@@ -79,7 +79,7 @@
 #define CFG_CHIBI_EEPROM_IEEEADDR   (uint16_t)(0x0000)  // Start location in EEPROM for the full IEEE address
 #define CFG_CHIBI_EEPROM_SHORTADDR  (uint16_t)(0x0009)  // Start location in EEPROM for the short (16-bit) address
 
-#define CFG_LCD
+// #define CFG_LCD
 #define CFG_LCD_INCLUDESMALLFONTS   (0)           // 1 to include 'smallfont' support
 #define CFG_LCD_WIDTH               (240)         // LCD width in pixels
 #define CFG_LCD_HEIGHT              (320)         // LCD height in pixels
