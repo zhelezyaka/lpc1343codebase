@@ -530,6 +530,8 @@
 #define SCB_SSP0CLKDIV_DIV3                       ((unsigned int) 0x00000003)
 #define SCB_SSP0CLKDIV_DIV4                       ((unsigned int) 0x00000004)
 #define SCB_SSP0CLKDIV_DIV6                       ((unsigned int) 0x00000006)
+#define SCB_SSP0CLKDIV_DIV10                      ((unsigned int) 0x0000000A)
+#define SCB_SSP0CLKDIV_DIV12                      ((unsigned int) 0x0000000C)
 #define SCB_SSP0CLKDIV_MASK                       ((unsigned int) 0x000000FF)
 
 /*  UARTCLKDIV (UART clock divider register)
@@ -2511,6 +2513,10 @@ static inline void NVIC_DisableIRQ(IRQn_t IRQn)
 #define SSP_SSP0CPSR_CPSDVSR_MASK                 ((unsigned int) 0x000000FF)
 #define SSP_SSP0CPSR_CPSDVSR_DIV2                 ((unsigned int) 0x00000002)
 #define SSP_SSP0CPSR_CPSDVSR_DIV4                 ((unsigned int) 0x00000004)
+#define SSP_SSP0CPSR_CPSDVSR_DIV10                ((unsigned int) 0x0000000A)
+#define SSP_SSP0CPSR_CPSDVSR_DIV12                ((unsigned int) 0x0000000C)
+#define SSP_SSP0CPSR_CPSDVSR_DIV16                ((unsigned int) 0x00000010)
+#define SSP_SSP0CPSR_CPSDVSR_DIV20                ((unsigned int) 0x00000014)
 
 /*  SSP0IMSC (SSP0 Interrupt Mask Set/Clear Register)
     This register controls whether each of the four possible interrupt conditions in the SSP

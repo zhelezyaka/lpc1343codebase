@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*! 
-    @file     main.c
+    @file     sd.h
     @author   K. Townsend (microBuilder.eu)
     @date     22 March 2010
     @version  0.10
@@ -35,59 +35,50 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 /**************************************************************************/
+#ifndef _SD_H__ 
+#define _SD_H__ 
 
-#include "sysinit.h"
+#include <stdint.h>
+#include <stdbool.h>
 
-#ifdef CFG_INTERFACE
-  #include "core/cmd/cmd.h"
-#endif
+/* SD/MMC Commands */
+#define GO_IDLE_STATE               (0x40 + 0)    // CMD0
+#define SEND_OP_COND                (0x40 + 1)
+#define CMD8                        (0x40 + 8)    // CMD8
+#define SEND_CSD                    (0x40 + 9)
+#define SEND_CID                    (0x40 + 10)   // CMD10
+#define STOP_TRAN                   (0x40 + 12)   // CMD12
+#define SET_BLOCKLEN                (0x40 + 16)   // CMD16
+#define READ_BLOCK                  (0x40 + 17)
+#define READ_MULT_BLOCK             (0x40 + 18)
+#define WRITE_BLOCK                 (0x40 + 24)
+#define WRITE_MULT_BLOCK            (0x40 + 25)
+#define APP_CMD                     (0x40 + 55)   // CMD55
+#define READ_OCR                    (0x40 + 58)   // CMD58
+#define CRC_ON_OFF                  (0x40 + 59)
+#define SD_SEND_OP_COND             (0xC0 + 41)   // ACMD41
+#define SD_STATUS                   (0xC0 + 13)   // ACMD13, SD_STATUS (SDC) 
+#define SET_WR_BLK_ERASE_COUNT      (0xC0 + 23)   // ACMD23 (SDC) 
 
-#ifdef CFG_SDCARD
-#include "drivers/fatfs/ff.h"
-DWORD get_fattime ()
+/* Card type flags (CardType) */
+#define CT_NONE                     0x00
+#define CT_MMC                      0x01
+#define CT_SD1                      0x02
+#define CT_SD2                      0x04
+#define CT_SDC                      (CT_SD1|CT_SD2)
+#define CT_BLOCK                    0x08
+
+/* MMC device configuration */
+typedef struct tagSDCFG
 {
-    //	RTCTime rtc;
-    //
-    //	/* Get local time */
-    //	rtc_gettime(&rtc);
-    //
-    //	/* Pack date and time into a DWORD variable */
-    //	return	  ((DWORD)(rtc.RTC_Year - 1980) << 25)
-    //			| ((DWORD)rtc.RTC_Mon << 21)
-    //			| ((DWORD)rtc.RTC_Mday << 16)
-    //			| ((DWORD)rtc.RTC_Hour << 11)
-    //			| ((DWORD)rtc.RTC_Min << 5)
-    //			| ((DWORD)rtc.RTC_Sec >> 1);
+  uint32_t sernum;        // serial number
+  uint32_t size;          // size=sectorsize*sectorcnt
+  uint32_t sectorcnt;
+  uint32_t sectorsize;    // 512
+  uint32_t blocksize;     // erase block size
+  uint8_t ocr[4];         // OCR
+  uint8_t cid[16];        // CID
+  uint8_t csd[16];        // CSD
+} SDCFG;
 
-  // ToDo!
-  return 0;
-}
 #endif
-
-/**************************************************************************/
-/*! 
-    Main program entry point.  After reset, normal code execution will
-    begin here.
-*/
-/**************************************************************************/
-int main (void)
-{
-  // Configure cpu and mandatory peripherals
-  systemInit();
-
-  while (1)
-  {
-    #ifdef CFG_INTERFACE
-      // Handle any incoming command line input
-      cmdPoll();
-    #else
-      // Toggle LED @ 1 Hz
-      systickDelay(1000);
-      if (gpioGetValue(CFG_LED_PORT, CFG_LED_PIN))  
-        gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_ON);
-      else 
-        gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF);
-    #endif
-  }
-}
-

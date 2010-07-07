@@ -36,7 +36,55 @@
 */
 /**************************************************************************/
 
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "sysinit.h"
+
+#include "core/cpu/cpu.h"
+#include "core/pmu/pmu.h"
+
+#ifdef CFG_PRINTF_UART
+  #include "core/uart/uart.h"
+#endif
+
+#ifdef CFG_INTERFACE
+  #include "core/cmd/cmd.h"
+#endif
+
+#ifdef CFG_CHIBI
+  #include "drivers/chibi/chb.h"
+  static chb_rx_data_t rx_data;
+#endif
+
+#ifdef CFG_USBHID
+  #include "core/usbhid-rom/usbhid.h"
+#endif
+
+#ifdef CFG_USBCDC
+  #include "core/usbcdc/usb.h"
+  #include "core/usbcdc/usbcore.h"
+  #include "core/usbcdc/usbhw.h"
+  #include "core/usbcdc/cdcuser.h"
+#endif
+
+#ifdef CFG_LCD
+  #include "drivers/lcd/lcd.h"
+  #include "drivers/lcd/drawing.h"
+  #include "drivers/lcd/fonts/consolas9.h"
+  #include "drivers/lcd/fonts/consolas11.h"
+  #include "drivers/lcd/fonts/consolas16.h"
+  #include "drivers/lcd/fonts/smallfonts.h"
+#endif
+
+#ifdef CFG_I2CEEPROM
+  #include "drivers/eeprom/mcp24aa/mcp24aa.h"
+#endif
+
+#ifdef CFG_SDCARD
+  #include "drivers/fatfs/diskio.h"
+  #include "drivers/fatfs/sdspi.h"
+#endif
 
 /**************************************************************************/
 /*! 
@@ -99,8 +147,8 @@ void systemInit()
     drawTestPattern();
 
     #if defined CFG_LCD_INCLUDESMALLFONTS & CFG_LCD_INCLUDESMALLFONTS == 1
-    drawStringSmall(1, 210, WHITE, "5x8 System (Max 40 Characters)", Font_System5x8);
-    drawStringSmall(1, 220, WHITE, "7x8 System (Max 30 Characters)", Font_System7x8);
+      drawStringSmall(1, 210, WHITE, "5x8 System (Max 40 Characters)", Font_System5x8);
+      drawStringSmall(1, 220, WHITE, "7x8 System (Max 30 Characters)", Font_System7x8);
     #endif
  
     uint16_t gray = drawRGB24toRGB565(0x33, 0x33, 0x33);
@@ -127,6 +175,12 @@ void systemInit()
     chb_init();
     chb_pcb_t *pcb = chb_get_pcb();
     printf("%-40s : 0x%04X%s", "Chibi Initialised", pcb->src_addr, CFG_INTERFACE_NEWLINE);
+  #endif
+
+  #ifdef CFG_SDCARD
+    sdspiInit();
+    DSTATUS stat;
+    stat = disk_initialize(0);
   #endif
 
   // Start the command line interface (if requested)
