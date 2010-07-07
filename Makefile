@@ -15,18 +15,30 @@ SRAM_USB = 384
 VPATH = 
 OBJS = main.o
 
+##########################################################################
+# Optional driver files 
+##########################################################################
+
+# Chibi Light-Weight Wireless Stackn (AT86RF212)
 VPATH += drivers/chibi
 OBJS += chb.o chb_buf.o chb_drvr.o chb_eeprom.o chb_spi.o
 
+# 4K EEPROM
 VPATH += drivers/eeprom/mcp24aa
 OBJS += mcp24aa.o
 
+# LM75B temperature sensor
 VPATH += drivers/sensors/lm75b
 OBJS += lm75b.o
 
+# Graphic LCD support (ILI9325)
 VPATH += drivers/lcd drivers/lcd/hw drivers/lcd/fonts
-OBJS += ILI9325.o drawing.o smallfonts.o consolas9.o consolas11.o
-OBJS += consolas16.o
+OBJS += ILI9325.o drawing.o 
+OBJS += smallfonts.o consolas9.o consolas11.o consolas16.o
+
+# ChaN FatFS and SD card support
+VPATH += drivers/fatfs
+OBJS += ff.o sd.o sdspi.o
 
 ##########################################################################
 # Library files 

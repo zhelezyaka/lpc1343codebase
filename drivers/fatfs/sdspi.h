@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*! 
-    @file     main.c
+    @file     sdspi.h
     @author   K. Townsend (microBuilder.eu)
     @date     22 March 2010
     @version  0.10
@@ -36,58 +36,20 @@
 */
 /**************************************************************************/
 
-#include "sysinit.h"
+#ifndef __SDSPI_H__
+#define __SDSPI_H__
 
-#ifdef CFG_INTERFACE
-  #include "core/cmd/cmd.h"
+#include <stdint.h>
+#include <stdbool.h>
+
+/* external functions */
+void sdspiInit (void);
+void sdspiRelease (void);
+void sdspiSetSpeed (uint8_t speed);
+void sdspiSelect (void);
+void sdspiDeSelect (void);
+void sdspiRelease (void);
+void sdspiSendByte (uint8_t data);
+uint8_t sdspiRecvByte (void);
+
 #endif
-
-#ifdef CFG_SDCARD
-#include "drivers/fatfs/ff.h"
-DWORD get_fattime ()
-{
-    //	RTCTime rtc;
-    //
-    //	/* Get local time */
-    //	rtc_gettime(&rtc);
-    //
-    //	/* Pack date and time into a DWORD variable */
-    //	return	  ((DWORD)(rtc.RTC_Year - 1980) << 25)
-    //			| ((DWORD)rtc.RTC_Mon << 21)
-    //			| ((DWORD)rtc.RTC_Mday << 16)
-    //			| ((DWORD)rtc.RTC_Hour << 11)
-    //			| ((DWORD)rtc.RTC_Min << 5)
-    //			| ((DWORD)rtc.RTC_Sec >> 1);
-
-  // ToDo!
-  return 0;
-}
-#endif
-
-/**************************************************************************/
-/*! 
-    Main program entry point.  After reset, normal code execution will
-    begin here.
-*/
-/**************************************************************************/
-int main (void)
-{
-  // Configure cpu and mandatory peripherals
-  systemInit();
-
-  while (1)
-  {
-    #ifdef CFG_INTERFACE
-      // Handle any incoming command line input
-      cmdPoll();
-    #else
-      // Toggle LED @ 1 Hz
-      systickDelay(1000);
-      if (gpioGetValue(CFG_LED_PORT, CFG_LED_PIN))  
-        gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_ON);
-      else 
-        gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF);
-    #endif
-  }
-}
-

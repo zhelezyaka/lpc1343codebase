@@ -39,55 +39,10 @@
 #ifndef __SYSINIT_H__ 
 #define __SYSINIT_H__
 
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "projectconfig.h"
 
-#include "core/cpu/cpu.h"
 #include "core/gpio/gpio.h"
-#include "core/pmu/pmu.h"
 #include "core/systick/systick.h"
-
-#ifdef CFG_PRINTF_UART
-  #include "core/uart/uart.h"
-#endif
-
-#ifdef CFG_INTERFACE
-  #include "core/cmd/cmd.h"
-#endif
-
-#ifdef CFG_CHIBI
-  #include "drivers/chibi/chb.h"
-  static chb_rx_data_t rx_data;
-#endif
-
-#ifdef CFG_USBHID
-  #include "core/usbhid-rom/usbhid.h"
-#endif
-
-#ifdef CFG_USBCDC
-  #include "core/usbcdc/usb.h"
-  #include "core/usbcdc/usbcore.h"
-  #include "core/usbcdc/usbhw.h"
-  #include "core/usbcdc/cdcuser.h"
-#endif
-
-#ifdef CFG_LCD
-  #include "drivers/lcd/lcd.h"
-  #include "drivers/lcd/drawing.h"
-  #include "drivers/lcd/fonts/consolas9.h"
-  #include "drivers/lcd/fonts/consolas11.h"
-  #include "drivers/lcd/fonts/consolas16.h"
-  #include "drivers/lcd/fonts/smallfonts.h"
-#endif
-
-#ifdef CFG_I2CEEPROM
-  #include "drivers/eeprom/mcp24aa/mcp24aa.h"
-#endif
-
-#ifdef CFG_SDCARD
-#endif
 
 // Function prototypes
 void systemInit();

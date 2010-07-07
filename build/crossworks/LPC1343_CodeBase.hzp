@@ -8,7 +8,9 @@
       <configuration Name="Common" filter="c;cpp;cxx;cc;h;s;asm;inc"/>
       <folder Name="core">
         <folder Name="adc">
-          <file file_name="../../core/adc/adc.c"/>
+          <file file_name="../../core/adc/adc.c">
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+          </file>
         </folder>
         <folder Name="cpu">
           <file file_name="../../core/cpu/cpu.c"/>
@@ -21,7 +23,7 @@
         </folder>
         <folder Name="ssp">
           <file file_name="../../core/ssp/ssp.c">
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
           </file>
         </folder>
         <folder Name="timer16">
@@ -58,29 +60,31 @@
         </folder>
         <folder Name="i2c">
           <file file_name="../../core/i2c/i2c.c">
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
           </file>
         </folder>
         <folder Name="isp"/>
         <folder Name="cmd">
-          <file file_name="../../core/cmd/cmd.c"/>
+          <file file_name="../../core/cmd/cmd.c">
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+          </file>
         </folder>
         <folder Name="usbcdc">
           <file file_name="../../core/usbcdc/cdcuser.c">
             <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
           </file>
           <file file_name="../../core/usbcdc/usbcore.c">
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
           </file>
           <file file_name="../../core/usbcdc/usbdesc.c">
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
           </file>
           <file file_name="../../core/usbcdc/usbhw.c">
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
           </file>
           <file file_name="../../core/usbcdc/usbuser.c">
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
           </file>
         </folder>
       </folder>
@@ -97,7 +101,7 @@
           </folder>
           <folder Name="mcp24aa">
             <file file_name="../../drivers/eeprom/mcp24aa/mcp24aa.c">
-              <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
+              <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
             </file>
           </folder>
         </folder>
@@ -155,14 +159,12 @@
           </folder>
         </folder>
         <folder Name="fatfs">
-          <file file_name="../../drivers/fatfs/diskio.c">
-            <configuration Name="THUMB Flash Release" build_exclude_from_build="Yes"/>
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
-          </file>
           <file file_name="../../drivers/fatfs/ff.c">
-            <configuration Name="THUMB Flash Release" build_exclude_from_build="Yes"/>
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
           </file>
+          <file file_name="../../drivers/fatfs/sd.c"/>
+          <file file_name="../../drivers/fatfs/sdspi.c"/>
         </folder>
       </folder>
       <file file_name="../../commands.c"/>
