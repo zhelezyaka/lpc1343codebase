@@ -48,8 +48,12 @@
 void      drawPixel ( uint16_t x, uint16_t y, uint16_t color );
 void      drawFill ( uint16_t color );
 void      drawString ( uint16_t x, uint16_t y, uint16_t color, const FONT_INFO *fontInfo, char *str );
-void      drawTestPattern ( void );
 uint32_t  drawGetStringWidth ( const FONT_INFO *fontInfo, char *str );
+void      drawLine ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color );
+void      drawCircle ( uint16_t xCenter, uint16_t yCenter, uint16_t radius, uint16_t color );
+void      drawRectangle ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color);
+void      drawRectangleFilled ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color);
+void      drawTestPattern ( void );
 uint16_t  drawRGB24toRGB565 ( uint8_t r, uint8_t g, uint8_t b );
 
 #if defined CFG_LCD_INCLUDESMALLFONTS & CFG_LCD_INCLUDESMALLFONTS == 1
