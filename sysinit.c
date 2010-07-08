@@ -143,7 +143,7 @@ void systemInit()
   // Initialise LCD Display
   #ifdef CFG_LCD
     lcdInit();
-    // drawFill(BLACK);
+    // Fill the screen with a test pattern
     drawTestPattern();
 
     #if defined CFG_LCD_INCLUDESMALLFONTS & CFG_LCD_INCLUDESMALLFONTS == 1
@@ -151,6 +151,7 @@ void systemInit()
       drawStringSmall(1, 220, WHITE, "7x8 System (Max 30 Characters)", Font_System7x8);
     #endif
  
+    // Get 16-bit equivalent of 24-bit color
     uint16_t gray = drawRGB24toRGB565(0x33, 0x33, 0x33);
 
     drawString(1,   90,   GREEN,    &consolas9ptFontInfo,   "Consolas 9 (38 chars wide)");
@@ -163,6 +164,12 @@ void systemInit()
     drawString(210, 10,   gray,     &consolas11ptFontInfo,  "Time");
     drawString(1,   22,   WHITE,    &consolas16ptFontInfo,  "0xAA01");
     drawString(190, 22,   WHITE,    &consolas16ptFontInfo,  "04:02");
+
+    // Draw some primitive shapes
+    drawCircle(120, 160, 100, BLACK);
+    drawLine(10, 10, 70, 300, BLACK);
+    drawRectangle (100, 100, 80, 80, WHITE);
+    drawRectangleFilled (98, 98, 82, 82, BLACK);
   #endif
 
   // Initialise Chibi

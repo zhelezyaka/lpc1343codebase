@@ -171,9 +171,6 @@ void ili9325SetCursor(uint16_t x, uint16_t y)
   ili9325Command(0x0021, y-1);       // GRAM Address Set (Vertical Address) (R21h)
 }
 
-
-
-
 /*************************************************/
 void lcdInit(void)
 {

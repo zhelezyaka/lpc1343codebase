@@ -5,6 +5,12 @@
     @date     22 March 2010
     @version  0.10
 
+    drawLine and drawCircle adapted from a tutorial by Leonard McMillan:
+    http://www.cs.unc.edu/~mcmillan/
+
+    drawString based on an example from Eran Duchan:
+    http://www.pavius.net/downloads/tools/53-the-dot-factory
+
     @section LICENSE
 
     Software License Agreement (BSD License)
@@ -39,7 +45,11 @@
 
 #include "drawing.h"
 
-/*************************************************/
+/**************************************************************************/
+/*!
+    @brief  Draws a single bitmap character
+*/
+/**************************************************************************/
 static void drawCharBitmap(const uint16_t xPixel, const uint16_t yPixel, uint16_t color, const uint8_t *glyph, uint8_t glyphHeightPages, uint8_t glyphWidthBits)
 {
   uint16_t verticalPage, horizBit, currentY, currentX;
@@ -60,7 +70,6 @@ static void drawCharBitmap(const uint16_t xPixel, const uint16_t yPixel, uint16_
       
       currentX = xPixel + (horizBit);
       // send the data byte
-      // ToDo: This really needs to be optimized!
       if (glyph[indexIntoGlyph] & (0X80)) drawPixel(currentX, currentY, color);
       if (glyph[indexIntoGlyph] & (0X40)) drawPixel(currentX, currentY - 1, color);
       if (glyph[indexIntoGlyph] & (0X20)) drawPixel(currentX, currentY - 2, color);
@@ -76,7 +85,11 @@ static void drawCharBitmap(const uint16_t xPixel, const uint16_t yPixel, uint16_
 }
 
 #if defined CFG_LCD_INCLUDESMALLFONTS & CFG_LCD_INCLUDESMALLFONTS == 1
-/*************************************************/
+/**************************************************************************/
+/*!
+    @brief  Draws a single smallfont character
+*/
+/**************************************************************************/
 static void drawCharSmall(uint16_t x, uint16_t y, uint16_t color, uint8_t c, struct FONT_DEF font)
 {
   uint8_t col, column[font.u8Width];
@@ -117,28 +130,98 @@ static void drawCharSmall(uint16_t x, uint16_t y, uint16_t color, uint8_t c, str
 }
 #endif
 
-/*************************************************/
+/**************************************************************************/
+/*!
+    @brief  Helper method to accurately draw individual circle points
+*/
+/**************************************************************************/
+static void drawCirclePoints(int cx, int cy, int x, int y, uint16_t color)
+{    
+  if (x == 0) 
+  {
+      drawPixel(cx, cy + y, color);
+      drawPixel(cx, cy - y, color);
+      drawPixel(cx + y, cy, color);
+      drawPixel(cx - y, cy, color);
+  } 
+  else if (x == y) 
+  {
+      drawPixel(cx + x, cy + y, color);
+      drawPixel(cx - x, cy + y, color);
+      drawPixel(cx + x, cy - y, color);
+      drawPixel(cx - x, cy - y, color);
+  } 
+  else if (x < y) 
+  {
+      drawPixel(cx + x, cy + y, color);
+      drawPixel(cx - x, cy + y, color);
+      drawPixel(cx + x, cy - y, color);
+      drawPixel(cx - x, cy - y, color);
+      drawPixel(cx + y, cy + x, color);
+      drawPixel(cx - y, cy + x, color);
+      drawPixel(cx + y, cy - x, color);
+      drawPixel(cx - y, cy - x, color);
+  }
+}
+
+/**************************************************************************/
+/*!
+    @brief  Draws a single pixel at the specified location
+
+    @param[in]  x
+                Horizontal position
+    @param[in]  y
+                Vertical position
+    @param[in]  color
+                Color used when drawing
+*/
+/**************************************************************************/
 void drawPixel(uint16_t x, uint16_t y, uint16_t color)
 {
   // Redirect to LCD
   lcdDrawPixel(x, y, color);
 }
 
-/*************************************************/
+/**************************************************************************/
+/*!
+    @brief  Fills the screen with the specified color
+
+    @param[in]  color
+                Color used when drawing
+*/
+/**************************************************************************/
 void drawFill(uint16_t color)
 {
   lcdFillRGB(color);
 }
 
-/*************************************************/
+/**************************************************************************/
+/*!
+    @brief  Draws a simple color test pattern
+*/
+/**************************************************************************/
 void drawTestPattern(void)
 {
   lcdTest();
 }
 
-
 #if defined CFG_LCD_INCLUDESMALLFONTS & CFG_LCD_INCLUDESMALLFONTS == 1
-/*************************************************/
+/**************************************************************************/
+/*!
+    @brief  Draws a string using a small font (6 of 8 pixels high).
+
+    @param[in]  x
+                Starting x co-ordinate
+    @param[in]  y
+                Starting y co-ordinate
+    @param[in]  color
+                Color to use when rendering the font
+    @param[in]  text
+                The string to render
+    @param[in]  font
+                Pointer to the FONT_DEF to use when drawing the string
+*/
+/**************************************************************************/
 void drawStringSmall(uint16_t x, uint16_t y, uint16_t color, char* text, struct FONT_DEF font)
 {
   uint8_t l;
@@ -149,7 +232,22 @@ void drawStringSmall(uint16_t x, uint16_t y, uint16_t color, char* text, struct 
 }
 #endif
 
-/*************************************************/
+/**************************************************************************/
+/*!
+    @brief  Draws a string using the supplied font
+
+    @param[in]  x
+                Starting x co-ordinate
+    @param[in]  y
+                Starting y co-ordinate
+    @param[in]  color
+                Color to use when rendering the font
+    @param[in]  fontInfo
+                Pointer to the FONT_INFO to use when drawing the string
+    @param[in]  str
+                The string to render
+*/
+/**************************************************************************/
 void drawString(uint16_t x, uint16_t y, uint16_t color, const FONT_INFO *fontInfo, char *str)
 {
   uint16_t currentX, charWidth, characterToOutput;
@@ -200,7 +298,25 @@ void drawString(uint16_t x, uint16_t y, uint16_t color, const FONT_INFO *fontInf
   }
 }
 
-/*************************************************/
+/**************************************************************************/
+/*!
+    @brief  Returns the width in pixels of a string when it is rendered
+
+    This method can be used to determine whether a string will fit
+    inside a specific area, or if it needs to be broken up into multiple
+    lines to be properly rendered on the screen.
+
+    This function only applied to bitmap fonts (which can have variable
+    widths).  All smallfonts (if available) are fixed width and can
+    easily have their width calculated without costly functions like
+    this one.
+
+    @param[in]  fontInfo
+                Pointer to the FONT_INFO for the font that will be used
+    @param[in]  str
+                The string that will be rendered
+*/
+/**************************************************************************/
 uint32_t drawGetStringWidth(const FONT_INFO *fontInfo, char *str)
 {
   uint32_t currChar, width = 0;
@@ -224,7 +340,199 @@ uint32_t drawGetStringWidth(const FONT_INFO *fontInfo, char *str)
   return width;
 }
 
-/*************************************************/
+/**************************************************************************/
+/*!
+    @brief  Draws a Bresenham line
+
+    Based on: http://www.cs.unc.edu/~mcmillan/comp136/Lecture6/Lines.html
+
+    @param[in]  x0
+                Starting x co-ordinate
+    @param[in]  y0
+                Starting y co-ordinate
+    @param[in]  x1
+                Ending x co-ordinate
+    @param[in]  y1
+                Ending y co-ordinate
+    @param[in]  color
+                Color used when drawing
+*/
+/**************************************************************************/
+void drawLine ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color )
+{
+
+  int dy = y1 - y0;
+  int dx = x1 - x0;
+  int stepx, stepy;
+
+  if (dy < 0) { dy = -dy;  stepy = -1; } else { stepy = 1; }
+  if (dx < 0) { dx = -dx;  stepx = -1; } else { stepx = 1; }
+  dy <<= 1;                                                  // dy is now 2*dy
+  dx <<= 1;                                                  // dx is now 2*dx
+
+  drawPixel(x0, y0, color);
+  if (dx > dy) {
+      int fraction = dy - (dx >> 1);                         // same as 2*dy - dx
+      while (x0 != x1) {
+          if (fraction >= 0) {
+              y0 += stepy;
+              fraction -= dx;                                // same as fraction -= 2*dx
+          }
+          x0 += stepx;
+          fraction += dy;                                    // same as fraction -= 2*dy
+          drawPixel(x0, y0, color);
+      }
+  } else {
+      int fraction = dx - (dy >> 1);
+      while (y0 != y1) {
+          if (fraction >= 0) {
+              x0 += stepx;
+              fraction -= dy;
+          }
+          y0 += stepy;
+          fraction += dx;
+          drawPixel(x0, y0, color);
+      }
+  }
+}
+
+/**************************************************************************/
+/*!
+    @brief  Draws a circle
+
+    Based on: http://www.cs.unc.edu/~mcmillan/comp136/Lecture7/circle.html
+
+    @param[in]  xCenter
+                The horizontal center of the circle
+    @param[in]  yCenter
+                The vertical center of the circle
+    @param[in]  radius
+                The circle's radius in pixels
+    @param[in]  color
+                Color used when drawing
+*/
+/**************************************************************************/
+void drawCircle (uint16_t xCenter, uint16_t yCenter, uint16_t radius, uint16_t color)
+{
+  int x = 0;
+  int y = radius;
+  int p = (5 - radius*4)/4;
+
+  drawCirclePoints(xCenter, yCenter, x, y, color);
+  while (x < y) 
+  {
+    x++;
+    if (p < 0) 
+    {
+        p += 2*x+1;
+    } 
+    else 
+    {
+        y--;
+        p += 2*(x-y)+1;
+    }
+    drawCirclePoints(xCenter, yCenter, x, y, color);
+  }
+}
+
+/**************************************************************************/
+/*!
+    @brief  Draws a simple (empty) rectangle
+
+    @param[in]  x0
+                Starting x co-ordinate
+    @param[in]  y0
+                Starting y co-ordinate
+    @param[in]  x1
+                Ending x co-ordinate
+    @param[in]  y1
+                Ending y co-ordinate
+    @param[in]  color
+                Color used when drawing
+*/
+/**************************************************************************/
+void drawRectangle ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color)
+{
+  uint16_t x, y;
+
+  if (y1 < y0)
+  {
+    // Swich y1 and y0
+    y = y1;
+    y1 = y0;
+    y0 = y;
+  }
+
+  if (x1 < x0)
+  {
+    // Swich x1 and x0
+    x = x1;
+    x1 = x0;
+    x0 = x;
+  }
+
+  drawLine (x0, y0, x1, y0, color);
+  drawLine (x1, y0, x1, y1, color);
+  drawLine (x1, y1, x0, y1, color);
+  drawLine (x0, y1, x0, y0, color);
+}
+
+/**************************************************************************/
+/*!
+    @brief  Draws a filled rectangle
+
+    @param[in]  x0
+                Starting x co-ordinate
+    @param[in]  y0
+                Starting y co-ordinate
+    @param[in]  x1
+                Ending x co-ordinate
+    @param[in]  y1
+                Ending y co-ordinate
+    @param[in]  color
+                Color used when drawing
+*/
+/**************************************************************************/
+void drawRectangleFilled ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color)
+{
+  int height;
+  uint16_t x, y;
+
+  if (y1 < y0)
+  {
+    // Swich y1 and y0
+    y = y1;
+    y1 = y0;
+    y0 = y;
+  }
+
+  if (x1 < x0)
+  {
+    // Swich x1 and x0
+    x = x1;
+    x1 = x0;
+    x0 = x;
+  }
+
+  height = y1 - y0;
+  for (height = y0; y1 > height - 1; ++height)
+  {
+    drawLine(x0, height, x1, height, color);
+  }
+}
+
+/**************************************************************************/
+/*!
+    @brief  Converts a 24-bit RGB color to an equivalent 16-bit RGB565 value
+
+    @param[in]  r
+                8-bit red
+    @param[in]  g
+                8-bit green
+    @param[in]  b
+                8-bit blue
+*/
+/**************************************************************************/
 uint16_t drawRGB24toRGB565(uint8_t r, uint8_t g, uint8_t b)
 {
   return ((r / 8) << 11) | ((g / 4) << 5) | (b / 8);
