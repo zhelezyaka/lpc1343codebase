@@ -38,7 +38,22 @@
 #include "ILI9325.h"
 
 /*************************************************/
-static void ili9325WriteCmd(uint16_t command)
+/* Private Methods                               */
+/*************************************************/
+
+/*************************************************/
+void ili9325Delay(unsigned int t)
+{
+  unsigned char t1;
+  while(t--)
+  for ( t1=10; t1 > 0; t1-- )
+  {
+    __asm("nop");
+  }
+}
+
+/*************************************************/
+void ili9325WriteCmd(uint16_t command)
 {
   CLR_CS_CD;      // Saves 7 commands compared to "CLR_CS; CLR_CD;"
   SET_RD_WR;      // Saves 7 commands compared to "SET_RD; SET_WR;"
@@ -51,7 +66,7 @@ static void ili9325WriteCmd(uint16_t command)
 }
 
 /*************************************************/
-static void ili9325WriteData(uint16_t data)
+void ili9325WriteData(uint16_t data)
 {
   CLR_CS;
   SET_CD_RD_WR;   // Saves 14 commands compared to "SET_CD; SET_RD; SET_WR"
@@ -64,7 +79,7 @@ static void ili9325WriteData(uint16_t data)
 }
 
 /*************************************************/
-static void ili9325Command(uint16_t command, uint16_t data)
+void ili9325Command(uint16_t command, uint16_t data)
 {
   // Provided for convenience sake ... shouldn't be used
   // in critical sections since it adds an extra
@@ -73,15 +88,32 @@ static void ili9325Command(uint16_t command, uint16_t data)
   ili9325WriteData(data);
 }
 
-/*************************************************/
-static void ili9325Delay(unsigned int t)
+uint16_t ili9325BGR2RGB(uint16_t color)   
+{   
+  uint16_t r, g, b;   
+   
+  b = (color>>0)  & 0x1f;   
+  g = (color>>5)  & 0x3f;   
+  r = (color>>11) & 0x1f;   
+     
+  return( (b<<11) + (g<<5) + (r<<0) );
+}  
+
+/***********************************************************
+  Read pixel from LCD controller at current position
+***********************************************************/
+uint16_t ili9325Read(void)
 {
-  unsigned char t1;
-  while(t--)
-  for ( t1=10; t1 > 0; t1-- )
-  {
-    __asm("nop");
-  }
+  // ToDo
+
+  return 0;
+}
+
+/*************************************************/
+void ili9325SetCursor(uint16_t x, uint16_t y)
+{
+  ili9325Command(0x0020, x-1);       // GRAM Address Set (Horizontal Address) (R20h)
+  ili9325Command(0x0021, y-1);       // GRAM Address Set (Vertical Address) (R21h)
 }
 
 /*************************************************/
@@ -165,11 +197,8 @@ void ili9325SetWindow(uint16_t x, uint16_t y, uint16_t x1, uint16_t y1)
 }
 
 /*************************************************/
-void ili9325SetCursor(uint16_t x, uint16_t y)
-{
-  ili9325Command(0x0020, x-1);       // GRAM Address Set (Horizontal Address) (R20h)
-  ili9325Command(0x0021, y-1);       // GRAM Address Set (Vertical Address) (R21h)
-}
+/* Public Methods                                */
+/*************************************************/
 
 /*************************************************/
 void lcdInit(void)
@@ -181,15 +210,18 @@ void lcdInit(void)
   gpioSetDir(ILI9325_RD_PORT, ILI9325_RD_PIN, 1);
   
   // Set data port pins to output
-  gpioSetDir(ILI9325_DATA_PORT, ILI9325_DATA_PIN1, 1);
-  gpioSetDir(ILI9325_DATA_PORT, ILI9325_DATA_PIN2, 1);
-  gpioSetDir(ILI9325_DATA_PORT, ILI9325_DATA_PIN3, 1);
-  gpioSetDir(ILI9325_DATA_PORT, ILI9325_DATA_PIN4, 1);
-  gpioSetDir(ILI9325_DATA_PORT, ILI9325_DATA_PIN5, 1);
-  gpioSetDir(ILI9325_DATA_PORT, ILI9325_DATA_PIN6, 1);
-  gpioSetDir(ILI9325_DATA_PORT, ILI9325_DATA_PIN7, 1);
-  gpioSetDir(ILI9325_DATA_PORT, ILI9325_DATA_PIN8, 1);
-    
+  ILI9325_GPIO2DATA_SETOUTPUT;
+
+  // Disable pullups
+  gpioSetPullup(&IOCON_PIO2_1, gpioPullupMode_Inactive);
+  gpioSetPullup(&IOCON_PIO2_2, gpioPullupMode_Inactive);
+  gpioSetPullup(&IOCON_PIO2_3, gpioPullupMode_Inactive);
+  gpioSetPullup(&IOCON_PIO2_4, gpioPullupMode_Inactive);
+  gpioSetPullup(&IOCON_PIO2_5, gpioPullupMode_Inactive);
+  gpioSetPullup(&IOCON_PIO2_6, gpioPullupMode_Inactive);
+  gpioSetPullup(&IOCON_PIO2_7, gpioPullupMode_Inactive);
+  gpioSetPullup(&IOCON_PIO2_8, gpioPullupMode_Inactive);
+  
   // Set backlight
   gpioSetDir(ILI9325_BL_PORT, ILI9325_BL_PIN, 1);      // set to output
   gpioSetValue(ILI9325_BL_PORT, ILI9325_BL_PIN, 0);    // turn on
@@ -245,4 +277,37 @@ void lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color)
   ili9325WriteData(y-1);
   ili9325WriteCmd(0x0022);  // Write Data to GRAM (R22h)
   ili9325WriteData(color);
+}
+
+/*************************************************/
+void lcdDrawHLine(uint16_t x0, uint16_t x1, uint16_t y, uint16_t color)
+{
+  // Allows for slightly better performance than setting individual pixels
+  uint16_t x, pixels;
+
+  if (x1 < x0)
+  {
+    // Switch x1 and x0
+    x = x1;
+    x1 = x0;
+    x0 = x;
+  }
+
+  ili9325WriteCmd(0x0020); // GRAM Address Set (Horizontal Address) (R20h)
+  ili9325WriteData(x0-1);
+  ili9325WriteCmd(0x0021); // GRAM Address Set (Vertical Address) (R21h)
+  ili9325WriteData(y-1);
+  ili9325WriteCmd(0x0022);  // Write Data to GRAM (R22h)
+  for (pixels = 0; pixels < x1 - x0 + 1; pixels++)
+  {
+    ili9325WriteData(color);
+  }
+}
+
+/*************************************************/
+uint16_t lcdGetPixel(uint16_t x, uint16_t y)
+{
+  ili9325SetCursor(x, y);
+  ili9325WriteCmd(0x0022);
+  return (ili9325Read());
 }

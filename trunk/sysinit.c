@@ -117,7 +117,6 @@ void systemInit()
 
   // Set LED pin as output and turn LED off
   gpioSetDir(CFG_LED_PORT, CFG_LED_PIN, 1);
-  gpioSetPullup(&IOCON_PIO3_5, gpioPullupMode_Inactive);
   gpioSetValue(CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF);
 
   // Initialise USB HID
@@ -143,33 +142,45 @@ void systemInit()
   // Initialise LCD Display
   #ifdef CFG_LCD
     lcdInit();
+
+    // Get 16-bit equivalent of 24-bit color
+    uint16_t gray = drawRGB24toRGB565(0x33, 0x33, 0x33);
+
     // Fill the screen with a test pattern
-    drawTestPattern();
+    // drawTestPattern();
+    drawFill(gray);
 
     #if defined CFG_LCD_INCLUDESMALLFONTS & CFG_LCD_INCLUDESMALLFONTS == 1
       drawStringSmall(1, 210, WHITE, "5x8 System (Max 40 Characters)", Font_System5x8);
       drawStringSmall(1, 220, WHITE, "7x8 System (Max 30 Characters)", Font_System7x8);
     #endif
  
-    // Get 16-bit equivalent of 24-bit color
-    uint16_t gray = drawRGB24toRGB565(0x33, 0x33, 0x33);
-
     drawString(1,   90,   GREEN,    &consolas9ptFontInfo,   "Consolas 9 (38 chars wide)");
     drawString(1,   105,  GREEN,    &consolas9ptFontInfo,   "12345678901234567890123456789012345678");
     drawString(1,   130,  YELLOW,   &consolas11ptFontInfo,  "Consolas 11 (33 chars wide)");
     drawString(1,   145,  YELLOW,   &consolas11ptFontInfo,  "123456789012345678901234567890123");
     drawString(1,   163,  BLACK,    &consolas16ptFontInfo,  "Consolas 16 (22 chars)");
     drawString(1,   183,  BLACK,    &consolas16ptFontInfo,  "1234567890123456789012");
-    drawString(1,   10,   gray,     &consolas11ptFontInfo,  "Address");
-    drawString(210, 10,   gray,     &consolas11ptFontInfo,  "Time");
+    drawString(1,   10,   BLACK,    &consolas11ptFontInfo,  "Address");
+    drawString(210, 10,   BLACK,    &consolas11ptFontInfo,  "Time");
     drawString(1,   22,   WHITE,    &consolas16ptFontInfo,  "0xAA01");
     drawString(190, 22,   WHITE,    &consolas16ptFontInfo,  "04:02");
 
     // Draw some primitive shapes
-    drawCircle(120, 160, 100, BLACK);
-    drawLine(10, 10, 70, 300, BLACK);
+    drawCircle(120, 160, 100, WHITE);
+    drawLine(10, 10, 70, 300, WHITE);
     drawRectangle (100, 100, 80, 80, WHITE);
-    drawRectangleFilled (98, 98, 82, 82, BLACK);
+    drawRectangleFilled (98, 98, 82, 82, gray);
+
+    // Draw some compound shapes
+    drawProgressBar(10, 150, 100, 10, WHITE, BLACK, WHITE, GREEN, 75);
+    drawProgressBar(10, 165, 100, 10, WHITE, BLACK, WHITE, YELLOW, 23);
+    drawProgressBar(10, 180, 100, 10, WHITE, BLACK, WHITE, RED, 64);
+    drawProgressBar(10, 195, 100, 20, WHITE, BLACK, WHITE, BLUE, 90);
+
+    uint16_t getc;
+    getc = lcdGetPixel(0, 0);
+    // drawFill(getc);
   #endif
 
   // Initialise Chibi

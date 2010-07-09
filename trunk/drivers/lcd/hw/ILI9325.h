@@ -93,6 +93,10 @@
 #define ILI9325_GPIO1DATA_WR_CS     (*(pREG32 (GPIO_GPIO1_BASE + ((ILI9325_WR_CS_PINS) << 2))))
 #define ILI9325_GPIO1DATA_CD_RD_WR  (*(pREG32 (GPIO_GPIO1_BASE + ((ILI9325_CD_RD_WR_PINS) << 2))))
 
+// Macros to set data bus direction to input/output
+#define ILI9325_GPIO2DATA_SETINPUT  GPIO_GPIO2DIR &= ~ILI9325_DATA_MASK
+#define ILI9325_GPIO2DATA_SETOUTPUT GPIO_GPIO2DIR |= ILI9325_DATA_MASK
+
 // Macros for control line state
 #define CLR_CD          ILI9325_GPIO1DATA_CD = (0)
 #define SET_CD          ILI9325_GPIO1DATA_CD = (1 << ILI9325_CD_PIN)
