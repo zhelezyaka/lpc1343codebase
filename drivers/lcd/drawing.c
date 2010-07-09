@@ -46,6 +46,12 @@
 #include "drawing.h"
 
 /**************************************************************************/
+/*                                                                        */
+/* ----------------------- Private Methods ------------------------------ */
+/*                                                                        */
+/**************************************************************************/
+
+/**************************************************************************/
 /*!
     @brief  Draws a single bitmap character
 */
@@ -165,6 +171,12 @@ static void drawCirclePoints(int cx, int cy, int x, int y, uint16_t color)
 }
 
 /**************************************************************************/
+/*                                                                        */
+/* ----------------------- Public Methods ------------------------------- */
+/*                                                                        */
+/**************************************************************************/
+
+/**************************************************************************/
 /*!
     @brief  Draws a single pixel at the specified location
 
@@ -220,6 +232,17 @@ void drawTestPattern(void)
                 The string to render
     @param[in]  font
                 Pointer to the FONT_DEF to use when drawing the string
+
+    @section Example
+
+    @code 
+
+    #include "drivers/lcd/fonts/smallfonts.h"
+    
+    drawStringSmall(1, 210, WHITE, "5x8 System (Max 40 Characters)", Font_System5x8);
+    drawStringSmall(1, 220, WHITE, "7x8 System (Max 30 Characters)", Font_System7x8);
+
+    @endcode
 */
 /**************************************************************************/
 void drawStringSmall(uint16_t x, uint16_t y, uint16_t color, char* text, struct FONT_DEF font)
@@ -246,6 +269,17 @@ void drawStringSmall(uint16_t x, uint16_t y, uint16_t color, char* text, struct 
                 Pointer to the FONT_INFO to use when drawing the string
     @param[in]  str
                 The string to render
+
+    @section Example
+
+    @code 
+
+    #include "drivers/lcd/fonts/consolas9.h"
+    
+    drawString(1,   90,   GREEN,    &consolas9ptFontInfo,   "Consolas 9 (38 chars wide)");
+    drawString(1,   105,  GREEN,    &consolas9ptFontInfo,   "12345678901234567890123456789012345678");
+
+    @endcode
 */
 /**************************************************************************/
 void drawString(uint16_t x, uint16_t y, uint16_t color, const FONT_INFO *fontInfo, char *str)
@@ -360,39 +394,53 @@ uint32_t drawGetStringWidth(const FONT_INFO *fontInfo, char *str)
 /**************************************************************************/
 void drawLine ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color )
 {
+  // Check if we can used the optimised horizontal line method
+  if (y0 == y1)
+  {
+    lcdDrawHLine(x0, x1, y0, color);
+    return;
+  }
 
+  // Draw non horizontal line
   int dy = y1 - y0;
   int dx = x1 - x0;
   int stepx, stepy;
 
   if (dy < 0) { dy = -dy;  stepy = -1; } else { stepy = 1; }
   if (dx < 0) { dx = -dx;  stepx = -1; } else { stepx = 1; }
-  dy <<= 1;                                                  // dy is now 2*dy
-  dx <<= 1;                                                  // dx is now 2*dx
+  dy <<= 1;                               // dy is now 2*dy
+  dx <<= 1;                               // dx is now 2*dx
 
   drawPixel(x0, y0, color);
-  if (dx > dy) {
-      int fraction = dy - (dx >> 1);                         // same as 2*dy - dx
-      while (x0 != x1) {
-          if (fraction >= 0) {
-              y0 += stepy;
-              fraction -= dx;                                // same as fraction -= 2*dx
-          }
-          x0 += stepx;
-          fraction += dy;                                    // same as fraction -= 2*dy
-          drawPixel(x0, y0, color);
+  if (dx > dy) 
+  {
+    int fraction = dy - (dx >> 1);        // same as 2*dy - dx
+    while (x0 != x1) 
+    {
+      if (fraction >= 0) 
+      {
+        y0 += stepy;
+        fraction -= dx;                   // same as fraction -= 2*dx
       }
-  } else {
-      int fraction = dx - (dy >> 1);
-      while (y0 != y1) {
-          if (fraction >= 0) {
-              x0 += stepx;
-              fraction -= dy;
-          }
-          y0 += stepy;
-          fraction += dx;
-          drawPixel(x0, y0, color);
+      x0 += stepx;
+      fraction += dy;                     // same as fraction -= 2*dy
+      drawPixel(x0, y0, color);
+    }
+  } 
+  else 
+  {
+    int fraction = dx - (dy >> 1);
+    while (y0 != y1) 
+    {
+      if (fraction >= 0) 
+      {
+        x0 += stepx;
+        fraction -= dy;
       }
+      y0 += stepy;
+      fraction += dx;
+      drawPixel(x0, y0, color);
+    }
   }
 }
 
@@ -424,12 +472,12 @@ void drawCircle (uint16_t xCenter, uint16_t yCenter, uint16_t radius, uint16_t c
     x++;
     if (p < 0) 
     {
-        p += 2*x+1;
+      p += 2*x+1;
     } 
     else 
     {
-        y--;
-        p += 2*(x-y)+1;
+      y--;
+      p += 2*(x-y)+1;
     }
     drawCirclePoints(xCenter, yCenter, x, y, color);
   }
@@ -531,6 +579,15 @@ void drawRectangleFilled ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, u
                 8-bit green
     @param[in]  b
                 8-bit blue
+
+    @section Example
+
+    @code 
+
+    // Get 16-bit equivalent of 24-bit color
+    uint16_t gray = drawRGB24toRGB565(0x33, 0x33, 0x33);
+
+    @endcode
 */
 /**************************************************************************/
 uint16_t drawRGB24toRGB565(uint8_t r, uint8_t g, uint8_t b)
@@ -538,4 +595,71 @@ uint16_t drawRGB24toRGB565(uint8_t r, uint8_t g, uint8_t b)
   return ((r / 8) << 11) | ((g / 4) << 5) | (b / 8);
 }
 
+/**************************************************************************/
+/*!
+    @brief  Draws a progress bar with rounded corners
+
+    @param[in]  x
+                Starting x location
+    @param[in]  y
+                Starting y location
+    @param[in]  width
+                Total width of the progress bar in pixels
+    @param[in]  borderColor
+                16-bit color for the outer border
+    @param[in]  fillColor
+                16-bit color for the outer border fill
+    @param[in]  barBorderColor
+                16-bit color for the inner bar's border
+    @param[in]  barFillColor
+                16-bit color for the inner bar's fill
+    @param[in]  progress
+                Progress percentage (between 0 and 100)
+
+    @section Example
+
+    @code 
+
+    // Get 16-bit equivalent of 24-bit color
+    uint16_t gray = drawRGB24toRGB565(0x33, 0x33, 0x33);
+
+    // Draw a the progress bar
+    drawProgressBar(10, 200, 100, 20, WHITE, gray, WHITE, BLUE, 90);
+
+    @endcode
+*/
+/**************************************************************************/
+void drawProgressBar ( uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t borderColor, uint16_t fillColor, uint16_t barBorderColor, uint16_t barFillColor, uint8_t progress )
+{
+  // Draw border with rounded corners
+  drawLine(x+2, y, x + width - 2, y, borderColor);
+  drawLine(x + width, y + 2, x + width, y + height - 2, borderColor);
+  drawLine(x + width - 2, y + height, x + 2, y + height, borderColor);
+  drawLine(x, y + height - 2, x, y + 2, borderColor);
+  drawPixel(x + 1, y + 1, borderColor);
+  drawPixel(x + width - 1, y + 1, borderColor);
+  drawPixel(x + 1, y + height - 1, borderColor);
+  drawPixel(x + width - 1, y + height - 1, borderColor);
+
+  // Fill outer container
+  drawLine(x+1, y+2, x+1, y+height-2, fillColor);
+  drawLine(x+2, y+height-1, x+width-2, y+height-1, fillColor);
+  drawLine(x+width-1, y+height-2, x+width-1, y+2, fillColor);
+  drawLine(x+width-2, y+1, x+2, y+1, fillColor);
+  drawRectangleFilled(x+2, y+2, x+width-2, y+height-2, fillColor);
+
+  // Progress bar
+  if (progress > 0 && progress <= 100)
+  {
+    // Calculate bar size
+    uint16_t bw;
+    bw = (width - 6);   // bar at 100%
+    if (progress != 100)
+    {
+      bw = (bw * progress) / 100;
+    } 
+    drawRectangle(x + 3, y + 3, bw + x + 3, y + height - 3, barBorderColor);
+    drawRectangleFilled(x + 4, y + 4, bw + x + 3 - 1, y + height - 4, barFillColor);
+  }
+}
 

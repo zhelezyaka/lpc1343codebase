@@ -41,14 +41,14 @@
 #include "projectconfig.h"
 
 // Color definitions
-#define	BLACK		0x0000
-#define	BLUE		0x001F
-#define	RED		0xF800
-#define	GREEN		0x07E0
-#define CYAN		0x07FF
-#define MAGENTA		0xF81F
-#define YELLOW		0xFFE0
-#define WHITE		0xFFFF
+#define	BLACK           0x0000
+#define	BLUE            0x001F
+#define	RED             0xF800
+#define	GREEN           0x07E0
+#define CYAN            0x07FF
+#define MAGENTA         0xF81F
+#define YELLOW          0xFFE0
+#define WHITE           0xFFFF
 
 // Method prototypes
 
@@ -56,9 +56,11 @@
 // initialisation and pixel-setting details to be abstracted away from the
 // higher level drawing and graphics code.
 
-extern void lcdInit(void);
-extern void lcdFillRGB(uint16_t data);
-extern void lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color);
-extern void lcdTest(void);
+extern void     lcdInit(void);
+extern void     lcdFillRGB(uint16_t data);
+extern void     lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color);
+extern void     lcdDrawHLine(uint16_t x0, uint16_t x1, uint16_t y, uint16_t color);
+extern void     lcdTest(void);
+extern uint16_t lcdGetPixel(uint16_t x, uint16_t y);
 
 #endif

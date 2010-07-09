@@ -43,36 +43,46 @@
 #include "sysdefs.h"
 #include "drivers/chibi/chb_drvr.h"
 
+/* Core CPU Settings (reference only) */
 #define CFG_CPU_CCLK                (72000000)    // Ref. only.  Clock speed actually set in "core/cpu/cpu.c"
 
+/* Systick Timer Settings */
 #define CFG_SYSTICK_DELAY_IN_MS     (1)           // The number of milliseconds between each tick of the systick timer
 
+/* UART Settings */
 #define CFG_UART_BAUDRATE           (57600)       // Default UART speed
 #define CFG_UART_BUFSIZE            (80)          // RX FIFO buffer size (the maximum number of received chars to store)
 
+/* Test LED Pin Settings */
 #define CFG_LED_PORT                (2)
 #define CFG_LED_PIN                 (10)
 #define CFG_LED_ON                  (0)           // The pin state to turn the LED on (0 = low, 1 = High)
 #define CFG_LED_OFF                 (1)           // The pin state to turn the LED off (0 = low, 1 = High)
 
-#define CFG_SDCARD
+// #define CFG_SDCARD
 
+/* USB Configuration */
 // #define CFG_USBHID
-#define CFG_USBCDC                                // Defaults to 115200 8N1
+// #define CFG_USBCDC                                // Defaults to 115200 8N1
 
+/* Printf Redirection */
 // #define CFG_PRINTF_NONE                        // Ignore all printf output
 // #define CFG_PRINTF_UART                        // Use UART for printf output
-#define CFG_PRINTF_USBCDC                         // Use USB CDC for printf output
+// #define CFG_PRINTF_USBCDC                         // Use USB CDC for printf output
 
-#define CFG_INTERFACE
+/* CLI Interface Settings */
+// #define CFG_INTERFACE
 #define CFG_INTERFACE_MAXMSGSIZE    (80)          // The maximum number of bytes to accept for a command
 #define CFG_INTERFACE_NEWLINE       "\r\n"        // This should be either \r\n (Windows-style) or \n (Unix-style)
 #define CFG_INTERFACE_PROMPT        "LPC1343 >> " // The command-prompt text to display before each command
 
-#define CFG_I2CEEPROM
+/* On-board EEPROM Settings */
+// #define CFG_I2CEEPROM
 
+/* LM75B Temperature Settings (requires external HW) */
 // #define CFG_LM75B
 
+/* Chibi Wireless Stack Settings (requires external HW) */
 // #define CFG_CHIBI
 #define CFG_CHIBI_MODE              (BPSK20_868MHZ)     // See chb_drvr.h for possible values
 #define CFG_CHIBI_POWER             (CHB_PWR_EU2_5DBM)  // See chb_drvr.h for possible values
