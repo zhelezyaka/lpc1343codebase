@@ -120,10 +120,10 @@ static int getNumber (char *s, int32_t *result)
   // Try to convert value
   for (value = 0; *s; s++)
   {
-    if (mustBeHex && isxdigit (*s))
-      value = (value << 4) | hexToDec [toupper (*s) - '0'];
-    else if (isdigit (*s))
-      value = (value * 10) + (*s - '0');
+    if (mustBeHex && isxdigit ((uint8_t)*s))
+      value = (value << 4) | hexToDec [toupper((uint8_t)*s) - '0'];
+    else if (isdigit ((uint8_t)*s))
+      value = (value * 10) + ((uint8_t)*s - '0');
     else
     {
       printf ("Malformed number. Must be decimal number, or hex value preceeded by '0x'%s", CFG_INTERFACE_NEWLINE);
@@ -207,7 +207,7 @@ void cmd_lcd_test(uint8_t argc, char **argv)
 void cmd_lcd_fill(uint8_t argc, char **argv)
 {
   // Try to convert supplied value to an integer
-  int32_t col;
+  int32_t col = 0;
   getNumber (argv[0], &col);
   
   // Check for invalid values (getNumber may complain about this as well)

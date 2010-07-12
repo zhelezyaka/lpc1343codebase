@@ -542,9 +542,8 @@ static bool sdWriteSector (uint32_t sector, const uint8_t *buff, uint32_t count)
 /**************************************************************************/
 static bool sdWriteDataBlock (const uint8_t *buff, uint8_t token)
 {
-  uint8_t resp, i;
-  
-  i = i; // avoid warning
+  uint8_t resp;
+  uint8_t i = 0; // avoid warning
   
   sdspiSendByte (token);                  /* send data token first*/
   
