@@ -82,8 +82,12 @@
 #endif
 
 #ifdef CFG_SDCARD
+  #include "core/ssp/ssp.h"
   #include "drivers/fatfs/diskio.h"
-  #include "drivers/fatfs/sdspi.h"
+  #include "drivers/fatfs/ff.h"
+  static FILINFO Finfo;
+  static FATFS Fatfs[1];
+  static uint8_t buf[64];
 #endif
 
 /**************************************************************************/
@@ -144,39 +148,36 @@ void systemInit()
     lcdInit();
 
     // Get 16-bit equivalent of 24-bit color
-    uint16_t gray = drawRGB24toRGB565(0x33, 0x33, 0x33);
+    uint16_t darkGray = drawRGB24toRGB565(0x33, 0x33, 0x33);
+    uint16_t lightGray = drawRGB24toRGB565(0xCC, 0xCC, 0xCC);
 
-    // Fill the screen with a test pattern
-    // drawTestPattern();
-    drawFill(gray);
+    // Draw background
+    drawFill(lightGray);
+    drawRectangleFilled(1, 1, 240, 20, darkGray);
+    drawRectangleFilled(1, 240, 240, 320, darkGray);
 
+    // Render some text
     #if defined CFG_LCD_INCLUDESMALLFONTS & CFG_LCD_INCLUDESMALLFONTS == 1
       drawStringSmall(1, 210, WHITE, "5x8 System (Max 40 Characters)", Font_System5x8);
       drawStringSmall(1, 220, WHITE, "7x8 System (Max 30 Characters)", Font_System7x8);
     #endif
- 
-    drawString(1,   90,   GREEN,    &consolas9ptFontInfo,   "Consolas 9 (38 chars wide)");
-    drawString(1,   105,  GREEN,    &consolas9ptFontInfo,   "12345678901234567890123456789012345678");
-    drawString(1,   130,  YELLOW,   &consolas11ptFontInfo,  "Consolas 11 (33 chars wide)");
-    drawString(1,   145,  YELLOW,   &consolas11ptFontInfo,  "123456789012345678901234567890123");
-    drawString(1,   163,  BLACK,    &consolas16ptFontInfo,  "Consolas 16 (22 chars)");
-    drawString(1,   183,  BLACK,    &consolas16ptFontInfo,  "1234567890123456789012");
-    drawString(1,   10,   BLACK,    &consolas11ptFontInfo,  "Address");
-    drawString(210, 10,   BLACK,    &consolas11ptFontInfo,  "Time");
-    drawString(1,   22,   WHITE,    &consolas16ptFontInfo,  "0xAA01");
-    drawString(190, 22,   WHITE,    &consolas16ptFontInfo,  "04:02");
+    drawString(5,   8,    WHITE,    &consolas9ptFontInfo,   "LPC1343 Demo Code v0.25");
 
     // Draw some primitive shapes
-    drawCircle(120, 160, 100, WHITE);
-    drawLine(10, 10, 70, 300, WHITE);
-    drawRectangle (100, 100, 80, 80, WHITE);
-    drawRectangleFilled (98, 98, 82, 82, gray);
+    drawCircle(15, 300, 10, WHITE);
+    drawLine(100, 280, 200, 310, WHITE);
+    drawRectangle (220, 5, 230, 15, WHITE);
+    drawRectangleFilled (222, 7, 228, 13, lightGray);
 
     // Draw some compound shapes
-    drawProgressBar(10, 150, 100, 10, WHITE, BLACK, WHITE, GREEN, 75);
-    drawProgressBar(10, 165, 100, 10, WHITE, BLACK, WHITE, YELLOW, 23);
-    drawProgressBar(10, 180, 100, 10, WHITE, BLACK, WHITE, RED, 64);
-    drawProgressBar(10, 195, 100, 20, WHITE, BLACK, WHITE, BLUE, 90);
+    drawString(10,   150,    BLACK,    &consolas9ptFontInfo,   "Green Progress");
+    drawProgressBar(100, 150, 130, 9, WHITE, BLACK, lightGray, GREEN, 75);
+    drawString(10,   165,    BLACK,    &consolas9ptFontInfo,   "Yellow Progress");
+    drawProgressBar(100, 165, 130, 9, WHITE, BLACK, lightGray, YELLOW, 23);
+    drawString(10,   180,    RED,    &consolas9ptFontInfo,   "Red Progress");
+    drawProgressBar(100, 180, 130, 9, WHITE, BLACK, lightGray, RED, 64);
+    drawString(10,   200,    BLACK,    &consolas9ptFontInfo,   "Battery");
+    drawProgressBar(100, 195, 130, 15, WHITE, BLACK, lightGray, BLUE, 90);
 
     uint16_t getc;
     getc = lcdGetPixel(0, 0);
@@ -196,9 +197,66 @@ void systemInit()
   #endif
 
   #ifdef CFG_SDCARD
-    sdspiInit();
+    // Init SSP w/clock low between frames and transition on leading edge
+    sspInit(0, sspClockPolarity_Low, sspClockPhase_RisingEdge);
     DSTATUS stat;
     stat = disk_initialize(0);
+    if (stat & STA_NOINIT) 
+    {
+      printf("%-40s : %s%s", "MMC", "Not Initialised", CFG_INTERFACE_NEWLINE);
+    }
+    if (stat & STA_NODISK) 
+    {
+      printf("%-40s : %s%s", "MMC", "No Disk", CFG_INTERFACE_NEWLINE);
+    }
+    if (stat == 0)
+    {
+      DSTATUS stat;
+      DWORD p2;
+      WORD w1;
+      BYTE res, b1;
+      DIR dir;
+
+      // SD Card Initialised
+      printf("%-40s : %s%s", "MMC", "Initialised", CFG_INTERFACE_NEWLINE);
+      // Drive size
+      if (disk_ioctl(0, GET_SECTOR_COUNT, &p2) == RES_OK) 
+      {
+        printf("%-40s : %d%s", "MMC Drive Size", p2, CFG_INTERFACE_NEWLINE);
+      }
+      // Sector Size
+      if (disk_ioctl(0, GET_SECTOR_SIZE, &w1) == RES_OK) 
+      {
+        printf("%-40s : %d%s", "MMC Sector Size", w1, CFG_INTERFACE_NEWLINE);
+      }
+      // Card Type
+      if (disk_ioctl(0, MMC_GET_TYPE, &b1) == RES_OK) 
+      {
+        printf("%-40s : %d%s", "MMC Card Type", b1, CFG_INTERFACE_NEWLINE);
+      }
+      // Try to mount drive
+      res = f_mount(0, &Fatfs[0]);
+      if (res != FR_OK) 
+      {
+        printf("%-40s : %d%s", "MMC - Failed to mount 0:", res, CFG_INTERFACE_NEWLINE);
+      }
+      if (res == FR_OK)
+      {
+        res = f_opendir(&dir, "/");
+        if (res) 
+        {
+            printf("%-40s : %d%s", "MMC - Failed to open /:", res, CFG_INTERFACE_NEWLINE);
+            return;
+        }
+        // Read dir
+        for(;;) 
+        {
+            res = f_readdir(&dir, &Finfo);
+            if ((res != FR_OK) || !Finfo.fname[0]) break;
+            printf("%-25s %s", (char *)&Finfo.fname[0], CFG_INTERFACE_NEWLINE);    
+        }
+      }
+    }
   #endif
 
   // Start the command line interface (if requested)
