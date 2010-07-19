@@ -59,16 +59,19 @@
 #define CFG_LED_ON                  (0)           // The pin state to turn the LED on (0 = low, 1 = High)
 #define CFG_LED_OFF                 (1)           // The pin state to turn the LED off (0 = low, 1 = High)
 
-// #define CFG_SDCARD
+#define CFG_SDCARD
+#define CFG_SDCARD_CDPORT           (2)
+#define CFG_SDCARD_CDPIN            (10)
 
 /* USB Configuration */
 // #define CFG_USBHID
-// #define CFG_USBCDC                                // Defaults to 115200 8N1
+// #define CFG_USBCDC                             // Defaults to 115200 8N1
+#define CFG_USBCDC_BUFSIZE          (80)          // Transmit FIFO buffer size (max number of outgoing characters to store)
 
 /* Printf Redirection */
 // #define CFG_PRINTF_NONE                        // Ignore all printf output
-// #define CFG_PRINTF_UART                        // Use UART for printf output
-// #define CFG_PRINTF_USBCDC                         // Use USB CDC for printf output
+#define CFG_PRINTF_UART                           // Use UART for printf output
+// #define CFG_PRINTF_USBCDC                      // Use USB CDC for printf output
 
 /* CLI Interface Settings */
 // #define CFG_INTERFACE
@@ -89,7 +92,7 @@
 #define CFG_CHIBI_EEPROM_IEEEADDR   (uint16_t)(0x0000)  // Start location in EEPROM for the full IEEE address
 #define CFG_CHIBI_EEPROM_SHORTADDR  (uint16_t)(0x0009)  // Start location in EEPROM for the short (16-bit) address
 
-#define CFG_LCD
+// #define CFG_LCD
 #define CFG_LCD_INCLUDESMALLFONTS   (0)           // 1 to include 'smallfont' support
 #define CFG_LCD_WIDTH               (240)         // LCD width in pixels
 #define CFG_LCD_HEIGHT              (320)         // LCD height in pixels

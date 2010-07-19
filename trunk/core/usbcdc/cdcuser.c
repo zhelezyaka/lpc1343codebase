@@ -25,7 +25,7 @@
 #include "cdc.h"
 #include "cdcuser.h"
 
-unsigned char BulkBufIn  [USB_CDC_BUFSIZE];            // Buffer to store USB IN  packet
+// unsigned char BulkBufIn  [USB_CDC_BUFSIZE];            // Buffer to store USB IN  packet
 unsigned char BulkBufOut [USB_CDC_BUFSIZE];            // Buffer to store USB OUT packet
 unsigned char NotificationBuf [10];
 
@@ -271,9 +271,9 @@ uint32_t CDC_SendBreak (unsigned short wDurationOfBreak) {
 void CDC_BulkIn(void) 
 {
 //  int numBytesRead, numBytesAvail;
-
-  // ToDo: Modify BulkIn to send incoming data to USB
-        
+//
+//  // ToDo: Modify BulkIn to send incoming data to USB
+//        
 //  ser_AvailChar (&numBytesAvail);
 //
 //  // ... add code to check for overwrite
@@ -287,6 +287,8 @@ void CDC_BulkIn(void)
 //  else {
 //    CDC_DepInEmpty = 1;
 //  }
+//
+//
 } 
 
 
