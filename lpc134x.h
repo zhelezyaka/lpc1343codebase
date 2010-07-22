@@ -532,6 +532,8 @@
 #define SCB_SSP0CLKDIV_DIV6                       ((unsigned int) 0x00000006)
 #define SCB_SSP0CLKDIV_DIV10                      ((unsigned int) 0x0000000A)
 #define SCB_SSP0CLKDIV_DIV12                      ((unsigned int) 0x0000000C)
+#define SCB_SSP0CLKDIV_DIV20                      ((unsigned int) 0x00000014)
+#define SCB_SSP0CLKDIV_DIV40                      ((unsigned int) 0x00000028)
 #define SCB_SSP0CLKDIV_MASK                       ((unsigned int) 0x000000FF)
 
 /*  UARTCLKDIV (UART clock divider register)

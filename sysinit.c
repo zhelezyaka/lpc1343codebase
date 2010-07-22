@@ -253,8 +253,27 @@ void systemInit()
         {
             res = f_readdir(&dir, &Finfo);
             if ((res != FR_OK) || !Finfo.fname[0]) break;
-            printf("%-25s %s", (char *)&Finfo.fname[0], CFG_INTERFACE_NEWLINE);    
+            #if _USE_LFN == 0
+              printf("%-25s %s", (char *)&Finfo.fname[0], CFG_INTERFACE_NEWLINE);
+            #else
+              printf("%-75s %s", (char *)&Finfo.lfname[0], CFG_INTERFACE_NEWLINE);
+            #endif
         }
+        // Create a file
+        //FIL logFile;  
+        //if(f_open(&logFile, "/log.txt", FA_READ | FA_WRITE | FA_OPEN_ALWAYS)!=FR_OK) 
+        //{  
+        //  // Flag error  
+        //  printf ("Unabled to create log.txt%s", CFG_INTERFACE_NEWLINE); 
+        //}  
+        //unsigned int bytesWritten;  
+        //f_write(&logFile, "New log opened!\n", 16, &bytesWritten);  
+        //// Flush the write buffer (required?)
+        //// f_sync(&logFile);  
+        //// Close and unmount.   
+        //f_close(&logFile);  
+        //f_mount(0,0); 
+        //printf("Wrote data to log.txt", CFG_INTERFACE_NEWLINE);
       }
     }
   #endif

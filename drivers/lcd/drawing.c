@@ -663,3 +663,26 @@ void drawProgressBar ( uint16_t x, uint16_t y, uint16_t width, uint16_t height, 
   }
 }
 
+#ifdef CFG_SDCARD
+/**************************************************************************/
+/*!
+    @brief  Loads an image from an SD card and renders it
+*/
+/**************************************************************************/
+void drawImageFromFile(uint16_t x, uint16_t y, char *filename)
+{
+  lcdDrawImageFromFile(x, y, filename);
+}
+#endif
+
+/**************************************************************************/
+/*!
+    @brief  Renders a bitmap image
+*/
+/**************************************************************************/
+void drawImage(uint16_t x, uint16_t y, uint16_t *data)
+{
+  lcdDrawImage(x, y, data);
+}
+
+

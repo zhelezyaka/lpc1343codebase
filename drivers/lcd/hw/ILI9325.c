@@ -304,6 +304,55 @@ void lcdDrawHLine(uint16_t x0, uint16_t x1, uint16_t y, uint16_t color)
   }
 }
 
+#ifdef CFG_SDCARD
+/**************************************************************************/
+/*!
+    @brief  Loads an image from an SD card and renders it
+*/
+/**************************************************************************/
+void lcdDrawImageFromFile(uint16_t x, uint16_t y, char *filename)
+{
+}
+#endif
+
+/**************************************************************************/
+/*!
+    @brief  Renders a bitmap image
+*/
+/**************************************************************************/
+void lcdDrawImage(uint16_t x, uint16_t y, const uint16_t *data)
+{
+  // data[0] = Width
+  // data[1] = height
+  // data[2] = Compression
+  // data[3] = Compression Window
+  // data[4] = Pixel Data ...
+
+  uint16_t line, width;
+  uint32_t currentPixel, totalPixels;
+  
+  width = 0;
+  
+  // Calculate total pixels (width * height)
+  totalPixels = data[0] * data[1];
+  currentPixel = 0;
+
+  // Draw individual pixels
+  for (line = 0; line < data[1]; line++)
+  {
+    // Set cursor to starting x, y position
+    ili9325SetCursor(x, y + line);
+    // Prepare to write data to GRAM
+    ili9325WriteCmd(0x0022);  // Write Data to GRAM (R22h)
+    do 
+    {
+      ili9325WriteData(data[currentPixel]);
+      currentPixel++;
+    } while (--width);
+    width = data[0];          // Reset width counter
+  }
+}
+
 /*************************************************/
 uint16_t lcdGetPixel(uint16_t x, uint16_t y)
 {

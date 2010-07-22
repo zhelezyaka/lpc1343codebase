@@ -10,6 +10,7 @@
 #include "diskio.h"
 #include "core/gpio/gpio.h"
 #include "core/ssp/ssp.h"
+#include "core/systick/systick.h"
 
 
 /* Definitions for MMC/SDC command */
@@ -33,13 +34,13 @@
 
 
 /* Port Controls  (Platform dependent) */
-#define CS_LOW()    ssp0Select()
-#define CS_HIGH()   ssp0Deselect()
+#define CS_LOW()    gpioSetValue(SSP0_CSPORT, SSP0_CSPIN, 0)
+#define CS_HIGH()   gpioSetValue(SSP0_CSPORT, SSP0_CSPIN, 1)
 
+// #define	FCLK_SLOW()					/* Set slow clock (100k-400k) */
+// #define	FCLK_FAST()					/* Set fast clock (depends on the CSD) */
 
-#define	FCLK_SLOW()					/* Set slow clock (100k-400k) */
-#define	FCLK_FAST()					/* Set fast clock (depends on the CSD) */
-
+#define FDELAY(ms) systickDelay(ms)     // Assumes delay = 1ms, ugly
 
 /*--------------------------------------------------------------------------
 
@@ -56,6 +57,61 @@ BYTE Timer1, Timer2;	/* 100Hz decrement timer */
 static
 BYTE CardType;			/* Card type flags */
 
+/**************************************************************************/
+/*! 
+    Set SSP clock to slow (400 KHz)
+*/
+/**************************************************************************/
+static void FCLK_SLOW()
+{
+    /* Divide by 10 (SSPCLKDIV also enables to SSP CLK) */
+    SCB_SSP0CLKDIV = SCB_SSP0CLKDIV_DIV10;
+  
+    /* (PCLK / (CPSDVSR × [SCR+1])) = (7,200,000 / (2 x [8 + 1])) = 400 KHz */
+    uint32_t configReg = ( SSP_SSP0CR0_DSS_8BIT    // Data size = 8-bit
+                  | SSP_SSP0CR0_FRF_SPI       // Frame format = SPI
+                  | SSP_SSP0CR0_SCR_8);       // Serial clock rate = 8
+  
+    // Set clock polarity
+    configReg &= ~SSP_SSP0CR0_CPOL_MASK;    // Clock polarity = Low between frames
+  
+    // Set edge transition
+    configReg &= ~SSP_SSP0CR0_CPHA_MASK;    // Clock out phase = Leading edge clock transition
+  
+    // Assign config values to SSP0CR0
+    SSP_SSP0CR0 = configReg;
+  
+    /* Clock prescale register must be even and at least 2 in master mode */
+    SSP_SSP0CPSR = SSP_SSP0CPSR_CPSDVSR_DIV2;  
+}
+
+/**************************************************************************/
+/*! 
+    Set SSP clock to fast (4.0 MHz)
+*/
+/**************************************************************************/
+static void FCLK_FAST()
+{
+    /* Divide by 1 (SSPCLKDIV also enables to SSP CLK) */
+    SCB_SSP0CLKDIV = SCB_SSP0CLKDIV_DIV1;
+  
+    /* (PCLK / (CPSDVSR × [SCR+1])) = (72,000,000 / (2 x [8 + 1])) = 4.0 MHz */
+    uint32_t configReg = ( SSP_SSP0CR0_DSS_8BIT    // Data size = 8-bit
+                  | SSP_SSP0CR0_FRF_SPI       // Frame format = SPI
+                  | SSP_SSP0CR0_SCR_8);       // Serial clock rate = 8
+  
+    // Set clock polarity
+    configReg &= ~SSP_SSP0CR0_CPOL_MASK;    // Clock polarity = Low between frames
+  
+    // Set edge transition
+    configReg &= ~SSP_SSP0CR0_CPHA_MASK;    // Clock out phase = Leading edge clock transition
+  
+    // Assign config values to SSP0CR0
+    SSP_SSP0CR0 = configReg;
+  
+    /* Clock prescale register must be even and at least 2 in master mode */
+    SSP_SSP0CPSR = SSP_SSP0CPSR_CPSDVSR_DIV2;  
+}
 
 /*-----------------------------------------------------------------------*/
 /* Transmit a byte to MMC via SPI  (Platform dependent)                  */
@@ -592,21 +648,22 @@ void disk_timerproc (void)
 	if (n) Timer2 = --n;
 
 	n = pv;
-	//pv = SOCKPORT & (SOCKWP | SOCKINS);	/* Sample socket switch */
-	pv = gpioGetValue( CFG_SDCARD_CDPORT, CFG_SDCARD_CDPIN);
+	// pv = SOCKPORT & (SOCKWP | SOCKINS);	/* Sample socket switch */
+	pv = 0; // gpioGetValue( 0, 1 );
 
-	if (n == pv) {					/* Have contacts stabled? */
-		s = Stat;
-
-		/* write protect NOT supported */
-
-		/* check card detect */
-		if (pv)			       /* (Socket empty) */
-			s |= (STA_NODISK | STA_NOINIT);
-		else				       /* (Card inserted) */
-			s &= ~STA_NODISK;
-
-		Stat = s;
-	}
+//	if (n == pv) {					/* Have contacts stabled? */
+//		s = Stat;
+//
+//		/* write protect NOT supported */
+//
+//		/* check card detect */
+//		if (pv)			       /* (Socket empty) */
+//			s |= (STA_NODISK | STA_NOINIT);
+//		else				       /* (Card inserted) */
+//			s &= ~STA_NODISK;
+//
+//		Stat = s;
+//	}
 }
+
 
