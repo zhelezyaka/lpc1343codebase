@@ -59,14 +59,14 @@
 #define CFG_LED_ON                  (0)           // The pin state to turn the LED on (0 = low, 1 = High)
 #define CFG_LED_OFF                 (1)           // The pin state to turn the LED off (0 = low, 1 = High)
 
-#define CFG_SDCARD
-#define CFG_SDCARD_CDPORT           (2)
-#define CFG_SDCARD_CDPIN            (10)
+// #define CFG_SDCARD
+#define CFG_SDCARD_CDPORT           (3)
+#define CFG_SDCARD_CDPIN            (0)
 
 /* USB Configuration */
-// #define CFG_USBHID
+#define CFG_USBHID
 // #define CFG_USBCDC                             // Defaults to 115200 8N1
-#define CFG_USBCDC_BUFSIZE          (80)          // Transmit FIFO buffer size (max number of outgoing characters to store)
+// #define CFG_USBCDC_BUFSIZE          (80)       // Transmit FIFO buffer size (max number of outgoing characters to store)
 
 /* Printf Redirection */
 // #define CFG_PRINTF_NONE                        // Ignore all printf output
@@ -74,13 +74,13 @@
 // #define CFG_PRINTF_USBCDC                      // Use USB CDC for printf output
 
 /* CLI Interface Settings */
-// #define CFG_INTERFACE
+#define CFG_INTERFACE
 #define CFG_INTERFACE_MAXMSGSIZE    (80)          // The maximum number of bytes to accept for a command
 #define CFG_INTERFACE_NEWLINE       "\r\n"        // This should be either \r\n (Windows-style) or \n (Unix-style)
 #define CFG_INTERFACE_PROMPT        "LPC1343 >> " // The command-prompt text to display before each command
 
 /* On-board EEPROM Settings */
-// #define CFG_I2CEEPROM
+#define CFG_I2CEEPROM
 
 /* LM75B Temperature Settings (requires external HW) */
 // #define CFG_LM75B

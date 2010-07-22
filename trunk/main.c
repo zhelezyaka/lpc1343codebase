@@ -77,8 +77,6 @@ int main (void)
 
   while (1)
   {
-    
-
     #ifdef CFG_INTERFACE
       // Handle any incoming command line input
       cmdPoll();

@@ -54,12 +54,17 @@ void      drawLine            ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t 
 void      drawCircle          ( uint16_t xCenter, uint16_t yCenter, uint16_t radius, uint16_t color );
 void      drawRectangle       ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color);
 void      drawRectangleFilled ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color);
+void      drawImage           ( uint16_t x, uint16_t y, uint16_t *data );
 void      drawProgressBar     ( uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t borderColor, uint16_t fillColor, uint16_t barBorderColor, uint16_t barFillColor, uint8_t progress );
 uint32_t  drawGetStringWidth  ( const FONT_INFO *fontInfo, char *str );
 uint16_t  drawRGB24toRGB565   ( uint8_t r, uint8_t g, uint8_t b );
 
 #if defined CFG_LCD_INCLUDESMALLFONTS & CFG_LCD_INCLUDESMALLFONTS == 1
 void      drawStringSmall     ( uint16_t x, uint16_t y, uint16_t color, char* text, struct FONT_DEF font );
+#endif
+
+#if defined CFG_SDCARD
+void      drawImageFromFile   ( uint16_t x, uint16_t y, char *filename );
 #endif
 
 #endif

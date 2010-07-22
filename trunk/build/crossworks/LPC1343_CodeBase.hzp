@@ -32,7 +32,9 @@
           </file>
         </folder>
         <folder Name="timer32">
-          <file file_name="../../core/timer32/timer32.c"/>
+          <file file_name="../../core/timer32/timer32.c">
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
+          </file>
         </folder>
         <folder Name="uart">
           <file file_name="../../core/uart/uart.c">
@@ -66,7 +68,7 @@
         <folder Name="isp"/>
         <folder Name="cmd">
           <file file_name="../../core/cmd/cmd.c">
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
           </file>
         </folder>
         <folder Name="usbcdc">
@@ -136,11 +138,11 @@
         </folder>
         <folder Name="lcd" file_name="">
           <file file_name="../../drivers/lcd/drawing.c">
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
           </file>
           <folder Name="hw">
             <file file_name="../../drivers/lcd/hw/ILI9325.c">
-              <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+              <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
               <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
             </file>
             <file file_name="../../drivers/lcd/hw/SPFD5420A.c">
@@ -167,15 +169,18 @@
             </file>
           </folder>
         </folder>
-        <folder Name="fatfs">
-          <file file_name="../../drivers/fatfs/ff.c"/>
-          <file file_name="../../drivers/fatfs/mmc.c"/>
-          <file file_name="../../drivers/fatfs/ccsbcs.c">
-            <configuration Name="THUMB Flash Release" build_exclude_from_build="Yes"/>
+        <folder Name="fatfs" file_name="">
+          <file file_name="../../drivers/fatfs/ff.c">
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
+          </file>
+          <file file_name="../../drivers/fatfs/mmc.c">
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
           </file>
         </folder>
       </folder>
-      <file file_name="../../commands.c"/>
+      <file file_name="../../commands.c">
+        <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+      </file>
       <file file_name="../../cmd_tbl.h"/>
       <file file_name="../../sysinit.c"/>
     </folder>
