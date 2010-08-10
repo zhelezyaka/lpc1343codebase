@@ -43,65 +43,239 @@
 #include "sysdefs.h"
 #include "drivers/chibi/chb_drvr.h"
 
-/* Core CPU Settings (reference only) */
-#define CFG_CPU_CCLK                (72000000)    // Ref. only.  Clock speed actually set in "core/cpu/cpu.c"
+/*=========================================================================
+    CORE CPU SETTINGS
+    -----------------------------------------------------------------------
 
-/* Systick Timer Settings */
-#define CFG_SYSTICK_DELAY_IN_MS     (1)           // The number of milliseconds between each tick of the systick timer
+    CFG_CPU_CCLK    Value is for reference only.  'core/cpu/cpu.c' must
+                    be modified to change the clock speed, but the value
+                    should be indicated here since CFG_CPU_CCLK is used by
+                    other peripherals to determine timing.
 
-/* UART Settings */
-#define CFG_UART_BAUDRATE           (57600)       // Default UART speed
-#define CFG_UART_BUFSIZE            (80)          // RX FIFO buffer size (the maximum number of received chars to store)
+    -----------------------------------------------------------------------*/
+    #define CFG_CPU_CCLK                (72000000)
+/*=========================================================================*/
 
-/* Test LED Pin Settings */
-#define CFG_LED_PORT                (2)
-#define CFG_LED_PIN                 (10)
-#define CFG_LED_ON                  (0)           // The pin state to turn the LED on (0 = low, 1 = High)
-#define CFG_LED_OFF                 (1)           // The pin state to turn the LED off (0 = low, 1 = High)
 
-// #define CFG_SDCARD
-#define CFG_SDCARD_CDPORT           (3)
-#define CFG_SDCARD_CDPIN            (0)
+/*=========================================================================
+    SYSTICK TIMER
+    -----------------------------------------------------------------------
 
-/* USB Configuration */
-#define CFG_USBHID
-// #define CFG_USBCDC                             // Defaults to 115200 8N1
-// #define CFG_USBCDC_BUFSIZE          (80)       // Transmit FIFO buffer size (max number of outgoing characters to store)
+    CFG_SYSTICK_DELAY_IN_MS   The number of milliseconds between each tick
+                              of the systick timer.
 
-/* Printf Redirection */
-// #define CFG_PRINTF_NONE                        // Ignore all printf output
-#define CFG_PRINTF_UART                           // Use UART for printf output
-// #define CFG_PRINTF_USBCDC                      // Use USB CDC for printf output
+    -----------------------------------------------------------------------*/
+    #define CFG_SYSTICK_DELAY_IN_MS     (1)
+/*=========================================================================*/
 
-/* CLI Interface Settings */
-#define CFG_INTERFACE
-#define CFG_INTERFACE_MAXMSGSIZE    (80)          // The maximum number of bytes to accept for a command
-#define CFG_INTERFACE_NEWLINE       "\r\n"        // This should be either \r\n (Windows-style) or \n (Unix-style)
-#define CFG_INTERFACE_PROMPT        "LPC1343 >> " // The command-prompt text to display before each command
 
-/* On-board EEPROM Settings */
-#define CFG_I2CEEPROM
+/*=========================================================================
+    UART
+    -----------------------------------------------------------------------
 
-/* LM75B Temperature Settings (requires external HW) */
-// #define CFG_LM75B
+    CFG_UART_BAUDRATE         The default UART speed.  This value is used 
+                              when initialising UART, and should be a 
+                              standard value like 57600, 9600, etc.
+    CFG_UART_BUFSIZE          The length in bytes of the UART RX FIFO. This
+                              will determine the maximum number of received
+                              characters to store in memory.
 
-/* Chibi Wireless Stack Settings (requires external HW) */
-// #define CFG_CHIBI
-#define CFG_CHIBI_MODE              (BPSK20_868MHZ)     // See chb_drvr.h for possible values
-#define CFG_CHIBI_POWER             (CHB_PWR_EU2_5DBM)  // See chb_drvr.h for possible values
-#define CFG_CHIBI_EEPROM_IEEEADDR   (uint16_t)(0x0000)  // Start location in EEPROM for the full IEEE address
-#define CFG_CHIBI_EEPROM_SHORTADDR  (uint16_t)(0x0009)  // Start location in EEPROM for the short (16-bit) address
+    -----------------------------------------------------------------------*/
+    #define CFG_UART_BAUDRATE           (57600)
+    #define CFG_UART_BUFSIZE            (80)
+/*=========================================================================*/
 
-// #define CFG_LCD
-#define CFG_LCD_INCLUDESMALLFONTS   (0)           // 1 to include 'smallfont' support
-#define CFG_LCD_WIDTH               (240)         // LCD width in pixels
-#define CFG_LCD_HEIGHT              (320)         // LCD height in pixels
+
+/*=========================================================================
+    ON-BOARD LED
+    -----------------------------------------------------------------------
+
+    CFG_LED_PORT              The port for the on board LED
+    CFG_LED_PIN               The pin for the on board LED
+    CFG_LED_ON                The pin state to turn the LED on (0 = low, 1 = high)
+    CFG_LED_OFF               The pin state to turn the LED off (0 = low, 1 = high)
+
+    -----------------------------------------------------------------------*/
+    #define CFG_LED_PORT                (2)
+    #define CFG_LED_PIN                 (10)
+    #define CFG_LED_ON                  (0)
+    #define CFG_LED_OFF                 (1)
+/*=========================================================================*/
+
+
+/*=========================================================================
+    MICRO-SD CARD
+    -----------------------------------------------------------------------
+
+    CFG_SDCARD                If this field is defined SD Card and Fat32
+                              file system support will be included
+    CFG_SDCARD_CDPORT         The card detect port number
+    CFG_SDCARD_CDPIN          The card detect pin number
+
+    NOTE: CFG_SDCARD =        ~7.2 KB Flash and 0.6 KB SRAM (-Os)
+    -----------------------------------------------------------------------*/
+    #define CFG_SDCARD
+    #define CFG_SDCARD_CDPORT           (3)
+    #define CFG_SDCARD_CDPIN            (0)
+/*=========================================================================*/
+
+
+/*=========================================================================
+    USB
+    -----------------------------------------------------------------------
+
+    CFG_USBHID                If this field is defined USB HID support will
+                              be included.  Currently uses ROM-based USB HID
+    CFG_USBCDC                If this field is defined USB CDC support will
+                              be included, with the USB Serial Port speed
+                              set to 115200 BPS by default
+    CFG_USBCDC_BUFSIZE        The size in bytes of the USB CDC transmit
+                              FIFO buffer
+
+    NOTE: CFG_USBHID =        ~0.5 KB Flash and 36 bytes SRAM (-Os)
+    NOTE: CFG_USBCDC =        ~4.0 KB Flash and 272 bytes SRAM (-Os)
+    -----------------------------------------------------------------------*/
+    // #define CFG_USBHID
+    // #define CFG_USBCDC
+    #define CFG_USBCDC_BUFSIZE          (80)
+/*=========================================================================*/
+
+
+/*=========================================================================
+    PRINTF REDIRECTION
+    -----------------------------------------------------------------------
+
+    CFG_PRINTF_UART           Will cause all printf statements to be 
+                              redirected to UART
+    CFG_PRINTF_USBCDC         Will cause all printf statements to be
+                              redirect to USB Serial
+    CFG_PRINTF_NEWLINE        This should be either "\r\n" for Windows or
+                              "\n" for *nix
+
+    Note: If no printf redirection definitions are present, all printf
+    output will be ignored, though this will also save ~350 bytes flash.
+
+    NOTE: PRINTF Support =    ~350 bytes Flash (-Os)
+    -----------------------------------------------------------------------*/
+    // #define CFG_PRINTF_UART
+    // #define CFG_PRINTF_USBCDC
+    #define CFG_PRINTF_NEWLINE          "\r\n"
+/*=========================================================================*/
+
+
+/*=========================================================================
+    COMMAND LINE INTERFACE
+    -----------------------------------------------------------------------
+
+    CFG_INTERFACE             If this field is defined the UART or USBCDC
+                              based command-line interface will be included
+    CFG_INTERFACE_MAXMSGSIZE  The maximum number of bytes to accept for an
+                              incoming command
+    CFG_INTERFACE_PROMPT      The command prompt to display at the start
+                              of every new data entry line
+
+    NOTE: CFG_INTERFACE =     ~6.0 KB Flash and 240 bytes SRAM (-Os), but
+                              this varies with the number of commands
+                              present
+    -----------------------------------------------------------------------*/
+    // #define CFG_INTERFACE
+    #define CFG_INTERFACE_MAXMSGSIZE    (80)
+    #define CFG_INTERFACE_PROMPT        "LPC1343 >> "
+/*=========================================================================*/
+
+
+/*=========================================================================
+    EEPROM
+    -----------------------------------------------------------------------
+
+    CFG_I2CEEPROM             If defined, drivers for the onboard EEPROM
+                              will be included during build
+
+    -----------------------------------------------------------------------*/
+    // #define CFG_I2CEEPROM
+/*=========================================================================*/
+
+
+/*=========================================================================
+    LM75B TEMPERATURE SENSOR
+    -----------------------------------------------------------------------
+
+    CFG_LM75B                 If defined, drivers for an optional LM75B
+                              temperature sensor will be included during
+                              build (requires external HW)
+
+    -----------------------------------------------------------------------*/
+    // #define CFG_LM75B
+/*=========================================================================*/
+
+
+/*=========================================================================
+    CHIBI WIRELESS STACK
+    -----------------------------------------------------------------------
+
+    CFG_CHIBI                   If defined, the CHIBI wireless stack will be
+                                included during build.  Requires external HW.
+    CFG_CHIBI_MODE              The mode to use when receiving and transmitting
+                                with Chibi.  See chb_drvr.h for possible values
+    CFG_CHIBI_POWER             The power level to use when transmitting.  See
+                                chb_drvr.h for possible values
+    CFG_CHIBI_EEPROM_IEEEADDR   Start location in EEPROM for the full IEEE
+                                address of this node
+    CFG_CHIBI_EEPROM_SHORTADDR  Start location in EEPROM for the short (16-bit)
+                                address of this node
+
+    NOTE: CFG_CHIBI =           ~4.0 KB Flash and 184 bytes SRAM (-Os)
+    -----------------------------------------------------------------------*/
+    // #define CFG_CHIBI
+    #define CFG_CHIBI_MODE              (BPSK20_868MHZ)     // See chb_drvr.h for possible values
+    #define CFG_CHIBI_POWER             (CHB_PWR_EU2_5DBM)  // See chb_drvr.h for possible values
+    #define CFG_CHIBI_EEPROM_IEEEADDR   (uint16_t)(0x0000)
+    #define CFG_CHIBI_EEPROM_SHORTADDR  (uint16_t)(0x0009)
+/*=========================================================================*/
+
+
+/*=========================================================================
+    TFT LCD
+    -----------------------------------------------------------------------
+
+    CFG_LCD                     If defined, this will cause drivers for
+                                a pre-determined LCD screen to be included
+                                during build.  Only one LCD driver can be 
+                                included during the build process (for ex.
+                                'drivers/lcd/hw/ILI9325.c')
+    CFG_LCD_INCLUDESMALLFONTS   If set to 1, smallfont support will be
+                                included for 3x6, 5x8, 7x8 and 8x8 fonts.
+                                This should only be enabled if these small
+                                fonts are required since there is already
+                                support for larger fonts generated using
+                                Dot Factory 
+                                http://www.pavius.net/downloads/tools/53-the-dot-factory
+    CFG_LCD_WIDTH               The width in pixels of the LCD screen
+    CFG_LCD_HEIGHT              The height in pixels of the LCD screen
+
+    NOTE: CFG_LCD (ILI9325) =    ~4.9 KB Flash (-Os, no small fonts, 
+                                consolas9 used)
+    -----------------------------------------------------------------------*/
+    // #define CFG_LCD
+    #define CFG_LCD_INCLUDESMALLFONTS   (0)
+    #define CFG_LCD_WIDTH               (240)
+    #define CFG_LCD_HEIGHT              (320)
+/*=========================================================================*/
+
+
 
 // #define CFG_TESTBED
 
-// #####################
-// Config error-checking
-// #####################
+
+
+/*=========================================================================
+  CONFIG FILE VALIDATION
+  -------------------------------------------------------------------------
+  Basic error checking to make sure that incompatible defines are not 
+  enabled at the same time, etc.
+
+  =========================================================================*/
+
 #if !defined CFG_PRINTF_NONE
   #if defined CFG_PRINTF_USBCDC && defined CFG_PRINTF_UART
     #error "CFG_PRINTF_UART or CFG_PRINTF_USBCDC cannot both be defined at once"

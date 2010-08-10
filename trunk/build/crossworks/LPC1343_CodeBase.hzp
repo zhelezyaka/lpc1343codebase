@@ -138,11 +138,11 @@
         </folder>
         <folder Name="lcd" file_name="">
           <file file_name="../../drivers/lcd/drawing.c">
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
           </file>
           <folder Name="hw">
             <file file_name="../../drivers/lcd/hw/ILI9325.c">
-              <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
+              <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
               <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
             </file>
             <file file_name="../../drivers/lcd/hw/SPFD5420A.c">
@@ -185,6 +185,7 @@
       <file file_name="../../sysinit.c"/>
     </folder>
     <folder Name="System Files">
+      <file file_name="$(TargetsDir)/LPC1000/include/CMSIS/system_LPC13xx.c"/>
       <file file_name="$(StudioDir)/source/thumb_crt0.s"/>
       <file file_name="$(TargetsDir)/LPC1000/LPC1300_Startup.s"/>
       <file file_name="$(TargetsDir)/LPC1000/LPC1300_Target.js">

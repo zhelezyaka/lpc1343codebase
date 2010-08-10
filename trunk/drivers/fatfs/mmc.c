@@ -65,7 +65,7 @@ BYTE CardType;			/* Card type flags */
 static void FCLK_SLOW()
 {
     /* Divide by 10 (SSPCLKDIV also enables to SSP CLK) */
-    SCB_SSP0CLKDIV = SCB_SSP0CLKDIV_DIV10;
+    SCB_SSP0CLKDIV = SCB_SSP0CLKDIV_DIV20;
   
     /* (PCLK / (CPSDVSR × [SCR+1])) = (7,200,000 / (2 x [8 + 1])) = 400 KHz */
     uint32_t configReg = ( SSP_SSP0CR0_DSS_8BIT    // Data size = 8-bit
@@ -357,13 +357,14 @@ DSTATUS disk_initialize (
 
     gpioSetDir( SSP0_CSPORT, SSP0_CSPIN, 1 ); /* CS */
     gpioSetDir( CFG_SDCARD_CDPORT, CFG_SDCARD_CDPIN, 0 ); /* Card Detect */
+    uint32_t test = gpioGetValue(CFG_SDCARD_CDPORT, CFG_SDCARD_CDPIN);
 
 	if (drv) return STA_NOINIT;			/* Supports only single drive */
 	if (Stat & STA_NODISK) return Stat;	/* No card in the socket */
 
 	power_on();							/* Force socket power on */
 	FCLK_SLOW();
-	for (n = 10; n; n--) rcvr_spi();	/* 80 dummy clocks */
+	for (n = 100; n; n--) rcvr_spi();	/* 80 dummy clocks */
 
 	ty = 0;
 	if (send_cmd(CMD0, 0) == 1) {			/* Enter Idle state */
