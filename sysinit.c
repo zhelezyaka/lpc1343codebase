@@ -179,9 +179,11 @@ void systemInit()
     drawString(10,   200,    BLACK,    &consolas9ptFontInfo,   "Battery");
     drawProgressBar(100, 195, 130, 15, WHITE, BLACK, lightGray, BLUE, 90);
 
-    uint16_t getc;
-    getc = lcdGetPixel(0, 0);
+    // uint16_t getc;
+    // getc = lcdGetPixel(0, 0);
     // drawFill(getc);
+
+    // drawImageFromFile(1, 1, "mur.pic");
   #endif
 
   // Initialise Chibi
@@ -193,7 +195,7 @@ void systemInit()
     // mcp24aaWriteBuffer(CFG_CHIBI_EEPROM_IEEEADDR, (uint8_t *)&addr_ieee, 8);
     chb_init();
     chb_pcb_t *pcb = chb_get_pcb();
-    printf("%-40s : 0x%04X%s", "Chibi Initialised", pcb->src_addr, CFG_INTERFACE_NEWLINE);
+    printf("%-40s : 0x%04X%s", "Chibi Initialised", pcb->src_addr, CFG_PRINTF_NEWLINE);
   #endif
 
   #ifdef CFG_SDCARD
@@ -203,11 +205,11 @@ void systemInit()
     stat = disk_initialize(0);
     if (stat & STA_NOINIT) 
     {
-      printf("%-40s : %s%s", "MMC", "Not Initialised", CFG_INTERFACE_NEWLINE);
+      printf("%-40s : %s%s", "MMC", "Not Initialised", CFG_PRINTF_NEWLINE);
     }
     if (stat & STA_NODISK) 
     {
-      printf("%-40s : %s%s", "MMC", "No Disk", CFG_INTERFACE_NEWLINE);
+      printf("%-40s : %s%s", "MMC", "No Disk", CFG_PRINTF_NEWLINE);
     }
     if (stat == 0)
     {
@@ -218,34 +220,34 @@ void systemInit()
       DIR dir;
 
       // SD Card Initialised
-      printf("%-40s : %s%s", "MMC", "Initialised", CFG_INTERFACE_NEWLINE);
+      printf("%-40s : %s%s", "MMC", "Initialised", CFG_PRINTF_NEWLINE);
       // Drive size
       if (disk_ioctl(0, GET_SECTOR_COUNT, &p2) == RES_OK) 
       {
-        printf("%-40s : %d%s", "MMC Drive Size", p2, CFG_INTERFACE_NEWLINE);
+        printf("%-40s : %d%s", "MMC Drive Size", p2, CFG_PRINTF_NEWLINE);
       }
       // Sector Size
       if (disk_ioctl(0, GET_SECTOR_SIZE, &w1) == RES_OK) 
       {
-        printf("%-40s : %d%s", "MMC Sector Size", w1, CFG_INTERFACE_NEWLINE);
+        printf("%-40s : %d%s", "MMC Sector Size", w1, CFG_PRINTF_NEWLINE);
       }
       // Card Type
       if (disk_ioctl(0, MMC_GET_TYPE, &b1) == RES_OK) 
       {
-        printf("%-40s : %d%s", "MMC Card Type", b1, CFG_INTERFACE_NEWLINE);
+        printf("%-40s : %d%s", "MMC Card Type", b1, CFG_PRINTF_NEWLINE);
       }
       // Try to mount drive
       res = f_mount(0, &Fatfs[0]);
       if (res != FR_OK) 
       {
-        printf("%-40s : %d%s", "MMC - Failed to mount 0:", res, CFG_INTERFACE_NEWLINE);
+        printf("%-40s : %d%s", "MMC - Failed to mount 0:", res, CFG_PRINTF_NEWLINE);
       }
       if (res == FR_OK)
       {
         res = f_opendir(&dir, "/");
         if (res) 
         {
-            printf("%-40s : %d%s", "MMC - Failed to open /:", res, CFG_INTERFACE_NEWLINE);
+            printf("%-40s : %d%s", "MMC - Failed to open /:", res, CFG_PRINTF_NEWLINE);
             return;
         }
         // Read dir
@@ -254,9 +256,9 @@ void systemInit()
             res = f_readdir(&dir, &Finfo);
             if ((res != FR_OK) || !Finfo.fname[0]) break;
             #if _USE_LFN == 0
-              printf("%-25s %s", (char *)&Finfo.fname[0], CFG_INTERFACE_NEWLINE);
+              printf("%-25s %s", (char *)&Finfo.fname[0], CFG_PRINTF_NEWLINE);
             #else
-              printf("%-75s %s", (char *)&Finfo.lfname[0], CFG_INTERFACE_NEWLINE);
+              printf("%-75s %s", (char *)&Finfo.lfname[0], CFG_PRINTF_NEWLINE);
             #endif
         }
         // Create a file
@@ -264,7 +266,7 @@ void systemInit()
         //if(f_open(&logFile, "/log.txt", FA_READ | FA_WRITE | FA_OPEN_ALWAYS)!=FR_OK) 
         //{  
         //  // Flag error  
-        //  printf ("Unabled to create log.txt%s", CFG_INTERFACE_NEWLINE); 
+        //  printf ("Unabled to create log.txt%s", CFG_PRINTF_NEWLINE); 
         //}  
         //unsigned int bytesWritten;  
         //f_write(&logFile, "New log opened!\n", 16, &bytesWritten);  
@@ -273,14 +275,14 @@ void systemInit()
         //// Close and unmount.   
         //f_close(&logFile);  
         //f_mount(0,0); 
-        //printf("Wrote data to log.txt", CFG_INTERFACE_NEWLINE);
+        //printf("Wrote data to log.txt", CFG_PRINTF_NEWLINE);
       }
     }
   #endif
 
   // Start the command line interface (if requested)
   #ifdef CFG_INTERFACE
-    printf("%sType 'help' for a list of available commands%s", CFG_INTERFACE_NEWLINE, CFG_INTERFACE_NEWLINE);
+    printf("%sType 'help' for a list of available commands%s", CFG_PRINTF_NEWLINE, CFG_PRINTF_NEWLINE);
     cmdInit();
   #endif
 }
@@ -302,10 +304,6 @@ void __putchar(const char c)
 
   #ifdef CFG_PRINTF_USBCDC
     usbcdcSendByte(c);
-  #endif
-
-  #if defined CFG_PRINTF_NONE
-    // Ignore output
   #endif
 }
 

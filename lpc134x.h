@@ -3452,4 +3452,21 @@ static inline void NVIC_DisableIRQ(IRQn_t IRQn)
 #define WDT_WDFEED_FEED1                          (0x000000AA)
 #define WDT_WDFEED_FEED2                          (0x00000055)
 
+/*##############################################################################
+## Misc. Inline Functions
+##############################################################################*/
+
+/**************************************************************************/
+/*! 
+    @brief  Reverses the bit order of a 32-bit value
+
+    Allows single-cycle reversing of 32-bit values (ASM RBIT)
+
+    @param[in]  value  
+                The 32-bit value to reverse
+    @returns    The reversed value
+*/
+/**************************************************************************/
+static inline uint32_t RBIT(uint32_t value)     { uint32_t result=0; __asm volatile ("rbit %0, %1" : "=r" (result) : "r" (value) ); return(result); }
+
 #endif
