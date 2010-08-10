@@ -70,6 +70,11 @@ volatile uint32_t fatTicks = 0;
 
 volatile uint32_t msTicks;             // 1ms tick counter
 
+/**************************************************************************/
+/*! 
+    @brief Systick interrupt handler
+*/
+/**************************************************************************/
 void SysTick_Handler (void)
 {
   msTicks++;
@@ -84,6 +89,16 @@ void SysTick_Handler (void)
   #endif
 }
 
+/**************************************************************************/
+/*! 
+    @brief      Configures the systick timer
+
+    @param[in]  ticks
+                The number of clock cycles between each tick of the
+                systick timer. for example, 'CFG_CPU_CCLK / 1000' = 
+                1 millisecond.  This value must not exceed 0x00FFFFFF.
+*/
+/**************************************************************************/
 static uint32_t systickConfig(uint32_t ticks)
 { 
   // Check if 'ticks' is greater than maximum value
@@ -106,12 +121,43 @@ static uint32_t systickConfig(uint32_t ticks)
   return (0);
 }
 
+/**************************************************************************/
+/*! 
+    @brief      Initialises the systick timer
 
+    @param[in]  delayMs
+                The number of milliseconds between each tick of the systick
+                timer.
+                  
+    @note       The shortest possible delay is 1 millisecond, which will 
+                allow fine grained delays, but will cause more load on the
+                system than a 10mS delay.  The resolution of the systick
+                timer needs to be balanced with the amount of processing
+                time you can spare.  The delay should really only be set
+                to 1 mS if you genuinely have a need for 1mS delays,
+                otherwise a higher value like 5 or 10 mS is probably
+                more appropriate.
+*/
+/**************************************************************************/
 void systickInit (uint32_t delayMs)
 {
   systickConfig ((CFG_CPU_CCLK / 1000) * delayMs);
 }
 
+/**************************************************************************/
+/*! 
+    @brief      Causes a blocking delay for 'delayTicks' ticks on the
+                systick timer.  For example: systickDelay(100) would cause
+                a blocking delay for 100 ticks of the systick timer.
+
+    @param[in]  delayTicks
+                The number of systick ticks to cause a blocking delay for
+
+    @Note       This function takes into account the fact that the tick
+                counter may eventually roll over to 0 once it reaches
+                0xFFFFFFFF.
+*/
+/**************************************************************************/
 void systickDelay (uint32_t delayTicks) 
 {
   uint32_t curTicks;
@@ -120,12 +166,12 @@ void systickDelay (uint32_t delayTicks)
   // Make sure delay is at least 1 tick in case of division, etc.
   if (delayTicks == 0) delayTicks = 1;
 
-  if (curTicks > 0x00FFFFFF - delayTicks)
+  if (curTicks > 0xFFFFFFFF - delayTicks)
   {
     // Rollover will occur during delay
     while (msTicks >= curTicks)
     {
-      while (msTicks < (delayTicks - (0x00FFFFFF - curTicks)));
+      while (msTicks < (delayTicks - (0xFFFFFFFF - curTicks)));
     }      
   }
   else
