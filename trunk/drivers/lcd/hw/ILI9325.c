@@ -37,6 +37,14 @@
 /**************************************************************************/
 #include "ILI9325.h"
 
+#ifdef CFG_SDCARD
+  #include "core/ssp/ssp.h"
+  #include "drivers/fatfs/diskio.h"
+  #include "drivers/fatfs/ff.h"
+  static FATFS Fatfs[1];
+  static uint16_t buffer[240];   // This assumes images are maximum 240 pixels wide!
+#endif
+
 /*************************************************/
 /* Private Methods                               */
 /*************************************************/
@@ -196,6 +204,56 @@ void ili9325SetWindow(uint16_t x, uint16_t y, uint16_t x1, uint16_t y1)
   ili9325Command(0x0053, y1-1);      // Window Vertical RAM Address End (R53h)
 }
 
+#ifdef CFG_SDCARD
+/**************************************************************************/
+static void ili9325ImageFromFIL(uint16_t x, uint16_t y, FIL file)
+{
+  uint16_t header[3];
+  UINT bytesRead;
+
+  // Read the image header
+  // data[0] = Width
+  // data[1] = height
+  // data[2] = Bit Depth (1 = RGB565)
+  // data[3..] = Pixel Data ...
+
+  // Read the header data
+  f_read(&file, header, sizeof(header), &bytesRead);
+
+  uint16_t imgW = header[0];   // width
+  uint16_t imgH = header[1];   // height
+
+  uint16_t wCounter, lineCounter, currentPixel;
+  wCounter = lineCounter = currentPixel = 0;
+
+  // Read until EOF
+  FRESULT res;
+  for (;;) 
+  {
+    // Read image data one row at a time
+    res = f_read(&file, buffer, imgW * 2, &bytesRead);
+    if (res || bytesRead == 0)
+    {
+      // Error or EOF
+      return;
+    }
+
+    // Draw pixel data for the current row
+    // ToDo: Needs to be optimised!
+    wCounter = imgW;
+    currentPixel = 0;
+    do 
+    {
+      lcdDrawPixel(x + currentPixel, y + lineCounter, buffer[currentPixel]);
+      currentPixel++;
+    } while (--wCounter);
+
+    // Increment row count by 1
+    lineCounter++;
+  }
+}
+#endif
+
 /*************************************************/
 /* Public Methods                                */
 /*************************************************/
@@ -308,50 +366,64 @@ void lcdDrawHLine(uint16_t x0, uint16_t x1, uint16_t y, uint16_t color)
 /**************************************************************************/
 /*!
     @brief  Loads an image from an SD card and renders it
+
+    @param[in]  x
+                The x position to start drawing from
+    @param[in]  y
+                The y position to start drawing from
+    @param[in]  filename
+                The full path and filename of the image on the file system
+                (ex.: "/folder/image.pic")
+
+    @section Example
+
+    @code 
+    // ToDo
+    @endcode
+
 */
 /**************************************************************************/
 void lcdDrawImageFromFile(uint16_t x, uint16_t y, char *filename)
 {
-}
-#endif
+  DSTATUS stat;
+  BYTE res;
 
-/**************************************************************************/
-/*!
-    @brief  Renders a bitmap image
-*/
-/**************************************************************************/
-void lcdDrawImage(uint16_t x, uint16_t y, const uint16_t *data)
-{
-  // data[0] = Width
-  // data[1] = height
-  // data[2] = Compression
-  // data[3] = Compression Window
-  // data[4] = Pixel Data ...
+  stat = disk_initialize(0);
 
-  uint16_t line, width;
-  uint32_t currentPixel, totalPixels;
-  
-  width = 0;
-  
-  // Calculate total pixels (width * height)
-  totalPixels = data[0] * data[1];
-  currentPixel = 0;
-
-  // Draw individual pixels
-  for (line = 0; line < data[1]; line++)
+  if ((stat & STA_NOINIT) || (stat & STA_NODISK))
   {
-    // Set cursor to starting x, y position
-    ili9325SetCursor(x, y + line);
-    // Prepare to write data to GRAM
-    ili9325WriteCmd(0x0022);  // Write Data to GRAM (R22h)
-    do 
+    // Card not initialised or no disk present
+    return;
+  }
+
+  if (stat == 0)
+  {
+    // Try to mount drive
+    res = f_mount(0, &Fatfs[0]);
+    if (res != FR_OK) 
     {
-      ili9325WriteData(data[currentPixel]);
-      currentPixel++;
-    } while (--width);
-    width = data[0];          // Reset width counter
+      // Failed to mount 0:
+      return;
+    }
+    if (res == FR_OK)
+    {
+      // Try to open the requested file
+      FIL logFile;  
+      if(f_open(&logFile, filename, FA_READ | FA_OPEN_ALWAYS) != FR_OK) 
+      {  
+        // Unable to open the requested file
+        return;
+      }
+      // Render the specified image
+      ili9325ImageFromFIL(x, y, logFile);
+      // Close file
+      f_close(&logFile);
+      // Unmount drive
+      f_mount(0,0); 
+    }
   }
 }
+#endif
 
 /*************************************************/
 uint16_t lcdGetPixel(uint16_t x, uint16_t y)

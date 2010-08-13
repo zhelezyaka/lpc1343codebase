@@ -358,7 +358,7 @@ extern void usbcdcSendByte(uint8_t c)
 {
   // Ugly delay required ... need to add buffer and handle this better! :-)
   uint32_t i, delay;
-  delay = ((CFG_CPU_CCLK/SCB_SYSAHBCLKDIV) / 25000);
+  delay = ((CFG_CPU_CCLK/SCB_SYSAHBCLKDIV) / 2500);
   for ( i = 0; i < delay; i++ )
   {
     __asm("nop");

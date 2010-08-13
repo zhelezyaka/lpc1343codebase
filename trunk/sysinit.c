@@ -219,22 +219,41 @@ void systemInit()
       BYTE res, b1;
       DIR dir;
 
+      char lcdText[80];
+
       // SD Card Initialised
       printf("%-40s : %s%s", "MMC", "Initialised", CFG_PRINTF_NEWLINE);
       // Drive size
       if (disk_ioctl(0, GET_SECTOR_COUNT, &p2) == RES_OK) 
       {
+        #ifdef CFG_LCD
+        sprintf(lcdText, "%-20s %d", "MMC Drive Size", p2);
+        drawString(10,   30,    BLACK,    &consolas9ptFontInfo,   lcdText);
+        #else
         printf("%-40s : %d%s", "MMC Drive Size", p2, CFG_PRINTF_NEWLINE);
+        #endif
       }
       // Sector Size
       if (disk_ioctl(0, GET_SECTOR_SIZE, &w1) == RES_OK) 
       {
+        #ifdef CFG_LCD
+        sprintf(lcdText, "%-20s %d", "MMC Sector Size", w1);
+        drawString(10,   45,    BLACK,    &consolas9ptFontInfo,   lcdText);
+        sprintf(lcdText, "%-20s %d MB", "Total Disk Space", (p2 / 1024) * w1);
+        drawString(10,   60,    BLACK,    &consolas9ptFontInfo,   lcdText);
+        #else
         printf("%-40s : %d%s", "MMC Sector Size", w1, CFG_PRINTF_NEWLINE);
+        #endif
       }
       // Card Type
       if (disk_ioctl(0, MMC_GET_TYPE, &b1) == RES_OK) 
       {
+        #ifdef CFG_LCD
+        sprintf(lcdText, "%-20s %d", "MMC Card Type", b1);
+        drawString(10,   75,    BLACK,    &consolas9ptFontInfo,   lcdText);
+        #else
         printf("%-40s : %d%s", "MMC Card Type", b1, CFG_PRINTF_NEWLINE);
+        #endif
       }
       // Try to mount drive
       res = f_mount(0, &Fatfs[0]);
@@ -278,6 +297,11 @@ void systemInit()
         //printf("Wrote data to log.txt", CFG_PRINTF_NEWLINE);
       }
     }
+  #endif
+
+  #if defined CFG_LCD | defined CFG_SD
+    // Draw bitmap from SD
+    // drawImageFromFile(0, 0, "/output.pic");
   #endif
 
   // Start the command line interface (if requested)
