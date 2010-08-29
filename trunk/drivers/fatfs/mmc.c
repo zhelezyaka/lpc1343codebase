@@ -65,9 +65,9 @@ BYTE CardType;			/* Card type flags */
 static void FCLK_SLOW()
 {
     /* Divide by 10 (SSPCLKDIV also enables to SSP CLK) */
-    SCB_SSP0CLKDIV = SCB_SSP0CLKDIV_DIV20;
+    SCB_SSP0CLKDIV = SCB_SSP0CLKDIV_DIV10;
   
-    /* (PCLK / (CPSDVSR × [SCR+1])) = (7,200,000 / (2 x [8 + 1])) = 400 KHz */
+    /* (PCLK / (CPSDVSR Ã— [SCR+1])) = (7,200,000 / (2 x [8 + 1])) = 400 KHz */
     uint32_t configReg = ( SSP_SSP0CR0_DSS_8BIT    // Data size = 8-bit
                   | SSP_SSP0CR0_FRF_SPI       // Frame format = SPI
                   | SSP_SSP0CR0_SCR_8);       // Serial clock rate = 8
@@ -95,7 +95,7 @@ static void FCLK_FAST()
     /* Divide by 1 (SSPCLKDIV also enables to SSP CLK) */
     SCB_SSP0CLKDIV = SCB_SSP0CLKDIV_DIV1;
   
-    /* (PCLK / (CPSDVSR × [SCR+1])) = (72,000,000 / (2 x [8 + 1])) = 4.0 MHz */
+    /* (PCLK / (CPSDVSR Ã— [SCR+1])) = (72,000,000 / (2 x [8 + 1])) = 4.0 MHz */
     uint32_t configReg = ( SSP_SSP0CR0_DSS_8BIT    // Data size = 8-bit
                   | SSP_SSP0CR0_FRF_SPI       // Frame format = SPI
                   | SSP_SSP0CR0_SCR_8);       // Serial clock rate = 8
@@ -357,7 +357,6 @@ DSTATUS disk_initialize (
 
     gpioSetDir( SSP0_CSPORT, SSP0_CSPIN, 1 ); /* CS */
     gpioSetDir( CFG_SDCARD_CDPORT, CFG_SDCARD_CDPIN, 0 ); /* Card Detect */
-    uint32_t test = gpioGetValue(CFG_SDCARD_CDPORT, CFG_SDCARD_CDPIN);
 
 	if (drv) return STA_NOINIT;			/* Supports only single drive */
 	if (Stat & STA_NODISK) return Stat;	/* No card in the socket */
@@ -640,7 +639,8 @@ DRESULT disk_ioctl (
 void disk_timerproc (void)
 {
 	static BYTE pv;
-	BYTE n, s;
+	BYTE n;
+  // BYTE s;
 
 
 	n = Timer1;						/* 100Hz decrement timer */

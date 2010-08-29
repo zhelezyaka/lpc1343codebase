@@ -12,7 +12,7 @@ imgconv - This Windows-based application converts PNG, JPG or BMP images to an
           followed by one 16-bit field for every RGB565 pixel until EOF.  All
           pixels are arranged left to right, top to bottom.
           
-          The source for and project files for Visual Studio 2010 are
+          The source and project files for Visual Studio 2010 are
           included in /src
 
 lpcrc   - This utility fixes the CRC of any .bin files generated with GCC

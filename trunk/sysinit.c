@@ -88,6 +88,12 @@
   static FILINFO Finfo;
   static FATFS Fatfs[1];
   static uint8_t buf[64];
+
+  DWORD get_fattime ()
+  {
+    // ToDo!
+    return 0;
+  }
 #endif
 
 /**************************************************************************/
@@ -299,9 +305,9 @@ void systemInit()
     }
   #endif
 
-  #if defined CFG_LCD | defined CFG_SD
+  #if defined CFG_LCD && defined CFG_SDCARD
     // Draw bitmap from SD
-    // drawImageFromFile(0, 0, "/output.pic");
+    drawImageFromFile(0, 0, "/output.pic");
   #endif
 
   // Start the command line interface (if requested)
