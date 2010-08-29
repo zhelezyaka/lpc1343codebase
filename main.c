@@ -42,28 +42,6 @@
   #include "core/cmd/cmd.h"
 #endif
 
-#ifdef CFG_SDCARD
-#include "drivers/fatfs/ff.h"
-DWORD get_fattime ()
-{
-    //	RTCTime rtc;
-    //
-    //	/* Get local time */
-    //	rtc_gettime(&rtc);
-    //
-    //	/* Pack date and time into a DWORD variable */
-    //	return	  ((DWORD)(rtc.RTC_Year - 1980) << 25)
-    //			| ((DWORD)rtc.RTC_Mon << 21)
-    //			| ((DWORD)rtc.RTC_Mday << 16)
-    //			| ((DWORD)rtc.RTC_Hour << 11)
-    //			| ((DWORD)rtc.RTC_Min << 5)
-    //			| ((DWORD)rtc.RTC_Sec >> 1);
-
-  // ToDo!
-  return 0;
-}
-#endif
-
 /**************************************************************************/
 /*! 
     Main program entry point.  After reset, normal code execution will

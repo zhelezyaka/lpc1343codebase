@@ -96,6 +96,7 @@ void ili9325Command(uint16_t command, uint16_t data)
   ili9325WriteData(data);
 }
 
+/*************************************************/
 uint16_t ili9325BGR2RGB(uint16_t color)   
 {   
   uint16_t r, g, b;   
@@ -219,7 +220,6 @@ static void ili9325ImageFromFIL(uint16_t x, uint16_t y, FIL file)
 
   // Read the header data
   f_read(&file, header, sizeof(header), &bytesRead);
-
   uint16_t imgW = header[0];   // width
   uint16_t imgH = header[1];   // height
 
@@ -231,24 +231,27 @@ static void ili9325ImageFromFIL(uint16_t x, uint16_t y, FIL file)
   for (;;) 
   {
     // Read image data one row at a time
-    res = f_read(&file, buffer, imgW * 2, &bytesRead);
+    res = f_read(&file, buffer, (imgW)  * 2, &bytesRead);
     if (res || bytesRead == 0)
     {
       // Error or EOF
       return;
     }
 
-    // Draw pixel data for the current row
-    // ToDo: Needs to be optimised!
     wCounter = imgW;
     currentPixel = 0;
+
+    // Set row start position
+    ili9325WriteCmd(0x0020); // GRAM Address Set (Horizontal Address) (R20h)
+    ili9325WriteData(x);
+    ili9325WriteCmd(0x0021); // GRAM Address Set (Vertical Address) (R21h)
+    ili9325WriteData(y + lineCounter);
+    ili9325WriteCmd(0x0022);  // Write Data to GRAM (R22h)
     do 
     {
-      lcdDrawPixel(x + currentPixel, y + lineCounter, buffer[currentPixel]);
+      ili9325WriteData(buffer[currentPixel]);
       currentPixel++;
     } while (--wCounter);
-
-    // Increment row count by 1
     lineCounter++;
   }
 }
