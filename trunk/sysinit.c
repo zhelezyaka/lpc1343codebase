@@ -39,6 +39,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef CFG_PRINTF_CWDEBUG
+  #include <cross_studio_io.h>
+#endif
+
 #include "sysinit.h"
 
 #include "core/cpu/cpu.h"
@@ -71,6 +75,7 @@
 #ifdef CFG_LCD
   #include "drivers/lcd/lcd.h"
   #include "drivers/lcd/drawing.h"
+  #include "drivers/lcd/touchscreen.h"
   #include "drivers/lcd/fonts/consolas9.h"
   #include "drivers/lcd/fonts/consolas11.h"
   #include "drivers/lcd/fonts/consolas16.h"
@@ -136,10 +141,17 @@ void systemInit()
 
   // Initialise USB CDC
   #ifdef CFG_USBCDC
-    CDC_Init();                   // Initialise VCOM
-    USB_Init();                   // USB Initialization
-    USB_Connect(TRUE);            // USB Connect
-    while (!USB_Configuration);   // wait until USB is configured
+    CDC_Init();                     // Initialise VCOM
+    USB_Init();                     // USB Initialization
+    USB_Connect(TRUE);              // USB Connect
+    // Wait until USB is configured or timeout occurs
+    uint32_t usbTimeout = 0; 
+    while ( usbTimeout < CFG_USBCDC_INITTIMEOUT / 10 )
+    { 
+      if (USB_Configuration) break;
+      systickDelay(10);             // Wait 10ms
+      usbTimeout++; 
+    }
   #endif
 
   // Printf can now be used with either UART or USBCDC
@@ -152,6 +164,7 @@ void systemInit()
   // Initialise LCD Display
   #ifdef CFG_LCD
     lcdInit();
+    tsInit();
 
     // Get 16-bit equivalent of 24-bit color
     uint16_t darkGray = drawRGB24toRGB565(0x33, 0x33, 0x33);
@@ -167,7 +180,8 @@ void systemInit()
       drawStringSmall(1, 210, WHITE, "5x8 System (Max 40 Characters)", Font_System5x8);
       drawStringSmall(1, 220, WHITE, "7x8 System (Max 30 Characters)", Font_System7x8);
     #endif
-    drawString(5,   8,    WHITE,    &consolas9ptFontInfo,   "LPC1343 Demo Code v0.25");
+    
+    drawString(5,   8,    WHITE,    &consolas9ptFontInfo,   "LPC1343 Demo Code");
 
     // Draw some primitive shapes
     drawCircle(15, 300, 10, WHITE);
@@ -189,10 +203,12 @@ void systemInit()
     // getc = lcdGetPixel(0, 0);
     // drawFill(getc);
 
-    // drawImageFromFile(1, 1, "mur.pic");
+    // drawImageFromFile(1, 1, "output.pic");
   #endif
 
   // Initialise Chibi
+  // Warning: CFG_CHIBI must be disabled if no antenna is connected,
+  // otherwise the SW will halt during initialisation
   #ifdef CFG_CHIBI
     // Write addresses to EEPROM for the first time if necessary
     // uint16_t addr_short = 0x0001;
@@ -205,7 +221,7 @@ void systemInit()
   #endif
 
   #ifdef CFG_SDCARD
-    // Init SSP w/clock low between frames and transition on leading edge
+    // Init SSP (clock low between frames, transition on leading edge)
     sspInit(0, sspClockPolarity_Low, sspClockPhase_RisingEdge);
     DSTATUS stat;
     stat = disk_initialize(0);
@@ -333,7 +349,14 @@ void __putchar(const char c)
   #endif
 
   #ifdef CFG_PRINTF_USBCDC
-    usbcdcSendByte(c);
+    // Send output to USB if connected
+    if (USB_Configuration)
+      usbcdcSendByte(c);
+  #endif
+
+  #ifdef CFG_PRINTF_CWDEBUG
+    // Send output to the Crossworks debug interface
+    debug_printf("%c", c);
   #endif
 }
 

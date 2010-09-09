@@ -33,7 +33,7 @@ OBJS += lm75b.o
 
 # Graphic LCD support (ILI9325)
 VPATH += drivers/lcd drivers/lcd/hw drivers/lcd/fonts
-OBJS += ILI9325.o drawing.o 
+OBJS += ILI9325.o drawing.o touchscreen.o
 OBJS += smallfonts.o consolas9.o consolas11.o consolas16.o
 
 # ChaN FatFS and SD card support

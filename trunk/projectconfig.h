@@ -81,7 +81,7 @@
                               characters to store in memory.
 
     -----------------------------------------------------------------------*/
-    #define CFG_UART_BAUDRATE           (57600)
+    #define CFG_UART_BAUDRATE           (115200)
     #define CFG_UART_BUFSIZE            (80)
 /*=========================================================================*/
 
@@ -131,6 +131,8 @@
                               set to 115200 BPS by default
     CFG_USBCDC_BUFSIZE        The size in bytes of the USB CDC transmit
                               FIFO buffer
+    CFG_USBCDC_INITTIMEOUT    The maximum delay in milliseconds to wait for
+                              USB to connect.  Must be a multiple of 10!
 
     NOTE: CFG_USBHID =        ~0.5 KB Flash and 36 bytes SRAM (-Os)
     NOTE: CFG_USBCDC =        ~4.0 KB Flash and 272 bytes SRAM (-Os)
@@ -138,6 +140,7 @@
     // #define CFG_USBHID
     #define CFG_USBCDC
     #define CFG_USBCDC_BUFSIZE          (80)
+    #define CFG_USBCDC_INITTIMEOUT      (5000)
 /*=========================================================================*/
 
 
@@ -149,6 +152,9 @@
                               redirected to UART
     CFG_PRINTF_USBCDC         Will cause all printf statements to be
                               redirect to USB Serial
+    CFG_PRINTF_CWDEBUG        Will cause all printf statements to be
+                              redirected to the Crossworks
+                              debug_printf statement (Crossworks only)
     CFG_PRINTF_NEWLINE        This should be either "\r\n" for Windows or
                               "\n" for *nix
 
@@ -159,6 +165,7 @@
     -----------------------------------------------------------------------*/
     // #define CFG_PRINTF_UART
     #define CFG_PRINTF_USBCDC
+    // #define CFG_PRINTF_CWDEBUG
     #define CFG_PRINTF_NEWLINE          "\r\n"
 /*=========================================================================*/
 
@@ -173,6 +180,11 @@
                               incoming command
     CFG_INTERFACE_PROMPT      The command prompt to display at the start
                               of every new data entry line
+
+    NOTE:                     The command-line interface will use either
+                              USB-CDC or UART depending on whether
+                              CFG_PRINTF_UART or CFG_PRINTF_USBCDC are 
+                              selected.
 
     NOTE: CFG_INTERFACE =     ~6.0 KB Flash and 240 bytes SRAM (-Os), but
                               this varies with the number of commands
@@ -264,8 +276,6 @@
 
 
 
-// #define CFG_TESTBED
-
 
 
 /*=========================================================================
@@ -307,6 +317,9 @@
 #ifdef CFG_CHIBI
   #if !defined CFG_I2CEEPROM
     #error "CFG_CHIBI requires CFG_I2CEEPROM to store and retrieve addresses"
+  #endif
+  #ifdef CFG_SDCARD
+    #error "CFG_CHIBI and CFG_SDCARD can not be defined at the same time. Only one SPI block available on the LPC134."
   #endif
 #endif
 
