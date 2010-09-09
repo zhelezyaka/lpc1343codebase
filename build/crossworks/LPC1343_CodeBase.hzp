@@ -9,7 +9,7 @@
       <folder Name="core">
         <folder Name="adc">
           <file file_name="../../core/adc/adc.c">
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
           </file>
         </folder>
         <folder Name="cpu">
@@ -168,13 +168,14 @@
               <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
             </file>
           </folder>
+          <file file_name="../../drivers/lcd/touchscreen.c"/>
         </folder>
         <folder Name="fatfs" file_name="">
           <file file_name="../../drivers/fatfs/ff.c">
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
           </file>
           <file file_name="../../drivers/fatfs/mmc.c">
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
           </file>
         </folder>
       </folder>

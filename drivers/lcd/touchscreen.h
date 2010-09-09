@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*! 
-    @file     main.c
+    @file     touchscreen.h
     @author   K. Townsend (microBuilder.eu)
     @date     22 March 2010
     @version  0.10
@@ -35,39 +35,37 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 /**************************************************************************/
+#ifndef __TOUCHSCREEN_H__
+#define __TOUCHSCREEN_H__
 
-#include <stdio.h>
+#include "projectconfig.h"
 
-#include "sysinit.h"
-#include "core/adc/adc.h"
+// Macros to selected the function of the X- and X+ pins
+#define TS_XM_FUNC_GPIO   do {IOCON_PIO3_2 &= ~IOCON_PIO3_2_FUNC_MASK; IOCON_PIO3_2 |= IOCON_PIO3_2_FUNC_GPIO;} while (0)
+#define TS_XP_FUNC_GPIO   do {IOCON_JTAG_TMS_PIO1_0 &= ~IOCON_JTAG_TMS_PIO1_0_FUNC_MASK; IOCON_JTAG_TMS_PIO1_0 |= IOCON_JTAG_TMS_PIO1_0_FUNC_GPIO;} while (0)
+#define TS_XP_FUNC_ADC    do {IOCON_JTAG_TMS_PIO1_0 &= ~IOCON_JTAG_TMS_PIO1_0_FUNC_AD1; IOCON_JTAG_TMS_PIO1_0 |= IOCON_JTAG_TMS_PIO1_0_FUNC_AD1 & IOCON_JTAG_TMS_PIO1_0_ADMODE_ANALOG;} while (0)
 
-#ifdef CFG_INTERFACE
-  #include "core/cmd/cmd.h"
+// Macros to selected the function of the Y- and Y+ pins
+#define TS_YM_FUNC_GPIO   do {IOCON_PIO3_1 &= ~IOCON_PIO3_1_FUNC_MASK; IOCON_PIO3_1 |= IOCON_PIO3_1_FUNC_GPIO;} while (0)
+#define TS_YP_FUNC_GPIO   do {IOCON_JTAG_TDI_PIO0_11 &= ~IOCON_JTAG_TDI_PIO0_11_FUNC_MASK; IOCON_JTAG_TDI_PIO0_11 |= IOCON_JTAG_TDI_PIO0_11_FUNC_GPIO;} while (0)
+#define TS_YP_FUNC_ADC    do {IOCON_JTAG_TDI_PIO0_11 &= ~IOCON_JTAG_TDI_PIO0_11_FUNC_MASK; IOCON_JTAG_TDI_PIO0_11 |= IOCON_JTAG_TDI_PIO0_11_FUNC_AD0 & IOCON_JTAG_TDI_PIO0_11_ADMODE_ANALOG;} while (0)
+
+#define TS_XP_PORT        (1)
+#define TS_XP_PIN         (0)
+#define TS_XM_PORT        (3)
+#define TS_XM_PIN         (2)
+#define TS_YP_PORT        (0)
+#define TS_YP_PIN         (11)
+#define TS_YM_PORT        (3)
+#define TS_YM_PIN         (1)
+
+#define TS_XADC_CHANNEL   (1)   // ADC0.1
+#define TS_YADC_CHANNEL   (0)   // ADC0.0
+
+// Method Prototypes
+void      tsInit ( void );
+uint32_t  tsReadX ( void );
+uint32_t  tsReadY ( void );
+void      tsWaitForEvent ( void );
+
 #endif
-
-/**************************************************************************/
-/*! 
-    Main program entry point.  After reset, normal code execution will
-    begin here.
-*/
-/**************************************************************************/
-int main (void)
-{
-  // Configure cpu and mandatory peripherals
-  systemInit();
-
-  while (1)
-  {
-    #ifdef CFG_INTERFACE
-      // Handle any incoming command line input
-      cmdPoll();
-    #else
-      // Toggle LED @ 1 Hz
-      systickDelay(1000);
-      if (gpioGetValue(CFG_LED_PORT, CFG_LED_PIN))  
-        gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_ON);
-      else 
-        gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF);
-    #endif
-  }
-}
