@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Session Name="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\build\codelite\LPC1343 Workspace.workspace">
+  <int Value="0" Name="m_selectedTab"/>
+  <wxString Value="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\build\codelite\LPC1343 Workspace.workspace" Name="m_workspaceName"/>
+  <TabInfoArray Name="TabInfoArray">
+    <TabInfo>
+      <wxString Value="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\main.c" Name="FileName"/>
+      <int Value="65" Name="FirstVisibleLine"/>
+      <int Value="73" Name="CurrentLine"/>
+      <wxArrayString Name="Bookmarks"/>
+    </TabInfo>
+    <TabInfo>
+      <wxString Value="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\sysinit.c" Name="FileName"/>
+      <int Value="162" Name="FirstVisibleLine"/>
+      <int Value="169" Name="CurrentLine"/>
+      <wxArrayString Name="Bookmarks"/>
+    </TabInfo>
+    <TabInfo>
+      <wxString Value="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\projectconfig.h" Name="FileName"/>
+      <int Value="263" Name="FirstVisibleLine"/>
+      <int Value="270" Name="CurrentLine"/>
+      <wxArrayString Name="Bookmarks"/>
+    </TabInfo>
+    <TabInfo>
+      <wxString Value="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\Makefile" Name="FileName"/>
+      <int Value="31" Name="FirstVisibleLine"/>
+      <int Value="37" Name="CurrentLine"/>
+      <wxArrayString Name="Bookmarks"/>
+    </TabInfo>
+  </TabInfoArray>
+  <SerializedObject Name="m_breakpoints">
+    <long Value="0" Name="Count"/>
+  </SerializedObject>
+</Session>
