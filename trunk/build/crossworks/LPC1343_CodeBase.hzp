@@ -62,31 +62,31 @@
         </folder>
         <folder Name="i2c">
           <file file_name="../../core/i2c/i2c.c">
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
           </file>
         </folder>
         <folder Name="isp"/>
         <folder Name="cmd">
           <file file_name="../../core/cmd/cmd.c">
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
           </file>
         </folder>
         <folder Name="usbcdc">
           <file file_name="../../core/usbcdc/cdcuser.c">
             <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
           </file>
           <file file_name="../../core/usbcdc/usbcore.c">
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
           </file>
           <file file_name="../../core/usbcdc/usbdesc.c">
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
           </file>
           <file file_name="../../core/usbcdc/usbhw.c">
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
           </file>
           <file file_name="../../core/usbcdc/usbuser.c">
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
           </file>
         </folder>
       </folder>
@@ -103,7 +103,7 @@
           </folder>
           <folder Name="mcp24aa">
             <file file_name="../../drivers/eeprom/mcp24aa/mcp24aa.c">
-              <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+              <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
             </file>
           </folder>
         </folder>
@@ -168,7 +168,9 @@
               <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
             </file>
           </folder>
-          <file file_name="../../drivers/lcd/touchscreen.c"/>
+          <file file_name="../../drivers/lcd/touchscreen.c">
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+          </file>
         </folder>
         <folder Name="fatfs" file_name="">
           <file file_name="../../drivers/fatfs/ff.c">
@@ -180,7 +182,7 @@
         </folder>
       </folder>
       <file file_name="../../commands.c">
-        <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+        <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
       </file>
       <file file_name="../../cmd_tbl.h"/>
       <file file_name="../../sysinit.c"/>
