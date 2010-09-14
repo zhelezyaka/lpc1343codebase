@@ -43,6 +43,8 @@
 #include "sysdefs.h"
 #include "drivers/chibi/chb_drvr.h"
 
+#define PLACE_IN_SRAM    __attribute__ ((section(".fast")))
+
 /*=========================================================================
     CORE CPU SETTINGS
     -----------------------------------------------------------------------
@@ -231,6 +233,7 @@
                                 with Chibi.  See chb_drvr.h for possible values
     CFG_CHIBI_POWER             The power level to use when transmitting.  See
                                 chb_drvr.h for possible values
+    CFG_CHIBI_BUFFERSIZE        The size of the message buffer in bytes.
     CFG_CHIBI_EEPROM_IEEEADDR   Start location in EEPROM for the full IEEE
                                 address of this node
     CFG_CHIBI_EEPROM_SHORTADDR  Start location in EEPROM for the short (16-bit)
@@ -241,6 +244,7 @@
     // #define CFG_CHIBI
     #define CFG_CHIBI_MODE              (BPSK20_868MHZ)     // See chb_drvr.h for possible values
     #define CFG_CHIBI_POWER             (CHB_PWR_EU2_5DBM)  // See chb_drvr.h for possible values
+    #define CFG_CHIBI_BUFFERSIZE        (128)
     #define CFG_CHIBI_EEPROM_IEEEADDR   (uint16_t)(0x0000)
     #define CFG_CHIBI_EEPROM_SHORTADDR  (uint16_t)(0x0009)
 /*=========================================================================*/
@@ -319,7 +323,7 @@
     #error "CFG_CHIBI requires CFG_I2CEEPROM to store and retrieve addresses"
   #endif
   #ifdef CFG_SDCARD
-    #error "CFG_CHIBI and CFG_SDCARD can not be defined at the same time. Only one SPI block available on the LPC134."
+    #error "CFG_CHIBI and CFG_SDCARD can not be defined at the same time. Only one SPI block available on the LPC1341."
   #endif
 #endif
 

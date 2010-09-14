@@ -50,18 +50,16 @@
 #define YELLOW          0xFFE0
 #define WHITE           0xFFFF
 
-// Method prototypes
-
 // Any LCD needs to implement these common methods, which allow the low-level
 // initialisation and pixel-setting details to be abstracted away from the
 // higher level drawing and graphics code.
 
 extern void     lcdInit(void);
+extern void     lcdTest(void);
+extern uint16_t lcdGetPixel(uint16_t x, uint16_t y);
 extern void     lcdFillRGB(uint16_t data);
 extern void     lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color);
 extern void     lcdDrawHLine(uint16_t x0, uint16_t x1, uint16_t y, uint16_t color);
-extern void     lcdTest(void);
-extern uint16_t lcdGetPixel(uint16_t x, uint16_t y);
 
 #ifdef CFG_SDCARD
 extern void     lcdDrawImageFromFile(uint16_t x, uint16_t y, char *filename);

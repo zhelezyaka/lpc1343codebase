@@ -4,7 +4,7 @@ the LPC1343 Reference Board
 imgconv - This Windows-based application converts PNG, JPG or BMP images to an
           RGB565 binary format that is understood by the LPC1343 Code Base.
           Using this utility, you can create bitmap images of different sizes
-          and load them directly from the SD card reader.
+          and load them directly from an SD card reader.
           
           The generated binary images have the following format:
           
@@ -16,11 +16,15 @@ imgconv - This Windows-based application converts PNG, JPG or BMP images to an
           included in /src
 
 lpcrc   - This utility fixes the CRC of any .bin files generated with GCC
-          from the command line.  You must use this utility to patch the
-          any compiled firmware that will be deployed with the USB bootloader.
+          from the command line.  You must use this utility to patch any
+           compiled firmware that will be deployed via the USB bootloader.
 
           The GCC src is included in the root folder and should build on any
           platform where a native GCC toolchain is available.  A pre-compiled
           windows binary is included in /bin for convenience sake, as well as
           in the root folder of the LPC1343 Code Base.
+          
+          If you are using the provided CodeLite project files, lpcrc will
+          automatically be executed after every build.  You only need to
+          run lpcrc if you are building directly from the command-line.
           

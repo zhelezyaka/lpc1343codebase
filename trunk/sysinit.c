@@ -198,26 +198,6 @@ void systemInit()
     drawProgressBar(100, 180, 130, 9, WHITE, BLACK, lightGray, RED, 64);
     drawString(10,   200,    BLACK,    &consolas9ptFontInfo,   "Battery");
     drawProgressBar(100, 195, 130, 15, WHITE, BLACK, lightGray, BLUE, 90);
-
-    // uint16_t getc;
-    // getc = lcdGetPixel(0, 0);
-    // drawFill(getc);
-
-    // drawImageFromFile(1, 1, "output.pic");
-  #endif
-
-  // Initialise Chibi
-  // Warning: CFG_CHIBI must be disabled if no antenna is connected,
-  // otherwise the SW will halt during initialisation
-  #ifdef CFG_CHIBI
-    // Write addresses to EEPROM for the first time if necessary
-    // uint16_t addr_short = 0x0001;
-    // uint64_t addr_ieee =  0x0000000000000001;
-    // mcp24aaWriteBuffer(CFG_CHIBI_EEPROM_SHORTADDR, (uint8_t *)&addr_short, 2);
-    // mcp24aaWriteBuffer(CFG_CHIBI_EEPROM_IEEEADDR, (uint8_t *)&addr_ieee, 8);
-    chb_init();
-    chb_pcb_t *pcb = chb_get_pcb();
-    printf("%-40s : 0x%04X%s", "Chibi Initialised", pcb->src_addr, CFG_PRINTF_NEWLINE);
   #endif
 
   #ifdef CFG_SDCARD
@@ -321,9 +301,23 @@ void systemInit()
     }
   #endif
 
+  // Initialise Chibi
+  // Warning: CFG_CHIBI must be disabled if no antenna is connected,
+  // otherwise the SW will halt during initialisation
+  #ifdef CFG_CHIBI
+    // Write addresses to EEPROM for the first time if necessary
+    // uint16_t addr_short = 0x0001;
+    // uint64_t addr_ieee =  0x0000000000000001;
+    // mcp24aaWriteBuffer(CFG_CHIBI_EEPROM_SHORTADDR, (uint8_t *)&addr_short, 2);
+    // mcp24aaWriteBuffer(CFG_CHIBI_EEPROM_IEEEADDR, (uint8_t *)&addr_ieee, 8);
+    chb_init();
+    chb_pcb_t *pcb = chb_get_pcb();
+    printf("%-40s : 0x%04X%s", "Chibi Initialised", pcb->src_addr, CFG_PRINTF_NEWLINE);
+  #endif
+
   #if defined CFG_LCD && defined CFG_SDCARD
     // Draw bitmap from SD
-    drawImageFromFile(0, 0, "/output.pic");
+    // drawImageFromFile(0, 0, "/output.pic");
   #endif
 
   // Start the command line interface (if requested)

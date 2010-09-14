@@ -106,6 +106,9 @@ static uint32_t systickConfig(uint32_t ticks)
   {
     return (1);
   }
+
+  // Reset counter
+  msTicks = 0;
                      
   // Set reload register
   SYSTICK_STRELOAD  = (ticks & SYSTICK_STRELOAD_MASK) - 1;
@@ -178,4 +181,16 @@ void systickDelay (uint32_t delayTicks)
   {
     while ((msTicks - curTicks) < delayTicks);
   }
+}
+
+/**************************************************************************/
+/*! 
+    @brief      Returns the current value of the systick timer counter. 
+                This value is incremented by one every time an interrupt
+                fires for the systick timer.
+*/
+/**************************************************************************/
+uint32_t systickGetTicks(void)
+{
+  return msTicks;
 }

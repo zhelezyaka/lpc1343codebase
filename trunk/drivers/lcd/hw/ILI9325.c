@@ -61,7 +61,7 @@ void ili9325Delay(unsigned int t)
 }
 
 /*************************************************/
-void ili9325WriteCmd(uint16_t command)
+void ili9325WriteCmd(uint16_t command) 
 {
   CLR_CS_CD;      // Saves 7 commands compared to "CLR_CS; CLR_CD;"
   SET_RD_WR;      // Saves 7 commands compared to "SET_RD; SET_WR;"
