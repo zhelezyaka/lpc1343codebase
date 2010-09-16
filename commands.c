@@ -63,9 +63,9 @@
   #include "drivers/sensors/lm75b/lm75b.h"
 #endif
 
-#ifdef CFG_LCD
-  #include "drivers/lcd/lcd.h"
-  #include "drivers/lcd/drawing.h"
+#ifdef CFG_TFTLCD
+  #include "drivers/lcd/tft/lcd.h"
+  #include "drivers/lcd/tft/drawing.h"
 #endif
 
 /**************************************************************************/

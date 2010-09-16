@@ -72,14 +72,18 @@
   #include "core/usbcdc/cdcuser.h"
 #endif
 
-#ifdef CFG_LCD
-  #include "drivers/lcd/lcd.h"
-  #include "drivers/lcd/drawing.h"
-  #include "drivers/lcd/touchscreen.h"
-  #include "drivers/lcd/fonts/consolas9.h"
-  #include "drivers/lcd/fonts/consolas11.h"
-  #include "drivers/lcd/fonts/consolas16.h"
-  #include "drivers/lcd/fonts/smallfonts.h"
+#ifdef CFG_ST7565
+  #include "drivers/lcd/bitmap/st7565/st7565.h"
+#endif
+
+#ifdef CFG_TFTLCD
+  #include "drivers/lcd/tft/lcd.h"
+  #include "drivers/lcd/tft/drawing.h"
+  #include "drivers/lcd/tft/touchscreen.h"
+  #include "drivers/lcd/tft/fonts/consolas9.h"
+  #include "drivers/lcd/tft/fonts/consolas11.h"
+  #include "drivers/lcd/tft/fonts/consolas16.h"
+  #include "drivers/lcd/tft/fonts/smallfonts.h"
 #endif
 
 #ifdef CFG_I2CEEPROM
@@ -156,13 +160,32 @@ void systemInit()
 
   // Printf can now be used with either UART or USBCDC
 
+  // Initialise ST7565 LCD
+  #ifdef CFG_ST7565
+    st7565Init();
+  #endif
+
   // Initialise EEPROM
   #ifdef CFG_I2CEEPROM
     mcp24aaInit();
   #endif
 
+  // Initialise the ST7565 128x64 pixel display
+  #ifdef CFG_ST7565
+    st7565Init();
+    st7565ClearScreen();    // Clear the screen  
+    st7565BLEnable();       // Enable the backlight
+    uint8_t i;
+    // Draw pixels diagonally
+    for (i = 1; i < 64; i++)
+    {
+      st7565DrawPixel(i, i);
+    }
+    st7565Refresh();        // Refresh the screen
+  #endif
+
   // Initialise LCD Display
-  #ifdef CFG_LCD
+  #ifdef CFG_TFTLCD
     lcdInit();
     tsInit();
 
@@ -176,7 +199,7 @@ void systemInit()
     drawRectangleFilled(1, 240, 240, 320, darkGray);
 
     // Render some text
-    #if defined CFG_LCD_INCLUDESMALLFONTS & CFG_LCD_INCLUDESMALLFONTS == 1
+    #if defined CFG_TFTLCD_INCLUDESMALLFONTS & CFG_TFTLCD_INCLUDESMALLFONTS == 1
       drawStringSmall(1, 210, WHITE, "5x8 System (Max 40 Characters)", Font_System5x8);
       drawStringSmall(1, 220, WHITE, "7x8 System (Max 30 Characters)", Font_System7x8);
     #endif
@@ -228,7 +251,7 @@ void systemInit()
       // Drive size
       if (disk_ioctl(0, GET_SECTOR_COUNT, &p2) == RES_OK) 
       {
-        #ifdef CFG_LCD
+        #ifdef CFG_TFTLCD
         sprintf(lcdText, "%-20s %d", "MMC Drive Size", p2);
         drawString(10,   30,    BLACK,    &consolas9ptFontInfo,   lcdText);
         #else
@@ -238,7 +261,7 @@ void systemInit()
       // Sector Size
       if (disk_ioctl(0, GET_SECTOR_SIZE, &w1) == RES_OK) 
       {
-        #ifdef CFG_LCD
+        #ifdef CFG_TFTLCD
         sprintf(lcdText, "%-20s %d", "MMC Sector Size", w1);
         drawString(10,   45,    BLACK,    &consolas9ptFontInfo,   lcdText);
         sprintf(lcdText, "%-20s %d MB", "Total Disk Space", (p2 / 1024) * w1);
@@ -250,7 +273,7 @@ void systemInit()
       // Card Type
       if (disk_ioctl(0, MMC_GET_TYPE, &b1) == RES_OK) 
       {
-        #ifdef CFG_LCD
+        #ifdef CFG_TFTLCD
         sprintf(lcdText, "%-20s %d", "MMC Card Type", b1);
         drawString(10,   75,    BLACK,    &consolas9ptFontInfo,   lcdText);
         #else
@@ -315,7 +338,7 @@ void systemInit()
     printf("%-40s : 0x%04X%s", "Chibi Initialised", pcb->src_addr, CFG_PRINTF_NEWLINE);
   #endif
 
-  #if defined CFG_LCD && defined CFG_SDCARD
+  #if defined CFG_TFTLCD && defined CFG_SDCARD
     // Draw bitmap from SD
     // drawImageFromFile(0, 0, "/output.pic");
   #endif
