@@ -118,28 +118,6 @@
         <File Name="../../drivers/sensors/lm75b/lm75b.h"/>
       </VirtualDirectory>
     </VirtualDirectory>
-    <VirtualDirectory Name="lcd">
-      <VirtualDirectory Name="hw">
-        <File Name="../../drivers/lcd/hw/ILI9325.c"/>
-        <File Name="../../drivers/lcd/hw/ILI9325.h"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="fonts">
-        <File Name="../../drivers/lcd/fonts/bitmapfonts.h"/>
-        <File Name="../../drivers/lcd/fonts/consolas9.c"/>
-        <File Name="../../drivers/lcd/fonts/consolas9.h"/>
-        <File Name="../../drivers/lcd/fonts/consolas11.c"/>
-        <File Name="../../drivers/lcd/fonts/consolas11.h"/>
-        <File Name="../../drivers/lcd/fonts/consolas16.c"/>
-        <File Name="../../drivers/lcd/fonts/consolas16.h"/>
-        <File Name="../../drivers/lcd/fonts/smallfonts.c"/>
-        <File Name="../../drivers/lcd/fonts/smallfonts.h"/>
-      </VirtualDirectory>
-      <File Name="../../drivers/lcd/drawing.c"/>
-      <File Name="../../drivers/lcd/drawing.h"/>
-      <File Name="../../drivers/lcd/lcd.h"/>
-      <File Name="../../drivers/lcd/touchscreen.c"/>
-      <File Name="../../drivers/lcd/touchscreen.h"/>
-    </VirtualDirectory>
     <VirtualDirectory Name="fatfs">
       <File Name="../../drivers/fatfs/ccsbcs.c"/>
       <File Name="../../drivers/fatfs/diskio.h"/>
