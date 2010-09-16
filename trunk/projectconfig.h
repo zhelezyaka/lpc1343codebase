@@ -131,6 +131,9 @@
     CFG_USBCDC                If this field is defined USB CDC support will
                               be included, with the USB Serial Port speed
                               set to 115200 BPS by default
+    CFG_USBCDC_BAUDRATE       The default TX/RX speed.  This value is used 
+                              when initialising USBCDC, and should be a 
+                              standard value like 57600, 9600, etc.
     CFG_USBCDC_BUFSIZE        The size in bytes of the USB CDC transmit
                               FIFO buffer
     CFG_USBCDC_INITTIMEOUT    The maximum delay in milliseconds to wait for
@@ -141,6 +144,7 @@
     -----------------------------------------------------------------------*/
     // #define CFG_USBHID
     #define CFG_USBCDC
+    #define CFG_USBCDC_BAUDRATE         (115200)
     #define CFG_USBCDC_BUFSIZE          (80)
     #define CFG_USBCDC_INITTIMEOUT      (5000)
 /*=========================================================================*/
@@ -254,30 +258,41 @@
     TFT LCD
     -----------------------------------------------------------------------
 
-    CFG_LCD                     If defined, this will cause drivers for
+    CFG_TFTLCD                  If defined, this will cause drivers for
                                 a pre-determined LCD screen to be included
                                 during build.  Only one LCD driver can be 
                                 included during the build process (for ex.
                                 'drivers/lcd/hw/ILI9325.c')
-    CFG_LCD_INCLUDESMALLFONTS   If set to 1, smallfont support will be
+    CFG_TFTLCD_INCLUDESMALLFONTS If set to 1, smallfont support will be
                                 included for 3x6, 5x8, 7x8 and 8x8 fonts.
                                 This should only be enabled if these small
                                 fonts are required since there is already
                                 support for larger fonts generated using
                                 Dot Factory 
                                 http://www.pavius.net/downloads/tools/53-the-dot-factory
-    CFG_LCD_WIDTH               The width in pixels of the LCD screen
-    CFG_LCD_HEIGHT              The height in pixels of the LCD screen
+    CFG_TFTLCD_WIDTH            The width in pixels of the LCD screen
+    CFG_TFTLCD_HEIGHT           The height in pixels of the LCD screen
 
-    NOTE: CFG_LCD (ILI9325) =    ~4.9 KB Flash (-Os, no small fonts, 
+    NOTE: CFG_TFTLCD (ILI9325)  ~4.9 KB Flash (-Os, no small fonts, 
                                 consolas9 used)
     -----------------------------------------------------------------------*/
-    // #define CFG_LCD
-    #define CFG_LCD_INCLUDESMALLFONTS   (0)
-    #define CFG_LCD_WIDTH               (240)
-    #define CFG_LCD_HEIGHT              (320)
+    // #define CFG_TFTLCD
+    #define CFG_TFTLCD_INCLUDESMALLFONTS   (0)
+    #define CFG_TFTLCD_WIDTH               (240)
+    #define CFG_TFTLCD_HEIGHT              (320)
 /*=========================================================================*/
 
+
+/*=========================================================================
+    ST7565 128x64 Graphic LCD
+    -----------------------------------------------------------------------
+
+    CFG_ST7565                  If defined, this will cause drivers for
+                                the 128x64 pixel ST7565 LCD to be included
+
+    -----------------------------------------------------------------------*/
+    // #define CFG_ST7565
+/*=========================================================================*/
 
 
 
@@ -323,7 +338,13 @@
     #error "CFG_CHIBI requires CFG_I2CEEPROM to store and retrieve addresses"
   #endif
   #ifdef CFG_SDCARD
-    #error "CFG_CHIBI and CFG_SDCARD can not be defined at the same time. Only one SPI block available on the LPC1341."
+    #error "CFG_CHIBI and CFG_SDCARD can not be defined at the same time. Only one SPI block is available on the LPC1343."
+  #endif
+#endif
+
+#ifdef CFG_TFTLCD
+  #ifdef CFG_ST7565
+    #error "CFG_TFTLCD and CFG_ST7565 can not be defined at the same time."
   #endif
 #endif
 
