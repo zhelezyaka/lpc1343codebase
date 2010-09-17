@@ -226,7 +226,7 @@ static void ili9325ImageFromFIL(uint16_t x, uint16_t y, FIL file)
   // Read the header data
   f_read(&file, header, sizeof(header), &bytesRead);
   uint16_t imgW = header[0];   // width
-  uint16_t imgH = header[1];   // height
+  // uint16_t imgH = header[1];   // height
 
   uint16_t wCounter, lineCounter, currentPixel;
   wCounter = lineCounter = currentPixel = 0;

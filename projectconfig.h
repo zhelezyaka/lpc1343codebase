@@ -109,14 +109,14 @@
     MICRO-SD CARD
     -----------------------------------------------------------------------
 
-    CFG_SDCARD                If this field is defined SD Card and Fat32
+    CFG_SDCARD                If this field is defined SD Card and FAT32
                               file system support will be included
     CFG_SDCARD_CDPORT         The card detect port number
     CFG_SDCARD_CDPIN          The card detect pin number
-
+    
     NOTE: CFG_SDCARD =        ~7.2 KB Flash and 0.6 KB SRAM (-Os)
     -----------------------------------------------------------------------*/
-    // #define CFG_SDCARD
+    #define CFG_SDCARD
     #define CFG_SDCARD_CDPORT           (3)
     #define CFG_SDCARD_CDPIN            (0)
 /*=========================================================================*/
@@ -143,7 +143,7 @@
     NOTE: CFG_USBCDC =        ~4.0 KB Flash and 272 bytes SRAM (-Os)
     -----------------------------------------------------------------------*/
     // #define CFG_USBHID
-    #define CFG_USBCDC
+    // #define CFG_USBCDC
     #define CFG_USBCDC_BAUDRATE         (115200)
     #define CFG_USBCDC_BUFSIZE          (80)
     #define CFG_USBCDC_INITTIMEOUT      (5000)
@@ -170,7 +170,7 @@
     NOTE: PRINTF Support =    ~350 bytes Flash (-Os)
     -----------------------------------------------------------------------*/
     // #define CFG_PRINTF_UART
-    #define CFG_PRINTF_USBCDC
+    // #define CFG_PRINTF_USBCDC
     // #define CFG_PRINTF_CWDEBUG
     #define CFG_PRINTF_NEWLINE          "\r\n"
 /*=========================================================================*/
@@ -196,7 +196,7 @@
                               this varies with the number of commands
                               present
     -----------------------------------------------------------------------*/
-    #define CFG_INTERFACE
+    // #define CFG_INTERFACE
     #define CFG_INTERFACE_MAXMSGSIZE    (80)
     #define CFG_INTERFACE_PROMPT        "LPC1343 >> "
 /*=========================================================================*/
@@ -291,7 +291,7 @@
                                 the 128x64 pixel ST7565 LCD to be included
 
     -----------------------------------------------------------------------*/
-    // #define CFG_ST7565
+    #define CFG_ST7565
 /*=========================================================================*/
 
 

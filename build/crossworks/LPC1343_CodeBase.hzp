@@ -137,41 +137,38 @@
           </folder>
         </folder>
         <folder Name="lcd" file_name="">
-          <file file_name="../../drivers/lcd/drawing.c">
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
-          </file>
-          <folder Name="hw">
-            <file file_name="../../drivers/lcd/hw/ILI9325.c">
+          <folder Name="bitmap">
+            <folder Name="st7565">
+              <file file_name="../../drivers/lcd/bitmap/ST7565/ST7565.c">
+                <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+              </file>
+            </folder>
+          </folder>
+          <folder Name="tft">
+            <folder Name="hw">
+              <file file_name="../../drivers/lcd/tft/hw/ILI9325.c">
+                <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+              </file>
+            </folder>
+            <folder Name="fonts">
+              <file file_name="../../drivers/lcd/tft/fonts/consolas9.c">
+                <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+              </file>
+              <file file_name="../../drivers/lcd/tft/fonts/consolas11.c">
+                <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+              </file>
+              <file file_name="../../drivers/lcd/tft/fonts/consolas16.c">
+                <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+              </file>
+            </folder>
+            <file file_name="../../drivers/lcd/tft/drawing.c">
               <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
-              <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
-              <configuration Name="Common" default_code_section=".text"/>
             </file>
-            <file file_name="../../drivers/lcd/hw/SPFD5420A.c">
-              <configuration Name="THUMB Flash Release" build_exclude_from_build="Yes"/>
-              <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
-            </file>
-            <file file_name="../../drivers/lcd/hw/ILI9320.c">
-              <configuration Name="THUMB Flash Release" build_exclude_from_build="Yes"/>
+            <file file_name="../../drivers/lcd/tft/touchscreen.c">
               <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
             </file>
           </folder>
-          <folder Name="fonts" file_name="">
-            <file file_name="../../drivers/lcd/fonts/smallfonts.c">
-              <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
-            </file>
-            <file file_name="../../drivers/lcd/fonts/consolas11.c">
-              <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
-            </file>
-            <file file_name="../../drivers/lcd/fonts/consolas9.c">
-              <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
-            </file>
-            <file file_name="../../drivers/lcd/fonts/consolas16.c">
-              <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
-            </file>
-          </folder>
-          <file file_name="../../drivers/lcd/touchscreen.c">
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
-          </file>
+          <file file_name="../../drivers/lcd/smallfonts.c"/>
         </folder>
         <folder Name="fatfs" file_name="">
           <file file_name="../../drivers/fatfs/ff.c">
@@ -179,6 +176,7 @@
           </file>
           <file file_name="../../drivers/fatfs/mmc.c">
             <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
+            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
           </file>
         </folder>
       </folder>

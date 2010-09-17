@@ -34,11 +34,11 @@ OBJS += lm75b.o
 # TFT LCD support (ILI9325)
 VPATH += drivers/lcd/tft drivers/lcd/tft/hw drivers/lcd/tft/fonts
 OBJS += ILI9325.o drawing.o touchscreen.o
-OBJS += smallfonts.o consolas9.o consolas11.o consolas16.o
+OBJS += consolas9.o consolas11.o consolas16.o
 
 # Bitmap LCD support (ST7565)
-VPATH += drivers/lcd/bitmap/st7565
-OBJS += ST7565.o
+VPATH += drivers/lcd drivers/lcd/bitmap/st7565
+OBJS += smallfonts.o ST7565.o
 
 # ChaN FatFS and SD card support
 VPATH += drivers/fatfs

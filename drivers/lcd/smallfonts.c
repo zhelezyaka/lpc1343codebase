@@ -1,5 +1,4 @@
 /* Partially based on original code for the KS0108 by Stephane Rey */
-/* Current version by Kevin Townsend */
 
 /**************************************************************************/
 /*! 
@@ -40,8 +39,6 @@
 /**************************************************************************/
 #include "sysdefs.h"
 #include "smallfonts.h"
-
-#if defined CFG_TFTLCD_INCLUDESMALLFONTS & CFG_TFTLCD_INCLUDESMALLFONTS == 1
 
 /* Global variables */
 const struct FONT_DEF Font_System3x6    = {3, 6, 32, 96,  au8FontSystem3x6};
@@ -557,5 +554,3 @@ const uint8_t au8Font8x8Thin[]= {
     0x40,0x88,0x88,0x7F,0x09,0x09,0x02,0x00,
     0x00,0x20,0x54,0x54,0x55,0x79,0x40,0x00,
 };
-
-#endif

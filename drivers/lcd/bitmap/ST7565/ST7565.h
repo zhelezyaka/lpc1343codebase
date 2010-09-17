@@ -40,6 +40,8 @@
 
 #include "projectconfig.h"
 
+#include "drivers/lcd/smallfonts.h"
+
 // Pin Definitions
 #define ST7565_A0_PORT                    (2)     // Register Select Pin (A0)
 #define ST7565_A0_PIN                     (1)
@@ -103,5 +105,6 @@ void st7565ClearScreen( void );
 void st7565Refresh( void );
 void st7565DrawPixel( uint8_t x, uint8_t y );
 void st7565ClearPixel( uint8_t x, uint8_t y );
+void st7565DrawString(uint16_t x, uint16_t y, char* text, struct FONT_DEF font);
 
 #endif

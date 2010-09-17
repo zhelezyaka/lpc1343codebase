@@ -83,7 +83,7 @@
   #include "drivers/lcd/tft/fonts/consolas9.h"
   #include "drivers/lcd/tft/fonts/consolas11.h"
   #include "drivers/lcd/tft/fonts/consolas16.h"
-  #include "drivers/lcd/tft/fonts/smallfonts.h"
+  #include "drivers/lcd/smallfonts.h"
 #endif
 
 #ifdef CFG_I2CEEPROM
@@ -96,7 +96,7 @@
   #include "drivers/fatfs/ff.h"
   static FILINFO Finfo;
   static FATFS Fatfs[1];
-  static uint8_t buf[64];
+  // static uint8_t buf[64];
 
   DWORD get_fattime ()
   {
@@ -175,12 +175,9 @@ void systemInit()
     st7565Init();
     st7565ClearScreen();    // Clear the screen  
     st7565BLEnable();       // Enable the backlight
-    uint8_t i;
-    // Draw pixels diagonally
-    for (i = 1; i < 64; i++)
-    {
-      st7565DrawPixel(i, i);
-    }
+    st7565DrawString(1, 1, "3X6 SYSTEM", Font_System3x6);   // 3x6 is UPPER CASE only
+    st7565DrawString(1, 10, "5x8 System", Font_System5x8);
+    st7565DrawString(1, 20, "7x8 System", Font_System7x8);
     st7565Refresh();        // Refresh the screen
   #endif
 
@@ -224,8 +221,6 @@ void systemInit()
   #endif
 
   #ifdef CFG_SDCARD
-    // Init SSP (clock low between frames, transition on leading edge)
-    sspInit(0, sspClockPolarity_Low, sspClockPhase_RisingEdge);
     DSTATUS stat;
     stat = disk_initialize(0);
     if (stat & STA_NOINIT) 
@@ -238,13 +233,14 @@ void systemInit()
     }
     if (stat == 0)
     {
-      DSTATUS stat;
       DWORD p2;
       WORD w1;
       BYTE res, b1;
       DIR dir;
 
-      char lcdText[80];
+      #ifdef CFG_TFTLCD
+        char lcdText[80];
+      #endif
 
       // SD Card Initialised
       printf("%-40s : %s%s", "MMC", "Initialised", CFG_PRINTF_NEWLINE);
@@ -255,7 +251,7 @@ void systemInit()
         sprintf(lcdText, "%-20s %d", "MMC Drive Size", p2);
         drawString(10,   30,    BLACK,    &consolas9ptFontInfo,   lcdText);
         #else
-        printf("%-40s : %d%s", "MMC Drive Size", p2, CFG_PRINTF_NEWLINE);
+        printf("%-40s : %d%s", "MMC Drive Size", (int)p2, CFG_PRINTF_NEWLINE);
         #endif
       }
       // Sector Size
