@@ -10,9 +10,7 @@
     Driver for 128x64 pixel display based on the ST7565 LCD controller.
 
     This driver is based on the ST7565 Library from Limor Fried
-    (Adafruit Industries) at: http://github.com/adafruit/ST7565-LCD/
- 
-    
+    (Adafruit Industries) at: http://github.com/adafruit/ST7565-LCD/    
     
     @section LICENSE
 
@@ -44,10 +42,13 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 /**************************************************************************/
+#include <string.h>
+
 #include "ST7565.h"
 
 #include "core/gpio/gpio.h"
 #include "core/systick/systick.h"
+#include "drivers/lcd/smallfonts.h"
 
 void sendByte(uint8_t byte);
 
@@ -105,6 +106,9 @@ void sendByte(uint8_t byte)
   // GPIO registers directly, but we'll leave it as is for the moment
   // for simplicity sake
 
+  // Make sure clock pin starts high
+  gpioSetValue(ST7565_SCLK_PORT, ST7565_SCLK_PIN, 1);
+
   // Write from MSB to LSB
   for (i=7; i>=0; i--) 
   {
@@ -114,6 +118,50 @@ void sendByte(uint8_t byte)
     gpioSetValue(ST7565_SDAT_PORT, ST7565_SDAT_PIN, byte & (1 << i) ? 1 : 0);
     // Set clock pin high
     gpioSetValue(ST7565_SCLK_PORT, ST7565_SCLK_PIN, 1);
+  }
+}
+
+/**************************************************************************/
+/*!
+    @brief  Draws a single graphic character using the supplied font
+*/
+/**************************************************************************/
+static void drawChar(uint16_t x, uint16_t y, uint8_t c, struct FONT_DEF font)
+{
+  uint8_t col, column[font.u8Width];
+
+  // Check if the requested character is available
+  if ((c >= font.u8FirstChar) && (c <= font.u8LastChar))
+  {
+    // Retrieve appropriate columns from font data
+    for (col = 0; col < font.u8Width; col++)
+    {
+      column[col] = font.au8FontTable[((c - 32) * font.u8Width) + col];    // Get first column of appropriate character
+    }
+  }
+  else
+  {    
+    // Requested character is not available in this font ... send a space instead
+    for (col = 0; col < font.u8Width; col++)
+    {
+      column[col] = 0xFF;    // Send solid space
+    }
+  }
+
+  // Render each column
+  uint16_t xoffset, yoffset;
+  for (xoffset = 0; xoffset < font.u8Width; xoffset++)
+  {
+    for (yoffset = 0; yoffset < (font.u8Height + 1); yoffset++)
+    {
+      uint8_t bit = 0x00;
+      bit = (column[xoffset] << (8 - (yoffset + 1)));     // Shift current row bit left
+      bit = (bit >> 7);                     // Shift current row but right (results in 0x01 for black, and 0x00 for white)
+      if (bit)
+      {
+        st7565DrawPixel(x + xoffset, y + yoffset);
+      }
+    }
   }
 }
 
@@ -281,4 +329,50 @@ void st7565ClearPixel(uint8_t x, uint8_t y)
 
   // x is which column
   buffer[x+ (y/8)*128] &= ~(1 << (7-(y%8)));
+}
+
+/**************************************************************************/
+/*!
+    @brief  Draws a string using the supplied font data.
+
+    @param[in]  x
+                Starting x co-ordinate
+    @param[in]  y
+                Starting y co-ordinate
+    @param[in]  text
+                The string to render
+    @param[in]  font
+                Pointer to the FONT_DEF to use when drawing the string
+
+    @section Example
+
+    @code 
+
+    #include "drivers/lcd/bitmap/st7565/st7565.h"
+    #include "drivers/lcd/smallfonts.h"
+    
+    // Configure the pins and initialise the LCD screen
+    st7565Init();
+
+    // Enable the backlight
+    st7565BLEnable();
+
+    // Render some text on the screen with different fonts
+    st7565DrawString(1, 1, "3X6 SYSTEM", Font_System3x6);   // 3x6 is UPPER CASE only
+    st7565DrawString(1, 10, "5x8 System", Font_System5x8);
+    st7565DrawString(1, 20, "7x8 System", Font_System7x8);
+
+    // Refresh the screen to see the results
+    st7565Refresh();
+
+    @endcode
+*/
+/**************************************************************************/
+void st7565DrawString(uint16_t x, uint16_t y, char* text, struct FONT_DEF font)
+{
+  uint8_t l;
+  for (l = 0; l < strlen(text); l++)
+  {
+    drawChar(x + (l * (font.u8Width + 1)), y, text[l], font);
+  }
 }

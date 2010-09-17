@@ -355,8 +355,11 @@ DSTATUS disk_initialize (
 {
 	BYTE n, cmd, ty, ocr[4];
 
-    gpioSetDir( SSP0_CSPORT, SSP0_CSPIN, 1 ); /* CS */
-    gpioSetDir( CFG_SDCARD_CDPORT, CFG_SDCARD_CDPIN, 0 ); /* Card Detect */
+        // Init SSP (clock low between frames, transition on leading edge)      
+        sspInit(0, sspClockPolarity_Low, sspClockPhase_RisingEdge); 
+    
+        gpioSetDir( SSP0_CSPORT, SSP0_CSPIN, 1 ); /* CS */
+        gpioSetDir( CFG_SDCARD_CDPORT, CFG_SDCARD_CDPIN, 0 ); /* Card Detect */
 
 	if (drv) return STA_NOINIT;			/* Supports only single drive */
 	if (Stat & STA_NODISK) return Stat;	/* No card in the socket */

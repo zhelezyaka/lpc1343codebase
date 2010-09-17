@@ -145,8 +145,6 @@
           <File Name="../../drivers/lcd/tft/fonts/consolas11.h"/>
           <File Name="../../drivers/lcd/tft/fonts/consolas16.c"/>
           <File Name="../../drivers/lcd/tft/fonts/consolas16.h"/>
-          <File Name="../../drivers/lcd/tft/fonts/smallfonts.c"/>
-          <File Name="../../drivers/lcd/tft/fonts/smallfonts.h"/>
         </VirtualDirectory>
         <File Name="../../drivers/lcd/tft/drawing.c"/>
         <File Name="../../drivers/lcd/tft/drawing.h"/>
@@ -160,6 +158,8 @@
           <File Name="../../drivers/lcd/bitmap/ST7565/ST7565.h"/>
         </VirtualDirectory>
       </VirtualDirectory>
+      <File Name="../../drivers/lcd/smallfonts.c"/>
+      <File Name="../../drivers/lcd/smallfonts.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="lpc1xxx">
@@ -178,6 +178,7 @@
     <File Name="../../main.h"/>
     <File Name="../../sysinit.c"/>
     <File Name="../../sysinit.h"/>
+    <File Name="../../ChangeLog.txt"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <Configuration Name="Debug" CompilerType="gnu gcc" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">

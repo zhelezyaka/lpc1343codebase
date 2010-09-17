@@ -43,7 +43,7 @@
 #include "drivers/lcd/tft/fonts/bitmapfonts.h"
 
 #if defined CFG_TFTLCD_INCLUDESMALLFONTS & CFG_TFTLCD_INCLUDESMALLFONTS == 1
-  #include "drivers/lcd/tft/fonts/smallfonts.h"
+  #include "drivers/lcd/smallfonts.h"
 #endif
 
 void      drawTestPattern     ( void );

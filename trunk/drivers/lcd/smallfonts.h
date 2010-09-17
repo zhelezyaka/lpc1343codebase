@@ -44,8 +44,6 @@
 
 #include "projectconfig.h"
 
-#if defined CFG_TFTLCD_INCLUDESMALLFONTS & CFG_TFTLCD_INCLUDESMALLFONTS == 1
-
 struct FONT_DEF 
 {
     uint8_t u8Width;     	/* Character width for storage         */
@@ -66,7 +64,5 @@ extern const uint8_t au8FontSystem5x8[];
 extern const uint8_t au8FontSystem7x8[];
 extern const uint8_t au8Font8x8[];
 extern const uint8_t au8Font8x8Thin[];
-
-#endif
 
 #endif
