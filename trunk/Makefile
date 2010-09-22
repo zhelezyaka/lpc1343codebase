@@ -38,7 +38,7 @@ OBJS += consolas9.o consolas11.o consolas16.o
 
 # Bitmap LCD support (ST7565)
 VPATH += drivers/lcd drivers/lcd/bitmap/st7565
-OBJS += smallfonts.o ST7565.o
+OBJS += smallfonts.o st7565.o
 
 # ChaN FatFS and SD card support
 VPATH += drivers/fatfs
