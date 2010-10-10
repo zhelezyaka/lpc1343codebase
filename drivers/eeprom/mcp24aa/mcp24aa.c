@@ -118,7 +118,7 @@ uint32_t i, timeout;
 mcp24aaError_e mcp24aaInit()
 {
   // Initialise I2C
-  if (i2cInit(I2CMODE_MASTER) == FALSE)
+  if (i2cInit(I2CMODE_MASTER) == false)
   {
     return MCP24AA_ERROR_I2CINIT;    /* Fatal error */
   }

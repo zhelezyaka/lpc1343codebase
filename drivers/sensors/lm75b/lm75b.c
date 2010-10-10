@@ -142,7 +142,7 @@ static lm75bError_e lm75bRead16(uint8_t reg, int32_t *value)
 lm75bError_e lm75bInit(void)
 {
   // Initialise I2C
-  if (i2cInit(I2CMODE_MASTER) == FALSE)
+  if (i2cInit(I2CMODE_MASTER) == false)
   {
     return LM75B_ERROR_I2CINIT;    /* Fatal error */
   }
