@@ -2,8 +2,6 @@
 /*! 
     @file     cmd_tbl.h
     @author   K. Townsend (microBuilder.eu)
-    @date     22 March 2010
-    @version  0.10
 
     @section LICENSE
 
@@ -52,7 +50,7 @@ void cmd_help(uint8_t argc, char **argv);         // handled by core/cmd/cmd.c
 void cmd_hello(uint8_t argc, char **argv);
 void cmd_sysinfo(uint8_t argc, char **argv);
 
-#ifdef CFG_LCD
+#ifdef CFG_TFTLCD
 void cmd_lcd_test(uint8_t argc, char **argv);
 void cmd_lcd_fill(uint8_t argc, char **argv);
 #endif
@@ -72,10 +70,11 @@ void cmd_i2ceeprom_write(uint8_t argc, char **argv);
 void cmd_lm75b_gettemp(uint8_t argc, char **argv);
 #endif
 
-#ifdef CFG_TESTBED
-void cmd_testbed_test(uint8_t argc, char **argv);
+#ifdef CFG_SDCARD
+void cmd_sd_dir(uint8_t argc, char **argv);
 #endif
 
+void cmd_deepsleep(uint8_t argc, char **argv);
 /**************************************************************************/
 /*! 
     Command list for the command-line interpreter and the name of the
@@ -92,7 +91,7 @@ cmd_t cmd_tbl[] =
   { "hello",          0,  1,  0, cmd_hello             , "Displays \'Hello World!\'"                             , "'hello [<name>]'" },
   { "sysinfo",        0,  0,  0, cmd_sysinfo           , "Displays current system configuration settings"      , "'sysinfo' has no parameters" },
 
-  #ifdef CFG_LCD
+  #ifdef CFG_TFTLCD
   { "lcd-test",       0,  0,  0, cmd_lcd_test          , "LCD - Display a test pattern on the LCD"             , "'lcd-test' has no parameters" },
   { "lcd-fill",       1,  1,  0, cmd_lcd_fill          , "LCD - Fills the screen with a 16-bit (RGB565) color" , "'lcd-fill <0xFFFF>'" },
   #endif
@@ -111,9 +110,12 @@ cmd_t cmd_tbl[] =
   { "lm75b-read",     0,  0,  0, cmd_lm75b_gettemp     , "Gets the current temperature in degrees celsius"     , "'lm75b-read' has no parameters" },
   #endif
 
-  #ifdef CFG_TESTBED
-  { "test",           0,  0,  1, cmd_testbed_test      , "Executes all testbed tests"                          , "'test' has no parameters" },
+  #ifdef CFG_SDCARD
+  { "sd-dir",         0,  1,  0,  cmd_sd_dir            , "List all files in the specified directory"           , "'sd-dir [<path>]'" },
+
   #endif
+
+  { "sleep",          0,  0,  0,  cmd_deepsleep         , "Put the device into deep sleep for ~10 seconds"      , "'sleep' has no parameters" },
 };
 
 #endif

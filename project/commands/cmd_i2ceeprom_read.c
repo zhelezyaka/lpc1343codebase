@@ -1,9 +1,10 @@
 /**************************************************************************/
 /*! 
-    @file     main.c
+    @file     cmd_i2ceeprom_read.c
     @author   K. Townsend (microBuilder.eu)
-    @date     22 March 2010
-    @version  0.10
+
+    @brief    Code to execute for cmd_i2ceeprom_read in the 'core/cmd'
+              command-line interpretter.
 
     @section LICENSE
 
@@ -38,57 +39,39 @@
 #include <stdio.h>
 
 #include "projectconfig.h"
-#include "sysinit.h"
+#include "core/cmd/cmd.h"
+#include "commands.h"       // Generic helper functions
 
-#ifdef CFG_INTERFACE
-  #include "core/cmd/cmd.h"
+#ifdef CFG_I2CEEPROM
+  #include "drivers/eeprom/mcp24aa/mcp24aa.h"
+  #include "eeprom.h"
+
+/**************************************************************************/
+/*! 
+    Reads a single byte at the supplied EEPROM address
+*/
+/**************************************************************************/
+void cmd_i2ceeprom_read(uint8_t argc, char **argv)
+{
+  uint16_t addr;
+  uint8_t value;
+
+  // Try to convert supplied address to an integer
+  int32_t addr32;
+  getNumber (argv[0], &addr32);
+  
+  // Check for invalid values (getNumber may complain about this as well)
+  if (addr32 < 0 || addr32 > MCP24AA_MAXADDR)
+  {
+    printf("Address out of range: Value from 0-%d or 0x0000-0x%04X required.%s", MCP24AA_MAXADDR, MCP24AA_MAXADDR, CFG_PRINTF_NEWLINE);
+    return;
+  }
+
+  // Address seems to be OK
+  addr = (uint16_t)addr32;
+  mcp24aaReadByte(addr, &value);
+
+  printf("0x%02X%s", value, CFG_PRINTF_NEWLINE);
+}
+
 #endif
-
-/**************************************************************************/
-/*! 
-    Approximates a 1 millisecond delay using "nop".  This is less
-    accurate than a dedicated timer, but is useful in certain situations.
-
-    The number of ticks to delay depends on the optimisation level set
-    when compiling (-O).  Depending on the compiler settings, one of the
-    two defined values for 'delay' should be used.
-*/
-/**************************************************************************/
-void delayms(uint32_t ms)
-{
-  uint32_t delay = ms * ((CFG_CPU_CCLK / 100) / 80);      // Release Mode (-Os)
-  // uint32_t delay = ms * ((CFG_CPU_CCLK / 100) / 140);  // Debug Mode (No optimisations)
-
-  while (delay > 0)
-  {
-    __asm volatile ("nop");
-    delay--;
-  }
-}
-
-/**************************************************************************/
-/*! 
-    Main program entry point.  After reset, normal code execution will
-    begin here.
-*/
-/**************************************************************************/
-int main (void)
-{
-  // Configure cpu and mandatory peripherals
-  systemInit();
-
-  while (1)
-  {
-    #ifdef CFG_INTERFACE
-      // Handle any incoming command line input
-      cmdPoll();
-    #else
-      // Toggle LED @ 1 Hz
-      systickDelay(1000);
-      if (gpioGetValue(CFG_LED_PORT, CFG_LED_PIN))  
-        gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_ON);
-      else 
-        gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF);
-    #endif
-  }
-}

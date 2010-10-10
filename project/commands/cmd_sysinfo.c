@@ -1,9 +1,10 @@
 /**************************************************************************/
 /*! 
-    @file     main.c
+    @file     cmd_sysinfo.c
     @author   K. Townsend (microBuilder.eu)
-    @date     22 March 2010
-    @version  0.10
+
+    @brief    Code to execute for cmd_sysinfo in the 'core/cmd'
+              command-line interpretter.
 
     @section LICENSE
 
@@ -38,57 +39,44 @@
 #include <stdio.h>
 
 #include "projectconfig.h"
-#include "sysinit.h"
+#include "core/cmd/cmd.h"
+#include "commands.h"       // Generic helper functions
 
-#ifdef CFG_INTERFACE
-  #include "core/cmd/cmd.h"
+#ifdef CFG_CHIBI
+  #include "drivers/chibi/chb.h"
+  #include "drivers/chibi/chb_drvr.h"
+#endif
+
+#ifdef CFG_LM75B
+  #include "drivers/sensors/lm75b/lm75b.h"
 #endif
 
 /**************************************************************************/
 /*! 
-    Approximates a 1 millisecond delay using "nop".  This is less
-    accurate than a dedicated timer, but is useful in certain situations.
-
-    The number of ticks to delay depends on the optimisation level set
-    when compiling (-O).  Depending on the compiler settings, one of the
-    two defined values for 'delay' should be used.
+    'sysinfo' command handler
 */
 /**************************************************************************/
-void delayms(uint32_t ms)
+void cmd_sysinfo(uint8_t argc, char **argv)
 {
-  uint32_t delay = ms * ((CFG_CPU_CCLK / 100) / 80);      // Release Mode (-Os)
-  // uint32_t delay = ms * ((CFG_CPU_CCLK / 100) / 140);  // Debug Mode (No optimisations)
+  printf("%-30s : %d.%d MHz %s", "Core System Clock", CFG_CPU_CCLK / 1000000, CFG_CPU_CCLK % 1000000, CFG_PRINTF_NEWLINE);
+  printf("%-30s : %d mS %s", "Systick Timer Delay", CFG_SYSTICK_DELAY_IN_MS, CFG_PRINTF_NEWLINE);
 
-  while (delay > 0)
-  {
-    __asm volatile ("nop");
-    delay--;
-  }
-}
+  // Wireless Settings (if CFG_CHIBI enabled)
+  #ifdef CFG_CHIBI
+    chb_pcb_t *pcb = chb_get_pcb();
+    printf("%-30s : %s %s", "Wireless", "AT86RF212", CFG_PRINTF_NEWLINE);
+    printf("%-30s : 0x%04X %s", "802.15.4 PAN ID", CFG_CHIBI_PANID, CFG_PRINTF_NEWLINE);
+    printf("%-30s : 0x%04X %s", "802.15.4 Node Address", pcb->src_addr, CFG_PRINTF_NEWLINE);
+    printf("%-30s : %d %s", "802.15.4 Channel", CFG_CHIBI_CHANNEL, CFG_PRINTF_NEWLINE);
+  #endif
 
-/**************************************************************************/
-/*! 
-    Main program entry point.  After reset, normal code execution will
-    begin here.
-*/
-/**************************************************************************/
-int main (void)
-{
-  // Configure cpu and mandatory peripherals
-  systemInit();
+  // System Temperature (if LM75B Present)
+  #ifdef CFG_LM75B
+    int32_t temp = 0;
+    lm75bGetTemperature(&temp);
+    temp *= 125;
+    printf("%-30s : %d.%d C %s", "System Temperature", temp / 1000, temp % 1000, CFG_PRINTF_NEWLINE);
+  #endif
 
-  while (1)
-  {
-    #ifdef CFG_INTERFACE
-      // Handle any incoming command line input
-      cmdPoll();
-    #else
-      // Toggle LED @ 1 Hz
-      systickDelay(1000);
-      if (gpioGetValue(CFG_LED_PORT, CFG_LED_PIN))  
-        gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_ON);
-      else 
-        gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF);
-    #endif
-  }
+  // printf("%-30s : %s", "<Property Name>", CFG_PRINTF_NEWLINE);
 }

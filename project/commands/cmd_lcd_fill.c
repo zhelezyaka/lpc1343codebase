@@ -1,9 +1,10 @@
 /**************************************************************************/
 /*! 
-    @file     main.c
+    @file     cmd_lcd_fill.c
     @author   K. Townsend (microBuilder.eu)
-    @date     22 March 2010
-    @version  0.10
+
+    @brief    Code to execute for cmd_lcd_fill in the 'core/cmd'
+              command-line interpretter.
 
     @section LICENSE
 
@@ -38,57 +39,33 @@
 #include <stdio.h>
 
 #include "projectconfig.h"
-#include "sysinit.h"
+#include "core/cmd/cmd.h"
+#include "commands.h"       // Generic helper functions
 
-#ifdef CFG_INTERFACE
-  #include "core/cmd/cmd.h"
-#endif
-
-/**************************************************************************/
-/*! 
-    Approximates a 1 millisecond delay using "nop".  This is less
-    accurate than a dedicated timer, but is useful in certain situations.
-
-    The number of ticks to delay depends on the optimisation level set
-    when compiling (-O).  Depending on the compiler settings, one of the
-    two defined values for 'delay' should be used.
-*/
-/**************************************************************************/
-void delayms(uint32_t ms)
-{
-  uint32_t delay = ms * ((CFG_CPU_CCLK / 100) / 80);      // Release Mode (-Os)
-  // uint32_t delay = ms * ((CFG_CPU_CCLK / 100) / 140);  // Debug Mode (No optimisations)
-
-  while (delay > 0)
-  {
-    __asm volatile ("nop");
-    delay--;
-  }
-}
+#ifdef CFG_TFTLCD    
+  #include "drivers/lcd/tft/lcd.h"    
+  #include "drivers/lcd/tft/drawing.h"  
 
 /**************************************************************************/
 /*! 
-    Main program entry point.  After reset, normal code execution will
-    begin here.
+    Fills the LCD screen with the specified color.
 */
 /**************************************************************************/
-int main (void)
+void cmd_lcd_fill(uint8_t argc, char **argv)
 {
-  // Configure cpu and mandatory peripherals
-  systemInit();
-
-  while (1)
+  // Try to convert supplied value to an integer
+  int32_t col = 0;
+  getNumber (argv[0], &col);
+  
+  // Check for invalid values (getNumber may complain about this as well)
+  if (col < 0 || col > 0xFFFF)
   {
-    #ifdef CFG_INTERFACE
-      // Handle any incoming command line input
-      cmdPoll();
-    #else
-      // Toggle LED @ 1 Hz
-      systickDelay(1000);
-      if (gpioGetValue(CFG_LED_PORT, CFG_LED_PIN))  
-        gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_ON);
-      else 
-        gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF);
-    #endif
+    printf("Invalid Color: Value from 0x0000-0xFFFF required.%s", CFG_PRINTF_NEWLINE);
+    return;
   }
+
+  // Fill the screen
+  drawFill((uint16_t)col);
 }
+
+#endif  

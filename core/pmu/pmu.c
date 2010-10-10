@@ -74,6 +74,9 @@ void WAKEUP_IRQHandler(void)
   // Reconfigure system clock/PLL
   cpuPllSetup(CPU_MULTIPLIER_6);
 
+  // Reconfigure system clock/PLL
+  cpuPllSetup(CPU_MULTIPLIER_6);
+
   // Reconfigure CT32B0
   timer32Init(0, TIMER32_DEFAULTINTERVAL);
   timer32Enable(0);

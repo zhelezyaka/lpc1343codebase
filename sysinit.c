@@ -58,7 +58,6 @@
 
 #ifdef CFG_CHIBI
   #include "drivers/chibi/chb.h"
-  static chb_rx_data_t rx_data;
 #endif
 
 #ifdef CFG_USBHID
@@ -78,12 +77,8 @@
 
 #ifdef CFG_TFTLCD
   #include "drivers/lcd/tft/lcd.h"
-  #include "drivers/lcd/tft/drawing.h"
   #include "drivers/lcd/tft/touchscreen.h"
-  #include "drivers/lcd/tft/fonts/consolas9.h"
-  #include "drivers/lcd/tft/fonts/consolas11.h"
-  #include "drivers/lcd/tft/fonts/consolas16.h"
-  #include "drivers/lcd/smallfonts.h"
+  #include "drivers/lcd/tft/drawing.h"  
 #endif
 
 #ifdef CFG_I2CEEPROM
@@ -94,9 +89,6 @@
   #include "core/ssp/ssp.h"
   #include "drivers/fatfs/diskio.h"
   #include "drivers/fatfs/ff.h"
-  static FILINFO Finfo;
-  static FATFS Fatfs[1];
-  // static uint8_t buf[64];
 
   DWORD get_fattime ()
   {
@@ -120,7 +112,7 @@ void systemInit()
   // Setup the cpu and core clock
   cpuInit();
 
-  // Initialise the systick timer (delay set in projectconfig.h)
+  // Initialise the systick timer
   systickInit(CFG_SYSTICK_DELAY_IN_MS);
 
   // Initialise GPIO
@@ -137,6 +129,11 @@ void systemInit()
   // Set LED pin as output and turn LED off
   gpioSetDir(CFG_LED_PORT, CFG_LED_PIN, 1);
   gpioSetValue(CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF);
+
+  // Initialise EEPROM
+  #ifdef CFG_I2CEEPROM
+    mcp24aaInit();
+  #endif
 
   // Initialise USB HID
   #ifdef CFG_USBHID
@@ -160,16 +157,6 @@ void systemInit()
 
   // Printf can now be used with either UART or USBCDC
 
-  // Initialise ST7565 LCD
-  #ifdef CFG_ST7565
-    st7565Init();
-  #endif
-
-  // Initialise EEPROM
-  #ifdef CFG_I2CEEPROM
-    mcp24aaInit();
-  #endif
-
   // Initialise the ST7565 128x64 pixel display
   #ifdef CFG_ST7565
     st7565Init();
@@ -181,142 +168,29 @@ void systemInit()
     st7565Refresh();        // Refresh the screen
   #endif
 
-  // Initialise LCD Display
+  // Initialise TFT LCD Display (ILI9235 240x320 pixel, 8-bit data bus)
   #ifdef CFG_TFTLCD
     lcdInit();
     tsInit();
-
-    // Get 16-bit equivalent of 24-bit color
-    uint16_t darkGray = drawRGB24toRGB565(0x33, 0x33, 0x33);
-    uint16_t lightGray = drawRGB24toRGB565(0xCC, 0xCC, 0xCC);
-
-    // Draw background
-    drawFill(lightGray);
-    drawRectangleFilled(1, 1, 240, 20, darkGray);
-    drawRectangleFilled(1, 240, 240, 320, darkGray);
-
-    // Render some text
-    #if defined CFG_TFTLCD_INCLUDESMALLFONTS & CFG_TFTLCD_INCLUDESMALLFONTS == 1
-      drawStringSmall(1, 210, WHITE, "5x8 System (Max 40 Characters)", Font_System5x8);
-      drawStringSmall(1, 220, WHITE, "7x8 System (Max 30 Characters)", Font_System7x8);
-    #endif
-    
-    drawString(5,   8,    WHITE,    &consolas9ptFontInfo,   "LPC1343 Demo Code");
-
-    // Draw some primitive shapes
-    drawCircle(15, 300, 10, WHITE);
-    drawLine(100, 280, 200, 310, WHITE);
-    drawRectangle (220, 5, 230, 15, WHITE);
-    drawRectangleFilled (222, 7, 228, 13, lightGray);
-
-    // Draw some compound shapes
-    drawString(10,   150,    BLACK,    &consolas9ptFontInfo,   "Green Progress");
-    drawProgressBar(100, 150, 130, 9, WHITE, BLACK, lightGray, GREEN, 75);
-    drawString(10,   165,    BLACK,    &consolas9ptFontInfo,   "Yellow Progress");
-    drawProgressBar(100, 165, 130, 9, WHITE, BLACK, lightGray, YELLOW, 23);
-    drawString(10,   180,    RED,    &consolas9ptFontInfo,   "Red Progress");
-    drawProgressBar(100, 180, 130, 9, WHITE, BLACK, lightGray, RED, 64);
-    drawString(10,   200,    BLACK,    &consolas9ptFontInfo,   "Battery");
-    drawProgressBar(100, 195, 130, 15, WHITE, BLACK, lightGray, BLUE, 90);
+    drawTestPattern();
   #endif
 
+  // Initialise SD Card
   #ifdef CFG_SDCARD
     DSTATUS stat;
     stat = disk_initialize(0);
     if (stat & STA_NOINIT) 
     {
-      printf("%-40s : %s%s", "MMC", "Not Initialised", CFG_PRINTF_NEWLINE);
+      printf("%-40s : %s%s", "SD", "Not Initialised", CFG_PRINTF_NEWLINE);
     }
     if (stat & STA_NODISK) 
     {
-      printf("%-40s : %s%s", "MMC", "No Disk", CFG_PRINTF_NEWLINE);
+      printf("%-40s : %s%s", "SD", "No Disk", CFG_PRINTF_NEWLINE);
     }
     if (stat == 0)
     {
-      DWORD p2;
-      WORD w1;
-      BYTE res, b1;
-      DIR dir;
-
-      #ifdef CFG_TFTLCD
-        char lcdText[80];
-      #endif
-
       // SD Card Initialised
-      printf("%-40s : %s%s", "MMC", "Initialised", CFG_PRINTF_NEWLINE);
-      // Drive size
-      if (disk_ioctl(0, GET_SECTOR_COUNT, &p2) == RES_OK) 
-      {
-        #ifdef CFG_TFTLCD
-        sprintf(lcdText, "%-20s %d", "MMC Drive Size", p2);
-        drawString(10,   30,    BLACK,    &consolas9ptFontInfo,   lcdText);
-        #else
-        printf("%-40s : %d%s", "MMC Drive Size", (int)p2, CFG_PRINTF_NEWLINE);
-        #endif
-      }
-      // Sector Size
-      if (disk_ioctl(0, GET_SECTOR_SIZE, &w1) == RES_OK) 
-      {
-        #ifdef CFG_TFTLCD
-        sprintf(lcdText, "%-20s %d", "MMC Sector Size", w1);
-        drawString(10,   45,    BLACK,    &consolas9ptFontInfo,   lcdText);
-        sprintf(lcdText, "%-20s %d MB", "Total Disk Space", (p2 / 1024) * w1);
-        drawString(10,   60,    BLACK,    &consolas9ptFontInfo,   lcdText);
-        #else
-        printf("%-40s : %d%s", "MMC Sector Size", w1, CFG_PRINTF_NEWLINE);
-        #endif
-      }
-      // Card Type
-      if (disk_ioctl(0, MMC_GET_TYPE, &b1) == RES_OK) 
-      {
-        #ifdef CFG_TFTLCD
-        sprintf(lcdText, "%-20s %d", "MMC Card Type", b1);
-        drawString(10,   75,    BLACK,    &consolas9ptFontInfo,   lcdText);
-        #else
-        printf("%-40s : %d%s", "MMC Card Type", b1, CFG_PRINTF_NEWLINE);
-        #endif
-      }
-      // Try to mount drive
-      res = f_mount(0, &Fatfs[0]);
-      if (res != FR_OK) 
-      {
-        printf("%-40s : %d%s", "MMC - Failed to mount 0:", res, CFG_PRINTF_NEWLINE);
-      }
-      if (res == FR_OK)
-      {
-        res = f_opendir(&dir, "/");
-        if (res) 
-        {
-            printf("%-40s : %d%s", "MMC - Failed to open /:", res, CFG_PRINTF_NEWLINE);
-            return;
-        }
-        // Read dir
-        for(;;) 
-        {
-            res = f_readdir(&dir, &Finfo);
-            if ((res != FR_OK) || !Finfo.fname[0]) break;
-            #if _USE_LFN == 0
-              printf("%-25s %s", (char *)&Finfo.fname[0], CFG_PRINTF_NEWLINE);
-            #else
-              printf("%-75s %s", (char *)&Finfo.lfname[0], CFG_PRINTF_NEWLINE);
-            #endif
-        }
-        // Create a file
-        //FIL logFile;  
-        //if(f_open(&logFile, "/log.txt", FA_READ | FA_WRITE | FA_OPEN_ALWAYS)!=FR_OK) 
-        //{  
-        //  // Flag error  
-        //  printf ("Unabled to create log.txt%s", CFG_PRINTF_NEWLINE); 
-        //}  
-        //unsigned int bytesWritten;  
-        //f_write(&logFile, "New log opened!\n", 16, &bytesWritten);  
-        //// Flush the write buffer (required?)
-        //// f_sync(&logFile);  
-        //// Close and unmount.   
-        //f_close(&logFile);  
-        //f_mount(0,0); 
-        //printf("Wrote data to log.txt", CFG_PRINTF_NEWLINE);
-      }
+      printf("%-40s : %s%s", "SD", "Initialised", CFG_PRINTF_NEWLINE);
     }
   #endif
 
@@ -339,7 +213,7 @@ void systemInit()
     // drawImageFromFile(0, 0, "/output.pic");
   #endif
 
-  // Start the command line interface (if requested)
+  // Start the command line interface if requested
   #ifdef CFG_INTERFACE
     printf("%sType 'help' for a list of available commands%s", CFG_PRINTF_NEWLINE, CFG_PRINTF_NEWLINE);
     cmdInit();
