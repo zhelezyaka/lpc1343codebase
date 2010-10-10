@@ -50,7 +50,7 @@ struct FONT_DEF
     uint8_t u8Height;  	/* Character height for storage        */
     uint8_t u8FirstChar;     /* The first character available       */
     uint8_t u8LastChar;      /* The last character available        */
-    uint8_t *au8FontTable;   /* Font table start address in memory  */
+    const uint8_t *au8FontTable;   /* Font table start address in memory  */
 };
 
 extern const struct FONT_DEF Font_System3x6;
