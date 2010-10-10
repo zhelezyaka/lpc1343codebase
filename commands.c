@@ -93,7 +93,7 @@
     @endcode
 */
 /**************************************************************************/
-static int getNumber (char *s, int32_t *result)
+int getNumber (char *s, int32_t *result)
 {
   int32_t value;
   uint32_t mustBeHex = FALSE;
