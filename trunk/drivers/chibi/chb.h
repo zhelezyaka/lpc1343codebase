@@ -36,7 +36,7 @@
 
 #include "types.h"
 
-#define CHB_HDR_SZ        9    // FCF + seq + pan_id + dest_addr + src_addr (1 + 2 + 1 + 2 + 2 + 2)
+#define CHB_HDR_SZ        9    // FCF + seq + pan_id + dest_addr + src_addr (2 + 1 + 2 + 2 + 2)
 #define CHB_FCS_LEN       2
 #define CHB_MAX_PAYLOAD   100
 

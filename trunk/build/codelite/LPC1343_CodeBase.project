@@ -173,9 +173,6 @@
     <File Name="../../Makefile"/>
     <File Name="../../projectconfig.h"/>
     <File Name="../../sysdefs.h"/>
-    <File Name="../../cmd_tbl.h"/>
-    <File Name="../../commands.c"/>
-    <File Name="../../main.h"/>
     <File Name="../../sysinit.c"/>
     <File Name="../../sysinit.h"/>
     <File Name="../../ChangeLog.txt"/>
@@ -264,4 +261,23 @@ monitor reset</PostConnectCommands>
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
+  <VirtualDirectory Name="project">
+    <File Name="../../project/cmd_tbl.h"/>
+    <File Name="../../project/commands.c"/>
+    <File Name="../../project/eeprom.c"/>
+    <File Name="../../project/eeprom.h"/>
+    <VirtualDirectory Name="commands">
+      <File Name="../../project/commands/cmd_chibi_addr.c"/>
+      <File Name="../../project/commands/cmd_chibi_tx.c"/>
+      <File Name="../../project/commands/cmd_deepsleep.c"/>
+      <File Name="../../project/commands/cmd_hello.c"/>
+      <File Name="../../project/commands/cmd_i2ceeprom_read.c"/>
+      <File Name="../../project/commands/cmd_i2ceeprom_write.c"/>
+      <File Name="../../project/commands/cmd_lcd_fill.c"/>
+      <File Name="../../project/commands/cmd_lcd_test.c"/>
+      <File Name="../../project/commands/cmd_lm75b_gettemp.c"/>
+      <File Name="../../project/commands/cmd_sd_dir.c"/>
+      <File Name="../../project/commands/cmd_sysinfo.c"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
 </CodeLite_Project>

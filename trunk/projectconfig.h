@@ -84,7 +84,7 @@
 
     -----------------------------------------------------------------------*/
     #define CFG_UART_BAUDRATE           (115200)
-    #define CFG_UART_BUFSIZE            (80)
+    #define CFG_UART_BUFSIZE            (128)
 /*=========================================================================*/
 
 
@@ -143,7 +143,7 @@
     NOTE: CFG_USBCDC =        ~4.0 KB Flash and 272 bytes SRAM (-Os)
     -----------------------------------------------------------------------*/
     // #define CFG_USBHID
-    // #define CFG_USBCDC
+    #define CFG_USBCDC
     #define CFG_USBCDC_BAUDRATE         (115200)
     #define CFG_USBCDC_BUFSIZE          (80)
     #define CFG_USBCDC_INITTIMEOUT      (5000)
@@ -170,7 +170,7 @@
     NOTE: PRINTF Support =    ~350 bytes Flash (-Os)
     -----------------------------------------------------------------------*/
     // #define CFG_PRINTF_UART
-    // #define CFG_PRINTF_USBCDC
+    #define CFG_PRINTF_USBCDC
     // #define CFG_PRINTF_CWDEBUG
     #define CFG_PRINTF_NEWLINE          "\r\n"
 /*=========================================================================*/
@@ -196,7 +196,7 @@
                               this varies with the number of commands
                               present
     -----------------------------------------------------------------------*/
-    // #define CFG_INTERFACE
+    #define CFG_INTERFACE
     #define CFG_INTERFACE_MAXMSGSIZE    (80)
     #define CFG_INTERFACE_PROMPT        "LPC1343 >> "
 /*=========================================================================*/
@@ -210,7 +210,8 @@
                               will be included during build
 
     -----------------------------------------------------------------------*/
-    // #define CFG_I2CEEPROM
+    #define CFG_I2CEEPROM
+    #define CFG_I2CEEPROM_SIZE          (4096)
 /*=========================================================================*/
 
 
@@ -237,6 +238,8 @@
                                 with Chibi.  See chb_drvr.h for possible values
     CFG_CHIBI_POWER             The power level to use when transmitting.  See
                                 chb_drvr.h for possible values
+    CFG_CHIBI_CHANNEL           802.15.4 Channel (ex. 1)
+    CFG_CHIBI_PANID             16-bit PAN Identifier (ex.0x1234)
     CFG_CHIBI_BUFFERSIZE        The size of the message buffer in bytes.
     CFG_CHIBI_EEPROM_IEEEADDR   Start location in EEPROM for the full IEEE
                                 address of this node
@@ -248,6 +251,8 @@
     // #define CFG_CHIBI
     #define CFG_CHIBI_MODE              (BPSK20_868MHZ)     // See chb_drvr.h for possible values
     #define CFG_CHIBI_POWER             (CHB_PWR_EU2_5DBM)  // See chb_drvr.h for possible values
+    #define CFG_CHIBI_CHANNEL           (0)
+    #define CFG_CHIBI_PANID             (0x1234)
     #define CFG_CHIBI_BUFFERSIZE        (128)
     #define CFG_CHIBI_EEPROM_IEEEADDR   (uint16_t)(0x0000)
     #define CFG_CHIBI_EEPROM_SHORTADDR  (uint16_t)(0x0009)
@@ -291,7 +296,7 @@
                                 the 128x64 pixel ST7565 LCD to be included
 
     -----------------------------------------------------------------------*/
-    #define CFG_ST7565
+    // #define CFG_ST7565
 /*=========================================================================*/
 
 

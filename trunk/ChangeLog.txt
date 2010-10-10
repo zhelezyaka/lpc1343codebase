@@ -1,6 +1,24 @@
-v0.32 - [In Development]
-====================================
+v0.32 - In Progress
+===================
 
+- Moved command.c and cmd_tbl.h to /project to try to keep all 
+  project-specific files in one location to improve code-sharing and make
+  upgrading easier
+- Created seperate .c files for every command for the command-line interface
+  to make it easier to maintain and share code between projects.  All commands
+  listed in cmd_tbl.h are now stored in their own files in /project/commands 
+  (ex.: "/project/commands/cmd_hello.c", etc.)
+- Added a CLI command to demonstrate how to draw to a ILI9325 TFT LCD
+- Added a CLI command to show the contents of any directory from the SD card 
+  (/project/commmands/cmd_sd_dir.c)
+- Added a CLI command showing how to enter deep-sleep and exit with a SW
+  wakeup (/project/commands/cmd_deepsleep.c).  Please note that the wakeup
+  will not work if you are using USB for the CLI.  To see the wakeup message,
+  you must use UART for the CLI, which is selected by uncommenting
+  CFG_PRINTF_UART in projectconfig.h
+- Fixed pmu.c to set the core clock back to an appropriate state after wakeup
+- Added simple wrapper for eeprom access (projects/eeprom.c)
 - Reorganised drivers/lcd to take into account non TFT LCD displays.
 - Added a prelimenary (experimental) driver for 128x64 pixel ST7565-based
-  bitmap LCDs (ex: http://www.adafruit.com/index.php?main_page=product_info&cPath=37&products_id=250)
+  bitmap LCDs (ex: Adafruit Industries - http://bit.ly/9xj5vw)
+- Numerous bug fixes added by Roel Verdult (Linux compatibility, GCC warnings, etc.)

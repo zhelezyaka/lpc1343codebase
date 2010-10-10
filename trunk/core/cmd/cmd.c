@@ -52,7 +52,7 @@
 #include <string.h>
 
 #include "cmd.h"
-#include "cmd_tbl.h"
+#include "project/cmd_tbl.h"
 
 #ifdef CFG_PRINTF_UART
 #include "core/uart/uart.h"
@@ -88,13 +88,13 @@ void cmdPoll()
     CDC_OutBufAvailChar (&numAvailByte);
     if (numAvailByte > 0) 
     {
-        numBytesToRead = numAvailByte > 32 ? 32 : numAvailByte; 
-        numBytesRead = CDC_RdOutBuf (&usbcdcBuf[0], &numBytesToRead);
-        int i;
-        for (i = numBytesToRead; i > 0; --i)
-        {
-          cmdRx(usbcdcBuf[i-1]);
-        }
+      numBytesToRead = numAvailByte > 32 ? 32 : numAvailByte; 
+      numBytesRead = CDC_RdOutBuf (&usbcdcBuf[0], &numBytesToRead);
+      int i;
+      for (i = 0; i < numBytesRead; i++) 
+      {  
+        cmdRx(usbcdcBuf[i]);   
+      }
     }
   #endif
 }
@@ -190,11 +190,13 @@ void cmdParse(char *cmd)
         {
           // Too few arguments supplied
           printf ("Too few arguments to command (%d expected)%s", cmd_tbl[i].minArgs, CFG_PRINTF_NEWLINE);
+          printf ("%sType '%s ?' for more information%s%s", CFG_PRINTF_NEWLINE, cmd_tbl[i].command, CFG_PRINTF_NEWLINE, CFG_PRINTF_NEWLINE);
         }
         else if ((argc - 1) > cmd_tbl[i].maxArgs)
         {
           // Too many arguments supplied
           printf ("Too many arguments to command (%d maximum)%s", cmd_tbl[i].maxArgs, CFG_PRINTF_NEWLINE);
+          printf ("%sType '%s ?' for more information%s%s", CFG_PRINTF_NEWLINE, cmd_tbl[i].command, CFG_PRINTF_NEWLINE, CFG_PRINTF_NEWLINE);
         }
         else
         {
