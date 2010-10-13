@@ -73,6 +73,7 @@
 
 #ifdef CFG_ST7565
   #include "drivers/lcd/bitmap/st7565/st7565.h"
+  #include "drivers/lcd/smallfonts.h"
 #endif
 
 #ifdef CFG_TFTLCD
@@ -155,18 +156,15 @@ void systemInit()
     }
   #endif
 
-  // Printf can now be used with either UART or USBCDC
-
   // Initialise the ST7565 128x64 pixel display
   #ifdef CFG_ST7565
     st7565Init();
     st7565ClearScreen();    // Clear the screen  
     st7565BLEnable();       // Enable the backlight
-    st7565DrawString(1, 1, "3X6 SYSTEM", Font_System3x6);   // 3x6 is UPPER CASE only
-    st7565DrawString(1, 10, "5x8 System", Font_System5x8);
-    st7565DrawString(1, 20, "7x8 System", Font_System7x8);
     st7565Refresh();        // Refresh the screen
   #endif
+
+  // Printf can now be used with UART, USBCDC or the ST7565
 
   // Initialise TFT LCD Display (ILI9235 240x320 pixel, 8-bit data bus)
   #ifdef CFG_TFTLCD
@@ -253,10 +251,16 @@ void __putchar(const char c)
 
     @param[in]  str
                 Text to send
+
+    @note This function is only called when using the GCC-compiler
+          in Codelite or running the Makefile manually.  This function
+          will not be called when using the C library in Crossworks for
+          ARM.
 */
 /**************************************************************************/
 int puts(const char * str)
 {
+  // Handle output character by character in __putchar
   while(*str) __putchar(*str++);
   return 0;
 }
