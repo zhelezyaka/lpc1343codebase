@@ -310,19 +310,12 @@
 
   =========================================================================*/
 
-#if !defined CFG_PRINTF_NONE
-  #if defined CFG_PRINTF_USBCDC && defined CFG_PRINTF_UART
-    #error "CFG_PRINTF_UART or CFG_PRINTF_USBCDC cannot both be defined at once"
-  #endif
-  #if defined CFG_PRINTF_USBCDC && !defined CFG_USBCDC
-    #error "CFG_PRINTF_CDC requires CFG_USBCDC to be defined as well"
-  #endif
+#if defined CFG_PRINTF_USBCDC && defined CFG_PRINTF_UART
+  #error "CFG_PRINTF_UART or CFG_PRINTF_USBCDC cannot both be defined at once"
 #endif
-#if defined CFG_PRINTF_NONE && defined CFG_PRINTF_UART
-  #error "CFG_PRINTF_NONE and CFG_PRINTF_UART can not be defined at the same time"
-#endif
-#if defined CFG_PRINTF_NONE && defined CFG_PRINTF_USBCDC
-  #error "CFG_PRINTF_NONE and CFG_PRINTF_USBCDC can not be defined at the same time"
+
+#if defined CFG_PRINTF_USBCDC && !defined CFG_USBCDC
+  #error "CFG_PRINTF_CDC requires CFG_USBCDC to be defined as well"
 #endif
 
 #if defined CFG_USBCDC && defined CFG_USBHID
@@ -330,9 +323,6 @@
 #endif
 
 #ifdef CFG_INTERFACE
-  #if defined CFG_PRINTF_NONE
-    #error "CFG_INTERFACE can not be defined with CFG_PRINTF_NONE"
-  #endif
   #if !defined CFG_PRINTF_UART && !defined CFG_PRINTF_USBCDC
     #error "CFG_PRINTF_UART or CFG_PRINTF_USBCDC must be defined for for CFG_INTERFACE Input/Output"
   #endif
