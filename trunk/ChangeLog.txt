@@ -23,3 +23,5 @@ v0.32 - In Progress
   bitmap LCDs (ex: Adafruit Industries - http://bit.ly/9xj5vw) ... based on a
   driver from Limor Fried at Adafruit
 - Numerous bug fixes added by Roel Verdult (Linux compatibility, GCC warnings, etc.)
+- Added stub files for PN532 driver (/drivers/nfc/pn532), and added CFG_PN532 to
+  projectconfig.h as an option

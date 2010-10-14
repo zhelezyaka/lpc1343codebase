@@ -31,6 +31,10 @@ OBJS += cmd_sysinfo.o cmd_sd_dir.o cmd_lcd_fill.o cmd_lcd_test.o
 # Optional driver files 
 ##########################################################################
 
+# PN532 NFC Transceiver
+VPATH += drivers/nfc/pn532
+OBJS += pn532.o
+
 # Chibi Light-Weight Wireless Stack (AT86RF212)
 VPATH += drivers/chibi
 OBJS += chb.o chb_buf.o chb_drvr.o chb_eeprom.o chb_spi.o

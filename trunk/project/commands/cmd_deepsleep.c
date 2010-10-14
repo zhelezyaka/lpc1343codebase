@@ -40,7 +40,7 @@
 
 #include "projectconfig.h"
 #include "core/cmd/cmd.h"
-#include "commands.h"
+#include "project/commands.h"
 
 #include "core/pmu/pmu.h"
 

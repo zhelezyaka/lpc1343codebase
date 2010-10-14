@@ -40,7 +40,7 @@
 
 #include "projectconfig.h"
 #include "core/cmd/cmd.h"
-#include "commands.h"       // Generic helper functions
+#include "project/commands.h"       // Generic helper functions
 
 #ifdef CFG_LM75B
   #include "drivers/sensors/lm75b/lm75b.h"
