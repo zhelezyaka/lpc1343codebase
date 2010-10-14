@@ -40,11 +40,11 @@
 
 #include "projectconfig.h"
 #include "core/cmd/cmd.h"
-#include "commands.h"       // Generic helper functions
+#include "project/commands.h"       // Generic helper functions
 
 #ifdef CFG_I2CEEPROM
   #include "drivers/eeprom/mcp24aa/mcp24aa.h"
-  #include "eeprom.h"
+  #include "project/eeprom.h"
 
 /**************************************************************************/
 /*! 

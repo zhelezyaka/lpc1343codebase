@@ -41,7 +41,7 @@
 
 #include "projectconfig.h"
 #include "core/cmd/cmd.h"
-#include "commands.h"       // Generic helper functions
+#include "project/commands.h"       // Generic helper functions
 
 #ifdef CFG_CHIBI
   #include "drivers/chibi/chb.h"

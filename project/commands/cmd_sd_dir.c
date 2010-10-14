@@ -41,7 +41,7 @@
 
 #include "projectconfig.h"
 #include "core/cmd/cmd.h"
-#include "commands.h"       // Generic helper functions
+#include "project/commands.h"       // Generic helper functions
 
 #ifdef CFG_SDCARD
   #include "core/timer32/timer32.h"

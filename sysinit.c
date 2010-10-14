@@ -76,6 +76,11 @@
   #include "drivers/lcd/smallfonts.h"
 #endif
 
+#ifdef CFG_PN532
+  #include "core/uart/uart.h"
+  #include "drivers/nfc/pn532/pn532.h"
+#endif
+
 #ifdef CFG_TFTLCD
   #include "drivers/lcd/tft/lcd.h"
   #include "drivers/lcd/tft/touchscreen.h"
@@ -119,8 +124,8 @@ void systemInit()
   // Initialise GPIO
   gpioInit();
 
+  // Initialise UART with the default baud rate
   #ifdef CFG_PRINTF_UART
-    // Initialise UART with the default baud rate (set in projectconfig.h)
     uartInit(CFG_UART_BAUDRATE);
   #endif
 
@@ -154,6 +159,11 @@ void systemInit()
       systickDelay(10);             // Wait 10ms
       usbTimeout++; 
     }
+  #endif
+
+  // Initialise PN532
+  #ifdef CFG_PN532
+    pn532Init();
   #endif
 
   // Initialise the ST7565 128x64 pixel display

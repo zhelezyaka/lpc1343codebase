@@ -196,7 +196,7 @@
                               this varies with the number of commands
                               present
     -----------------------------------------------------------------------*/
-    #define CFG_INTERFACE
+    // #define CFG_INTERFACE
     #define CFG_INTERFACE_MAXMSGSIZE    (80)
     #define CFG_INTERFACE_PROMPT        "LPC1343 >> "
 /*=========================================================================*/
@@ -225,6 +225,20 @@
 
     -----------------------------------------------------------------------*/
     // #define CFG_LM75B
+/*=========================================================================*/
+
+
+/*=========================================================================
+    PN532 NFC TRANSCEIVER
+    -----------------------------------------------------------------------
+
+    CFG_PN532                 If defined, drivers for an optional PN532
+                              Near-Field Communication (NFC) transceiver
+                              will be included during build (requires
+                              external HW)
+
+    -----------------------------------------------------------------------*/
+    #define CFG_PN532
 /*=========================================================================*/
 
 
@@ -322,9 +336,16 @@
   #error "Only one USB class can be defined at a time (CFG_USBCDC or CFG_USBHID)"
 #endif
 
+#if defined CFG_PRINTF_UART && defined CFG_PN532
+  #error "CFG_PRINTF_UART and CFG_PN532 can not be defined at the same time (use CFG_PRINTF_USBCDC instead)"
+#endif
+
 #ifdef CFG_INTERFACE
   #if !defined CFG_PRINTF_UART && !defined CFG_PRINTF_USBCDC
     #error "CFG_PRINTF_UART or CFG_PRINTF_USBCDC must be defined for for CFG_INTERFACE Input/Output"
+  #endif
+  #if defined CFG_PN532
+    #error "CFG_INTERFACE and CFG_PN532 can not be defined at the same time"
   #endif
 #endif
 

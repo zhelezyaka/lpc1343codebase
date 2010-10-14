@@ -40,7 +40,7 @@
 
 #include "projectconfig.h"
 #include "core/cmd/cmd.h"
-#include "commands.h"       // Generic helper functions
+#include "project/commands.h"       // Generic helper functions
 
 /**************************************************************************/
 /*! 

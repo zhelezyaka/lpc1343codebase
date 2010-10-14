@@ -177,6 +177,11 @@
             <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
           </file>
         </folder>
+        <folder Name="nfc">
+          <folder Name="pn532">
+            <file file_name="../../drivers/nfc/pn532/pn532.c"/>
+          </folder>
+        </folder>
       </folder>
       <file file_name="../../sysinit.c"/>
       <folder Name="project">
