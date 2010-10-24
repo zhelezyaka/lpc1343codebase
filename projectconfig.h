@@ -2,8 +2,6 @@
 /*! 
     @file     projectconfig.h
     @author   K. Townsend (microBuilder.eu)
-    @date     22 March 2010
-    @version  0.10
 
     @section LICENSE
 
@@ -116,7 +114,7 @@
     
     NOTE: CFG_SDCARD =        ~7.2 KB Flash and 0.6 KB SRAM (-Os)
     -----------------------------------------------------------------------*/
-    // #define CFG_SDCARD
+    #define CFG_SDCARD
     #define CFG_SDCARD_CDPORT           (3)
     #define CFG_SDCARD_CDPIN            (0)
 /*=========================================================================*/
@@ -145,7 +143,7 @@
     // #define CFG_USBHID
     #define CFG_USBCDC
     #define CFG_USBCDC_BAUDRATE         (115200)
-    #define CFG_USBCDC_BUFSIZE          (80)
+    #define CFG_USBCDC_BUFSIZE          (64)
     #define CFG_USBCDC_INITTIMEOUT      (5000)
 /*=========================================================================*/
 
@@ -196,7 +194,7 @@
                               this varies with the number of commands
                               present
     -----------------------------------------------------------------------*/
-    // #define CFG_INTERFACE
+    #define CFG_INTERFACE
     #define CFG_INTERFACE_MAXMSGSIZE    (80)
     #define CFG_INTERFACE_PROMPT        "LPC1343 >> "
 /*=========================================================================*/
@@ -238,7 +236,7 @@
                               external HW)
 
     -----------------------------------------------------------------------*/
-    #define CFG_PN532
+    // #define CFG_PN532
 /*=========================================================================*/
 
 

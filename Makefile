@@ -60,6 +60,14 @@ OBJS += smallfonts.o st7565.o
 VPATH += drivers/fatfs
 OBJS += ff.o mmc.o
 
+# PWM
+VPATH += drivers/pwm
+OBJS += pwm.o
+
+# Motors
+VPATH += drivers/motor/stepper
+OBJS += stepper.o
+
 ##########################################################################
 # Library files 
 ##########################################################################

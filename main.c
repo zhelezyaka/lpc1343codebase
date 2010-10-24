@@ -42,10 +42,6 @@
   #include "core/cmd/cmd.h"
 #endif
 
-#ifdef CFG_PN532
-   #include "drivers/nfc/pn532/pn532.h"
-#endif
-
 /**************************************************************************/
 /*! 
     Approximates a 1 millisecond delay using "nop".  This is less
@@ -81,13 +77,6 @@ int main (void)
 
   while (1)
   {
-    #ifdef CFG_PN532
-      // Poll input buffer for user input
-      pn532PollInput();
-      // Poll PN532 buffer for responses
-      pn532PollNFC();
-    #endif
-
     #ifdef CFG_INTERFACE
       // Handle any incoming command line input
       cmdPoll();

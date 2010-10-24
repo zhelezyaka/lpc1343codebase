@@ -55,8 +55,8 @@ unsigned short  CDC_DepInEmpty  = 1;                   // Data IN EP is empty
 typedef struct __CDC_BUF_T 
 {
   unsigned char data[CDC_BUF_SIZE];
-  unsigned int wrIdx;
-  unsigned int rdIdx;
+  volatile unsigned int wrIdx;
+  volatile unsigned int rdIdx;
 } CDC_BUF_T;
 
 CDC_BUF_T  CDC_OutBuf;                                 // buffer for all CDC Out data
