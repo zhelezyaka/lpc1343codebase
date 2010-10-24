@@ -25,3 +25,10 @@ v0.32 - In Progress
 - Numerous bug fixes added by Roel Verdult (Linux compatibility, GCC warnings, etc.)
 - Added stub files for PN532 driver (/drivers/nfc/pn532), and added CFG_PN532 to
   projectconfig.h as an option
+- Added a simple pwm example using 16-bit timer 1 and p1.9 (MAT0) for the output.  PWM can be used
+  to drive stepper motors, or to dim LEDs by adjusting the duty-cycle, etc.  The example can be
+  found in "/drivers/pwm"
+- Added a bi-polar stepper motor driver based on the Arduino library.  Basic position data was added
+  to detece deviation from the 'Home' position and to retrieve the spindle's current angle.  See
+  "drivers/motor/stepper" for more information.
+- Added test firmware for the UART and USBCDC CLI (tools/testfirmware)

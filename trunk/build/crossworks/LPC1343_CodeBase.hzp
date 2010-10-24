@@ -182,6 +182,14 @@
             <file file_name="../../drivers/nfc/pn532/pn532.c"/>
           </folder>
         </folder>
+        <folder Name="pwm">
+          <file file_name="../../drivers/pwm/pwm.c"/>
+        </folder>
+        <folder Name="motor">
+          <folder Name="stepper">
+            <file file_name="../../drivers/motor/stepper/stepper.c"/>
+          </folder>
+        </folder>
       </folder>
       <file file_name="../../sysinit.c"/>
       <folder Name="project">
