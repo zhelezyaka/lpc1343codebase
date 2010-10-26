@@ -43,6 +43,47 @@
 
 #define PLACE_IN_SRAM    __attribute__ ((section(".fast")))
 
+/**************************************************************************
+
+    This table tries to give an indication of which GPIO pins and 
+    peripherals are used by the available drivers and SW examples.  Only
+    dedicated GPIO pins available on the LPC1343 Reference Board are shown
+    below.  Any unused peripheral blocks like I2C, SSP, ADC, etc., can
+    also be used as GPIO if they are available.
+
+                PORT 1        PORT 2                PORT 3 
+                =========     =================     =======
+                8 9 10 11     1 2 3 4 5 6 7 8 9     0 1 2 3
+
+    SDCARD      . .  .  .     . . . . . . . . .     X . . .
+    PWM         . X  .  .     . . . . . . . . .     . . . .
+    STEPPER     . .  .  .     . . . . . . . . .     X X X X
+    PN532       . .  .  .     . . . . . . . . .     . . . .
+    CHIBI       X X  X  .     . . . . . . . . .     . . . .
+    TFTLCD      X X  X  X     X X X X X X X X X     . . . X
+    ST7565      . .  .  .     X X X X X X . . .     . . . .
+
+                TIMERS                    SSP     ADC
+                ======================    ===     =======
+                16B0  16B1  32B0  32B1    0       0 1 2 3
+
+    SDCARD      .     .     .     .       X       . . . .
+    PWM         .     X     .     .       .       . . . .
+    PMU [1]     .     .     X     .       .       . . . .
+    USB         .     .     .     X       .       . . . .
+    STEPPER     .     .     X     .       .       . . . .
+    PN532       .     .     .     .       .       . . . .
+    CHIBI       .     .     .     .       X       . . . .
+    TFTLCD      .     .     .     .       .       X X X X
+    ST7565      .     .     .     .       .       . . . .
+
+    [1]  PMU uses 32-bit Timer 0 for SW wakeup from deep-sleep.  This timer
+         can safely be used by other peripherals, but may need to be
+         reconfigured when you wakeup from deep-sleep.
+
+ **************************************************************************/
+
+
 /*=========================================================================
     CORE CPU SETTINGS
     -----------------------------------------------------------------------
@@ -113,8 +154,10 @@
     CFG_SDCARD_CDPIN          The card detect pin number
     
     NOTE: CFG_SDCARD =        ~7.2 KB Flash and 0.6 KB SRAM (-Os)
+
+    DEPENDENCIES:             SDCARD requires the use of SSP0.
     -----------------------------------------------------------------------*/
-    #define CFG_SDCARD
+    // #define CFG_SDCARD
     #define CFG_SDCARD_CDPORT           (3)
     #define CFG_SDCARD_CDPIN            (0)
 /*=========================================================================*/
@@ -201,6 +244,45 @@
 
 
 /*=========================================================================
+    PWM SETTINGS
+    -----------------------------------------------------------------------
+
+    CFG_PWM                     If this is defined, a basic PWM driver
+                                will be included using 16-bit Timer 1 and
+                                Pin 1.9 (MAT0) for the PWM output.  In
+                                order to allow for a fixed number of
+                                pulses to be generated, some PWM-specific
+                                code is required in the 16-Bit Timer 1
+                                ISR.  See "core/timer16/timer16.c" for
+                                more information.
+    CFG_PWM_DEFAULT_PULSEWIDTH  The default pulse width in ticks
+    CFG_PWM_DEFAULT_DUTYCYCLE   The default duty cycle in percent
+
+    DEPENDENCIES:               PWM output requires the use of 16-bit
+                                timer 1 and pin 1.9 (CT16B1_MAT0).
+    -----------------------------------------------------------------------*/
+    // #define CFG_PWM
+    #define CFG_PWM_DEFAULT_PULSEWIDTH  (CFG_CPU_CCLK / 1000)
+    #define CFG_PWM_DEFAULT_DUTYCYCLE   (50)
+/*=========================================================================*/
+
+
+/*=========================================================================
+    STEPPER MOTOR SETTINGS
+    -----------------------------------------------------------------------
+
+    CFG_STEPPER                 If this is defined, a simple bi-polar 
+                                stepper motor will be included for common
+                                H-bridge chips like the L293D or SN754410N
+
+    DEPENDENCIES:               STEPPER requires the use of pins 3.0-3 and
+                                32-bit Timer 0.
+    -----------------------------------------------------------------------*/
+    // #define CFG_STEPPER
+/*=========================================================================*/
+
+
+/*=========================================================================
     EEPROM
     -----------------------------------------------------------------------
 
@@ -259,6 +341,10 @@
                                 address of this node
 
     NOTE: CFG_CHIBI =           ~4.0 KB Flash and 184 bytes SRAM (-Os)
+
+    DEPENDENCIES:               Chibi requires the use of SSP0, and pins 
+                                1.8, 1.9, 1.10.  It also requires the
+                                presence of CFG_I2CEEPROM.
     -----------------------------------------------------------------------*/
     // #define CFG_CHIBI
     #define CFG_CHIBI_MODE              (BPSK20_868MHZ)     // See chb_drvr.h for possible values
@@ -292,6 +378,9 @@
 
     NOTE: CFG_TFTLCD (ILI9325)  ~4.9 KB Flash (-Os, no small fonts, 
                                 consolas9 used)
+
+    DEPENDENCIES:               TFTLCD requires the use of pins 1.8, 1.9,
+                                1.10, 1.11, 3.3 and 2.1-9.
     -----------------------------------------------------------------------*/
     // #define CFG_TFTLCD
     #define CFG_TFTLCD_INCLUDESMALLFONTS   (0)
@@ -307,6 +396,7 @@
     CFG_ST7565                  If defined, this will cause drivers for
                                 the 128x64 pixel ST7565 LCD to be included
 
+    DEPENDENCIES:               TFTLCD requires the use of pins 2.1-6.
     -----------------------------------------------------------------------*/
     // #define CFG_ST7565
 /*=========================================================================*/
@@ -354,11 +444,26 @@
   #ifdef CFG_SDCARD
     #error "CFG_CHIBI and CFG_SDCARD can not be defined at the same time. Only one SPI block is available on the LPC1343."
   #endif
+  #ifdef CFG_CHIBI
+    #error "CFG_CHIBI and CFG_TFTLCD can not be defined at the same time since they both use pins 1.8, 1.9 and 1.10."
+  #endif
+  #ifdef CFG_PWM
+    #error "CFG_CHIBI and CFG_PWM can not be defined at the same time since they both use pin 1.9."
+  #endif
 #endif
 
 #ifdef CFG_TFTLCD
   #ifdef CFG_ST7565
     #error "CFG_TFTLCD and CFG_ST7565 can not be defined at the same time."
+  #endif
+  #ifdef CFG_PWM
+    #error "CFG_TFTLCD and CFG_PWM can not be defined at the same time since they both use pin 1.9."
+  #endif
+#endif
+
+#ifdef CFG_SDCARD
+  #ifdef CFG_STEPPER
+    #error  "CFG_SDCARD and CFG_STEPPER can not be defined at the same time sicne they both use pin 3.0."
   #endif
 #endif
 

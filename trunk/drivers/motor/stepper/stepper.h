@@ -39,14 +39,14 @@
 
 #include "projectconfig.h"
 
-#define STEPPER_IN1_PORT   (2)
-#define STEPPER_IN1_PIN    (8)
-#define STEPPER_IN2_PORT   (2)
-#define STEPPER_IN2_PIN    (9)
-#define STEPPER_IN3_PORT   (2)
-#define STEPPER_IN3_PIN    (10)
-#define STEPPER_IN4_PORT   (2)
-#define STEPPER_IN4_PIN    (11)
+#define STEPPER_IN1_PORT   (3)
+#define STEPPER_IN1_PIN    (0)
+#define STEPPER_IN2_PORT   (3)
+#define STEPPER_IN2_PIN    (1)
+#define STEPPER_IN3_PORT   (3)
+#define STEPPER_IN3_PIN    (2)
+#define STEPPER_IN4_PORT   (3)
+#define STEPPER_IN4_PIN    (3)
 
 void     stepperInit( uint32_t steps );
 void     stepperSetSpeed( uint32_t rpm );

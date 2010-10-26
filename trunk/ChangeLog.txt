@@ -27,8 +27,13 @@ v0.32 - In Progress
   projectconfig.h as an option
 - Added a simple pwm example using 16-bit timer 1 and p1.9 (MAT0) for the output.  PWM can be used
   to drive stepper motors, or to dim LEDs by adjusting the duty-cycle, etc.  The example can be
-  found in "/drivers/pwm"
+  found in "/core/pwm"
 - Added a bi-polar stepper motor driver based on the Arduino library.  Basic position data was added
   to detece deviation from the 'Home' position and to retrieve the spindle's current angle.  See
   "drivers/motor/stepper" for more information.
 - Added test firmware for the UART and USBCDC CLI (tools/testfirmware)
+- Added a table to projectconfig.h to try to keep track of pin and peripherals
+  usage by drivers and the included SW examples.
+- Reorganised some pins used by drivers to avoid pin conflicts.
+- Modified core/timer16/timer16.c to allow PWM output to be stopped after a
+  certain number of pulses have been sent out.
