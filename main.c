@@ -68,6 +68,11 @@ void delayms(uint32_t ms)
 /*! 
     Main program entry point.  After reset, normal code execution will
     begin here.
+
+    Note: CFG_INTERFACE is normally enabled by default.  If you wish to
+          enable the blinking LED code in main, you will need to open
+          projectconfig.h, comment out "#define CFG_INTERFACE" and
+          rebuild the project.
 */
 /**************************************************************************/
 int main (void)
