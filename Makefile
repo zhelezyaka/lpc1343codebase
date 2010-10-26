@@ -32,8 +32,8 @@ OBJS += cmd_sysinfo.o cmd_sd_dir.o cmd_lcd_fill.o cmd_lcd_test.o
 ##########################################################################
 
 # PN532 NFC Transceiver
-VPATH += drivers/nfc/pn532
-OBJS += pn532.o
+# VPATH += drivers/nfc/pn532
+# OBJS += pn532.o
 
 # Chibi Light-Weight Wireless Stack (AT86RF212)
 VPATH += drivers/chibi
@@ -60,10 +60,6 @@ OBJS += smallfonts.o st7565.o
 VPATH += drivers/fatfs
 OBJS += ff.o mmc.o
 
-# PWM
-VPATH += drivers/pwm
-OBJS += pwm.o
-
 # Motors
 VPATH += drivers/motor/stepper
 OBJS += stepper.o
@@ -74,10 +70,11 @@ OBJS += stepper.o
 
 VPATH += core core/adc core/cmd core/cpu core/gpio core/i2c core/pmu
 VPATH += core/ssp core/systick core/timer16 core/timer32 core/uart
-VPATH += core/usbhid-rom core/libc core/wdt core/usbcdc
+VPATH += core/usbhid-rom core/libc core/wdt core/usbcdc core/pwm
 OBJS += adc.o cpu.o cmd.o gpio.o i2c.o pmu.o ssp.o systick.o timer16.o
 OBJS += timer32.o uart.o uart_buf.o usbconfig.o usbhid.o stdio.o string.o
 OBJS += wdt.o cdcuser.o usbcore.o usbdesc.o usbhw.o usbuser.o sysinit.o
+OBJS += pwm.o
 
 ##########################################################################
 # GNU GCC compiler prefix and location

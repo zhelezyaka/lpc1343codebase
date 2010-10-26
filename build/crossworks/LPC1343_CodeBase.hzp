@@ -89,6 +89,9 @@
             <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
           </file>
         </folder>
+        <folder Name="pwm">
+          <file file_name="../../core/pwm/pwm.c"/>
+        </folder>
       </folder>
       <file file_name="../../lpc134x.h"/>
       <file file_name="../../projectconfig.h"/>
@@ -181,9 +184,6 @@
           <folder Name="pn532">
             <file file_name="../../drivers/nfc/pn532/pn532.c"/>
           </folder>
-        </folder>
-        <folder Name="pwm">
-          <file file_name="../../drivers/pwm/pwm.c"/>
         </folder>
         <folder Name="motor">
           <folder Name="stepper">

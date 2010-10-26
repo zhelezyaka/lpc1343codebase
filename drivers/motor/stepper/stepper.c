@@ -23,21 +23,19 @@
     systemInit();             // Configure cpu and mandatory peripherals
 
     stepperInit(200);         // Initialise driver for 200-step motor
-    stepperSetSpeed(120);     // Set speed to 120 rpm (2 revolutions per second)
+    stepperSetSpeed(60);      // Set speed to 120 rpm (2 revolutions per second)
 
-    uint32_t counter = 0;
     while (1)
     {
       stepperStep(400);       // Move forward 400 steps
       stepperStep(-200);      // Move backward 200 steps
       systickDelay(1000);     // Wait one second
 
-      counter++;              // Increment the counter
-      if (counter == 10)
+      // Move 'home' after 10 loops (current position = 2000)
+      if (stepperGetPosition() == 2000)
       {
         stepperMoveHome();    // Move back to the starting position
         systickDelay(1000);   // Wait one second
-        counter = 0;          // Reset counter
       }
     }
 
@@ -77,8 +75,7 @@
 
 #include "stepper.h"
 #include "core/gpio/gpio.h"
-#include "core/timer16/timer16.h"
-#include "drivers/pwm/pwm.h"
+#include "core/timer32/timer32.h"
 
 static int64_t  stepperPosition = 0;          // The current position (in steps) relative to 'Home'
 static uint32_t stepperStepNumber = 0;        // The current position (in steps) relative to 0°
@@ -142,10 +139,6 @@ void stepperInit(uint32_t steps)
   gpioSetValue(STEPPER_IN2_PORT, STEPPER_IN2_PIN, 0);
   gpioSetValue(STEPPER_IN3_PORT, STEPPER_IN3_PIN, 0);
   gpioSetValue(STEPPER_IN4_PORT, STEPPER_IN4_PIN, 0);
-
-  // Initialise 16-bit timer 0 which is used for delays
-  timer16Init(0, 0xFFFF);
-  timer16Enable(0);
 
   // Set the number of steps per rotation
   stepperStepsPerRotation = steps;
@@ -250,6 +243,10 @@ void stepperSetSpeed(uint32_t rpm)
 
   // Set stepper RPM
   stepperStepDelay = ticksOneRPM / rpm;
+
+  // Initialise 32-bit timer 0 with the appropriate delay
+  timer32Init(0, stepperStepDelay);
+  timer32Enable(0);
 }
 
 /**************************************************************************/
@@ -269,8 +266,8 @@ void stepperStep(int32_t steps)
 
   while (stepsLeft > 0)
   {
-    // Wait x ticks between individual steps
-    timer16DelayTicks(0, stepperStepDelay);
+    // Wait 1 tick between individual steps
+    timer32Delay(0, 1);
 
     // Increment or decrement step counters (depending on direction)
     if (steps > 0)
@@ -291,6 +288,7 @@ void stepperStep(int32_t steps)
       }
       stepperStepNumber--;        // Decrement single rotation counter
     }
+
     // Decrement number of remaining steps
     stepsLeft--;
 
