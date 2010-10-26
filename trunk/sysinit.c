@@ -91,6 +91,10 @@
   #include "drivers/eeprom/mcp24aa/mcp24aa.h"
 #endif
 
+#ifdef CFG_PWM
+  #include "core/pwm/pwm.h"
+#endif
+
 #ifdef CFG_SDCARD
   #include "core/ssp/ssp.h"
   #include "drivers/fatfs/diskio.h"
@@ -139,6 +143,11 @@ void systemInit()
   // Initialise EEPROM
   #ifdef CFG_I2CEEPROM
     mcp24aaInit();
+  #endif
+
+  // Initialise PWM (requires 16-bit Timer 1 and P1.9)
+  #ifdef CFG_PWM
+    pwmInit();
   #endif
 
   // Initialise USB HID

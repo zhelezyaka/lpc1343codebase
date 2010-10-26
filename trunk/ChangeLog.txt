@@ -1,5 +1,5 @@
-v0.32 - In Progress
-===================
+v0.50 - 26 October 2010
+=======================
 
 - Moved command.c and cmd_tbl.h to /project to try to keep all 
   project-specific files in one location to improve code-sharing and make
@@ -37,3 +37,13 @@ v0.32 - In Progress
 - Reorganised some pins used by drivers to avoid pin conflicts.
 - Modified core/timer16/timer16.c to allow PWM output to be stopped after a
   certain number of pulses have been sent out.
+
+  KNOWN ISSUES
+  
+- USB CDC Output is brutally slow because of an endpoint issue with BULKIN/BULKOUT.
+  This is a known issue, but we haven't had the time to find a solution.  This will be
+  a high-priority update in the next revision.
+- The SPI code needs to be modified to allow several SPI devices to be safely
+  connected on the same bus.  At present, this has not been tested since the
+  SSP/SPI blocks are used exclusively in the current drivers. 
+  

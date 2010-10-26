@@ -63,19 +63,20 @@
     TFTLCD      X X  X  X     X X X X X X X X X     . . . X
     ST7565      . .  .  .     X X X X X X . . .     . . . .
 
-                TIMERS                    SSP     ADC
-                ======================    ===     =======
-                16B0  16B1  32B0  32B1    0       0 1 2 3
+                TIMERS                    SSP     ADC         UART
+                ======================    ===     =======     ====
+                16B0  16B1  32B0  32B1    0       0 1 2 3     0
 
-    SDCARD      .     .     .     .       X       . . . .
-    PWM         .     X     .     .       .       . . . .
-    PMU [1]     .     .     X     .       .       . . . .
-    USB         .     .     .     X       .       . . . .
-    STEPPER     .     .     X     .       .       . . . .
-    PN532       .     .     .     .       .       . . . .
-    CHIBI       .     .     .     .       X       . . . .
-    TFTLCD      .     .     .     .       .       X X X X
-    ST7565      .     .     .     .       .       . . . .
+    SDCARD      .     .     .     .       X       . . . .     .
+    PWM         .     X     .     .       .       . . . .     .
+    PMU [1]     .     .     X     .       .       . . . .     .
+    USB         .     .     .     X       .       . . . .     .
+    STEPPER     .     .     X     .       .       . . . .     .
+    PN532       .     .     .     .       .       . . . .     X
+    CHIBI       .     .     .     .       X       . . . .     .
+    TFTLCD      .     .     .     .       .       X X X X     .
+    ST7565      .     .     .     .       .       . . . .     .
+    INTERFACE   .     .     .     .       .       . . . .     X
 
     [1]  PMU uses 32-bit Timer 0 for SW wakeup from deep-sleep.  This timer
          can safely be used by other peripherals, but may need to be
@@ -261,7 +262,7 @@
     DEPENDENCIES:               PWM output requires the use of 16-bit
                                 timer 1 and pin 1.9 (CT16B1_MAT0).
     -----------------------------------------------------------------------*/
-    // #define CFG_PWM
+    #define CFG_PWM
     #define CFG_PWM_DEFAULT_PULSEWIDTH  (CFG_CPU_CCLK / 1000)
     #define CFG_PWM_DEFAULT_DUTYCYCLE   (50)
 /*=========================================================================*/
@@ -316,6 +317,11 @@
                               Near-Field Communication (NFC) transceiver
                               will be included during build (requires
                               external HW)
+
+    @warning                  This code is in development and should not
+                              be used.  It is provided here to make
+                              collaborative development easier by having
+                              the core files in the code repository.
 
     -----------------------------------------------------------------------*/
     // #define CFG_PN532
