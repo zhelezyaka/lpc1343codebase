@@ -408,6 +408,26 @@
 /*=========================================================================*/
 
 
+/*=========================================================================
+    RSA Encryption
+    -----------------------------------------------------------------------
+
+    CFG_RSA                     If defined, support for basic RSA
+                                encryption will be included.
+    CFG_RSA_BITS                Indicates the number of bits used for
+                                RSA encryption keys.  To keep code size
+                                reasonable, RSA encryption is currently
+                                limited to using 64-bit or 32-bit numbers,
+                                with 64-bit providing higher security, and
+                                32-bit providing smaller encrypted text
+                                size.  Please note that Printf can not be
+                                used to display 64-bit values (%lld)!
+    -----------------------------------------------------------------------*/
+    #define CFG_RSA
+    #define CFG_RSA_BITS                  (32)
+/*=========================================================================*/
+
+
 
 
 /*=========================================================================
@@ -470,6 +490,12 @@
 #ifdef CFG_SDCARD
   #ifdef CFG_STEPPER
     #error  "CFG_SDCARD and CFG_STEPPER can not be defined at the same time sicne they both use pin 3.0."
+  #endif
+#endif
+
+#ifdef CFG_RSA
+  #if CFG_RSA_BITS != 64 && CFG_RSA_BITS != 32
+    #error "CFG_RSA_BITS must be equal to either 32 or 64."
   #endif
 #endif
 

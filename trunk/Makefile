@@ -64,6 +64,10 @@ OBJS += ff.o mmc.o
 VPATH += drivers/motor/stepper
 OBJS += stepper.o
 
+# RSA Encryption/Descryption
+VPATH += drivers/rsa
+OBJS += rsa.o
+
 ##########################################################################
 # Library files 
 ##########################################################################
