@@ -190,6 +190,9 @@
             <file file_name="../../drivers/motor/stepper/stepper.c"/>
           </folder>
         </folder>
+        <folder Name="rsa">
+          <file file_name="../../drivers/rsa/rsa.c"/>
+        </folder>
       </folder>
       <file file_name="../../sysinit.c"/>
       <folder Name="project">

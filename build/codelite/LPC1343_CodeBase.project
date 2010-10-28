@@ -177,6 +177,10 @@
         <File Name="../../drivers/motor/stepper/stepper.h"/>
       </VirtualDirectory>
     </VirtualDirectory>
+    <VirtualDirectory Name="rsa">
+      <File Name="../../drivers/rsa/rsa.c"/>
+      <File Name="../../drivers/rsa/rsa.h"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="lpc1xxx">
     <File Name="../../lpc1xxx/linkscript.ld"/>
