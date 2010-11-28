@@ -225,11 +225,6 @@ void systemInit()
     printf("%-40s : 0x%04X%s", "Chibi Initialised", pcb->src_addr, CFG_PRINTF_NEWLINE);
   #endif
 
-  #if defined CFG_TFTLCD && defined CFG_SDCARD
-    // Draw bitmap from SD
-    // drawImageFromFile(0, 0, "/output.pic");
-  #endif
-
   // Start the command line interface if requested
   #ifdef CFG_INTERFACE
     printf("%sType 'help' for a list of available commands%s", CFG_PRINTF_NEWLINE, CFG_PRINTF_NEWLINE);

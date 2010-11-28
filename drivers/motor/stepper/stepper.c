@@ -4,7 +4,6 @@
     @author   Based on original code by Tom Igoe
               Modified by K. Townsend (microBuilder.eu)
               
-
     @brief    Simple bi-polar stepper motor controller, based on the
               Arduino stepper library by Tom Igoe.  Includes simple
               position handling methods to keep track of the motor's
@@ -23,7 +22,7 @@
     systemInit();             // Configure cpu and mandatory peripherals
 
     stepperInit(200);         // Initialise driver for 200-step motor
-    stepperSetSpeed(60);      // Set speed to 120 rpm (2 revolutions per second)
+    stepperSetSpeed(60);      // Set speed to 60 rpm (1 revolutions per second)
 
     while (1)
     {

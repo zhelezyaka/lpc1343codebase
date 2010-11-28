@@ -25,7 +25,7 @@ How to use:
    * You should be able to see a new COM port on your PC.
 */
 
-#define NXP_VID		  0x1FC9
+#define NXP_VID		    0x1FC9
 #define MY_VID	  	  0x????
 
 #define USB_VENDOR_ID NXP_VID 	// Vendor ID

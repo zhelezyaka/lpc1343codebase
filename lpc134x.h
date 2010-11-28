@@ -2448,7 +2448,7 @@ static inline void NVIC_DisableIRQ(IRQn_t IRQn)
 /*  Serial Clock Rate. The number of prescaler-output clocks per
     bit on the bus, minus one. Given that CPSDVSR is the
     prescale divider, and the APB clock PCLK clocks the
-    prescaler, the bit frequency is PCLK / (CPSDVSR Ã— [SCR+1]). */
+    prescaler, the bit frequency is PCLK / (CPSDVSR — [SCR+1]). */
 
 #define SSP_SSP0CR0_SCR_MASK                      ((unsigned int) 0x0000FF00) // Serial clock rate
 #define SSP_SSP0CR0_SCR_1                         ((unsigned int) 0x00000100)

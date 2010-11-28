@@ -39,6 +39,8 @@
 #ifndef _USBCONFIG_H_
 #define _USBCONFIG_H_
 
+#include "projectconfig.h"
+
 #define USB_VID		  0x1FC9
 
 #define USB_VENDOR_ID USB_VID 	// Vendor ID
@@ -55,8 +57,6 @@
 #define HID_DESC_OFFSET              0x0012
 #define HID_DESC_SIZE               (sizeof(HID_DESCRIPTOR))
 #define HID_REPORT_DESC_SIZE        (sizeof(HID_ReportDescriptor))
-
-#include "projectconfig.h"
 
 extern const uint8_t USB_DeviceDescriptor[];
 extern const uint8_t USB_ConfigDescriptor[];

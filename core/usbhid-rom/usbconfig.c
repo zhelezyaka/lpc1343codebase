@@ -39,6 +39,10 @@
 #include "usb.h"
 #include "usbconfig.h"
 
+#ifndef WBVAL
+#define WBVAL(x) ((x) & 0xFF),(((x) >> 8) & 0xFF)
+#endif
+
 /* USB String Descriptor (optional) */
 const uint8_t USB_HIDStringDescriptor[] = 
 {

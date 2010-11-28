@@ -41,14 +41,14 @@
 
 #include "projectconfig.h"
 #include "core/cmd/cmd.h"
-#include "project/commands.h"       // Generic helper functions
+#include "project/commands.h"           // Generic helper functions
 
 #ifdef CFG_SDCARD
   #include "core/timer32/timer32.h"
   #include "core/ssp/ssp.h"
   #include "drivers/fatfs/diskio.h"
   #include "drivers/fatfs/ff.h"
-  
+
   static FILINFO Finfo;
   static FATFS Fatfs[1];
 
