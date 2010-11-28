@@ -138,6 +138,9 @@
               <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
             </file>
           </folder>
+          <folder Name="analogjoystick">
+            <file file_name="../../drivers/sensors/analogjoystick/analogjoystick.c"/>
+          </folder>
         </folder>
         <folder Name="lcd" file_name="">
           <folder Name="bitmap">
@@ -192,6 +195,11 @@
         </folder>
         <folder Name="rsa">
           <file file_name="../../drivers/rsa/rsa.c"/>
+        </folder>
+        <folder Name="dac">
+          <folder Name="mcp4725">
+            <file file_name="../../drivers/dac/mcp4725/mcp4725.c"/>
+          </folder>
         </folder>
       </folder>
       <file file_name="../../sysinit.c"/>

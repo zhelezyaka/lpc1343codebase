@@ -111,11 +111,10 @@ cmd_t cmd_tbl[] =
   #endif
 
   #ifdef CFG_SDCARD
-  { "sd-dir",         0,  1,  0,  cmd_sd_dir            , "List all files in the specified directory"           , "'sd-dir [<path>]'" },
-
+  { "sd-dir",         0,  1,  0,  cmd_sd_dir           , "List all files in the specified directory"           , "'sd-dir [<path>]'" },
   #endif
 
-  { "sleep",          0,  0,  0,  cmd_deepsleep         , "Put the device into deep sleep for ~10 seconds"      , "'sleep' has no parameters" },
+  { "sleep",          0,  0,  0,  cmd_deepsleep        , "Put the device into deep sleep for ~10 seconds"      , "'sleep' has no parameters" },
 };
 
 #endif

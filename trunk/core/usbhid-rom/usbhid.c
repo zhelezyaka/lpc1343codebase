@@ -38,7 +38,7 @@
 
 #include "core/usbhid-rom/usb.h"
 #include "core/usbhid-rom/usbconfig.h"
-#include "core/usbhid-rom/rom_drivers.h"
+#include "core/rom_drivers.h"
 #include "core/gpio/gpio.h"
 
 #include "usbhid.h"

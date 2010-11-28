@@ -1,9 +1,19 @@
-v0.51 - Ongoing
-===============
+v0.51 - 27 November 2010
+========================
 
 - Added simple RSA encryption/decryption driver.  Currently limited to
   using 64-bit and 32-bit numbers in key pairs, which isn't terribly secure,
   but allows much smaller code size than if huge number support was included.
+- Added a driver for the MCP4725 I2C DAC (see "drivers/dac/mcp4725").
+- Moved 'rom_drivers.h' from 'core/usbhid-rom' to 'core' since it can be used
+  for usbmsd-rom as well if it is implemented at a later date.
+- ili9325ReadData() added to ili9325.c by Adafruit Industries (thanks!)
+- Modified FCLK_FAST() in 'drivers/fatfs/mmc.c' to set fast SPI speed
+  to 18MHz instead of the previous 4MHz.  This allows for slightly faster
+  rendering of bitmap images from SD cards, amongst other things.
+- Fixed ILI9325 driver to use 0,0 based pixels and not 1x1, meaning the
+  pixel co-ordinates are 0..239 for X and 0..319 for Y.  There may still be
+  some off-by-one pixel issues that need to be further tested.
 
 v0.50 - 26 October 2010
 =======================

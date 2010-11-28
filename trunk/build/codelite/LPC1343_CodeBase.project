@@ -181,6 +181,12 @@
       <File Name="../../drivers/rsa/rsa.c"/>
       <File Name="../../drivers/rsa/rsa.h"/>
     </VirtualDirectory>
+    <VirtualDirectory Name="dac">
+      <VirtualDirectory Name="mcp4725">
+        <File Name="../../drivers/dac/mcp4725/mcp4725.c"/>
+        <File Name="../../drivers/dac/mcp4725/mcp4725.h"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="lpc1xxx">
     <File Name="../../lpc1xxx/linkscript.ld"/>

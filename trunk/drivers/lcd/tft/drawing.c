@@ -2,8 +2,6 @@
 /*! 
     @file     drawing.c
     @author   K. Townsend (microBuilder.eu)
-    @date     22 March 2010
-    @version  0.10
 
     drawLine and drawCircle adapted from a tutorial by Leonard McMillan:
     http://www.cs.unc.edu/~mcmillan/
@@ -274,7 +272,7 @@ void drawStringSmall(uint16_t x, uint16_t y, uint16_t color, char* text, struct 
 
     @code 
 
-    #include "drivers/lcd/fonts/consolas9.h"
+    #include "drivers/lcd/tft/fonts/consolas9.h"
     
     drawString(1,   90,   GREEN,    &consolas9ptFontInfo,   "Consolas 9 (38 chars wide)");
     drawString(1,   105,  GREEN,    &consolas9ptFontInfo,   "12345678901234567890123456789012345678");
@@ -322,7 +320,7 @@ void drawString(uint16_t x, uint16_t y, uint16_t color, const FONT_INFO *fontInf
     }        
     
     // Send individual characters
-    drawCharBitmap(currentX, y, color, &fontInfo->data[charOffset], fontInfo->heightPages, charWidth);
+    drawCharBitmap(currentX, y + 1, color, &fontInfo->data[charOffset], fontInfo->heightPages, charWidth);
 
     // next char X
     currentX += charWidth + 1;
@@ -667,6 +665,18 @@ void drawProgressBar ( uint16_t x, uint16_t y, uint16_t width, uint16_t height, 
 /**************************************************************************/
 /*!
     @brief  Loads an image from an SD card and renders it
+
+    @section Example
+
+    @code 
+
+    #include "drivers/lcd/tft/drawing.h"
+    #include "drivers/lcd/tft/fonts/consolas9.h"
+
+    // Draw output.pic (from the root folder) starting at pixel 0,0
+    drawImageFromFile(0, 0, "/output.pic");
+
+    @endcode
 */
 /**************************************************************************/
 void drawImageFromFile(uint16_t x, uint16_t y, char *filename)

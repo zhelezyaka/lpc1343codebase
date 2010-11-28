@@ -2,15 +2,17 @@
 /*! 
     @file     ILI9325.c
     @author   K. Townsend (microBuilder.eu)
-    @date     22 March 2010
-    @version  0.10
 
-    @section DESCRIPTION
+    @section  DESCRIPTION
 
     Driver to the ILI9325 240x320 pixel TFT LCD driver.  This driver
     uses an 8-bit interface and a 16-bit RGB565 colour palette.
 
-    @section LICENSE
+    @section  UPDATES
+
+    26-11-2010: ili9325ReadData contributed by Adafruit Industries
+
+    @section  LICENSE
 
     Software License Agreement (BSD License)
 
@@ -92,6 +94,50 @@ void ili9325WriteData(uint16_t data)
 }
 
 /*************************************************/
+uint16_t ili9325ReadData(void)
+{
+  uint16_t high, low;
+  high = low = 0;
+  uint16_t d;
+
+  SET_CD_RD_WR;   // Saves 14 commands compared to "SET_CD; SET_RD; SET_WR"
+  CLR_CS;
+  
+  // set inputs
+  ILI9325_GPIO2DATA_SETINPUT;
+  CLR_RD;
+  ili9325Delay(100);
+  high = ILI9325_GPIO2DATA_DATA;  
+  high >>= ILI9325_DATA_OFFSET;
+  high &= 0xFF;
+  
+  SET_RD;
+  
+  CLR_RD;
+  ili9325Delay(100);
+  low = ILI9325_GPIO2DATA_DATA;
+  low >>= ILI9325_DATA_OFFSET;
+  low &=0xFF;
+  SET_RD;
+  
+  SET_CS;
+  ILI9325_GPIO2DATA_SETOUTPUT;
+
+  d = high;
+  d <<= 8;
+  d |= low;
+  
+  return d;
+}
+
+/*************************************************/
+uint16_t ili9325Read(uint16_t addr)
+{
+  ili9325WriteCmd(addr);
+  return ili9325ReadData();
+}
+
+/*************************************************/
 void ili9325Command(uint16_t command, uint16_t data)
 {
   // Provided for convenience sake ... shouldn't be used
@@ -113,21 +159,20 @@ uint16_t ili9325BGR2RGB(uint16_t color)
   return( (b<<11) + (g<<5) + (r<<0) );
 }  
 
-/***********************************************************
-  Read pixel from LCD controller at current position
-***********************************************************/
-uint16_t ili9325Read(void)
+/*************************************************/
+/* Returns the 4-hexdigit controller code         */
+/*************************************************/
+uint16_t ili9325Type(void)
 {
-  // ToDo
-
-  return 0;
+  ili9325WriteCmd(0x0);
+  return ili9325ReadData();
 }
 
 /*************************************************/
 void ili9325SetCursor(uint16_t x, uint16_t y)
 {
-  ili9325Command(0x0020, x-1);       // GRAM Address Set (Horizontal Address) (R20h)
-  ili9325Command(0x0021, y-1);       // GRAM Address Set (Vertical Address) (R21h)
+  ili9325Command(0x0020, x);       // GRAM Address Set (Horizontal Address) (R20h)
+  ili9325Command(0x0021, y);       // GRAM Address Set (Vertical Address) (R21h)
 }
 
 /*************************************************/
@@ -204,10 +249,10 @@ void ili9325Home(void)
 /*************************************************/
 void ili9325SetWindow(uint16_t x, uint16_t y, uint16_t x1, uint16_t y1)
 {
-  ili9325Command(0x0050, x-1);       // Window Horizontal RAM Address Start (R50h)
-  ili9325Command(0x0051, x1-1);      // Window Horizontal RAM Address End (R51h)
-  ili9325Command(0x0052, y-1);       // Window Vertical RAM Address Start (R52h) )
-  ili9325Command(0x0053, y1-1);      // Window Vertical RAM Address End (R53h)
+  ili9325Command(0x0050, x);       // Window Horizontal RAM Address Start (R50h)
+  ili9325Command(0x0051, x1);      // Window Horizontal RAM Address End (R51h)
+  ili9325Command(0x0052, y);       // Window Vertical RAM Address Start (R52h) )
+  ili9325Command(0x0053, y1);      // Window Vertical RAM Address End (R53h)
 }
 
 #ifdef CFG_SDCARD
@@ -338,9 +383,9 @@ void lcdFillRGB(uint16_t data)
 void lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color)
 {
   ili9325WriteCmd(0x0020); // GRAM Address Set (Horizontal Address) (R20h)
-  ili9325WriteData(x-1);
+  ili9325WriteData(x);
   ili9325WriteCmd(0x0021); // GRAM Address Set (Vertical Address) (R21h)
-  ili9325WriteData(y-1);
+  ili9325WriteData(y);
   ili9325WriteCmd(0x0022);  // Write Data to GRAM (R22h)
   ili9325WriteData(color);
 }
@@ -358,11 +403,10 @@ void lcdDrawHLine(uint16_t x0, uint16_t x1, uint16_t y, uint16_t color)
     x1 = x0;
     x0 = x;
   }
-
   ili9325WriteCmd(0x0020); // GRAM Address Set (Horizontal Address) (R20h)
-  ili9325WriteData(x0-1);
+  ili9325WriteData(x0);
   ili9325WriteCmd(0x0021); // GRAM Address Set (Vertical Address) (R21h)
-  ili9325WriteData(y-1);
+  ili9325WriteData(y);
   ili9325WriteCmd(0x0022);  // Write Data to GRAM (R22h)
   for (pixels = 0; pixels < x1 - x0 + 1; pixels++)
   {
@@ -438,5 +482,5 @@ uint16_t lcdGetPixel(uint16_t x, uint16_t y)
 {
   ili9325SetCursor(x, y);
   ili9325WriteCmd(0x0022);
-  return (ili9325Read());
+  return (ili9325ReadData());
 }
