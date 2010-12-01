@@ -1,6 +1,10 @@
 v0.60 - Ongoing
 ===============
 
+- Added some sample images to 'tools/imgconv' that can be
+  used to render a basic clock on a TFT LCD screen (using
+  drawImageFromFile in 'drivers/lcd/tft/drawing.c')
+- Modified the makefile to automatically run './lpcrc' post-build
 - Added drawButton() to 'drivers/lcd/tft/drawing.c'
 - Updated 'drivers/lcd/tft/touchscreen.c' to do basic debouncing.
   tsReadZ() was added to detect pressure on the touch screen, and

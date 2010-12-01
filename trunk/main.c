@@ -44,7 +44,7 @@
 
 #ifdef CFG_TFTLCD
   #include "drivers/lcd/tft/drawing.h"  
-  #include "drivers/lcd/tft/touchscreen.h"  
+  #include "drivers/lcd/tft/touchscreen.h"
   #include "drivers/lcd/tft/fonts/consolas9.h"
   #include "drivers/lcd/tft/fonts/consolas16.h"
 #endif
@@ -88,6 +88,9 @@ int main (void)
   systemInit();
 
   #ifdef CFG_TFTLCD
+    // Draw background
+    drawRectangleFilled(0, 0, 239, 319, BLACK);
+
     // Show five 48x48 icons along bottom for toolbar
     drawImageFromFile(0, 272, "/icon48.pic");
     drawImageFromFile(48, 272, "/icon48.pic");
@@ -96,7 +99,14 @@ int main (void)
     drawImageFromFile(192, 272, "/icon48.pic");
 
     // Render a larger icon in the middle (128x128)
-    drawImageFromFile(56, 120, "/consol~1.pic");
+    // drawImageFromFile(56, 120, "/consol~1.pic");
+
+    // Render the time using number icons
+    drawImageFromFile(0, 120, "/clock/0.pic");
+    drawImageFromFile(48, 120, "/clock/6.pic");
+    drawImageFromFile(96, 120, "/clock/colon.pic");
+    drawImageFromFile(144, 120, "/clock/2.pic");
+    drawImageFromFile(192, 120, "/clock/7.pic");
   
     // Show some buttons
     // ToDo: Visual appearance needs to be improved, better corners and color etc.
