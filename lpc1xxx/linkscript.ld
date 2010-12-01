@@ -43,7 +43,7 @@ SECTIONS
   /*
    * More information about Special Section Indexes is available in the
    * free "ELF for the ARM Architecture" document from ARM Limited
-   * http://simplemachines.it/doc/aaelf.pdf
+   * http://infocenter.arm.com/help/topic/com.arm.doc.ihi0044d/IHI0044D_aaelf.pdf
    *
    */
   .ARM.extab : { *(.ARM.extab* .gnu.linkonce.armextab.*) } > flash

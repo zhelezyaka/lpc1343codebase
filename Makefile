@@ -8,7 +8,7 @@ TARGET = LPC13xx
 FLASH = 32K
 SRAM = 8K
 
-# For USB support the LPC1xxx reserves 384 bytes from the sram,
+# For USB support the LPC134x reserves 384 bytes from the sram,
 # if you don't want to use the USB features, just use 0 here.
 SRAM_USB = 384
 
@@ -96,6 +96,7 @@ SIZE = $(CROSS_COMPILE)size
 OBJCOPY = $(CROSS_COMPILE)objcopy
 OBJDUMP = $(CROSS_COMPILE)objdump
 OUTFILE = firmware
+LPCRC = ./lpcrc
 
 ##########################################################################
 # GNU GCC compiler flags
@@ -151,6 +152,7 @@ firmware: $(OBJS) $(SYS_OBJS)
 	-@echo ""
 	$(OBJCOPY) $(OCFLAGS) -O binary $(OUTFILE).elf $(OUTFILE).bin
 	$(OBJCOPY) $(OCFLAGS) -O ihex $(OUTFILE).elf $(OUTFILE).hex
+	$(LPCRC) firmware.bin
 
 clean:
 	rm -f $(OBJS) $(LD_TEMP) $(OUTFILE).elf $(OUTFILE).bin $(OUTFILE).hex

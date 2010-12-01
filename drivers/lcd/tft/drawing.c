@@ -349,9 +349,10 @@ void drawString(uint16_t x, uint16_t y, uint16_t color, const FONT_INFO *fontInf
                 The string that will be rendered
 */
 /**************************************************************************/
-uint32_t drawGetStringWidth(const FONT_INFO *fontInfo, char *str)
+uint16_t drawGetStringWidth(const FONT_INFO *fontInfo, char *str)
 {
-  uint32_t currChar, width = 0;
+  uint16_t width = 0;
+  uint32_t currChar;
   uint32_t startChar = fontInfo->startChar;
 
   // until termination
@@ -661,6 +662,83 @@ void drawProgressBar ( uint16_t x, uint16_t y, uint16_t width, uint16_t height, 
   }
 }
 
+/**************************************************************************/
+/*!
+    @brief  Draws a simple button
+
+    @param[in]  x
+                Starting x location
+    @param[in]  y
+                Starting y location
+    @param[in]  width
+                Total width of the button in pixels
+    @param[in]  height
+                Total height of the button in pixels
+    @param[in]  fontInfo
+                Pointer to the FONT_INFO used to render the button text
+    @param[in]  fontHeight
+                The height in pixels of the font (used for centering)
+    @param[in]  text
+                The text to render on the button
+    @param[in]  pressed
+                Whether the button should be rendered in its 'pressed'
+                (TRUE) or 'default' (FALSE) state.
+
+    @section Example
+
+    @code 
+
+    #include "drivers/lcd/tft/drawing.h"  
+    #include "drivers/lcd/tft/fonts/consolas16.h"
+
+    // Draw two buttons using Consolas16
+    drawButton(20, 20, 200, 35, &consolas16ptFontInfo, 16, "System Settings", FALSE);
+    drawButton(20, 65, 200, 35, &consolas16ptFontInfo, 16, "Refresh", FALSE);
+
+    @endcode
+*/
+/**************************************************************************/
+void drawButton(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const FONT_INFO *fontInfo, uint16_t fontHeight, char* text, bool pressed)
+{
+  // ToDo: Move color definitions to header file
+  uint16_t outerBorder      = 0x528A; // drawRGB24toRGB565( 80,  80,  80);
+  uint16_t highlight        = 0xFFFF; // drawRGB24toRGB565(255, 255, 255);
+  uint16_t highlightDarker  = 0xC618; // drawRGB24toRGB565(195, 195, 195);
+  uint16_t background       = 0xEF5D; // drawRGB24toRGB565(235, 235, 235);
+  uint16_t backgroundActive = drawRGB24toRGB565(60, 60, 60);
+  // uint16_t backgroundDarker = 0xD6BA; // drawRGB24toRGB565(212, 212, 212);
+  // uint16_t outerHighlight   = 0xB5B6; // drawRGB24toRGB565(180, 180, 180);
+  uint16_t font             = 0x2945; // drawRGB24toRGB565( 40,  40,  40);
+  uint16_t fontActive       = drawRGB24toRGB565( 200,  200,  200);
+
+  // Draw background
+  if (pressed)
+    drawRectangleFilled(x + 1, y + 1, x + width - 1, y + height - 1, backgroundActive);
+  else
+    drawRectangleFilled(x + 1, y + 1, x + width - 1, y + height - 1, background);
+
+  // Draw outer border
+  drawLine(x + 1, y, x + width - 1, y, outerBorder);
+  drawLine(x, y + 1, x, y + height - 1, outerBorder);
+  drawLine(x + 1, y + height, x + width - 1, y + height, outerBorder);
+  drawLine(x + width, y + height - 1, x + width, y + 1, outerBorder);
+
+  // Draw highlights
+  drawLine(x + 1, y + 1, x + width - 1, y + 1, highlight);
+  drawLine(x + width - 1, y + 1, x + width - 1, y + height - 1, highlight);
+  drawLine(x + 1, y + 2, x + 1, y + height - 1, highlightDarker);
+  drawLine(x + 1, y + height - 1, x + width - 2, y + height - 1, highlightDarker);
+
+  // Render text
+  uint16_t textWidth = drawGetStringWidth(&*fontInfo, text);
+  uint16_t xStart = x + (width / 2) - (textWidth / 2);
+  uint16_t yStart = y + (height / 2) - (fontHeight / 2) + 1;
+  if (pressed)
+    drawString(xStart, yStart, fontActive, &*fontInfo, text);
+  else
+    drawString(xStart, yStart, font, &*fontInfo, text);
+}
+
 #ifdef CFG_SDCARD
 /**************************************************************************/
 /*!
@@ -671,7 +749,6 @@ void drawProgressBar ( uint16_t x, uint16_t y, uint16_t width, uint16_t height, 
     @code 
 
     #include "drivers/lcd/tft/drawing.h"
-    #include "drivers/lcd/tft/fonts/consolas9.h"
 
     // Draw output.pic (from the root folder) starting at pixel 0,0
     drawImageFromFile(0, 0, "/output.pic");

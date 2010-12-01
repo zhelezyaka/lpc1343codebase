@@ -56,6 +56,8 @@ volatile uint32_t p1_1_counter  = 0;
 volatile uint32_t p2_1_counter  = 0;
 volatile uint32_t p3_1_counter  = 0;
 
+static bool _gpioInitialised = false;
+
 /**************************************************************************/
 /*! 
     @brief IRQ Handler for GPIO port 0 (currently checks pin 0.1)
@@ -162,6 +164,10 @@ void gpioInit (void)
   NVIC_EnableIRQ(EINT1_IRQn);
   NVIC_EnableIRQ(EINT2_IRQn);
   NVIC_EnableIRQ(EINT3_IRQn);
+
+  /* Set initialisation flag */
+  _gpioInitialised = true;
+
   return;
 }
 
@@ -180,6 +186,8 @@ void gpioInit (void)
 /**************************************************************************/
 void gpioSetDir (uint32_t portNum, uint32_t bitPos, gpioDirection_t dir)
 {
+  if (!_gpioInitialised) gpioInit();
+
   switch (portNum)
   {
     case 0:
@@ -239,6 +247,8 @@ void gpioSetDir (uint32_t portNum, uint32_t bitPos, gpioDirection_t dir)
 /**************************************************************************/
 uint32_t gpioGetValue (uint32_t portNum, uint32_t bitPos)
 {
+  if (!_gpioInitialised) gpioInit();
+
   uint32_t value = 0;
 
   switch (portNum)
@@ -278,6 +288,8 @@ uint32_t gpioGetValue (uint32_t portNum, uint32_t bitPos)
 /**************************************************************************/
 void gpioSetValue (uint32_t portNum, uint32_t bitPos, uint32_t bitVal)
 {
+  if (!_gpioInitialised) gpioInit();
+
   switch (portNum)
   {
     case 0:
@@ -364,6 +376,8 @@ void gpioSetValue (uint32_t portNum, uint32_t bitPos, uint32_t bitVal)
 /**************************************************************************/
 void gpioSetInterrupt (uint32_t portNum, uint32_t bitPos, gpioInterruptSense_t sense, gpioInterruptEdge_t edge, gpioInterruptEvent_t event)
 {
+  if (!_gpioInitialised) gpioInit();
+
   switch (portNum)
   {
     case 0:
@@ -492,6 +506,8 @@ void gpioSetInterrupt (uint32_t portNum, uint32_t bitPos, gpioInterruptSense_t s
 /**************************************************************************/
 void gpioIntEnable (uint32_t portNum, uint32_t bitPos)
 {
+  if (!_gpioInitialised) gpioInit();
+
   switch (portNum)
   {
     case 0:
@@ -524,6 +540,8 @@ void gpioIntEnable (uint32_t portNum, uint32_t bitPos)
 /**************************************************************************/
 void gpioIntDisable (uint32_t portNum, uint32_t bitPos)
 {
+  if (!_gpioInitialised) gpioInit();
+
   switch (portNum)
   {
     case 0:
@@ -558,6 +576,8 @@ void gpioIntDisable (uint32_t portNum, uint32_t bitPos)
 /**************************************************************************/
 uint32_t gpioIntStatus (uint32_t portNum, uint32_t bitPos)
 {
+  if (!_gpioInitialised) gpioInit();
+
   uint32_t regVal = 0;
 
   switch (portNum)
@@ -604,6 +624,8 @@ uint32_t gpioIntStatus (uint32_t portNum, uint32_t bitPos)
 /**************************************************************************/
 void gpioIntClear (uint32_t portNum, uint32_t bitPos)
 {
+  if (!_gpioInitialised) gpioInit();
+
   switch (portNum)
   {
     case 0:
@@ -656,6 +678,8 @@ void gpioIntClear (uint32_t portNum, uint32_t bitPos)
 /**************************************************************************/
 void gpioSetPullup (volatile uint32_t *ioconReg, gpioPullupMode_t mode)
 {
+  if (!_gpioInitialised) gpioInit();
+
   // ToDo: Disable interrupts while we are doing this?
 
   *ioconReg &= ~(IOCON_COMMON_MODE_MASK);

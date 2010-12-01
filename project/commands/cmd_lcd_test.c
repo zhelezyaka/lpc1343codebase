@@ -64,8 +64,8 @@ void cmd_lcd_test(uint8_t argc, char **argv)
 
   // Draw background
   drawFill(lightGray);
-  drawRectangleFilled(1, 1, 240, 20, darkGray);
-  drawRectangleFilled(1, 240, 240, 320, darkGray);
+  drawRectangleFilled(0, 0, 239, 19, darkGray);
+  drawRectangleFilled(0, 239, 239, 319, darkGray);
 
   // Render some text
   #if defined CFG_TFTLCD_INCLUDESMALLFONTS & CFG_TFTLCD_INCLUDESMALLFONTS == 1

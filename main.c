@@ -42,6 +42,13 @@
   #include "core/cmd/cmd.h"
 #endif
 
+#ifdef CFG_TFTLCD
+  #include "drivers/lcd/tft/drawing.h"  
+  #include "drivers/lcd/tft/touchscreen.h"  
+  #include "drivers/lcd/tft/fonts/consolas9.h"
+  #include "drivers/lcd/tft/fonts/consolas16.h"
+#endif
+
 /**************************************************************************/
 /*! 
     Approximates a 1 millisecond delay using "nop".  This is less
@@ -79,6 +86,28 @@ int main (void)
 {
   // Configure cpu and mandatory peripherals
   systemInit();
+
+  #ifdef CFG_TFTLCD
+    // Show five 48x48 icons along bottom for toolbar
+    drawImageFromFile(0, 272, "/icon48.pic");
+    drawImageFromFile(48, 272, "/icon48.pic");
+    drawImageFromFile(96, 272, "/icon48.pic");
+    drawImageFromFile(144, 272, "/icon48.pic");
+    drawImageFromFile(192, 272, "/icon48.pic");
+
+    // Render a larger icon in the middle (128x128)
+    drawImageFromFile(56, 120, "/consol~1.pic");
+  
+    // Show some buttons
+    // ToDo: Visual appearance needs to be improved, better corners and color etc.
+    drawButton(20, 10, 200, 35, &consolas16ptFontInfo, 16, "Button (Released)", FALSE);
+    drawButton(20, 50, 200, 35, &consolas16ptFontInfo, 16, "Button (Pressed)", TRUE);
+
+    // Draw a simple progress bar and some smaller text
+    uint16_t lightGray = drawRGB24toRGB565(0xCC, 0xCC, 0xCC);
+    drawString(10, 100, WHITE, &consolas9ptFontInfo, "Battery");
+    drawProgressBar(100, 95, 130, 15, WHITE, BLACK, lightGray, BLUE, 90);
+  #endif
 
   while (1)
   {

@@ -29,8 +29,12 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
-            this.panel2 = new System.Windows.Forms.Panel();
+            this.btnConvert = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.txtSrcHeight = new System.Windows.Forms.TextBox();
+            this.txtSrcWidth = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
             this.btnImgSrc = new System.Windows.Forms.Button();
             this.txtFilename = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -42,25 +46,21 @@
             this.cmbImageSize = new System.Windows.Forms.ComboBox();
             this.cmbColorDepth = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.btnSaveBinary = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.label8 = new System.Windows.Forms.Label();
+            this.txtOutY = new System.Windows.Forms.TextBox();
+            this.txtOutX = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.picPreview = new System.Windows.Forms.PictureBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.txtSrcWidth = new System.Windows.Forms.TextBox();
-            this.txtSrcHeight = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.btnSaveBinary = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.btnConvert = new System.Windows.Forms.Button();
-            this.label7 = new System.Windows.Forms.Label();
-            this.txtOutX = new System.Windows.Forms.TextBox();
-            this.txtOutY = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.panel1.SuspendLayout();
-            this.panel2.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picPreview)).BeginInit();
             this.SuspendLayout();
@@ -75,19 +75,16 @@
             this.panel1.Size = new System.Drawing.Size(240, 445);
             this.panel1.TabIndex = 2;
             // 
-            // panel2
+            // btnConvert
             // 
-            this.panel2.Controls.Add(this.label8);
-            this.panel2.Controls.Add(this.txtOutY);
-            this.panel2.Controls.Add(this.txtOutX);
-            this.panel2.Controls.Add(this.label7);
-            this.panel2.Controls.Add(this.groupBox3);
-            this.panel2.Controls.Add(this.button1);
-            this.panel2.Controls.Add(this.btnSaveBinary);
-            this.panel2.Location = new System.Drawing.Point(246, 0);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(281, 445);
-            this.panel2.TabIndex = 3;
+            this.btnConvert.Enabled = false;
+            this.btnConvert.Location = new System.Drawing.Point(12, 410);
+            this.btnConvert.Name = "btnConvert";
+            this.btnConvert.Size = new System.Drawing.Size(202, 23);
+            this.btnConvert.TabIndex = 4;
+            this.btnConvert.Text = "Convert";
+            this.btnConvert.UseVisualStyleBackColor = true;
+            this.btnConvert.Click += new System.EventHandler(this.btnConvert_Click);
             // 
             // groupBox2
             // 
@@ -103,6 +100,40 @@
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Image Source:";
+            // 
+            // txtSrcHeight
+            // 
+            this.txtSrcHeight.Location = new System.Drawing.Point(78, 72);
+            this.txtSrcHeight.Name = "txtSrcHeight";
+            this.txtSrcHeight.ReadOnly = true;
+            this.txtSrcHeight.Size = new System.Drawing.Size(149, 20);
+            this.txtSrcHeight.TabIndex = 7;
+            // 
+            // txtSrcWidth
+            // 
+            this.txtSrcWidth.Location = new System.Drawing.Point(78, 46);
+            this.txtSrcWidth.Name = "txtSrcWidth";
+            this.txtSrcWidth.ReadOnly = true;
+            this.txtSrcWidth.Size = new System.Drawing.Size(149, 20);
+            this.txtSrcWidth.TabIndex = 6;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(9, 75);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(41, 13);
+            this.label6.TabIndex = 4;
+            this.label6.Text = "Height:";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(9, 49);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(38, 13);
+            this.label5.TabIndex = 3;
+            this.label5.Text = "Width:";
             // 
             // btnImgSrc
             // 
@@ -218,26 +249,53 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Color Depth:";
             // 
-            // btnSaveBinary
+            // panel2
             // 
-            this.btnSaveBinary.Enabled = false;
-            this.btnSaveBinary.Location = new System.Drawing.Point(17, 385);
-            this.btnSaveBinary.Name = "btnSaveBinary";
-            this.btnSaveBinary.Size = new System.Drawing.Size(240, 23);
-            this.btnSaveBinary.TabIndex = 1;
-            this.btnSaveBinary.Text = "Export As Binary ...";
-            this.btnSaveBinary.UseVisualStyleBackColor = true;
-            this.btnSaveBinary.Click += new System.EventHandler(this.btnSaveBinary_Click);
+            this.panel2.Controls.Add(this.label8);
+            this.panel2.Controls.Add(this.txtOutY);
+            this.panel2.Controls.Add(this.txtOutX);
+            this.panel2.Controls.Add(this.label7);
+            this.panel2.Controls.Add(this.groupBox3);
+            this.panel2.Controls.Add(this.button1);
+            this.panel2.Controls.Add(this.btnSaveBinary);
+            this.panel2.Location = new System.Drawing.Point(246, 0);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(281, 445);
+            this.panel2.TabIndex = 3;
             // 
-            // button1
+            // label8
             // 
-            this.button1.Enabled = false;
-            this.button1.Location = new System.Drawing.Point(17, 410);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(240, 23);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Export As Header ...";
-            this.button1.UseVisualStyleBackColor = true;
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(191, 361);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(12, 13);
+            this.label8.TabIndex = 7;
+            this.label8.Text = "x";
+            // 
+            // txtOutY
+            // 
+            this.txtOutY.Enabled = false;
+            this.txtOutY.Location = new System.Drawing.Point(207, 359);
+            this.txtOutY.Name = "txtOutY";
+            this.txtOutY.Size = new System.Drawing.Size(50, 20);
+            this.txtOutY.TabIndex = 6;
+            // 
+            // txtOutX
+            // 
+            this.txtOutX.Enabled = false;
+            this.txtOutX.Location = new System.Drawing.Point(134, 359);
+            this.txtOutX.Name = "txtOutX";
+            this.txtOutX.Size = new System.Drawing.Size(50, 20);
+            this.txtOutX.TabIndex = 5;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(17, 364);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(97, 13);
+            this.label7.TabIndex = 4;
+            this.label7.Text = "Output Image Size:";
             // 
             // groupBox3
             // 
@@ -256,92 +314,35 @@
             this.picPreview.Location = new System.Drawing.Point(13, 21);
             this.picPreview.Name = "picPreview";
             this.picPreview.Size = new System.Drawing.Size(240, 320);
+            this.picPreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.picPreview.TabIndex = 1;
             this.picPreview.TabStop = false;
             // 
-            // label5
+            // button1
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(9, 49);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(38, 13);
-            this.label5.TabIndex = 3;
-            this.label5.Text = "Width:";
+            this.button1.Enabled = false;
+            this.button1.Location = new System.Drawing.Point(17, 410);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(240, 23);
+            this.button1.TabIndex = 2;
+            this.button1.Text = "Export As Header ...";
+            this.button1.UseVisualStyleBackColor = true;
             // 
-            // label6
+            // btnSaveBinary
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(9, 75);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(41, 13);
-            this.label6.TabIndex = 4;
-            this.label6.Text = "Height:";
-            // 
-            // txtSrcWidth
-            // 
-            this.txtSrcWidth.Location = new System.Drawing.Point(78, 46);
-            this.txtSrcWidth.Name = "txtSrcWidth";
-            this.txtSrcWidth.ReadOnly = true;
-            this.txtSrcWidth.Size = new System.Drawing.Size(149, 20);
-            this.txtSrcWidth.TabIndex = 6;
-            // 
-            // txtSrcHeight
-            // 
-            this.txtSrcHeight.Location = new System.Drawing.Point(78, 72);
-            this.txtSrcHeight.Name = "txtSrcHeight";
-            this.txtSrcHeight.ReadOnly = true;
-            this.txtSrcHeight.Size = new System.Drawing.Size(149, 20);
-            this.txtSrcHeight.TabIndex = 7;
+            this.btnSaveBinary.Enabled = false;
+            this.btnSaveBinary.Location = new System.Drawing.Point(17, 385);
+            this.btnSaveBinary.Name = "btnSaveBinary";
+            this.btnSaveBinary.Size = new System.Drawing.Size(240, 23);
+            this.btnSaveBinary.TabIndex = 1;
+            this.btnSaveBinary.Text = "Export As Binary ...";
+            this.btnSaveBinary.UseVisualStyleBackColor = true;
+            this.btnSaveBinary.Click += new System.EventHandler(this.btnSaveBinary_Click);
             // 
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             this.openFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog1_FileOk);
-            // 
-            // btnConvert
-            // 
-            this.btnConvert.Enabled = false;
-            this.btnConvert.Location = new System.Drawing.Point(12, 410);
-            this.btnConvert.Name = "btnConvert";
-            this.btnConvert.Size = new System.Drawing.Size(202, 23);
-            this.btnConvert.TabIndex = 4;
-            this.btnConvert.Text = "Convert";
-            this.btnConvert.UseVisualStyleBackColor = true;
-            this.btnConvert.Click += new System.EventHandler(this.btnConvert_Click);
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(17, 364);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(97, 13);
-            this.label7.TabIndex = 4;
-            this.label7.Text = "Output Image Size:";
-            // 
-            // txtOutX
-            // 
-            this.txtOutX.Enabled = false;
-            this.txtOutX.Location = new System.Drawing.Point(134, 359);
-            this.txtOutX.Name = "txtOutX";
-            this.txtOutX.Size = new System.Drawing.Size(50, 20);
-            this.txtOutX.TabIndex = 5;
-            // 
-            // txtOutY
-            // 
-            this.txtOutY.Enabled = false;
-            this.txtOutY.Location = new System.Drawing.Point(207, 359);
-            this.txtOutY.Name = "txtOutY";
-            this.txtOutY.Size = new System.Drawing.Size(50, 20);
-            this.txtOutY.TabIndex = 6;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(191, 361);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(12, 13);
-            this.label8.TabIndex = 7;
-            this.label8.Text = "x";
             // 
             // Main
             // 
@@ -353,13 +354,14 @@
             this.Name = "Main";
             this.Text = "Main";
             this.panel1.ResumeLayout(false);
-            this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picPreview)).EndInit();
             this.ResumeLayout(false);
 

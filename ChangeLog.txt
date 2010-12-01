@@ -1,3 +1,14 @@
+v0.60 - Ongoing
+===============
+
+- Added drawButton() to 'drivers/lcd/tft/drawing.c'
+- Updated 'drivers/lcd/tft/touchscreen.c' to do basic debouncing.
+  tsReadZ() was added to detect pressure on the touch screen, and
+  tsWaitForEvent() will only exit when the pressure passes a minimum
+  threshold.  (Thanks to Limor for pointing out some code by Rossum
+  for this.)
+- Fixed some off-by-one pixel errors in cmd-test and elsewhere
+
 v0.51 - 27 November 2010
 ========================
 
