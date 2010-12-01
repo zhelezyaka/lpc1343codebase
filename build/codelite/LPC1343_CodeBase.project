@@ -155,6 +155,7 @@
         <File Name="../../drivers/lcd/tft/lcd.h"/>
         <File Name="../../drivers/lcd/tft/touchscreen.c"/>
         <File Name="../../drivers/lcd/tft/touchscreen.h"/>
+        <File Name="../../drivers/lcd/tft/colors.h"/>
       </VirtualDirectory>
       <VirtualDirectory Name="bitmap">
         <VirtualDirectory Name="st7565">

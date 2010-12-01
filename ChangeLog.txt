@@ -1,6 +1,8 @@
 v0.60 - Ongoing
 ===============
 
+- Added 'drivers/lcd/tft/colors.h' to keep all common 16-bit
+  RGB565 color definitions in one location
 - Added some sample images to 'tools/imgconv' that can be
   used to render a basic clock on a TFT LCD screen (using
   drawImageFromFile in 'drivers/lcd/tft/drawing.c')
