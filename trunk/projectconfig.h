@@ -188,7 +188,7 @@
     NOTE: CFG_USBCDC =        ~4.0 KB Flash and 272 bytes SRAM (-Os)
     -----------------------------------------------------------------------*/
     // #define CFG_USBHID
-    #define CFG_USBCDC
+    // #define CFG_USBCDC
     #define CFG_USBCDC_BAUDRATE         (115200)
     #define CFG_USBCDC_BUFSIZE          (64)
     #define CFG_USBCDC_INITTIMEOUT      (5000)
@@ -215,7 +215,7 @@
     NOTE: PRINTF Support =    ~350 bytes Flash (-Os)
     -----------------------------------------------------------------------*/
     // #define CFG_PRINTF_UART
-    #define CFG_PRINTF_USBCDC
+    // #define CFG_PRINTF_USBCDC
     // #define CFG_PRINTF_CWDEBUG
     #define CFG_PRINTF_NEWLINE          "\r\n"
 /*=========================================================================*/
@@ -241,7 +241,7 @@
                               this varies with the number of commands
                               present
     -----------------------------------------------------------------------*/
-    #define CFG_INTERFACE
+    // #define CFG_INTERFACE
     #define CFG_INTERFACE_MAXMSGSIZE    (80)
     #define CFG_INTERFACE_PROMPT        "LPC1343 >> "
 /*=========================================================================*/
