@@ -262,11 +262,12 @@ static void ili9325ImageFromFIL(uint16_t x, uint16_t y, FIL file)
   uint16_t header[3];
   UINT bytesRead;
 
-  // Read the image header
-  // data[0] = Width
-  // data[1] = height
-  // data[2] = Bit Depth (1 = RGB565)
-  // data[3..] = Pixel Data ...
+  // Image header
+  // ------------
+  // U16 Width
+  // U16 height
+  // U16 Bit Depth (1 = RGB565)
+  // ... Pixel Data ...
 
   // Read the header data
   f_read(&file, header, sizeof(header), &bytesRead);
