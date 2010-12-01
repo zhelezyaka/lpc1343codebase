@@ -121,8 +121,8 @@ namespace ImgConv
             Graphics gfx;
 
             // Set preview window to full size (may have been resized by previous image)
-            picPreview.Height = 320;
-            picPreview.Width = 240;
+            //picPreview.Height = 320;
+            //picPreview.Width = 240;
 
             // Resize image
             if (bmp != null)
@@ -159,8 +159,8 @@ namespace ImgConv
                             gfx.DrawImage(thumb, 0, 0);
                             thumb.Dispose();
                             // Resize preview window
-                            picPreview.Width = newWidth;
-                            picPreview.Height = newHeight;
+                            //picPreview.Width = newWidth;
+                            //picPreview.Height = newHeight;
                             // Display output image size
                             txtOutY.Text = newHeight.ToString();
                             txtOutX.Text = newWidth.ToString();
@@ -180,8 +180,8 @@ namespace ImgConv
                         gfx = Graphics.FromImage(preview);
                         gfx.DrawImage(bmp, 0, 0, Convert.ToInt32(txtCustomX.Text), Convert.ToInt32(txtCustomY.Text));
                         // Resize preview window
-                        picPreview.Width = Convert.ToInt32(txtCustomX.Text);
-                        picPreview.Height = Convert.ToInt32(txtCustomY.Text);
+                        //picPreview.Width = Convert.ToInt32(txtCustomX.Text);
+                        //picPreview.Height = Convert.ToInt32(txtCustomY.Text);
                         // Display output image size
                         txtOutY.Text = txtCustomY.Text;
                         txtOutX.Text = txtCustomX.Text;

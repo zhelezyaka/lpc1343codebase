@@ -60,6 +60,8 @@ extern volatile uint8_t   I2CMasterBuffer[I2C_BUFSIZE];
 extern volatile uint8_t   I2CSlaveBuffer[I2C_BUFSIZE];
 extern volatile uint32_t  I2CReadLength, I2CWriteLength;
 
+static bool _mcp4725Initialised = false;
+
 /**************************************************************************/
 /*! 
     @brief Initialises I2C for the MCP4725.
@@ -73,6 +75,10 @@ int mcp4725Init()
     /* Fatal error */
     return -1;
   }
+
+  /* Set initialisation flag */
+  _mcp4725Initialised = true;
+
   return 0;
 }
 
@@ -93,6 +99,8 @@ int mcp4725Init()
 /**************************************************************************/
 void mcp4725SetVoltage( uint16_t output, bool writeEEPROM )
 {
+  if (!_mcp4725Initialised) mcp4725Init();
+
   // Clear write buffers
   uint32_t i;
   for ( i = 0; i < I2C_BUFSIZE; i++ )
@@ -129,6 +137,8 @@ void mcp4725SetVoltage( uint16_t output, bool writeEEPROM )
 /**************************************************************************/
 void mcp472ReadConfig( uint8_t *status, uint16_t *value )
 {
+  if (!_mcp4725Initialised) mcp4725Init();
+
   // Clear write buffers
   uint32_t i;
   for ( i = 0; i < I2C_BUFSIZE; i++ )

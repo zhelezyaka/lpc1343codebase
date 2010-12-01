@@ -37,6 +37,42 @@
 
 #include "core/adc/adc.h"
 
+static bool _tsInitialised = FALSE;
+
+/**************************************************************************/
+/*!
+    @brief  Reads the current Z/pressure level using the ADC
+*/
+/**************************************************************************/
+static void tsReadZ(uint32_t* z1, uint32_t* z2)
+{
+  if (!_tsInitialised) tsInit();
+
+  // Make sure that X+/Y- are set to GPIO
+  TS_XP_FUNC_GPIO;
+  TS_YM_FUNC_GPIO;
+
+  // Set X- and Y+ to inputs (necessary?)
+  gpioSetDir (TS_XM_PORT, TS_XM_PIN, 0);
+  gpioSetDir (TS_YP_PORT, TS_YP_PIN, 0);
+
+  // Set X+ and Y- to output
+  gpioSetDir (TS_XP_PORT, TS_XP_PIN, 1);
+  gpioSetDir (TS_YM_PORT, TS_YM_PIN, 1);
+
+  // X+ goes low, Y- goes high
+  gpioSetValue(TS_XP_PORT, TS_XP_PIN, 0);   // GND
+  gpioSetValue(TS_YM_PORT, TS_YM_PIN, 1);   // 3.3V
+
+  // Set X- and Y+ to ADC
+  TS_XM_FUNC_ADC;  
+  TS_YP_FUNC_ADC;  
+
+  // Get ADC results
+  *z1 = adcRead(TS_YP_ADC_CHANNEL);     // Z1 (Read Y+)
+  *z2 = adcRead(TS_XM_ADC_CHANNEL);     // Z2 (Read X-)
+}
+
 /**************************************************************************/
 /*!
     @brief  Initialises the appropriate GPIO pins and ADC for the
@@ -48,11 +84,8 @@ void tsInit(void)
   // Make sure that ADC is initialised
   adcInit();
 
-  // Disable the internal pull-up resistors on touch screen pins
-  gpioSetPullup(&IOCON_JTAG_TMS_PIO1_0, gpioPullupMode_Inactive);   // X+
-  gpioSetPullup(&IOCON_PIO3_2, gpioPullupMode_Inactive);            // X-
-  gpioSetPullup(&IOCON_JTAG_TDI_PIO0_11, gpioPullupMode_Inactive);  // Y+
-  gpioSetPullup(&IOCON_PIO3_1, gpioPullupMode_Inactive);            // Y-
+  // Set initialisation flag
+  _tsInitialised = TRUE;
 }
 
 /**************************************************************************/
@@ -62,6 +95,8 @@ void tsInit(void)
 /**************************************************************************/
 uint32_t tsReadX(void)
 {
+  if (!_tsInitialised) tsInit();
+
   // Make sure Y+/Y- are set to GPIO
   TS_YP_FUNC_GPIO;
   TS_YM_FUNC_GPIO;
@@ -82,7 +117,7 @@ uint32_t tsReadX(void)
   TS_XP_FUNC_ADC;  
 
   // Return the ADC results
-  return adcRead(TS_XADC_CHANNEL);
+  return adcRead(TS_XP_ADC_CHANNEL);
 }
 
 /**************************************************************************/
@@ -92,6 +127,8 @@ uint32_t tsReadX(void)
 /**************************************************************************/
 uint32_t tsReadY(void)
 {
+  if (!_tsInitialised) tsInit();
+
   // Make sure X+/X- are set to GPIO
   TS_XP_FUNC_GPIO;
   TS_XM_FUNC_GPIO;
@@ -112,16 +149,52 @@ uint32_t tsReadY(void)
   TS_YP_FUNC_ADC;
 
   // Return the ADC results
-  return adcRead(TS_YADC_CHANNEL);
+  return adcRead(TS_YP_ADC_CHANNEL);
 }
 
 /**************************************************************************/
 /*!
     @brief  Causes a blocking delay until a valid touch event occurs
+
+    @note   Thanks to 'rossum' and limor for this nifty little tidbit on
+            debouncing the signals via pressure sensitivity (using Z)
 */
 /**************************************************************************/
-void tsWaitForEvent(void)
+void tsWaitForEvent(tsTouchData_t* data)
 {
-  // ToDo
+  if (!_tsInitialised) tsInit();
+
+  // Read Z for pressure
+  uint32_t z1, z2;
+  z1 = z2 = 0;
+
+  // Wait for touch
+  while (z2 < 8)
+  {
+    tsReadZ(&z1, &z2);
+  }
+
+  // Set results
+  data->x = tsReadX();
+  data->y = tsReadY();
+
+  // Calculate pressure level
+  int32_t t = z2 * data->x / z1;
+  t-=64;
+  if (t < 0)
+  {
+    data->pressure = 0;
+  }
+  else if (t > 255)
+  {
+    data->pressure = 255;
+  }
+  else
+  {
+    data->pressure = t;
+  }
+  
+  // Display results
+  printf("Touch Event: X = %d, Y = %d %s", (int)data->x, (int)data->y, CFG_PRINTF_NEWLINE);
 }
 

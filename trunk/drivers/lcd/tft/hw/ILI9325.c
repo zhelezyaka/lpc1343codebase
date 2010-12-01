@@ -281,7 +281,7 @@ static void ili9325ImageFromFIL(uint16_t x, uint16_t y, FIL file)
   for (;;) 
   {
     // Read image data one row at a time
-    res = f_read(&file, buffer, (imgW)  * 2, &bytesRead);
+    res = f_read(&file, buffer, imgW  * 2, &bytesRead);
     if (res || bytesRead == 0)
     {
       // Error or EOF
