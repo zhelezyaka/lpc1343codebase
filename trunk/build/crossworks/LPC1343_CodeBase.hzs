@@ -19,12 +19,6 @@
   <ProjectSessionItem path="LPC1343_CodeBase" name="unnamed" />
   <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase" name="unnamed" />
   <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files" name="unnamed" />
-  <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files;drivers" name="unnamed" />
-  <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files;drivers;fatfs" name="unnamed" />
-  <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files;drivers;lcd" name="unnamed" />
-  <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files;drivers;lcd;tft" name="unnamed" />
-  <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files;drivers;lcd;tft;hw" name="unnamed" />
-  <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;System Files" name="unnamed" />
  </Project>
  <Register1>
   <RegisterWindow openNodes="CPU;SSP0/SSP0CR0;SSP0/SSP0CR1;SSP0/SSP0CPSR" binaryNodes="GPIO1/GPIO1DATA;GPIO2/GPIO2DATA" unsignedNodes="" visibleGroups="GPIO2;SSP0;GPIO1;CPU" decimalNodes="" octalNodes="" asciiNodes="" />
@@ -60,10 +54,7 @@
   <Watches active="0" update="Never" />
  </Watch4>
  <Files>
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\main.c" y="87" path="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\main.c" left="0" selected="1" name="unnamed" top="58" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\drivers\lcd\tft\hw\ILI9325.c" y="283" path="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\drivers\lcd\tft\hw\ILI9325.c" left="0" selected="0" name="unnamed" top="260" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="72" debugPath="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\projectconfig.h" y="179" path="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\projectconfig.h" left="0" selected="0" name="unnamed" top="163" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\Users\Kevin\AppData\Local\Rowley Associates Limited\CrossWorks for ARM\packages\targets\LPC1000\LPC1300_Startup.s" y="148" path="C:\Users\Kevin\AppData\Local\Rowley Associates Limited\CrossWorks for ARM\packages\targets\LPC1000\LPC1300_Startup.s" left="0" selected="0" name="unnamed" top="121" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\projectconfig.h" y="395" path="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\projectconfig.h" left="0" selected="1" name="unnamed" top="385" />
  </Files>
  <ARMCrossStudioWindow activeProject="LPC1343_CodeBase" autoConnectTarget="Segger J-Link" debugSearchFileMap="" fileDialogInitialDirectory="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\drivers\fatfs" fileDialogDefaultFilter="*.c" autoConnectCapabilities="388991" debugSearchPath="" buildConfiguration="THUMB Flash Release" />
 </session>
