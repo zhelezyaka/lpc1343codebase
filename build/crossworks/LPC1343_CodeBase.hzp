@@ -172,7 +172,9 @@
               <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
             </file>
           </folder>
-          <file file_name="../../drivers/lcd/smallfonts.c"/>
+          <file file_name="../../drivers/lcd/smallfonts.c">
+            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+          </file>
         </folder>
         <folder Name="fatfs" file_name="">
           <file file_name="../../drivers/fatfs/ff.c">

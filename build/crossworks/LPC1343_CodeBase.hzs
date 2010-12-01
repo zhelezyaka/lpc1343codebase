@@ -1,16 +1,7 @@
 <!DOCTYPE CrossStudio_for_ARM_Session_File>
 <session>
  <Bookmarks/>
- <Breakpoints>
-  <BreakpointListItem group="CM3 Exceptions" type="Exception" state="2" counter="0" expression="BusFault" />
-  <BreakpointListItem group="CM3 Exceptions" type="Exception" state="2" counter="0" expression="ExceptionEntryReturnFault" />
-  <BreakpointListItem group="CM3 Exceptions" type="Exception" state="2" counter="0" expression="HardFault" />
-  <BreakpointListItem group="CM3 Exceptions" type="Exception" state="2" counter="0" expression="MemManage" />
-  <BreakpointListItem group="CM3 Exceptions" type="Exception" state="3" counter="0" expression="Reset" />
-  <BreakpointListItem group="CM3 Exceptions" type="Exception" state="2" counter="0" expression="UsageFault_CheckingError" />
-  <BreakpointListItem group="CM3 Exceptions" type="Exception" state="2" counter="0" expression="UsageFault_Coprocessor" />
-  <BreakpointListItem group="CM3 Exceptions" type="Exception" state="2" counter="0" expression="UsageFault_StateError" />
- </Breakpoints>
+ <Breakpoints/>
  <ExecutionCountWindow/>
  <Memory1>
   <MemoryWindow autoEvaluate="0" addressText="&amp;delay" numColumns="8" sizeText="sizeof(delay)" dataSize="1" radix="16" addressSpace="" />
@@ -31,9 +22,6 @@
   <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files;drivers" name="unnamed" />
   <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files;drivers;lcd" name="unnamed" />
   <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files;drivers;lcd;tft" name="unnamed" />
-  <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files;drivers;lcd;tft;hw" name="unnamed" />
-  <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files;project" name="unnamed" />
-  <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files;project;commands" name="unnamed" />
  </Project>
  <Register1>
   <RegisterWindow openNodes="CPU;SSP0/SSP0CR0;SSP0/SSP0CR1;SSP0/SSP0CPSR" binaryNodes="GPIO1/GPIO1DATA;GPIO2/GPIO2DATA" unsignedNodes="" visibleGroups="GPIO2;SSP0;GPIO1;CPU" decimalNodes="" octalNodes="" asciiNodes="" />
@@ -69,10 +57,9 @@
   <Watches active="0" update="Never" />
  </Watch4>
  <Files>
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="47" debugPath="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\main.c" y="94" path="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\main.c" left="0" selected="1" name="unnamed" top="71" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\drivers\lcd\tft\hw\ILI9325.c" y="284" path="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\drivers\lcd\tft\hw\ILI9325.c" left="0" selected="0" name="unnamed" top="256" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="22" debugPath="C:\users\kevin\documents\my dropbox\microbuilder\code\lpc1343\lpc1343_codebase\drivers\lcd\tft\drawing.c" y="719" path="C:\users\kevin\documents\my dropbox\microbuilder\code\lpc1343\lpc1343_codebase\drivers\lcd\tft\drawing.c" left="0" selected="0" name="unnamed" top="694" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\project\commands\cmd_lcd_test.c" y="63" path="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\project\commands\cmd_lcd_test.c" left="0" selected="0" name="unnamed" top="24" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="19" debugPath="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\main.c" y="89" path="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\main.c" left="0" selected="1" name="unnamed" top="71" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\drivers\lcd\tft\drawing.c" y="43" path="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\drivers\lcd\tft\drawing.c" left="0" selected="0" name="unnamed" top="6" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\drivers\lcd\tft\drawing.h" y="0" path="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\drivers\lcd\tft\drawing.h" left="0" selected="0" name="unnamed" top="18" />
  </Files>
  <ARMCrossStudioWindow activeProject="LPC1343_CodeBase" autoConnectTarget="Segger J-Link" debugSearchFileMap="" fileDialogInitialDirectory="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\drivers\fatfs" fileDialogDefaultFilter="*.c" autoConnectCapabilities="388991" debugSearchPath="" buildConfiguration="THUMB Flash Release" />
 </session>
