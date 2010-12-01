@@ -341,7 +341,7 @@ void lcdInit(void)
   ili9325InitDisplay();
 
   // Fill black
-  lcdFillRGB(BLACK);
+  lcdFillRGB(COLOR_BLACK);
 }
 
 /*************************************************/
@@ -354,14 +354,14 @@ void lcdTest(void)
   {
     for(j=0;j<240;j++)
     {
-      if(i>279)ili9325WriteData(WHITE);
-      else if(i>239)ili9325WriteData(BLUE);
-      else if(i>199)ili9325WriteData(GREEN);
-      else if(i>159)ili9325WriteData(CYAN);
-      else if(i>119)ili9325WriteData(RED);
-      else if(i>79)ili9325WriteData(MAGENTA);
-      else if(i>39)ili9325WriteData(YELLOW);
-      else ili9325WriteData(BLACK);
+      if(i>279)ili9325WriteData(COLOR_WHITE);
+      else if(i>239)ili9325WriteData(COLOR_BLUE);
+      else if(i>199)ili9325WriteData(COLOR_GREEN);
+      else if(i>159)ili9325WriteData(COLOR_CYAN);
+      else if(i>119)ili9325WriteData(COLOR_RED);
+      else if(i>79)ili9325WriteData(COLOR_MAGENTA);
+      else if(i>39)ili9325WriteData(COLOR_YELLOW);
+      else ili9325WriteData(COLOR_BLACK);
     }
   }
 }
@@ -461,7 +461,7 @@ void lcdDrawImageFromFile(uint16_t x, uint16_t y, char *filename)
     {
       // Try to open the requested file
       FIL logFile;  
-      if(f_open(&logFile, filename, FA_READ | FA_OPEN_ALWAYS) != FR_OK) 
+      if(f_open(&logFile, filename, FA_READ | FA_OPEN_EXISTING) != FR_OK) 
       {  
         // Unable to open the requested file
         return;

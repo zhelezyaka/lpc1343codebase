@@ -69,27 +69,27 @@ void cmd_lcd_test(uint8_t argc, char **argv)
 
   // Render some text
   #if defined CFG_TFTLCD_INCLUDESMALLFONTS & CFG_TFTLCD_INCLUDESMALLFONTS == 1
-    drawStringSmall(1, 210, WHITE, "5x8 System (Max 40 Characters)", Font_System5x8);
-    drawStringSmall(1, 220, WHITE, "7x8 System (Max 30 Characters)", Font_System7x8);
+    drawStringSmall(1, 210, COLOR_WHITE, "5x8 System (Max 40 Characters)", Font_System5x8);
+    drawStringSmall(1, 220, COLOR_WHITE, "7x8 System (Max 30 Characters)", Font_System7x8);
   #endif
   
-  drawString(5,   8,    WHITE,    &consolas9ptFontInfo,   "LPC1343 Demo Code");
+  drawString(5,   8,    COLOR_WHITE,    &consolas9ptFontInfo,   "LPC1343 Demo Code");
 
   // Draw some primitive shapes
-  drawCircle(15, 300, 10, WHITE);
-  drawLine(100, 280, 200, 310, WHITE);
-  drawRectangle (220, 5, 230, 15, WHITE);
+  drawCircle(15, 300, 10, COLOR_WHITE);
+  drawLine(100, 280, 200, 310, COLOR_WHITE);
+  drawRectangle (220, 5, 230, 15, COLOR_WHITE);
   drawRectangleFilled (222, 7, 228, 13, lightGray);
 
   // Draw some compound shapes
-  drawString(10,   150,    BLACK,    &consolas9ptFontInfo,   "Green Progress");
-  drawProgressBar(100, 150, 130, 9, WHITE, BLACK, lightGray, GREEN, 75);
-  drawString(10,   165,    BLACK,    &consolas9ptFontInfo,   "Yellow Progress");
-  drawProgressBar(100, 165, 130, 9, WHITE, BLACK, lightGray, YELLOW, 23);
-  drawString(10,   180,    RED,    &consolas9ptFontInfo,   "Red Progress");
-  drawProgressBar(100, 180, 130, 9, WHITE, BLACK, lightGray, RED, 64);
-  drawString(10,   200,    BLACK,    &consolas9ptFontInfo,   "Battery");
-  drawProgressBar(100, 195, 130, 15, WHITE, BLACK, lightGray, BLUE, 90);
+  drawString(10,   150,    COLOR_BLACK,    &consolas9ptFontInfo,   "Green Progress");
+  drawProgressBar(100, 150, 130, 9, COLOR_WHITE, COLOR_BLACK, lightGray, COLOR_GREEN, 75);
+  drawString(10,   165,    COLOR_BLACK,    &consolas9ptFontInfo,   "Yellow Progress");
+  drawProgressBar(100, 165, 130, 9, COLOR_WHITE, COLOR_BLACK, lightGray, COLOR_YELLOW, 23);
+  drawString(10,   180,    COLOR_RED,    &consolas9ptFontInfo,   "Red Progress");
+  drawProgressBar(100, 180, 130, 9, COLOR_WHITE, COLOR_BLACK, lightGray, COLOR_RED, 64);
+  drawString(10,   200,    COLOR_BLACK,    &consolas9ptFontInfo,   "Battery");
+  drawProgressBar(100, 195, 130, 15, COLOR_WHITE, COLOR_BLACK, lightGray, COLOR_BLUE, 90);
 }
 
 #endif  

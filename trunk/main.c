@@ -89,7 +89,7 @@ int main (void)
 
   #ifdef CFG_TFTLCD
     // Draw background
-    drawRectangleFilled(0, 0, 239, 319, BLACK);
+    drawRectangleFilled(0, 0, 239, 319, COLOR_BLACK);
 
     // Show five 48x48 icons along bottom for toolbar
     drawImageFromFile(0, 272, "/icon48.pic");
@@ -115,8 +115,8 @@ int main (void)
 
     // Draw a simple progress bar and some smaller text
     uint16_t lightGray = drawRGB24toRGB565(0xCC, 0xCC, 0xCC);
-    drawString(10, 100, WHITE, &consolas9ptFontInfo, "Battery");
-    drawProgressBar(100, 95, 130, 15, WHITE, BLACK, lightGray, BLUE, 90);
+    drawString(10, 100, COLOR_WHITE, &consolas9ptFontInfo, "Battery");
+    drawProgressBar(100, 95, 130, 15, COLOR_WHITE, COLOR_BLACK, lightGray, COLOR_BLUE, 90);
   #endif
 
   while (1)

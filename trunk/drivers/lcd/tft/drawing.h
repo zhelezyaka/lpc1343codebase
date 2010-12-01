@@ -40,6 +40,7 @@
 
 #include "projectconfig.h"
 #include "lcd.h"
+#include "colors.h"
 #include "drivers/lcd/tft/fonts/bitmapfonts.h"
 
 #if defined CFG_TFTLCD_INCLUDESMALLFONTS & CFG_TFTLCD_INCLUDESMALLFONTS == 1
