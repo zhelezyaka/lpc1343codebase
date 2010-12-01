@@ -158,6 +158,26 @@ uint32_t tsReadY(void)
 
     @note   Thanks to 'rossum' and limor for this nifty little tidbit on
             debouncing the signals via pressure sensitivity (using Z)
+
+
+    @section Example
+
+    @code 
+    #include "drivers/lcd/tft/touchscreen.h"
+
+    // Create an object to hold the eventual event data
+    tsTouchData_t data;
+
+    // Cause a blocking delay until a valid touch event occurs
+    tsWaitForEvent(&data);
+
+    // A valid touch event occurred ... parse data
+    if (data.x > 100 && data.x < 300)
+    {
+      // Do something
+    }
+
+    @endcode
 */
 /**************************************************************************/
 void tsWaitForEvent(tsTouchData_t* data)

@@ -153,7 +153,10 @@
                               file system support will be included
     CFG_SDCARD_CDPORT         The card detect port number
     CFG_SDCARD_CDPIN          The card detect pin number
-    
+
+    NOTE:                     All config settings for FAT32 are defined
+                              in ffconf.h
+
     NOTE: CFG_SDCARD =        ~7.2 KB Flash and 0.6 KB SRAM (-Os)
 
     DEPENDENCIES:             SDCARD requires the use of SSP0.
@@ -379,8 +382,6 @@
                                 support for larger fonts generated using
                                 Dot Factory 
                                 http://www.pavius.net/downloads/tools/53-the-dot-factory
-    CFG_TFTLCD_WIDTH            The width in pixels of the LCD screen
-    CFG_TFTLCD_HEIGHT           The height in pixels of the LCD screen
 
     NOTE: CFG_TFTLCD (ILI9325)  ~4.9 KB Flash (-Os, no small fonts, 
                                 consolas9 used)
@@ -390,8 +391,6 @@
     -----------------------------------------------------------------------*/
     #define CFG_TFTLCD
     #define CFG_TFTLCD_INCLUDESMALLFONTS   (0)
-    #define CFG_TFTLCD_WIDTH               (240)
-    #define CFG_TFTLCD_HEIGHT              (320)
 /*=========================================================================*/
 
 
@@ -402,7 +401,7 @@
     CFG_ST7565                  If defined, this will cause drivers for
                                 the 128x64 pixel ST7565 LCD to be included
 
-    DEPENDENCIES:               TFTLCD requires the use of pins 2.1-6.
+    DEPENDENCIES:               CFG_ST7565 requires the use of pins 2.1-6.
     -----------------------------------------------------------------------*/
     // #define CFG_ST7565
 /*=========================================================================*/
@@ -420,7 +419,9 @@
                                 limited to using 64-bit or 32-bit numbers,
                                 with 64-bit providing higher security, and
                                 32-bit providing smaller encrypted text
-                                size.  Please note that Printf can not be
+                                size.
+                                  
+    NOTE:                       Please note that Printf can not be
                                 used to display 64-bit values (%lld)!
     -----------------------------------------------------------------------*/
     // #define CFG_RSA
