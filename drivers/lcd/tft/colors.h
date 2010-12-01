@@ -41,22 +41,30 @@
 #include "projectconfig.h"
 
 // Basic Color definitions
-#define	COLOR_BLACK                   0x0000
-#define	COLOR_BLUE                    0x001F
-#define	COLOR_RED                     0xF800
-#define	COLOR_GREEN                   0x07E0
-#define COLOR_CYAN                    0x07FF
-#define COLOR_MAGENTA                 0xF81F
-#define COLOR_YELLOW                  0xFFE0
-#define COLOR_WHITE                   0xFFFF
+#define	COLOR_BLACK                     0x0000
+#define	COLOR_BLUE                      0x001F
+#define	COLOR_RED                       0xF800
+#define	COLOR_GREEN                     0x07E0
+#define COLOR_CYAN                      0x07FF
+#define COLOR_MAGENTA                   0xF81F
+#define COLOR_YELLOW                    0xFFE0
+#define COLOR_WHITE                     0xFFFF
 
-// Button Colors (see drawing.c)                   R   G   B
-#define COLOR_BUTTON_BORDER           0x528A    // 80  80  80
-#define COLOR_BUTTON_HIGHLIGHT        0xFFFF    // 255 255 255
-#define COLOR_BUTTON_HIGHLIGHTDARKER  0xC618    // 195 195 195
-#define COLOR_BUTTON_BACKGROUND       0xEF5D    // 235 235 235
-#define COLOR_BUTTON_BACKGROUNDACTIVE 0x528A    // 80  80  80
-#define COLOR_BUTTON_FONT             0x2945    // 40  40  40
-#define COLOR_BUTTON_FONTACTIVE       0xC618    // 195 195 195
+// Grayscale Values
+#define COLOR_DARKGRAY                  0x18E3    // 30  30  30
+#define COLOR_MEDIUMGRAY                0x8410    // 128 128 128
+#define COLOR_LIGHTGRAY                 0xCE59    // 200 200 200
+#define COLOR_PALEGRAY                  0xE71C    // 225 225 225
+
+// Button Colors (see drawing.c)
+#define COLOR_BUTTON_BORDER             0x528A    // 80  80  80
+#define COLOR_BUTTON_HIGHLIGHT          0xFFFF    // 255 255 255
+#define COLOR_BUTTON_HIGHLIGHTDARKER    0xB5B6    // 180 180 180
+#define COLOR_BUTTON_BACKGROUND1        0xEF5D    // 235 235 235
+#define COLOR_BUTTON_BACKGROUND2        0xCE59    // 200 200 200
+#define COLOR_BUTTON_BACKGROUNDACTIVE1  0x528A    // 80  80  80
+#define COLOR_BUTTON_BACKGROUNDACTIVE2  0x4228    // 70  70  70
+#define COLOR_BUTTON_FONT               0x2945    // 40  40  40
+#define COLOR_BUTTON_FONTACTIVE         0xC618    // 195 195 195
 
 #endif

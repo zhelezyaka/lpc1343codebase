@@ -46,7 +46,8 @@
   #include "drivers/lcd/tft/drawing.h"  
   #include "drivers/lcd/tft/touchscreen.h"
   #include "drivers/lcd/tft/fonts/consolas9.h"
-  #include "drivers/lcd/tft/fonts/consolas16.h"
+  #include "drivers/lcd/tft/fonts/consolas11.h"
+  // #include "drivers/lcd/tft/fonts/consolas16.h"
 #endif
 
 /**************************************************************************/
@@ -91,6 +92,17 @@ int main (void)
     // Draw background
     drawRectangleFilled(0, 0, 239, 319, COLOR_BLACK);
 
+    // Show some buttons
+    drawRectangleFilled(0, 0, 239, 120, COLOR_LIGHTGRAY);
+    drawButton(20, 10, 200, 35, &consolas11ptFontInfo, 7, "Button (Released)", FALSE);
+    drawButton(20, 50, 200, 35, &consolas11ptFontInfo, 7, "Button (Pressed)", TRUE);
+
+    // Draw a simple progress bar and some smaller text
+    uint16_t lightGray = drawRGB24toRGB565(30, 30, 30);
+    drawString(30, 100, COLOR_DARKGRAY, &consolas9ptFontInfo, "Battery");
+    drawProgressBar(80, 95, 130, 15, COLOR_WHITE, COLOR_BLACK, COLOR_LIGHTGRAY, COLOR_BLUE, 90);
+
+    // Render a clock and some icons on the bottom if possible
     #ifdef CFG_SDCARD
       // Show five 48x48 icons along bottom for toolbar
       drawImageFromFile(0, 272, "/icon48.pic");
@@ -99,26 +111,13 @@ int main (void)
       drawImageFromFile(144, 272, "/icon48.pic");
       drawImageFromFile(192, 272, "/icon48.pic");
   
-      // Render a larger icon in the middle (128x128)
-      // drawImageFromFile(56, 120, "/consol~1.pic");
-  
       // Render the time using number icons
-      drawImageFromFile(0, 120, "/clock/0.pic");
-      drawImageFromFile(48, 120, "/clock/6.pic");
-      drawImageFromFile(96, 120, "/clock/colon.pic");
-      drawImageFromFile(144, 120, "/clock/2.pic");
-      drawImageFromFile(192, 120, "/clock/7.pic");
-    #endif
-  
-    // Show some buttons
-    // ToDo: Visual appearance needs to be improved, better corners and color etc.
-    drawButton(20, 10, 200, 35, &consolas16ptFontInfo, 16, "Button (Released)", FALSE);
-    drawButton(20, 50, 200, 35, &consolas16ptFontInfo, 16, "Button (Pressed)", TRUE);
-
-    // Draw a simple progress bar and some smaller text
-    uint16_t lightGray = drawRGB24toRGB565(0xCC, 0xCC, 0xCC);
-    drawString(10, 100, COLOR_WHITE, &consolas9ptFontInfo, "Battery");
-    drawProgressBar(100, 95, 130, 15, COLOR_WHITE, COLOR_BLACK, lightGray, COLOR_BLUE, 90);
+      drawImageFromFile(0, 160, "/clock/0.pic");
+      drawImageFromFile(48, 160, "/clock/6.pic");
+      drawImageFromFile(96, 160, "/clock/colon.pic");
+      drawImageFromFile(144, 160, "/clock/2.pic");
+      drawImageFromFile(192, 160, "/clock/7.pic");
+    #endif  
   #endif
 
   while (1)

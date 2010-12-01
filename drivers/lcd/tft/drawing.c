@@ -703,19 +703,32 @@ void drawButton(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const F
   // ToDo: Move color definitions to header file
 
   // Draw background
-  drawRectangleFilled(x + 1, y + 1, x + width - 1, y + height - 1, pressed ? COLOR_BUTTON_BACKGROUNDACTIVE : COLOR_BUTTON_BACKGROUND);
+  drawRectangleFilled(x + 1, y + 1, x + width - 1, y + height - 1, pressed ? COLOR_BUTTON_BACKGROUNDACTIVE1 : COLOR_BUTTON_BACKGROUND1);
+  drawRectangleFilled(x + 1, y + (height / 2), x + width - 1, y + height - 1, pressed ? COLOR_BUTTON_BACKGROUNDACTIVE2 : COLOR_BUTTON_BACKGROUND2);
 
   // Draw outer border
-  drawLine(x + 1, y, x + width - 1, y, COLOR_BUTTON_BORDER);
-  drawLine(x, y + 1, x, y + height - 1, COLOR_BUTTON_BORDER);
-  drawLine(x + 1, y + height, x + width - 1, y + height, COLOR_BUTTON_BORDER);
-  drawLine(x + width, y + height - 1, x + width, y + 1, COLOR_BUTTON_BORDER);
+//  drawLine(x + 1, y, x + width - 1, y, COLOR_BUTTON_BORDER);
+//  drawLine(x, y + 1, x, y + height - 1, COLOR_BUTTON_BORDER);
+//  drawLine(x + 1, y + height, x + width - 1, y + height, COLOR_BUTTON_BORDER);
+//  drawLine(x + width, y + height - 1, x + width, y + 1, COLOR_BUTTON_BORDER);
+  drawLine(x + 2, y, x + width - 2, y, COLOR_BUTTON_BORDER);
+  drawLine(x, y + 2, x, y + height - 2, COLOR_BUTTON_BORDER);
+  drawLine(x + 2, y + height, x + width - 2, y + height, COLOR_BUTTON_BORDER);
+  drawLine(x + width, y + height - 2, x + width, y + 2, COLOR_BUTTON_BORDER);
+  drawPixel(x + 1, y + 1, COLOR_BUTTON_BORDER);
+  drawPixel(x + width - 1, y + 1, COLOR_BUTTON_BORDER);
+  drawPixel(x + 1, y + height - 1, COLOR_BUTTON_BORDER);
+  drawPixel(x + width - 1, y + height - 1, COLOR_BUTTON_BORDER);
 
   // Draw highlights
-  drawLine(x + 1, y + 1, x + width - 1, y + 1, COLOR_BUTTON_HIGHLIGHT);
-  drawLine(x + width - 1, y + 1, x + width - 1, y + height - 1, COLOR_BUTTON_HIGHLIGHT);
-  drawLine(x + 1, y + 2, x + 1, y + height - 1, COLOR_BUTTON_HIGHLIGHTDARKER);
-  drawLine(x + 1, y + height - 1, x + width - 2, y + height - 1, COLOR_BUTTON_HIGHLIGHTDARKER);
+//  drawLine(x + 1, y + 1, x + width - 1, y + 1, COLOR_BUTTON_HIGHLIGHT);
+//  drawLine(x + width - 1, y + 1, x + width - 1, y + height - 1, COLOR_BUTTON_HIGHLIGHT);
+//  drawLine(x + 1, y + 2, x + 1, y + height - 1, COLOR_BUTTON_HIGHLIGHTDARKER);
+//  drawLine(x + 1, y + height - 1, x + width - 2, y + height - 1, COLOR_BUTTON_HIGHLIGHTDARKER);
+  drawLine(x + 2, y + 1, x + width - 2, y + 1, COLOR_BUTTON_HIGHLIGHT);
+  drawLine(x + width - 1, y + 2, x + width - 1, y + height - 2, COLOR_BUTTON_HIGHLIGHT);
+  drawLine(x + 1, y + 2, x + 1, y + height - 2, COLOR_BUTTON_HIGHLIGHTDARKER);
+  drawLine(x + 2, y + height - 1, x + width - 2, y + height - 1, COLOR_BUTTON_HIGHLIGHTDARKER);
 
   // Render text
   uint16_t textWidth = drawGetStringWidth(&*fontInfo, text);
