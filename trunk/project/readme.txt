@@ -30,6 +30,3 @@ cmd_tbl.h       Contains the master command list for the
 commands.c      Common helper functions for the command-line
                 interface.
 
-eeprom.c        Helper functions to simplify EEPROM access.
-
-

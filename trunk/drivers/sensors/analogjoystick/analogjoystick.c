@@ -44,6 +44,7 @@
 /**************************************************************************/
 #include "analogjoystick.h"
 #include "core/adc/adc.h"
+#include "core/gpio/gpio.h"
 
 static bool _joystickInitialised = false;
 

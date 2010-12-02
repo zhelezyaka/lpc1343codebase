@@ -109,6 +109,7 @@
               <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
             </file>
           </folder>
+          <file file_name="../../drivers/eeprom/eeprom.c"/>
         </folder>
         <folder Name="chibi" file_name="">
           <file file_name="../../drivers/chibi/chb.c">
@@ -157,12 +158,15 @@
             <folder Name="fonts">
               <file file_name="../../drivers/lcd/tft/fonts/consolas9.c">
                 <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
+                <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
               </file>
               <file file_name="../../drivers/lcd/tft/fonts/consolas11.c">
                 <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
+                <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
               </file>
               <file file_name="../../drivers/lcd/tft/fonts/consolas16.c">
                 <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
+                <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
               </file>
             </folder>
             <file file_name="../../drivers/lcd/tft/drawing.c">
@@ -171,6 +175,7 @@
             <file file_name="../../drivers/lcd/tft/touchscreen.c">
               <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
             </file>
+            <file file_name="../../drivers/lcd/tft/tscalibration.c"/>
           </folder>
           <file file_name="../../drivers/lcd/smallfonts.c">
             <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
@@ -207,7 +212,6 @@
       <file file_name="../../sysinit.c"/>
       <folder Name="project">
         <file file_name="../../project/commands.c"/>
-        <file file_name="../../project/eeprom.c"/>
         <folder Name="commands">
           <file file_name="../../project/commands/cmd_chibi_addr.c"/>
           <file file_name="../../project/commands/cmd_chibi_tx.c"/>

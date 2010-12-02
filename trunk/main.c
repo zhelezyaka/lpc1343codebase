@@ -45,9 +45,9 @@
 #ifdef CFG_TFTLCD
   #include "drivers/lcd/tft/drawing.h"  
   #include "drivers/lcd/tft/touchscreen.h"
+  #include "drivers/lcd/tft/tscalibration.h"
   #include "drivers/lcd/tft/fonts/consolas9.h"
   #include "drivers/lcd/tft/fonts/consolas11.h"
-  // #include "drivers/lcd/tft/fonts/consolas16.h"
 #endif
 
 /**************************************************************************/
@@ -118,6 +118,9 @@ int main (void)
       drawImageFromFile(144, 160, "/clock/2.pic");
       drawImageFromFile(192, 160, "/clock/7.pic");
     #endif  
+
+    // Calibrate touch screen
+    // tscalibrationStart();
   #endif
 
   while (1)

@@ -2,8 +2,6 @@
 /*! 
     @file     usbhid.c
     @author   K. Townsend (microBuilder.eu)
-    @date     22 March 2010
-    @version  0.10
 
     @section LICENSE
 
@@ -139,13 +137,8 @@ void usbHIDInit (void)
   HidDevInfo.idProduct = USB_PROD_ID;
   HidDevInfo.bcdDevice = USB_DEVICE; 
   HidDevInfo.StrDescPtr = (uint32_t)&USB_HIDStringDescriptor[0];
-  #ifdef CFG_USBHID_EXAMPLE  
-  HidDevInfo.InReportCount = 2;
-  HidDevInfo.OutReportCount = 2;
-  #else
   HidDevInfo.InReportCount = 1;
   HidDevInfo.OutReportCount = 1;
-  #endif
   HidDevInfo.SampleInterval = 0x20;
   HidDevInfo.InReport = usbHIDGetInReport;
   HidDevInfo.OutReport = usbHIDSetOutReport;
