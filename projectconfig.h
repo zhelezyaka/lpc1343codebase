@@ -160,6 +160,9 @@
 
     CFG_SDCARD                If this field is defined SD Card and FAT32
                               file system support will be included
+    CFG_SDCARD_READONLY       If this is set to 1, all commands to
+                              write to the SD card will be removed
+                              saving some flash space.
     CFG_SDCARD_CDPORT         The card detect port number
     CFG_SDCARD_CDPIN          The card detect pin number
 
@@ -171,6 +174,7 @@
     DEPENDENCIES:             SDCARD requires the use of SSP0.
     -----------------------------------------------------------------------*/
     #define CFG_SDCARD
+    #define CFG_SDCARD_READONLY         (1)   // Must be 0 or 1
     #define CFG_SDCARD_CDPORT           (3)
     #define CFG_SDCARD_CDPIN            (0)
 /*=========================================================================*/
