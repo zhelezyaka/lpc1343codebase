@@ -1,6 +1,8 @@
 v0.60 - Ongoing
 ===============
 
+- Added a flag to projectconfig.h to make FATFS read-only (to
+  save a couple KB when space is tight).
 - Moved 'project/eeprom.*' to 'drivers/eeprom' to add a level
   of abstraction to eeprom access throughout the code
 - Added a table to projectconfig.h to manage eeprom addresses.

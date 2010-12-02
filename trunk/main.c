@@ -98,7 +98,7 @@ int main (void)
     drawButton(20, 50, 200, 35, &consolas11ptFontInfo, 7, "Button (Pressed)", TRUE);
 
     // Draw a simple progress bar and some smaller text
-    uint16_t lightGray = drawRGB24toRGB565(30, 30, 30);
+    // uint16_t lightGray = drawRGB24toRGB565(30, 30, 30);
     drawString(30, 100, COLOR_DARKGRAY, &consolas9ptFontInfo, "Battery");
     drawProgressBar(80, 95, 130, 15, COLOR_WHITE, COLOR_BLACK, COLOR_LIGHTGRAY, COLOR_BLUE, 90);
 
