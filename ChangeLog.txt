@@ -1,6 +1,10 @@
 v0.60 - Ongoing
 ===============
 
+- Moved 'project/eeprom.*' to 'drivers/eeprom' to add a level
+  of abstraction to eeprom access throughout the code
+- Added a table to projectconfig.h to manage eeprom addresses.
+  First 256 byte of eeprom should be reserved for this.
 - Added 'drivers/lcd/tft/colors.h' to keep all common 16-bit
   RGB565 color definitions in one location
 - Added some sample images to 'tools/imgconv' that can be

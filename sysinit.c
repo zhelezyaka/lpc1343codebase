@@ -189,7 +189,7 @@ void systemInit()
   #ifdef CFG_TFTLCD
     lcdInit();
     tsInit();
-    drawTestPattern();
+    // drawTestPattern();
   #endif
 
   // Initialise SD Card

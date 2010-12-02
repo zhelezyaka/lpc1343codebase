@@ -36,8 +36,11 @@
 #include "touchscreen.h"
 
 #include "core/adc/adc.h"
+#include "core/gpio/gpio.h"
+#include "drivers/eeprom/eeprom.h"
 
 static bool _tsInitialised = FALSE;
+static bool _tsCalibrated = FALSE;
 
 /**************************************************************************/
 /*!
@@ -158,7 +161,6 @@ uint32_t tsReadY(void)
 
     @note   Thanks to 'rossum' and limor for this nifty little tidbit on
             debouncing the signals via pressure sensitivity (using Z)
-
 
     @section Example
 

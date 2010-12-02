@@ -39,12 +39,12 @@
 
 #include "lpc134x.h"
 #include "sysdefs.h"
-#include "drivers/chibi/chb_drvr.h"
 
 #define PLACE_IN_SRAM    __attribute__ ((section(".fast")))
 
 /**************************************************************************
-
+    PIN USAGE
+    -----------------------------------------------------------------------
     This table tries to give an indication of which GPIO pins and 
     peripherals are used by the available drivers and SW examples.  Only
     dedicated GPIO pins available on the LPC1343 Reference Board are shown
@@ -83,6 +83,15 @@
          reconfigured when you wakeup from deep-sleep.
 
  **************************************************************************/
+
+
+/*=========================================================================
+    FIRMWARE VERSION SETTINGS
+    -----------------------------------------------------------------------*/
+    #define CFG_FIRMWARE_VERSION_MAJOR            (0)
+    #define CFG_FIRMWARE_VERSION_MINOR            (6)
+    #define CFG_FIRMWARE_VERSION_REVISION         (0)
+/*=========================================================================*/
 
 
 /*=========================================================================
@@ -292,10 +301,53 @@
 
     CFG_I2CEEPROM             If defined, drivers for the onboard EEPROM
                               will be included during build
+    CFG_I2CEEPROM_SIZE        The number of bytes available on the EEPROM
 
     -----------------------------------------------------------------------*/
     #define CFG_I2CEEPROM
     #define CFG_I2CEEPROM_SIZE          (4096)
+/*=========================================================================*/
+
+
+/*=========================================================================
+    EEPROM MEMORY MAP
+    -----------------------------------------------------------------------
+    EEPROM is used to persist certain user modifiable values to make
+    sure that these changes remain in effect after a reset or hard
+    power-down.  The addresses in EEPROM for these various system
+    settings/values are defined below.  The first 256 bytes of EEPROM
+    are reserved for this (0x0000..0x00FF).
+
+          EEPROM Address (0x0000..0x00FF)
+          ===============================
+          0 1 2 3 4 5 6 7 8 9 A B C D E F
+    000x  x x x x x x x x . x x . . . . .   Chibi
+    001x  x x x x x x x x x x x x x . . .   Touch Screen Calibration
+    002x  . . . . . . . . . . . . . . . .
+    003x  . . . . . . . . . . . . . . . .
+    004x  . . . . . . . . . . . . . . . .
+    005x  . . . . . . . . . . . . . . . .
+    006x  . . . . . . . . . . . . . . . .
+    007x  . . . . . . . . . . . . . . . .
+    008x  . . . . . . . . . . . . . . . .
+    009x  . . . . . . . . . . . . . . . .
+    00Ax  . . . . . . . . . . . . . . . .
+    00Bx  . . . . . . . . . . . . . . . .
+    00Cx  . . . . . . . . . . . . . . . .
+    00Dx  . . . . . . . . . . . . . . . .
+    00Ex  . . . . . . . . . . . . . . . .
+    00Fx  . . . . . . . . . . . . . . . .
+
+    -----------------------------------------------------------------------*/
+    #define CFG_EEPROM_CHIBI_IEEEADDR           (uint16_t)(0x0000)    // 8
+    #define CFG_EEPROM_CHIBI_SHORTADDR          (uint16_t)(0x0009)    // 2
+    #define CFG_EEPROM_TOUCHSCREEN_CONFIGURED   (uint8_t) (0x0010)    // 1
+    #define CFG_EEPROM_TOUCHSCREEN_OFFSET_MIDX  (uint16_t)(0x0011)    // 2
+    #define CFG_EEPROM_TOUCHSCREEN_OFFSET_MIDY  (uint16_t)(0x0013)    // 2
+    #define CFG_EEPROM_TOUCHSCREEN_OFFSET_TLX   (uint16_t)(0x0015)    // 2
+    #define CFG_EEPROM_TOUCHSCREEN_OFFSET_TLY   (uint16_t)(0x0017)    // 2
+    #define CFG_EEPROM_TOUCHSCREEN_OFFSET_BRX   (uint16_t)(0x0019)    // 2
+    #define CFG_EEPROM_TOUCHSCREEN_OFFSET_BRY   (uint16_t)(0x001B)    // 2
 /*=========================================================================*/
 
 
@@ -335,34 +387,28 @@
     CHIBI WIRELESS STACK
     -----------------------------------------------------------------------
 
-    CFG_CHIBI                   If defined, the CHIBI wireless stack will be
-                                included during build.  Requires external HW.
-    CFG_CHIBI_MODE              The mode to use when receiving and transmitting
-                                with Chibi.  See chb_drvr.h for possible values
-    CFG_CHIBI_POWER             The power level to use when transmitting.  See
-                                chb_drvr.h for possible values
-    CFG_CHIBI_CHANNEL           802.15.4 Channel (ex. 1)
-    CFG_CHIBI_PANID             16-bit PAN Identifier (ex.0x1234)
-    CFG_CHIBI_BUFFERSIZE        The size of the message buffer in bytes.
-    CFG_CHIBI_EEPROM_IEEEADDR   Start location in EEPROM for the full IEEE
-                                address of this node
-    CFG_CHIBI_EEPROM_SHORTADDR  Start location in EEPROM for the short (16-bit)
-                                address of this node
+    CFG_CHIBI                 If defined, the CHIBI wireless stack will be
+                              included during build.  Requires external HW.
+    CFG_CHIBI_MODE            The mode to use when receiving and transmitting
+                              with Chibi.  See chb_drvr.h for possible values
+    CFG_CHIBI_POWER           The power level to use when transmitting.  See
+                              chb_drvr.h for possible values
+    CFG_CHIBI_CHANNEL         802.15.4 Channel (ex. 1)
+    CFG_CHIBI_PANID           16-bit PAN Identifier (ex.0x1234)
+    CFG_CHIBI_BUFFERSIZE      The size of the message buffer in bytes.
 
-    NOTE: CFG_CHIBI =           ~4.0 KB Flash and 184 bytes SRAM (-Os)
+    NOTE: CFG_CHIBI =         ~4.0 KB Flash and 184 bytes SRAM (-Os)
 
-    DEPENDENCIES:               Chibi requires the use of SSP0, and pins 
-                                1.8, 1.9, 1.10.  It also requires the
-                                presence of CFG_I2CEEPROM.
+    DEPENDENCIES:             Chibi requires the use of SSP0, and pins 
+                              1.8, 1.9, 1.10.  It also requires the
+                              presence of CFG_I2CEEPROM.
     -----------------------------------------------------------------------*/
     // #define CFG_CHIBI
-    #define CFG_CHIBI_MODE              (BPSK20_868MHZ)     // See chb_drvr.h for possible values
-    #define CFG_CHIBI_POWER             (CHB_PWR_EU2_5DBM)  // See chb_drvr.h for possible values
-    #define CFG_CHIBI_CHANNEL           (0)
+    #define CFG_CHIBI_MODE              (0)                 // OQPSK_868MHZ
+    #define CFG_CHIBI_POWER             (0xE9)              // CHB_PWR_EU2_3DBM
+    #define CFG_CHIBI_CHANNEL           (0)                 // 868-868.6 MHz
     #define CFG_CHIBI_PANID             (0x1234)
     #define CFG_CHIBI_BUFFERSIZE        (128)
-    #define CFG_CHIBI_EEPROM_IEEEADDR   (uint16_t)(0x0000)
-    #define CFG_CHIBI_EEPROM_SHORTADDR  (uint16_t)(0x0009)
 /*=========================================================================*/
 
 
@@ -379,12 +425,12 @@
                                 included for 3x6, 5x8, 7x8 and 8x8 fonts.
                                 This should only be enabled if these small
                                 fonts are required since there is already
-                                support for larger fonts generated using
+                                support for larger fonts generated with
                                 Dot Factory 
                                 http://www.pavius.net/downloads/tools/53-the-dot-factory
 
     NOTE: CFG_TFTLCD (ILI9325)  ~4.9 KB Flash (-Os, no small fonts, 
-                                consolas9 used)
+                                only consolas9 used)
 
     DEPENDENCIES:               TFTLCD requires the use of pins 1.8, 1.9,
                                 1.10, 1.11, 3.3 and 2.1-9.
@@ -471,7 +517,7 @@
   #ifdef CFG_SDCARD
     #error "CFG_CHIBI and CFG_SDCARD can not be defined at the same time. Only one SPI block is available on the LPC1343."
   #endif
-  #ifdef CFG_CHIBI
+  #ifdef CFG_TFTLCD
     #error "CFG_CHIBI and CFG_TFTLCD can not be defined at the same time since they both use pins 1.8, 1.9 and 1.10."
   #endif
   #ifdef CFG_PWM
