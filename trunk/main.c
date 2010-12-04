@@ -42,14 +42,6 @@
   #include "core/cmd/cmd.h"
 #endif
 
-#ifdef CFG_TFTLCD
-  #include "drivers/lcd/tft/drawing.h"  
-  #include "drivers/lcd/tft/touchscreen.h"
-  #include "drivers/lcd/tft/tscalibration.h"
-  #include "drivers/lcd/tft/fonts/consolas9.h"
-  #include "drivers/lcd/tft/fonts/consolas11.h"
-#endif
-
 /**************************************************************************/
 /*! 
     Approximates a 1 millisecond delay using "nop".  This is less
@@ -87,41 +79,6 @@ int main (void)
 {
   // Configure cpu and mandatory peripherals
   systemInit();
-
-  #ifdef CFG_TFTLCD
-    // Draw background
-    drawRectangleFilled(0, 0, 239, 319, COLOR_BLACK);
-
-    // Show some buttons
-    drawRectangleFilled(0, 0, 239, 120, COLOR_LIGHTGRAY);
-    drawButton(20, 10, 200, 35, &consolas11ptFontInfo, 7, "Button (Released)", FALSE);
-    drawButton(20, 50, 200, 35, &consolas11ptFontInfo, 7, "Button (Pressed)", TRUE);
-
-    // Draw a simple progress bar and some smaller text
-    // uint16_t lightGray = drawRGB24toRGB565(30, 30, 30);
-    drawString(30, 100, COLOR_DARKGRAY, &consolas9ptFontInfo, "Battery");
-    drawProgressBar(80, 95, 130, 15, COLOR_WHITE, COLOR_BLACK, COLOR_LIGHTGRAY, COLOR_BLUE, 90);
-
-    // Render a clock and some icons on the bottom if possible
-    #ifdef CFG_SDCARD
-      // Show five 48x48 icons along bottom for toolbar
-      drawImageFromFile(0, 272, "/icon48.pic");
-      drawImageFromFile(48, 272, "/icon48.pic");
-      drawImageFromFile(96, 272, "/icon48.pic");
-      drawImageFromFile(144, 272, "/icon48.pic");
-      drawImageFromFile(192, 272, "/icon48.pic");
-  
-      // Render the time using number icons
-      drawImageFromFile(0, 160, "/clock/0.pic");
-      drawImageFromFile(48, 160, "/clock/6.pic");
-      drawImageFromFile(96, 160, "/clock/colon.pic");
-      drawImageFromFile(144, 160, "/clock/2.pic");
-      drawImageFromFile(192, 160, "/clock/7.pic");
-    #endif  
-
-    // Calibrate touch screen
-    // tscalibrationStart();
-  #endif
 
   while (1)
   {

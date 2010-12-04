@@ -173,7 +173,7 @@
 
     DEPENDENCIES:             SDCARD requires the use of SSP0.
     -----------------------------------------------------------------------*/
-    #define CFG_SDCARD
+    // #define CFG_SDCARD
     #define CFG_SDCARD_READONLY         (1)   // Must be 0 or 1
     #define CFG_SDCARD_CDPORT           (3)
     #define CFG_SDCARD_CDPIN            (0)
@@ -200,8 +200,8 @@
     NOTE: CFG_USBHID =        ~0.5 KB Flash and 36 bytes SRAM (-Os)
     NOTE: CFG_USBCDC =        ~4.0 KB Flash and 272 bytes SRAM (-Os)
     -----------------------------------------------------------------------*/
-    // #define CFG_USBHID
-    #define CFG_USBCDC
+    #define CFG_USBHID
+    // #define CFG_USBCDC
     #define CFG_USBCDC_BAUDRATE         (115200)
     #define CFG_USBCDC_BUFSIZE          (64)
     #define CFG_USBCDC_INITTIMEOUT      (5000)
@@ -227,8 +227,8 @@
 
     NOTE: PRINTF Support =    ~350 bytes Flash (-Os)
     -----------------------------------------------------------------------*/
-    // #define CFG_PRINTF_UART
-    #define CFG_PRINTF_USBCDC
+    #define CFG_PRINTF_UART
+    // #define CFG_PRINTF_USBCDC
     // #define CFG_PRINTF_CWDEBUG
     #define CFG_PRINTF_NEWLINE          "\r\n"
 /*=========================================================================*/
@@ -254,7 +254,7 @@
                               this varies with the number of commands
                               present
     -----------------------------------------------------------------------*/
-    #define CFG_INTERFACE
+    // #define CFG_INTERFACE
     #define CFG_INTERFACE_MAXMSGSIZE    (80)
     #define CFG_INTERFACE_PROMPT        "LPC1343 >> "
 /*=========================================================================*/
@@ -439,7 +439,7 @@
     DEPENDENCIES:               TFTLCD requires the use of pins 1.8, 1.9,
                                 1.10, 1.11, 3.3 and 2.1-9.
     -----------------------------------------------------------------------*/
-    #define CFG_TFTLCD
+    // #define CFG_TFTLCD
     #define CFG_TFTLCD_INCLUDESMALLFONTS   (0)
 /*=========================================================================*/
 
