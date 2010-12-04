@@ -89,6 +89,12 @@ void tsInit(void)
 
   // Set initialisation flag
   _tsInitialised = TRUE;
+
+  // Check/Load calibration data
+  if (!_tsCalibrated)
+  {
+    // ToDo
+  }
 }
 
 /**************************************************************************/
@@ -217,6 +223,6 @@ void tsWaitForEvent(tsTouchData_t* data)
   }
   
   // Display results
-  printf("Touch Event: X = %d, Y = %d %s", (int)data->x, (int)data->y, CFG_PRINTF_NEWLINE);
+  // printf("Touch Event: X = %d, Y = %d %s", (int)data->x, (int)data->y, CFG_PRINTF_NEWLINE);
 }
 
