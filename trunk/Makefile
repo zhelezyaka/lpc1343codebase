@@ -25,7 +25,11 @@ OBJS += commands.o
 VPATH += project/commands
 OBJS += cmd_chibi_addr.o cmd_chibi_tx.o cmd_deepsleep.o cmd_hello.o
 OBJS += cmd_i2ceeprom_read.o cmd_i2ceeprom_write.o cmd_lm75b_gettemp.o
-OBJS += cmd_sysinfo.o cmd_sd_dir.o cmd_lcd_fill.o cmd_lcd_test.o
+OBJS += cmd_sysinfo.o cmd_sd_dir.o
+
+VPATH += project/commands/drawing
+OBJS += cmd_button.o cmd_circle.o cmd_clear.o cmd_line.o cmd_pixel.o
+OBJS += cmd_progress.o
 
 ##########################################################################
 # Optional driver files 

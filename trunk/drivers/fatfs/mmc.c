@@ -67,16 +67,18 @@ static void FCLK_SLOW()
     /* Divide by 10 (SSPCLKDIV also enables to SSP CLK) */
     SCB_SSP0CLKDIV = SCB_SSP0CLKDIV_DIV10;
   
-    /* (PCLK / (CPSDVSR Ã— [SCR+1])) = (7,200,000 / (2 x [8 + 1])) = 400 KHz */
-    uint32_t configReg = ( SSP_SSP0CR0_DSS_8BIT    // Data size = 8-bit
-                  | SSP_SSP0CR0_FRF_SPI       // Frame format = SPI
-                  | SSP_SSP0CR0_SCR_8);       // Serial clock rate = 8
+    /* (PCLK / (CPSDVSR * [SCR+1])) = (7,200,000 / (2 x [8 + 1])) = 400 KHz */
+    uint32_t configReg = ( SSP_SSP0CR0_DSS_8BIT     // Data size = 8-bit
+                  | SSP_SSP0CR0_FRF_SPI             // Frame format = SPI
+                  | SSP_SSP0CR0_SCR_8);             // Serial clock rate = 8
   
-    // Set clock polarity
-    configReg &= ~SSP_SSP0CR0_CPOL_MASK;    // Clock polarity = Low between frames
-  
-    // Set edge transition
-    configReg &= ~SSP_SSP0CR0_CPHA_MASK;    // Clock out phase = Leading edge clock transition
+    // Set clock polarity (low between frames)
+    // configReg &= ~SSP_SSP0CR0_CPOL_MASK;    
+    // configReg |= SSP_SSP0CR0_CPOL_LOW;
+
+    // Set edge transition (leading edge)
+    // configReg &= ~SSP_SSP0CR0_CPHA_MASK;
+    // configReg |= SSP_SSP0CR0_CPHA_FIRST;
   
     // Assign config values to SSP0CR0
     SSP_SSP0CR0 = configReg;
@@ -95,16 +97,18 @@ static void FCLK_FAST()
     /* Divide by 1 (SSPCLKDIV also enables to SSP CLK) */
     SCB_SSP0CLKDIV = SCB_SSP0CLKDIV_DIV1;
   
-    /* (PCLK / (CPSDVSR — [SCR+1])) = (72,000,000 / (2 * [1 + 1])) = 18.0 MHz */
-    uint32_t configReg = ( SSP_SSP0CR0_DSS_8BIT    // Data size = 8-bit
-                  | SSP_SSP0CR0_FRF_SPI       // Frame format = SPI
-                  | SSP_SSP0CR0_SCR_1);       // Serial clock rate = 1
+    /* (PCLK / (CPSDVSR * [SCR+1])) = (72,000,000 / (2 * [1 + 1])) = 18.0 MHz */
+    uint32_t configReg = ( SSP_SSP0CR0_DSS_8BIT   // Data size = 8-bit
+                  | SSP_SSP0CR0_FRF_SPI           // Frame format = SPI
+                  | SSP_SSP0CR0_SCR_1);           // Serial clock rate = 1
   
-    // Set clock polarity
-    configReg &= ~SSP_SSP0CR0_CPOL_MASK;    // Clock polarity = Low between frames
-  
-    // Set edge transition
-    configReg &= ~SSP_SSP0CR0_CPHA_MASK;    // Clock out phase = Leading edge clock transition
+    // Set clock polarity (low between frames)
+    // configReg &= ~SSP_SSP0CR0_CPOL_MASK;    
+    // configReg |= SSP_SSP0CR0_CPOL_LOW;
+
+    // Set edge transition (leading edge)
+    // configReg &= ~SSP_SSP0CR0_CPHA_MASK;
+    // configReg |= SSP_SSP0CR0_CPHA_FIRST;
   
     // Assign config values to SSP0CR0
     SSP_SSP0CR0 = configReg;
@@ -358,8 +362,10 @@ DSTATUS disk_initialize (
         // Init SSP (clock low between frames, transition on leading edge)      
         sspInit(0, sspClockPolarity_Low, sspClockPhase_RisingEdge); 
     
-        gpioSetDir( SSP0_CSPORT, SSP0_CSPIN, 1 ); /* CS */
-        gpioSetDir( CFG_SDCARD_CDPORT, CFG_SDCARD_CDPIN, 0 ); /* Card Detect */
+        gpioSetDir( SSP0_CSPORT, SSP0_CSPIN, gpioDirection_Output ); /* CS */
+        gpioSetDir( CFG_SDCARD_CDPORT, CFG_SDCARD_CDPIN, gpioDirection_Input ); /* Card Detect */
+        gpioSetPullup (&IOCON_PIO3_0, gpioPullupMode_Inactive);
+
 
 	if (drv) return STA_NOINIT;			/* Supports only single drive */
 	if (Stat & STA_NODISK) return Stat;	/* No card in the socket */
@@ -642,33 +648,35 @@ DRESULT disk_ioctl (
 
 void disk_timerproc (void)
 {
-	static BYTE pv;
-	BYTE n;
+  // static BYTE pv;
+  BYTE n;
   // BYTE s;
 
+  n = Timer1;						/* 100Hz decrement timer */
+  if (n) Timer1 = --n;
+  n = Timer2;
+  if (n) Timer2 = --n;
 
-	n = Timer1;						/* 100Hz decrement timer */
-	if (n) Timer1 = --n;
-	n = Timer2;
-	if (n) Timer2 = --n;
-
-	n = pv;
-	// pv = SOCKPORT & (SOCKWP | SOCKINS);	/* Sample socket switch */
-	pv = 0; // gpioGetValue( 0, 1 );
-
-//	if (n == pv) {					/* Have contacts stabled? */
-//		s = Stat;
-//
-//		/* write protect NOT supported */
-//
-//		/* check card detect */
-//		if (pv)			       /* (Socket empty) */
-//			s |= (STA_NODISK | STA_NOINIT);
-//		else				       /* (Card inserted) */
-//			s &= ~STA_NODISK;
-//
-//		Stat = s;
-//	}
+  //  n = pv;
+  //  pv = 0;
+  //  // pv = SOCKPORT & (SOCKWP | SOCKINS);	/* Sample socket switch */
+  //  pv = gpioGetValue(CFG_SDCARD_CDPORT, CFG_SDCARD_CDPIN);
+  //  
+  //  /* Have contacts stabled? */
+  //  if (n == pv) 
+  //  {
+  //    s = Stat;
+  //    
+  //    /* write protect NOT supported */
+  //    
+  //    /* check card detect */
+  //    if (!pv)			       /* (Socket empty) */
+  //            s |= (STA_NODISK | STA_NOINIT);
+  //    else				       /* (Card inserted) */
+  //            s &= ~STA_NODISK;
+  //    
+  //    Stat = s;
+  //  }
 }
 
 

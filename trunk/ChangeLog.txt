@@ -1,6 +1,9 @@
 v0.60 - Ongoing
 ===============
 
+- Modified Chibi to use 16-bit timer 0 for us delays (more accurate)
+- Added a number of commands to '/projects/commands/drawing' for
+  basic TFT LCD operations.  Removed 'lcd-test.c' and 'lcd-fill.c'.
 - Added a flag to projectconfig.h to make FATFS read-only (to
   save a couple KB when space is tight).
 - Moved 'project/eeprom.*' to 'drivers/eeprom' to add a level

@@ -73,7 +73,7 @@
     USB         .     .     .     X       .       . . . .     .
     STEPPER     .     .     X     .       .       . . . .     .
     PN532       .     .     .     .       .       . . . .     X
-    CHIBI       .     .     .     .       X       . . . .     .
+    CHIBI       x     .     .     .       X       . . . .     .
     TFTLCD      .     .     .     .       .       X X X X     .
     ST7565      .     .     .     .       .       . . . .     .
     INTERFACE   .     .     .     .       .       . . . .     X
@@ -200,8 +200,8 @@
     NOTE: CFG_USBHID =        ~0.5 KB Flash and 36 bytes SRAM (-Os)
     NOTE: CFG_USBCDC =        ~4.0 KB Flash and 272 bytes SRAM (-Os)
     -----------------------------------------------------------------------*/
-    #define CFG_USBHID
-    // #define CFG_USBCDC
+    // #define CFG_USBHID
+    #define CFG_USBCDC
     #define CFG_USBCDC_BAUDRATE         (115200)
     #define CFG_USBCDC_BUFSIZE          (64)
     #define CFG_USBCDC_INITTIMEOUT      (5000)
@@ -227,8 +227,8 @@
 
     NOTE: PRINTF Support =    ~350 bytes Flash (-Os)
     -----------------------------------------------------------------------*/
-    #define CFG_PRINTF_UART
-    // #define CFG_PRINTF_USBCDC
+    // #define CFG_PRINTF_UART
+    #define CFG_PRINTF_USBCDC
     // #define CFG_PRINTF_CWDEBUG
     #define CFG_PRINTF_NEWLINE          "\r\n"
 /*=========================================================================*/
@@ -254,7 +254,7 @@
                               this varies with the number of commands
                               present
     -----------------------------------------------------------------------*/
-    // #define CFG_INTERFACE
+    #define CFG_INTERFACE
     #define CFG_INTERFACE_MAXMSGSIZE    (80)
     #define CFG_INTERFACE_PROMPT        "LPC1343 >> "
 /*=========================================================================*/
@@ -322,6 +322,8 @@
     settings/values are defined below.  The first 256 bytes of EEPROM
     are reserved for this (0x0000..0x00FF).
 
+    CFG_EEPROM_RESERVED       The last byte of reserved EEPROM memory
+
           EEPROM Address (0x0000..0x00FF)
           ===============================
           0 1 2 3 4 5 6 7 8 9 A B C D E F
@@ -343,6 +345,7 @@
     00Fx  . . . . . . . . . . . . . . . .
 
     -----------------------------------------------------------------------*/
+    #define CFG_EEPROM_RESERVED                 (0x00FF)              // Protect first 256 bytes of memory
     #define CFG_EEPROM_CHIBI_IEEEADDR           (uint16_t)(0x0000)    // 8
     #define CFG_EEPROM_CHIBI_SHORTADDR          (uint16_t)(0x0009)    // 2
     #define CFG_EEPROM_TOUCHSCREEN_CONFIGURED   (uint8_t) (0x0010)    // 1
@@ -403,9 +406,10 @@
 
     NOTE: CFG_CHIBI =         ~4.0 KB Flash and 184 bytes SRAM (-Os)
 
-    DEPENDENCIES:             Chibi requires the use of SSP0, and pins 
-                              1.8, 1.9, 1.10.  It also requires the
-                              presence of CFG_I2CEEPROM.
+    DEPENDENCIES:             Chibi requires the use of SSP0, 16-bit
+                              timer 0 (for us delays) and pins 1.8, 1.9,
+                              and 1.10.  It also requires the presence of
+                              CFG_I2CEEPROM.
     -----------------------------------------------------------------------*/
     // #define CFG_CHIBI
     #define CFG_CHIBI_MODE              (0)                 // OQPSK_868MHZ

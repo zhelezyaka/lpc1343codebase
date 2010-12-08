@@ -69,6 +69,13 @@ void cmd_i2ceeprom_write(uint8_t argc, char **argv)
   // Address seems to be OK
   addr = (uint16_t)addr32;
 
+  // Make sure this isn't in the reserved system config space
+  if (addr <= CFG_EEPROM_RESERVED)
+  {
+    printf("ERROR: Can not write to reserved system space (0x%04X-0x%04X)%s", 0, CFG_EEPROM_RESERVED, CFG_PRINTF_NEWLINE);
+    return;
+  }
+
   // Try to convert supplied data to an integer
   int32_t val32;
   getNumber (argv[1], &val32);

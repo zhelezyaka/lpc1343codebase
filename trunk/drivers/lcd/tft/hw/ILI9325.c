@@ -481,7 +481,14 @@ void lcdDrawImageFromFile(uint16_t x, uint16_t y, char *filename)
 /*************************************************/
 uint16_t lcdGetPixel(uint16_t x, uint16_t y)
 {
+  uint16_t preFetch = 0;
+
   ili9325SetCursor(x, y);
   ili9325WriteCmd(0x0022);
-  return (ili9325ReadData());
+  preFetch = ili9325ReadData();
+
+  // Eeek ... why does this need to be done twice for a proper value?!?
+  ili9325SetCursor(x, y);
+  ili9325WriteCmd(0x0022);
+  return ili9325ReadData();
 }

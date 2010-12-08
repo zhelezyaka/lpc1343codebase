@@ -290,7 +290,7 @@ void drawString(uint16_t x, uint16_t y, uint16_t color, const FONT_INFO *fontInf
   currentX = x;
 
   // while not NULL
-  while (*str != 0)
+  while (*str != '\0')
   {
     // get character to output
     characterToOutput = *str;
@@ -723,10 +723,13 @@ void drawButton(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const F
   drawLine(x + 2, y + height - 1, x + width - 2, y + height - 1, COLOR_BUTTON_HIGHLIGHTDARKER);
 
   // Render text
-  uint16_t textWidth = drawGetStringWidth(&*fontInfo, text);
-  uint16_t xStart = x + (width / 2) - (textWidth / 2);
-  uint16_t yStart = y + (height / 2) - (fontHeight / 2) + 1;
-  drawString(xStart, yStart, pressed ? COLOR_BUTTON_FONTACTIVE : COLOR_BUTTON_FONT, &*fontInfo, text);
+  if (text != NULL)
+  {
+    uint16_t textWidth = drawGetStringWidth(&*fontInfo, text);
+    uint16_t xStart = x + (width / 2) - (textWidth / 2);
+    uint16_t yStart = y + (height / 2) - (fontHeight / 2) + 1;
+    drawString(xStart, yStart, pressed ? COLOR_BUTTON_FONTACTIVE : COLOR_BUTTON_FONT, &*fontInfo, text);
+  }
 }
 
 #ifdef CFG_SDCARD

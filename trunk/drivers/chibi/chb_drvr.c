@@ -39,6 +39,7 @@
 #include "chb_eeprom.h"
 
 #include "core/systick/systick.h"
+#include "core/timer16/timer16.h"
 
 /**************************************************************************/
 /*!
@@ -67,14 +68,31 @@ static U8 chb_get_status()
 /**************************************************************************/
 static void chb_delay_us(U16 usec)
 {
-  U8 ticks = CFG_CPU_CCLK / 1000000;
+  // Determine maximum delay using a 16 bit timer
+  // ToDo: Move this to a macro or fixed value!
+  uint32_t maxus = 0xFFFF / (CFG_CPU_CCLK / 1000000);
+
+  // Check if delay can be done in one operation
+  if (usec <= maxus)
+  {
+    timer16DelayUS(0, usec);
+    return;
+  }
+
+  // Split delay into several steps (to stay within limit of 16-bit timer)
   do
   {
-    do 
+    if (usec >= maxus)
     {
-      __asm volatile("nop");
-    } while (--ticks);
-  } while (--usec);
+      timer16DelayUS(0, maxus);
+      usec -= maxus;
+    }
+    else
+    {
+      timer16DelayUS(0, usec);
+      usec = 0;
+    }
+  } while (usec > 0);
 }
 
 /**************************************************************************/
@@ -759,6 +777,10 @@ void chb_drvr_init()
 
     // config SPI for at86rf230 access
     chb_spi_init();
+
+    // Setup 16-bit timer 0 (used for us delays)
+    timer16Init(0, 0xFFFF);
+    timer16Enable(0);
 
     // Set sleep and reset as output
     gpioSetDir(CHB_SLPTRPORT, CHB_SLPTRPIN, 1);

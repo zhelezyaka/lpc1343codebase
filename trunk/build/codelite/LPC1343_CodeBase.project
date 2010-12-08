@@ -218,11 +218,17 @@
       <File Name="../../project/commands/cmd_hello.c"/>
       <File Name="../../project/commands/cmd_i2ceeprom_read.c"/>
       <File Name="../../project/commands/cmd_i2ceeprom_write.c"/>
-      <File Name="../../project/commands/cmd_lcd_fill.c"/>
-      <File Name="../../project/commands/cmd_lcd_test.c"/>
       <File Name="../../project/commands/cmd_lm75b_gettemp.c"/>
       <File Name="../../project/commands/cmd_sd_dir.c"/>
       <File Name="../../project/commands/cmd_sysinfo.c"/>
+      <VirtualDirectory Name="drawing">
+        <File Name="../../project/commands/drawing/cmd_button.c"/>
+        <File Name="../../project/commands/drawing/cmd_circle.c"/>
+        <File Name="../../project/commands/drawing/cmd_clear.c"/>
+        <File Name="../../project/commands/drawing/cmd_line.c"/>
+        <File Name="../../project/commands/drawing/cmd_pixel.c"/>
+        <File Name="../../project/commands/drawing/cmd_progress.c"/>
+      </VirtualDirectory>
     </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
