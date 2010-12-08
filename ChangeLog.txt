@@ -1,28 +1,37 @@
-v0.60 - Ongoing
-===============
+v0.60 - 8 December 2010
+=======================
 
-- Modified Chibi to use 16-bit timer 0 for us delays (more accurate)
-- Added a number of commands to '/projects/commands/drawing' for
-  basic TFT LCD operations.  Removed 'lcd-test.c' and 'lcd-fill.c'.
-- Added a flag to projectconfig.h to make FATFS read-only (to
-  save a couple KB when space is tight).
-- Moved 'project/eeprom.*' to 'drivers/eeprom' to add a level
-  of abstraction to eeprom access throughout the code
-- Added a table to projectconfig.h to manage eeprom addresses.
-  First 256 byte of eeprom should be reserved for this.
-- Added 'drivers/lcd/tft/colors.h' to keep all common 16-bit
-  RGB565 color definitions in one location
-- Added some sample images to 'tools/imgconv' that can be
-  used to render a basic clock on a TFT LCD screen (using
-  drawImageFromFile in 'drivers/lcd/tft/drawing.c')
-- Modified the makefile to automatically run './lpcrc' post-build
+- Modified FCLK_FAST() in 'drivers/fatfs/mmc.c' to set
+  the max speed to 6.0MHz for improved reliability.
+  Tested with a 4GB microSD card, 300KB/s can be read
+  using a 512 byte read buffer.
+- Modified Chibi to use 16-bit timer 0 for us delays
+  (more accurate)
+- Added a number of commands to
+  '/projects/commands/drawing' for basic TFT LCD
+  operations.  Removed 'lcd-test.c' and 'lcd-fill.c'.
+- Added a flag to projectconfig.h to make FATFS read-only
+  (to save a couple KB when space is tight).
+- Moved 'project/eeprom.*' to 'drivers/eeprom' to add a
+  level of abstraction to eeprom access throughout the code
+- Added a table to projectconfig.h to manage eeprom
+  addresses. First 256 byte of eeprom should be reserved
+  for this.
+- Added 'drivers/lcd/tft/colors.h' to keep all common
+  16-bit RGB565 color definitions in one location
+- Added some sample images to 'tools/imgconv' that can
+  be used to render a basic clock on a TFT LCD screen
+  (using drawImageFromFile in 'drivers/lcd/tft/drawing.c')
+- Modified the makefile to automatically run './lpcrc' 
+  post-build
 - Added drawButton() to 'drivers/lcd/tft/drawing.c'
-- Updated 'drivers/lcd/tft/touchscreen.c' to do basic debouncing.
-  tsReadZ() was added to detect pressure on the touch screen, and
-  tsWaitForEvent() will only exit when the pressure passes a minimum
-  threshold.  (Thanks to Limor for pointing out some code by Rossum
-  for this.)
-- Fixed some off-by-one pixel errors in cmd-test and elsewhere
+- Updated 'drivers/lcd/tft/touchscreen.c' to do basic
+  debouncing.  tsReadZ() was added to detect pressure on
+  the touch screen, and tsWaitForEvent() will only exit
+  when the pressure passes a minimum threshold.  (Thanks
+  to Limor for pointing out some code by Rossum for this.)
+- Fixed some off-by-one pixel errors in cmd-test and
+  elsewhere
 
 v0.51 - 27 November 2010
 ========================

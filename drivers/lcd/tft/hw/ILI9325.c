@@ -461,16 +461,16 @@ void lcdDrawImageFromFile(uint16_t x, uint16_t y, char *filename)
     if (res == FR_OK)
     {
       // Try to open the requested file
-      FIL logFile;  
-      if(f_open(&logFile, filename, FA_READ | FA_OPEN_EXISTING) != FR_OK) 
+      FIL imgfile;  
+      if(f_open(&imgfile, filename, FA_READ | FA_OPEN_EXISTING) != FR_OK) 
       {  
         // Unable to open the requested file
         return;
       }
       // Render the specified image
-      ili9325ImageFromFIL(x, y, logFile);
+      ili9325ImageFromFIL(x, y, imgfile);
       // Close file
-      f_close(&logFile);
+      f_close(&imgfile);
       // Unmount drive
       f_mount(0,0); 
     }

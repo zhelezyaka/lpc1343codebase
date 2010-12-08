@@ -76,11 +76,12 @@
     CHIBI       x     .     .     .       X       . . . .     .
     TFTLCD      .     .     .     .       .       X X X X     .
     ST7565      .     .     .     .       .       . . . .     .
-    INTERFACE   .     .     .     .       .       . . . .     X
+    INTERFACE   .     .     .     .       .       . . . .     X[2]
 
     [1]  PMU uses 32-bit Timer 0 for SW wakeup from deep-sleep.  This timer
          can safely be used by other peripherals, but may need to be
          reconfigured when you wakeup from deep-sleep.
+    [2]  INTERFACE can be configured to use either USBCDC or UART
 
  **************************************************************************/
 
@@ -169,7 +170,8 @@
     NOTE:                     All config settings for FAT32 are defined
                               in ffconf.h
 
-    NOTE: CFG_SDCARD =        ~7.2 KB Flash and 0.6 KB SRAM (-Os)
+    BENCHMARK:                With SPI set to 6.0MHz, FATFS can read
+                              ~300KB/s (w/512 byte read buffer)
 
     DEPENDENCIES:             SDCARD requires the use of SSP0.
     -----------------------------------------------------------------------*/
