@@ -1,0 +1,103 @@
+v0.60 - 8 December 2010
+=======================
+
+- Added a number of CLI commands for the TFT LCD
+  (see 'project/commands/drawing')
+- Modified FCLK_FAST() in 'drivers/fatfs/mmc.c' to set
+  the max speed to 6.0MHz for improved reliability.
+  Tested with a 4GB microSD card, 300KB/s can be read
+  using a 512 byte read buffer.
+- Modified Chibi to use 16-bit timer 0 for us delays
+  (more accurate)
+- Added a number of commands to
+  '/projects/commands/drawing' for basic TFT LCD
+  operations.  Removed 'lcd-test.c' and 'lcd-fill.c'.
+- Added a flag to projectconfig.h to make FATFS read-only
+  (to save a couple KB when space is tight).
+- Moved 'project/eeprom.*' to 'drivers/eeprom' to add a
+  level of abstraction to eeprom access throughout the code
+- Added a table to projectconfig.h to manage eeprom
+  addresses. First 256 byte of eeprom should be reserved
+  for this.
+- Added 'drivers/lcd/tft/colors.h' to keep all common
+  16-bit RGB565 color definitions in one location
+- Added some sample images to 'tools/imgconv' that can
+  be used to render a basic clock on a TFT LCD screen
+  (using drawImageFromFile in 'drivers/lcd/tft/drawing.c')
+- Modified the makefile to automatically run './lpcrc' 
+  post-build
+- Added drawButton() to 'drivers/lcd/tft/drawing.c'
+- Updated 'drivers/lcd/tft/touchscreen.c' to do basic
+  debouncing.  tsReadZ() was added to detect pressure on
+  the touch screen, and tsWaitForEvent() will only exit
+  when the pressure passes a minimum threshold.  (Thanks
+  to Limor for pointing out some code by Rossum for this.)
+- Fixed some off-by-one pixel errors in cmd-test and
+  elsewhere
+
+v0.51 - 27 November 2010
+========================
+
+- Added simple RSA encryption/decryption driver.  Currently limited to
+  using 64-bit and 32-bit numbers in key pairs, which isn't terribly secure,
+  but allows much smaller code size than if huge number support was included.
+- Added a driver for the MCP4725 I2C DAC (see "drivers/dac/mcp4725").
+- Moved 'rom_drivers.h' from 'core/usbhid-rom' to 'core' since it can be used
+  for usbmsd-rom as well if it is implemented at a later date.
+- ili9325ReadData() added to ili9325.c by Adafruit Industries (thanks!)
+- Modified FCLK_FAST() in 'drivers/fatfs/mmc.c' to set fast SPI speed
+  to 18MHz instead of the previous 4MHz.  This allows for slightly faster
+  rendering of bitmap images from SD cards, amongst other things.
+- Fixed ILI9325 driver to use 0,0 based pixels and not 1x1, meaning the
+  pixel co-ordinates are 0..239 for X and 0..319 for Y.  There may still be
+  some off-by-one pixel issues that need to be further tested.
+
+v0.50 - 26 October 2010
+=======================
+
+- Moved command.c and cmd_tbl.h to /project to try to keep all 
+  project-specific files in one location to improve code-sharing and make
+  upgrading easier
+- Created seperate .c files for every command for the command-line interface
+  to make it easier to maintain and share code between projects.  All commands
+  listed in cmd_tbl.h are now stored in their own files in /project/commands 
+  (ex.: "/project/commands/cmd_hello.c", etc.)
+- Added a CLI command to demonstrate how to draw to the ILI9325 TFT LCD
+- Added a CLI command to show the contents of any directory from the SD card 
+  (/project/commmands/cmd_sd_dir.c)
+- Added a CLI command showing how to enter deep-sleep and exit with a SW
+  wakeup (/project/commands/cmd_deepsleep.c).  Please note that the wakeup
+  will not work if you are using USB for the CLI.  To see the wakeup message,
+  you must use UART for the CLI, which is selected by uncommenting
+  CFG_PRINTF_UART in projectconfig.h
+- Fixed pmu.c to set the core clock back to an appropriate state after wakeup
+- Added simple wrapper for eeprom access (projects/eeprom.c)
+- Reorganised drivers/lcd to take into account non TFT LCD displays.
+- Added a preliminary (experimental) driver for 128x64 pixel ST7565-based
+  bitmap LCDs (ex: Adafruit Industries - http://bit.ly/9xj5vw) ... based on a
+  driver from Limor Fried at Adafruit
+- Numerous bug fixes added by Roel Verdult (Linux compatibility, GCC warnings, etc.)
+- Added stub files for PN532 driver (/drivers/nfc/pn532), and added CFG_PN532 to
+  projectconfig.h as an option
+- Added a simple pwm example using 16-bit timer 1 and p1.9 (MAT0) for the output.  PWM can be used
+  to drive stepper motors, or to dim LEDs by adjusting the duty-cycle, etc.  The example can be
+  found in "/core/pwm"
+- Added a bi-polar stepper motor driver based on the Arduino library.  Basic position data was added
+  to detece deviation from the 'Home' position and to retrieve the spindle's current angle.  See
+  "drivers/motor/stepper" for more information.
+- Added test firmware for the UART and USBCDC CLI (tools/testfirmware)
+- Added a table to projectconfig.h to try to keep track of pin and peripherals
+  usage by drivers and the included SW examples.
+- Reorganised some pins used by drivers to avoid pin conflicts.
+- Modified core/timer16/timer16.c to allow PWM output to be stopped after a
+  certain number of pulses have been sent out.
+
+  KNOWN ISSUES
+  
+- USB CDC Output is brutally slow because of an endpoint issue with BULKIN/BULKOUT.
+  This is a known issue, but we haven't had the time to find a solution.  This will be
+  a high-priority update in the next revision.
+- The SPI code needs to be modified to allow several SPI devices to be safely
+  connected on the same bus.  At present, this has not been tested since the
+  SSP/SPI blocks are used exclusively in the current drivers. 
+  
