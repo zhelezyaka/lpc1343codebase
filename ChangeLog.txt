@@ -1,6 +1,8 @@
 v0.60 - 8 December 2010
 =======================
 
+- Added a number of CLI commands for the TFT LCD
+  (see 'project/commands/drawing')
 - Modified FCLK_FAST() in 'drivers/fatfs/mmc.c' to set
   the max speed to 6.0MHz for improved reliability.
   Tested with a 4GB microSD card, 300KB/s can be read
