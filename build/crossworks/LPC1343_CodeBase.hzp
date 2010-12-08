@@ -222,8 +222,26 @@
           <file file_name="../../project/commands/cmd_lm75b_gettemp.c"/>
           <file file_name="../../project/commands/cmd_sd_dir.c"/>
           <file file_name="../../project/commands/cmd_sysinfo.c"/>
-          <file file_name="../../project/commands/cmd_lcd_fill.c"/>
-          <file file_name="../../project/commands/cmd_lcd_test.c"/>
+          <folder Name="drawing">
+            <file file_name="../../project/commands/drawing/cmd_button.c"/>
+            <file file_name="../../project/commands/drawing/cmd_circle.c">
+              <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+              <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+            </file>
+            <file file_name="../../project/commands/drawing/cmd_line.c">
+              <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+              <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+            </file>
+            <file file_name="../../project/commands/drawing/cmd_pixel.c">
+              <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+              <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+            </file>
+            <file file_name="../../project/commands/drawing/cmd_progress.c">
+              <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+              <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+            </file>
+            <file file_name="../../project/commands/drawing/cmd_clear.c"/>
+          </folder>
         </folder>
         <file file_name="../../project/cmd_tbl.h"/>
       </folder>

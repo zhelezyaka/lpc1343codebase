@@ -51,8 +51,14 @@ void cmd_hello(uint8_t argc, char **argv);
 void cmd_sysinfo(uint8_t argc, char **argv);
 
 #ifdef CFG_TFTLCD
-void cmd_lcd_test(uint8_t argc, char **argv);
-void cmd_lcd_fill(uint8_t argc, char **argv);
+void cmd_button(uint8_t argc, char **argv);
+void cmd_circle(uint8_t argc, char **argv);
+void cmd_clear(uint8_t argc, char **argv);
+void cmd_clear24(uint8_t argc, char **argv);
+void cmd_line(uint8_t argc, char **argv);
+void cmd_pixel(uint8_t argc, char **argv);
+void cmd_progress(uint8_t argc, char **argv);
+void cmd_getpixel(uint8_t argc, char **argv);
 #endif
 
 #ifdef CFG_CHIBI
@@ -75,6 +81,7 @@ void cmd_sd_dir(uint8_t argc, char **argv);
 #endif
 
 void cmd_deepsleep(uint8_t argc, char **argv);
+
 /**************************************************************************/
 /*! 
     Command list for the command-line interpreter and the name of the
@@ -88,26 +95,32 @@ cmd_t cmd_tbl[] =
 {
   // command name, min args, max args, hidden, function name, command description, syntax description
   { "help",           0,  0,  0, cmd_help              , "Displays a list of all available commands"           , "'help' has no parameters" },
-  { "hello",          0,  1,  0, cmd_hello             , "Displays \'Hello World!\'"                             , "'hello [<name>]'" },
+  { "hello",          0,  1,  0, cmd_hello             , "Displays \'Hello World!\'"                           , "'hello [<name>]'" },
   { "sysinfo",        0,  0,  0, cmd_sysinfo           , "Displays current system configuration settings"      , "'sysinfo' has no parameters" },
 
   #ifdef CFG_TFTLCD
-  { "lcd-test",       0,  0,  0, cmd_lcd_test          , "LCD - Display a test pattern on the LCD"             , "'lcd-test' has no parameters" },
-  { "lcd-fill",       1,  1,  0, cmd_lcd_fill          , "LCD - Fills the screen with a 16-bit (RGB565) color" , "'lcd-fill <0xFFFF>'" },
+  { "btn",            5,  99, 0, cmd_button            , "Draws a button"                                      , "'btn <x> <y> <w> <h> <enabled> [<text>]'" },
+  { "circle",         4,  4,  0, cmd_circle            , "Draws a circle"                                      , "'circle <x> <y> <radius> <color>'" },
+  { "clr",            1,  1,  0, cmd_clear             , "Fills the screen with a 16-bit (RGB565) color"       , "'clr <color>'" },
+  { "clr24",          3,  3,  0, cmd_clear24           , "Fills the screen with a 24-bit (RGB) color"          , "'clr24 <r> <g> <b>'" },
+  { "gp",             2,  2,  0, cmd_getpixel          , "Reads a single pixel from the LCD"                   , "'gp <x> <y>'" },
+  { "line",           5,  5,  0, cmd_line              , "Draws a line"                                        , "'line <x1> <y1> <x2> <y2> <color>'" },
+  { "p",              3,  3,  0, cmd_pixel             , "Draws a single pixel"                                , "'p <x> <y> <color>'" },
+  { "progress",       8,  8,  0, cmd_progress          , "Draws a progress bar"                                , "'progress <x> <y> <w> <h> <percent> <bordercolor> <backgroundcolor> <fillcolor>'" },
   #endif
 
   #ifdef CFG_CHIBI
-  { "chb-addr",       0,  1,  0, cmd_chibi_addr        , "Chibi - Gets/sets the 16-bit node address"           , "'chb-addr [<1-65534>|<OxFFFE>]'" },
-  { "chb-send",       2, 99,  0, cmd_chibi_tx          , "Chibi - Transmits the supplied text/value"           , "'chb-send <destaddr> <message>'" },
+  { "chb-addr",       0,  1,  0, cmd_chibi_addr        , "Gets/sets the 16-bit node address"                   , "'chb-addr [<1-65534>|<OxFFFE>]'" },
+  { "chb-send",       2, 99,  0, cmd_chibi_tx          , "Transmits the supplied text/value"                   , "'chb-send <destaddr> <message>'" },
   #endif
 
   #ifdef CFG_I2CEEPROM
-  { "eeprom-read",    1,  1,  0, cmd_i2ceeprom_read    , "Reads one byte from the specified EEPROM address"    , "'eeprom-read <addr>'" },
-  { "eeprom-write",   2,  2,  0, cmd_i2ceeprom_write   , "Writes one byte to the specified EEPROM address"     , "'eeprom-write <addr> <value>'" },
+  { "eeprom-read",    1,  1,  0, cmd_i2ceeprom_read    , "Reads one byte from EEPROM"                          , "'eeprom-read <addr>'" },
+  { "eeprom-write",   2,  2,  0, cmd_i2ceeprom_write   , "Writes one byte to EEPROM"                           , "'eeprom-write <addr> <value>'" },
   #endif
 
   #ifdef CFG_LM75B
-  { "lm75b-read",     0,  0,  0, cmd_lm75b_gettemp     , "Gets the current temperature in degrees celsius"     , "'lm75b-read' has no parameters" },
+  { "lm75b-read",     0,  0,  0, cmd_lm75b_gettemp     , "Gets the temp. in degrees celsius"                   , "'lm75b-read' has no parameters" },
   #endif
 
   #ifdef CFG_SDCARD
