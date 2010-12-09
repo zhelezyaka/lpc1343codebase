@@ -228,6 +228,7 @@
         <File Name="../../project/commands/drawing/cmd_line.c"/>
         <File Name="../../project/commands/drawing/cmd_pixel.c"/>
         <File Name="../../project/commands/drawing/cmd_progress.c"/>
+        <File Name="../../project/commands/drawing/cmd_bmp.c"/>
       </VirtualDirectory>
     </VirtualDirectory>
   </VirtualDirectory>

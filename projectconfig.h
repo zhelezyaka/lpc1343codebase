@@ -40,8 +40,6 @@
 #include "lpc134x.h"
 #include "sysdefs.h"
 
-#define PLACE_IN_SRAM    __attribute__ ((section(".fast")))
-
 /**************************************************************************
     PIN USAGE
     -----------------------------------------------------------------------
@@ -90,7 +88,7 @@
     FIRMWARE VERSION SETTINGS
     -----------------------------------------------------------------------*/
     #define CFG_FIRMWARE_VERSION_MAJOR            (0)
-    #define CFG_FIRMWARE_VERSION_MINOR            (6)
+    #define CFG_FIRMWARE_VERSION_MINOR            (7)
     #define CFG_FIRMWARE_VERSION_REVISION         (0)
 /*=========================================================================*/
 
@@ -172,6 +170,10 @@
 
     BENCHMARK:                With SPI set to 6.0MHz, FATFS can read
                               ~300KB/s (w/512 byte read buffer)
+							  
+    PIN LAYOUT:               The pin layout that is used by this driver
+                              can be seen in the following schematic:
+                              /tools/schematics/Breakout_TFTLCD_ILI9325_v1.3
 
     DEPENDENCIES:             SDCARD requires the use of SSP0.
     -----------------------------------------------------------------------*/
@@ -439,9 +441,10 @@
                                 Dot Factory 
                                 http://www.pavius.net/downloads/tools/53-the-dot-factory
 
-    NOTE: CFG_TFTLCD (ILI9325)  ~4.9 KB Flash (-Os, no small fonts, 
-                                only consolas9 used)
-
+    PIN LAYOUT:                 The pin layout that is used by this driver
+                                can be seen in the following schematic:
+                                /tools/schematics/Breakout_TFTLCD_ILI9325_v1.3
+								
     DEPENDENCIES:               TFTLCD requires the use of pins 1.8, 1.9,
                                 1.10, 1.11, 3.3 and 2.1-9.
     -----------------------------------------------------------------------*/
