@@ -59,6 +59,9 @@ void cmd_line(uint8_t argc, char **argv);
 void cmd_pixel(uint8_t argc, char **argv);
 void cmd_progress(uint8_t argc, char **argv);
 void cmd_getpixel(uint8_t argc, char **argv);
+#ifdef CFG_SDCARD
+void cmd_bmp(uint8_t argc, char **argv);
+#endif
 #endif
 
 #ifdef CFG_CHIBI
@@ -107,6 +110,9 @@ cmd_t cmd_tbl[] =
   { "line",           5,  5,  0, cmd_line              , "Draws a line"                                        , "'line <x1> <y1> <x2> <y2> <color>'" },
   { "p",              3,  3,  0, cmd_pixel             , "Draws a single pixel"                                , "'p <x> <y> <color>'" },
   { "progress",       8,  8,  0, cmd_progress          , "Draws a progress bar"                                , "'progress <x> <y> <w> <h> <percent> <bordercolor> <backgroundcolor> <fillcolor>'" },
+  #ifdef CFG_SDCARD
+  { "bmp",            3,  3,  0, cmd_bmp               , "Draws a bitmap image from the SD card"               , "'bmp <x> <y> <filename>'" },
+  #endif
   #endif
 
   #ifdef CFG_CHIBI

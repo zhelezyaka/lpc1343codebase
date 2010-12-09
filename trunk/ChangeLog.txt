@@ -1,3 +1,13 @@
+v0.70 - Ongoing
+===============
+
+- Added 'projects/command/drawing/cmd_bmp.c' to load
+  bitmap images from the SD card and display them on
+  the TFT LCD.  (Images must be converted using the
+  program found in '/tools/imgconv'.)
+- Added some schematics to '/tools/schematics' to
+  show the assumed pin configurations
+
 v0.60 - 8 December 2010
 =======================
 
