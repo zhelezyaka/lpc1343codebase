@@ -140,7 +140,9 @@
             </file>
           </folder>
           <folder Name="analogjoystick">
-            <file file_name="../../drivers/sensors/analogjoystick/analogjoystick.c"/>
+            <file file_name="../../drivers/sensors/analogjoystick/analogjoystick.c">
+              <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
+            </file>
           </folder>
         </folder>
         <folder Name="lcd" file_name="">
@@ -153,6 +155,7 @@
             <folder Name="hw">
               <file file_name="../../drivers/lcd/tft/hw/ILI9325.c">
                 <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
+                <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
               </file>
             </folder>
             <folder Name="fonts">
@@ -176,6 +179,7 @@
               <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
             </file>
             <file file_name="../../drivers/lcd/tft/tscalibration.c"/>
+            <file file_name="../../drivers/lcd/tft/bmp.c"/>
           </folder>
           <file file_name="../../drivers/lcd/smallfonts.c">
             <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
@@ -192,7 +196,9 @@
         </folder>
         <folder Name="nfc">
           <folder Name="pn532">
-            <file file_name="../../drivers/nfc/pn532/pn532.c"/>
+            <file file_name="../../drivers/nfc/pn532/pn532.c">
+              <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
+            </file>
           </folder>
         </folder>
         <folder Name="motor">
@@ -201,7 +207,9 @@
           </folder>
         </folder>
         <folder Name="rsa">
-          <file file_name="../../drivers/rsa/rsa.c"/>
+          <file file_name="../../drivers/rsa/rsa.c">
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
+          </file>
         </folder>
         <folder Name="dac">
           <folder Name="mcp4725">
@@ -226,19 +234,19 @@
             <file file_name="../../project/commands/drawing/cmd_button.c"/>
             <file file_name="../../project/commands/drawing/cmd_circle.c">
               <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
-              <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+              <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
             </file>
             <file file_name="../../project/commands/drawing/cmd_line.c">
               <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
-              <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+              <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
             </file>
             <file file_name="../../project/commands/drawing/cmd_pixel.c">
               <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
-              <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+              <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
             </file>
             <file file_name="../../project/commands/drawing/cmd_progress.c">
               <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
-              <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+              <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
             </file>
             <file file_name="../../project/commands/drawing/cmd_clear.c"/>
             <file file_name="../../project/commands/drawing/cmd_bmp.c"/>

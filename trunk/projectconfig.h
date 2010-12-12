@@ -258,7 +258,7 @@
                               this varies with the number of commands
                               present
     -----------------------------------------------------------------------*/
-    #define CFG_INTERFACE
+    // #define CFG_INTERFACE
     #define CFG_INTERFACE_MAXMSGSIZE    (80)
     #define CFG_INTERFACE_PROMPT        "LPC1343 >> "
 /*=========================================================================*/
@@ -549,7 +549,7 @@
 
 #ifdef CFG_SDCARD
   #ifdef CFG_STEPPER
-    #error  "CFG_SDCARD and CFG_STEPPER can not be defined at the same time sicne they both use pin 3.0."
+    #error  "CFG_SDCARD and CFG_STEPPER can not be defined at the same time since they both use pin 3.0."
   #endif
 #endif
 

@@ -47,6 +47,10 @@
   #include "drivers/lcd/smallfonts.h"
 #endif
 
+#ifdef CFG_SDCARD
+  #include "bmp.h"
+#endif
+
 void      drawTestPattern     ( void );
 void      drawPixel           ( uint16_t x, uint16_t y, uint16_t color );
 void      drawFill            ( uint16_t color );
@@ -66,7 +70,7 @@ void      drawStringSmall     ( uint16_t x, uint16_t y, uint16_t color, char* te
 #endif
 
 #if defined CFG_SDCARD
-void      drawImageFromFile   ( uint16_t x, uint16_t y, char *filename );
+bmp_error_t   drawBitmapImage ( uint16_t x, uint16_t y, char *filename );
 #endif
 
 #endif

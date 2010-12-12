@@ -43,6 +43,10 @@
 
 #include "drawing.h"
 
+#ifdef CFG_SDCARD
+  #include "bmp.h"
+#endif
+
 /**************************************************************************/
 /*                                                                        */
 /* ----------------------- Private Methods ------------------------------ */
@@ -188,6 +192,12 @@ static void drawCirclePoints(int cx, int cy, int x, int y, uint16_t color)
 /**************************************************************************/
 void drawPixel(uint16_t x, uint16_t y, uint16_t color)
 {
+  if ((x >= 240) || (y >= 320))
+  {
+    // Pixel out of range
+    return;
+  }
+
   // Redirect to LCD
   lcdDrawPixel(x, y, color);
 }
@@ -735,7 +745,8 @@ void drawButton(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const F
 #ifdef CFG_SDCARD
 /**************************************************************************/
 /*!
-    @brief  Loads an image from an SD card and renders it
+    @brief  Loads a 24-bit Windows bitmap image from an SD card and
+            renders it
 
     @section Example
 
@@ -743,14 +754,14 @@ void drawButton(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const F
 
     #include "drivers/lcd/tft/drawing.h"
 
-    // Draw output.pic (from the root folder) starting at pixel 0,0
-    drawImageFromFile(0, 0, "/output.pic");
+    // Draw image.bmp (from the root folder) starting at pixel 0,0
+    drawBitmapImage(0, 0, "/image.bmp");
 
     @endcode
 */
 /**************************************************************************/
-void drawImageFromFile(uint16_t x, uint16_t y, char *filename)
+bmp_error_t drawBitmapImage(uint16_t x, uint16_t y, char *filename)
 {
-  lcdDrawImageFromFile(x, y, filename);
+  return bmpDrawBitmap(x, y, filename);
 }
 #endif

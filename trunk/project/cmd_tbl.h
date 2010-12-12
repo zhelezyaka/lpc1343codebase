@@ -104,7 +104,7 @@ cmd_t cmd_tbl[] =
   #ifdef CFG_TFTLCD
   { "btn",            5,  99, 0, cmd_button            , "Draws a button"                                      , "'btn <x> <y> <w> <h> <enabled> [<text>]'" },
   { "circle",         4,  4,  0, cmd_circle            , "Draws a circle"                                      , "'circle <x> <y> <radius> <color>'" },
-  { "clr",            1,  1,  0, cmd_clear             , "Fills the screen with a 16-bit (RGB565) color"       , "'clr <color>'" },
+  { "clr",            0,  1,  0, cmd_clear             , "Fills the screen with a 16-bit (RGB565) color"       , "'clr [<color>]'" },
   { "clr24",          3,  3,  0, cmd_clear24           , "Fills the screen with a 24-bit (RGB) color"          , "'clr24 <r> <g> <b>'" },
   { "gp",             2,  2,  0, cmd_getpixel          , "Reads a single pixel from the LCD"                   , "'gp <x> <y>'" },
   { "line",           5,  5,  0, cmd_line              , "Draws a line"                                        , "'line <x1> <y1> <x2> <y2> <color>'" },

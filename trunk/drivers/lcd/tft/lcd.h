@@ -52,8 +52,4 @@ extern void     lcdFillRGB(uint16_t data);
 extern void     lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color);
 extern void     lcdDrawHLine(uint16_t x0, uint16_t x1, uint16_t y, uint16_t color);
 
-#ifdef CFG_SDCARD
-extern void     lcdDrawImageFromFile(uint16_t x, uint16_t y, char *filename);
-#endif
-
 #endif

@@ -1,10 +1,24 @@
 v0.70 - Ongoing
 ===============
 
+- Removed the imgconv tool from 'tools/imgconv' (see
+  point below for more information)
+- Removed the previous custom image code and replaced
+  it with 24-bit Windows bitmap files.  This is a bit
+  slower (since 24-bit data needs to be converted to
+  RGB565 for each pixel and rows are rendered bottom
+  up making pixel drawing harder to optimise) but
+  converting and eventually saving images is easier.
+  The current code is functional but needs to be
+  heavily optimised.
+- Made some minor optimisations to the data and cmd
+  functions in the ILI9325 driver.  Other functions
+  need to be optimised as well, but these two should
+  be close to optimal now.  Currently 25 cycles
+  compiled with -Os, 36 cycles with no optimisation.
 - Added 'projects/command/drawing/cmd_bmp.c' to load
-  bitmap images from the SD card and display them on
-  the TFT LCD.  (Images must be converted using the
-  program found in '/tools/imgconv'.)
+  24-bit Windows bitmap images from the SD card and
+  display them on the TFT LCD.
 - Added some schematics to '/tools/schematics' to
   show the assumed pin configurations
 

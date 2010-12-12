@@ -56,10 +56,11 @@
 // These combined pin definitions are for optimisation purposes.
 // If the pin values above are modified the bit equivalents
 // below will also need to be updated
-#define ILI9325_CS_CD_PINS      0x300   // 8 + 9
-#define ILI9325_RD_WR_PINS      0xC00   // 11 + 10
-#define ILI9325_WR_CS_PINS      0x500   // 10 + 8
-#define ILI9325_CD_RD_WR_PINS   0xE00   // 9 + 11 + 10
+#define ILI9325_CS_CD_PINS        0x300   // 8 + 9
+#define ILI9325_RD_WR_PINS        0xC00   // 11 + 10
+#define ILI9325_WR_CS_PINS        0x500   // 10 + 8
+#define ILI9325_CD_RD_WR_PINS     0xE00   // 9 + 11 + 10
+#define ILI9325_CS_CD_RD_WR_PINS  0xF00   // 8 + 9 + 11 + 10
 
 // Backlight and Reset pins
 #define ILI9325_RES_PORT        3     // LCD Reset  (LCD Pin 31)
@@ -81,17 +82,28 @@
 #define ILI9325_DATA_MASK       0x000001FE
 #define ILI9325_DATA_OFFSET     1     // Offset = PIN1
 
+// Placed here to try to keep all pin specific values in header file
+#define ILI9325_DISABLEPULLUPS() do { gpioSetPullup(&IOCON_PIO2_1, gpioPullupMode_Inactive); \
+                                      gpioSetPullup(&IOCON_PIO2_2, gpioPullupMode_Inactive); \
+                                      gpioSetPullup(&IOCON_PIO2_3, gpioPullupMode_Inactive); \
+                                      gpioSetPullup(&IOCON_PIO2_4, gpioPullupMode_Inactive); \
+                                      gpioSetPullup(&IOCON_PIO2_5, gpioPullupMode_Inactive); \
+                                      gpioSetPullup(&IOCON_PIO2_6, gpioPullupMode_Inactive); \
+                                      gpioSetPullup(&IOCON_PIO2_7, gpioPullupMode_Inactive); \
+                                      gpioSetPullup(&IOCON_PIO2_8, gpioPullupMode_Inactive); } while (0)
+
 // These registers allow fast single operation clear+set of bits (see section 8.5.1 of LPC1343 UM)
-#define ILI9325_GPIO2DATA_DATA      (*(pREG32 (GPIO_GPIO2_BASE + (ILI9325_DATA_MASK << 2))))
-#define ILI9325_GPIO1DATA_WR        (*(pREG32 (GPIO_GPIO1_BASE + ((1 << ILI9325_WR_PIN) << 2))))
-#define ILI9325_GPIO1DATA_CD        (*(pREG32 (GPIO_GPIO1_BASE + ((1 << ILI9325_CD_PIN) << 2))))
-#define ILI9325_GPIO1DATA_CS        (*(pREG32 (GPIO_GPIO1_BASE + ((1 << ILI9325_CS_PIN) << 2))))
-#define ILI9325_GPIO1DATA_RD        (*(pREG32 (GPIO_GPIO1_BASE + ((1 << ILI9325_RD_PIN) << 2))))
-#define ILI9325_GPIO3DATA_RES       (*(pREG32 (GPIO_GPIO3_BASE + ((1 << ILI9325_RES_PIN) << 2))))
-#define ILI9325_GPIO1DATA_CS_CD     (*(pREG32 (GPIO_GPIO1_BASE + ((ILI9325_CS_CD_PINS) << 2))))
-#define ILI9325_GPIO1DATA_RD_WR     (*(pREG32 (GPIO_GPIO1_BASE + ((ILI9325_RD_WR_PINS) << 2))))
-#define ILI9325_GPIO1DATA_WR_CS     (*(pREG32 (GPIO_GPIO1_BASE + ((ILI9325_WR_CS_PINS) << 2))))
-#define ILI9325_GPIO1DATA_CD_RD_WR  (*(pREG32 (GPIO_GPIO1_BASE + ((ILI9325_CD_RD_WR_PINS) << 2))))
+#define ILI9325_GPIO2DATA_DATA        (*(pREG32 (GPIO_GPIO2_BASE + (ILI9325_DATA_MASK << 2))))
+#define ILI9325_GPIO1DATA_WR          (*(pREG32 (GPIO_GPIO1_BASE + ((1 << ILI9325_WR_PIN) << 2))))
+#define ILI9325_GPIO1DATA_CD          (*(pREG32 (GPIO_GPIO1_BASE + ((1 << ILI9325_CD_PIN) << 2))))
+#define ILI9325_GPIO1DATA_CS          (*(pREG32 (GPIO_GPIO1_BASE + ((1 << ILI9325_CS_PIN) << 2))))
+#define ILI9325_GPIO1DATA_RD          (*(pREG32 (GPIO_GPIO1_BASE + ((1 << ILI9325_RD_PIN) << 2))))
+#define ILI9325_GPIO3DATA_RES         (*(pREG32 (GPIO_GPIO3_BASE + ((1 << ILI9325_RES_PIN) << 2))))
+#define ILI9325_GPIO1DATA_CS_CD       (*(pREG32 (GPIO_GPIO1_BASE + ((ILI9325_CS_CD_PINS) << 2))))
+#define ILI9325_GPIO1DATA_RD_WR       (*(pREG32 (GPIO_GPIO1_BASE + ((ILI9325_RD_WR_PINS) << 2))))
+#define ILI9325_GPIO1DATA_WR_CS       (*(pREG32 (GPIO_GPIO1_BASE + ((ILI9325_WR_CS_PINS) << 2))))
+#define ILI9325_GPIO1DATA_CD_RD_WR    (*(pREG32 (GPIO_GPIO1_BASE + ((ILI9325_CD_RD_WR_PINS) << 2))))
+#define ILI9325_GPIO1DATA_CS_CD_RD_WR (*(pREG32 (GPIO_GPIO1_BASE + ((ILI9325_CS_CD_RD_WR_PINS) << 2))))
 
 // Macros to set data bus direction to input/output
 #define ILI9325_GPIO2DATA_SETINPUT  GPIO_GPIO2DIR &= ~ILI9325_DATA_MASK
@@ -111,9 +123,11 @@
 
 // These 'combined' macros are defined to improve code performance by
 // reducing the number of instructions in heavily used functions
-#define CLR_CS_CD       ILI9325_GPIO1DATA_CS_CD = (0);
-#define SET_RD_WR       ILI9325_GPIO1DATA_RD_WR = (ILI9325_RD_WR_PINS);
-#define SET_WR_CS       ILI9325_GPIO1DATA_WR_CS = (ILI9325_WR_CS_PINS);
-#define SET_CD_RD_WR    ILI9325_GPIO1DATA_CD_RD_WR = (ILI9325_CD_RD_WR_PINS);
+#define CLR_CS_CD           ILI9325_GPIO1DATA_CS_CD = (0);
+#define SET_RD_WR           ILI9325_GPIO1DATA_RD_WR = (ILI9325_RD_WR_PINS);
+#define SET_WR_CS           ILI9325_GPIO1DATA_WR_CS = (ILI9325_WR_CS_PINS);
+#define SET_CD_RD_WR        ILI9325_GPIO1DATA_CD_RD_WR = (ILI9325_CD_RD_WR_PINS);
+#define CLR_CS_CD_SET_RD_WR ILI9325_GPIO1DATA_CS_CD_RD_WR = (ILI9325_RD_WR_PINS);
+#define CLR_CS_SET_CD_RD_WR ILI9325_GPIO1DATA_CS_CD_RD_WR = (ILI9325_CD_RD_WR_PINS);
 
 #endif
