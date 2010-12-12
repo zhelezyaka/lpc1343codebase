@@ -42,6 +42,8 @@
   #include "core/cmd/cmd.h"
 #endif
 
+#include "drivers/lcd/tft/drawing.h"
+
 /**************************************************************************/
 /*! 
     Approximates a 1 millisecond delay using "nop".  This is less

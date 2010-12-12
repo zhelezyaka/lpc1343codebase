@@ -44,14 +44,6 @@
 /**************************************************************************/
 #include "ILI9325.h"
 
-#ifdef CFG_SDCARD
-  #include "core/ssp/ssp.h"
-  #include "drivers/fatfs/diskio.h"
-  #include "drivers/fatfs/ff.h"
-  static FATFS Fatfs[1];
-  static uint16_t buffer[240];   // This assumes images are maximum 240 pixels wide!
-#endif
-
 /*************************************************/
 /* Private Methods                               */
 /*************************************************/
@@ -70,32 +62,39 @@ void ili9325Delay(unsigned int t)
 /*************************************************/
 void ili9325WriteCmd(uint16_t command) 
 {
-  CLR_CS_CD;      // Saves 7 commands compared to "CLR_CS; CLR_CD;"
-  SET_RD_WR;      // Saves 7 commands compared to "SET_RD; SET_WR;"
+  // Compiled with -Os on GCC 4.4 this works out to 25 cycles
+  // (versus 36 compiled with no optimisations).  I'm not sure it
+  // cen be improved further, so that means 25 cycles for continuous
+  // writes (cmd, data, data, data, ...) or ~150 cycles for a 
+  // random pixel (Set X [cmd+data], Set Y [cmd+data],
+  // Set color [cmd+data]).
+
+  CLR_CS_CD_SET_RD_WR;  // Saves 18 commands compared to "CLR_CS; CLR_CD; SET_RD; SET_WR;" 
   ILI9325_GPIO2DATA_DATA = (command >> (8 - ILI9325_DATA_OFFSET));
   CLR_WR;
   SET_WR;
   ILI9325_GPIO2DATA_DATA = command << ILI9325_DATA_OFFSET;
   CLR_WR;
-  SET_WR_CS;      // Saves 7 commands compared to "SET_WR; SET_CS;"
+  SET_WR_CS;            // Saves 7 commands compared to "SET_WR; SET_CS;"
 }
 
 /*************************************************/
 void ili9325WriteData(uint16_t data)
 {
-  CLR_CS;
-  SET_CD_RD_WR;   // Saves 14 commands compared to "SET_CD; SET_RD; SET_WR"
+  CLR_CS_SET_CD_RD_WR;  // Saves 18 commands compared to SET_CD; SET_RD; SET_WR; CLR_CS"
   ILI9325_GPIO2DATA_DATA = (data >> (8 - ILI9325_DATA_OFFSET));
   CLR_WR;
   SET_WR;
   ILI9325_GPIO2DATA_DATA = data << ILI9325_DATA_OFFSET;
   CLR_WR;
-  SET_WR_CS;      // Saves 7 commands compared to "SET_WR, SET_CS;"
+  SET_WR_CS;            // Saves 7 commands compared to "SET_WR, SET_CS;"
 }
 
 /*************************************************/
 uint16_t ili9325ReadData(void)
 {
+  // ToDo: Optimise this method!
+
   uint16_t high, low;
   high = low = 0;
   uint16_t d;
@@ -110,7 +109,6 @@ uint16_t ili9325ReadData(void)
   high = ILI9325_GPIO2DATA_DATA;  
   high >>= ILI9325_DATA_OFFSET;
   high &= 0xFF;
-  
   SET_RD;
   
   CLR_RD;
@@ -255,59 +253,6 @@ void ili9325SetWindow(uint16_t x, uint16_t y, uint16_t x1, uint16_t y1)
   ili9325Command(0x0053, y1);      // Window Vertical RAM Address End (R53h)
 }
 
-#ifdef CFG_SDCARD
-/**************************************************************************/
-static void ili9325ImageFromFIL(uint16_t x, uint16_t y, FIL file)
-{
-  uint16_t header[3];
-  UINT bytesRead;
-
-  // Image header
-  // ------------
-  // U16 Width
-  // U16 height
-  // U16 Bit Depth (1 = RGB565)
-  // ... Pixel Data ...
-
-  // Read the header data
-  f_read(&file, header, sizeof(header), &bytesRead);
-  uint16_t imgW = header[0];   // width
-  // uint16_t imgH = header[1];   // height
-
-  uint16_t wCounter, lineCounter, currentPixel;
-  wCounter = lineCounter = currentPixel = 0;
-
-  // Read until EOF
-  FRESULT res;
-  for (;;) 
-  {
-    // Read image data one row at a time
-    res = f_read(&file, buffer, imgW  * 2, &bytesRead);
-    if (res || bytesRead == 0)
-    {
-      // Error or EOF
-      return;
-    }
-
-    wCounter = imgW;
-    currentPixel = 0;
-
-    // Set row start position
-    ili9325WriteCmd(0x0020); // GRAM Address Set (Horizontal Address) (R20h)
-    ili9325WriteData(x);
-    ili9325WriteCmd(0x0021); // GRAM Address Set (Vertical Address) (R21h)
-    ili9325WriteData(y + lineCounter);
-    ili9325WriteCmd(0x0022);  // Write Data to GRAM (R22h)
-    do 
-    {
-      ili9325WriteData(buffer[currentPixel]);
-      currentPixel++;
-    } while (--wCounter);
-    lineCounter++;
-  }
-}
-#endif
-
 /*************************************************/
 /* Public Methods                                */
 /*************************************************/
@@ -325,14 +270,7 @@ void lcdInit(void)
   ILI9325_GPIO2DATA_SETOUTPUT;
 
   // Disable pullups
-  gpioSetPullup(&IOCON_PIO2_1, gpioPullupMode_Inactive);
-  gpioSetPullup(&IOCON_PIO2_2, gpioPullupMode_Inactive);
-  gpioSetPullup(&IOCON_PIO2_3, gpioPullupMode_Inactive);
-  gpioSetPullup(&IOCON_PIO2_4, gpioPullupMode_Inactive);
-  gpioSetPullup(&IOCON_PIO2_5, gpioPullupMode_Inactive);
-  gpioSetPullup(&IOCON_PIO2_6, gpioPullupMode_Inactive);
-  gpioSetPullup(&IOCON_PIO2_7, gpioPullupMode_Inactive);
-  gpioSetPullup(&IOCON_PIO2_8, gpioPullupMode_Inactive);
+  ILI9325_DISABLEPULLUPS();
   
   // Set backlight
   gpioSetDir(ILI9325_BL_PORT, ILI9325_BL_PIN, 1);      // set to output
@@ -414,69 +352,6 @@ void lcdDrawHLine(uint16_t x0, uint16_t x1, uint16_t y, uint16_t color)
     ili9325WriteData(color);
   }
 }
-
-#ifdef CFG_SDCARD
-/**************************************************************************/
-/*!
-    @brief  Loads an image from an SD card and renders it
-
-    @param[in]  x
-                The x position to start drawing from
-    @param[in]  y
-                The y position to start drawing from
-    @param[in]  filename
-                The full path and filename of the image on the file system
-                (ex.: "/folder/image.pic")
-
-    @section Example
-
-    @code 
-    // ToDo
-    @endcode
-
-*/
-/**************************************************************************/
-void lcdDrawImageFromFile(uint16_t x, uint16_t y, char *filename)
-{
-  DSTATUS stat;
-  BYTE res;
-
-  stat = disk_initialize(0);
-
-  if ((stat & STA_NOINIT) || (stat & STA_NODISK))
-  {
-    // Card not initialised or no disk present
-    return;
-  }
-
-  if (stat == 0)
-  {
-    // Try to mount drive
-    res = f_mount(0, &Fatfs[0]);
-    if (res != FR_OK) 
-    {
-      // Failed to mount 0:
-      return;
-    }
-    if (res == FR_OK)
-    {
-      // Try to open the requested file
-      FIL imgfile;  
-      if(f_open(&imgfile, filename, FA_READ | FA_OPEN_EXISTING) != FR_OK) 
-      {  
-        // Unable to open the requested file
-        return;
-      }
-      // Render the specified image
-      ili9325ImageFromFIL(x, y, imgfile);
-      // Close file
-      f_close(&imgfile);
-      // Unmount drive
-      f_mount(0,0); 
-    }
-  }
-}
-#endif
 
 /*************************************************/
 uint16_t lcdGetPixel(uint16_t x, uint16_t y)

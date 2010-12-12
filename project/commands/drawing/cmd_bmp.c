@@ -62,7 +62,7 @@ void cmd_bmp(uint8_t argc, char **argv)
   filename = argv[2];
 
   // Render image
-  drawImageFromFile(x, y, filename);
+  drawBitmapImage(x, y, filename);
 }
 
 #endif  

@@ -8,7 +8,7 @@ TARGET = LPC13xx
 FLASH = 32K
 SRAM = 8K
 
-# For USB support the LPC134x reserves 384 bytes from the sram,
+# For USB HID support the LPC134x reserves 384 bytes from the sram,
 # if you don't want to use the USB features, just use 0 here.
 SRAM_USB = 384
 
@@ -53,7 +53,7 @@ OBJS += lm75b.o
 
 # TFT LCD support (ILI9325)
 VPATH += drivers/lcd/tft drivers/lcd/tft/hw drivers/lcd/tft/fonts
-OBJS += ILI9325.o drawing.o touchscreen.o tscalibration.o
+OBJS += ILI9325.o drawing.o touchscreen.o tscalibration.o bmp.o
 OBJS += consolas9.o consolas11.o consolas16.o
 
 # Bitmap LCD support (ST7565)
