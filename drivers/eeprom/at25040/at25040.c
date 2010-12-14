@@ -107,7 +107,7 @@ uint8_t dest_addr[SSP_FIFOSIZE];
     @brief Sends the write enable command (WREN/0x06)
 */
 /**************************************************************************/
-static void at25WriteEnable()
+void at25WriteEnable()
 {
   AT25_SELECT();
   src_addr[0] = AT25_WREN;
@@ -125,7 +125,7 @@ static void at25WriteEnable()
     @return     The 8-bit value returned by the Read Status Register
 */
 /**************************************************************************/
-static uint8_t at25GetRSR()
+uint8_t at25GetRSR()
 {
   AT25_SELECT();
   src_addr[0] = AT25_RDSR;

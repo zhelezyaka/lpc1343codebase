@@ -174,7 +174,7 @@ void ili9325SetCursor(uint16_t x, uint16_t y)
 }
 
 /*************************************************/
-static void ili9325InitDisplay(void)
+void ili9325InitDisplay(void)
 {
   // Clear data line
   GPIO_GPIO2DATA &= ~ILI9325_DATA_MASK;

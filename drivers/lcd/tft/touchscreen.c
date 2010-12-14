@@ -39,15 +39,46 @@
 #include "core/gpio/gpio.h"
 #include "drivers/eeprom/eeprom.h"
 
+// Required for touch screen cqlibrqtion
+#include "drivers/lcd/tft/drawing.h"
+#include "drivers/lcd/tft/fonts/inconsolata11.h"
+
 static bool _tsInitialised = FALSE;
 static bool _tsCalibrated = FALSE;
+
+/**************************************************************************/
+/*                                                                        */
+/* ----------------------- Private Methods ------------------------------ */
+/*                                                                        */
+/**************************************************************************/
+
+/**************************************************************************/
+/*!
+    @brief  Centers a line of text horizontally
+*/
+/**************************************************************************/
+void tsCalibCenterText(char* text, uint16_t y, uint16_t color)
+{
+  drawString((240 - drawGetStringWidth(&inconsolata11ptFontInfo, text)) / 2, y, color, &inconsolata11ptFontInfo, text);
+}
+
+/**************************************************************************/
+/*!
+    @brief  Draws a circular test point
+*/
+/**************************************************************************/
+void tsCalibDrawTestPoint(uint16_t x, uint16_t y, uint16_t radius)
+{
+  drawCircle(x, y, radius, COLOR_RED);
+  drawCircle(x, y, radius + 2, COLOR_MEDIUMGRAY);
+}
 
 /**************************************************************************/
 /*!
     @brief  Reads the current Z/pressure level using the ADC
 */
 /**************************************************************************/
-static void tsReadZ(uint32_t* z1, uint32_t* z2)
+void tsReadZ(uint32_t* z1, uint32_t* z2)
 {
   if (!_tsInitialised) tsInit();
 
@@ -74,27 +105,6 @@ static void tsReadZ(uint32_t* z1, uint32_t* z2)
   // Get ADC results
   *z1 = adcRead(TS_YP_ADC_CHANNEL);     // Z1 (Read Y+)
   *z2 = adcRead(TS_XM_ADC_CHANNEL);     // Z2 (Read X-)
-}
-
-/**************************************************************************/
-/*!
-    @brief  Initialises the appropriate GPIO pins and ADC for the
-            touchscreen
-*/
-/**************************************************************************/
-void tsInit(void)
-{
-  // Make sure that ADC is initialised
-  adcInit();
-
-  // Set initialisation flag
-  _tsInitialised = TRUE;
-
-  // Check/Load calibration data
-  if (!_tsCalibrated)
-  {
-    // ToDo
-  }
 }
 
 /**************************************************************************/
@@ -163,6 +173,79 @@ uint32_t tsReadY(void)
 
 /**************************************************************************/
 /*!
+    @brief  Converts Z variables into an 8-bit 'pressure' value
+*/
+/**************************************************************************/
+uint8_t tsCalculatePressure(uint32_t x, uint32_t z1, uint32_t z2)
+{
+  // Calculate pressure level
+  int32_t t = z2 * x / z1;
+  t-=64;
+  if (t < 0)
+  {
+    return 0;
+  }
+  else if (t > 255)
+  {
+    return 255;
+  }
+  else
+  {
+    return t;
+  }
+}
+
+/**************************************************************************/
+/*                                                                        */
+/* ----------------------- Public Methods ------------------------------- */
+/*                                                                        */
+/**************************************************************************/
+
+/**************************************************************************/
+/*!
+    @brief  Initialises the appropriate GPIO pins and ADC for the
+            touchscreen
+*/
+/**************************************************************************/
+void tsInit(void)
+{
+  // Make sure that ADC is initialised
+  adcInit();
+
+  // Set initialisation flag
+  _tsInitialised = TRUE;
+
+  // Check/Load calibration data
+  if (!_tsCalibrated)
+  {
+    // ToDo
+  }
+}
+
+/**************************************************************************/
+/*!
+    @brief  Starts the screen calibration process
+*/
+/**************************************************************************/
+void tsCalibrate(void)
+{
+  // Clear the screen
+  drawRectangleFilled(0, 0, 239, 319, COLOR_WHITE);
+
+  // Display starup text
+  tsCalibCenterText("To begin calibrating the", 50, COLOR_DARKGRAY);
+  tsCalibCenterText("touch screen please click", 65, COLOR_DARKGRAY);
+  tsCalibCenterText("on the center dot", 80, COLOR_DARKGRAY);
+
+  // Draw test circle
+  tsCalibDrawTestPoint(120, 160, 5);
+
+  // Draw cancel button
+  drawButton(20, 200, 200, 60, &inconsolata11ptFontInfo, 7, "Cancel", FALSE);
+}
+
+/**************************************************************************/
+/*!
     @brief  Causes a blocking delay until a valid touch event occurs
 
     @note   Thanks to 'rossum' and limor for this nifty little tidbit on
@@ -183,6 +266,11 @@ uint32_t tsReadY(void)
     if (data.x > 100 && data.x < 300)
     {
       // Do something
+      printf("Touch Event: X = %d, Y = %d, Pressure = %d %s", 
+          (int)data.x, 
+          (int)data.y, 
+          (int)data.pressure, 
+          CFG_PRINTF_NEWLINE);
     }
 
     @endcode
@@ -205,24 +293,5 @@ void tsWaitForEvent(tsTouchData_t* data)
   // Set results
   data->x = tsReadX();
   data->y = tsReadY();
-
-  // Calculate pressure level
-  int32_t t = z2 * data->x / z1;
-  t-=64;
-  if (t < 0)
-  {
-    data->pressure = 0;
-  }
-  else if (t > 255)
-  {
-    data->pressure = 255;
-  }
-  else
-  {
-    data->pressure = t;
-  }
-  
-  // Display results
-  // printf("Touch Event: X = %d, Y = %d %s", (int)data->x, (int)data->y, CFG_PRINTF_NEWLINE);
+  data->pressure = tsCalculatePressure(data->x, z1, z2);
 }
-

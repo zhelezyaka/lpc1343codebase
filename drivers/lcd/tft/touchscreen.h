@@ -72,9 +72,8 @@ typedef struct
 } tsTouchData_t;
 
 // Method Prototypes
-void      tsInit ( void );
-uint32_t  tsReadX ( void );
-uint32_t  tsReadY ( void );
-void      tsWaitForEvent ( tsTouchData_t* data );
+void          tsInit ( void );
+void          tsCalibrate ( void );
+void          tsWaitForEvent ( tsTouchData_t* data );
 
 #endif

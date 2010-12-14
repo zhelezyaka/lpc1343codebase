@@ -49,7 +49,7 @@ void pn532PollInput (void)
 
 /**************************************************************************/
 /*! 
-    Polls the PN532/UART buffer and retransmits it USB CDC (etc.)
+    Polls the PN532/UART buffer and retransmits it to USB CDC (etc.)
 */
 /**************************************************************************/
 void pn532PollNFC (void)
@@ -74,16 +74,12 @@ void pn532Init (void)
 {
   byte_t abtWakeUp[] = { 0x55,0x55,0x00,0x00,0x00,0x00,0x00,0xff,0x03,0xfd,0xd4,0x14,0x01,0x17,0x00,0x00,0xff,0x03,0xfd,0xd4,0x14,0x01,0x17,0x00 };
 
-  // Configure UART
+  // Configure UART and initialise buffer
   // ToDo: Trust CFG_UART_BAUDRATE in projectconfig.h, or
   // force a value here at the risk of projectconfig.h being
   // misleading to someone unfamiliar with the code?
   uartInit(CFG_UART_BAUDRATE);
 
-  // Initialise the UART buffer
-  // Removed: This already happens in uartInit above
-  // uartRxBufferInit();
-  
   // Send wakeup sequence to the PN532
   uartSend(abtWakeUp,sizeof(abtWakeUp));
   

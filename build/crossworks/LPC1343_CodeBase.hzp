@@ -69,6 +69,7 @@
         <folder Name="cmd">
           <file file_name="../../core/cmd/cmd.c">
             <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
+            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
           </file>
         </folder>
         <folder Name="usbcdc">
@@ -159,18 +160,9 @@
               </file>
             </folder>
             <folder Name="fonts">
-              <file file_name="../../drivers/lcd/tft/fonts/consolas9.c">
-                <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
-                <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
-              </file>
-              <file file_name="../../drivers/lcd/tft/fonts/consolas11.c">
-                <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
-                <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
-              </file>
-              <file file_name="../../drivers/lcd/tft/fonts/consolas16.c">
-                <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
-                <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
-              </file>
+              <file file_name="../../drivers/lcd/tft/fonts/inconsolata9.c"/>
+              <file file_name="../../drivers/lcd/tft/fonts/inconsolata11.c"/>
+              <file file_name="../../drivers/lcd/tft/fonts/inconsolata16.c"/>
             </folder>
             <file file_name="../../drivers/lcd/tft/drawing.c">
               <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
@@ -178,7 +170,6 @@
             <file file_name="../../drivers/lcd/tft/touchscreen.c">
               <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
             </file>
-            <file file_name="../../drivers/lcd/tft/tscalibration.c"/>
             <file file_name="../../drivers/lcd/tft/bmp.c"/>
           </folder>
           <file file_name="../../drivers/lcd/smallfonts.c">
@@ -219,17 +210,37 @@
       </folder>
       <file file_name="../../sysinit.c"/>
       <folder Name="project">
-        <file file_name="../../project/commands.c"/>
+        <file file_name="../../project/commands.c">
+          <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+        </file>
         <folder Name="commands">
-          <file file_name="../../project/commands/cmd_chibi_addr.c"/>
-          <file file_name="../../project/commands/cmd_chibi_tx.c"/>
-          <file file_name="../../project/commands/cmd_deepsleep.c"/>
-          <file file_name="../../project/commands/cmd_hello.c"/>
-          <file file_name="../../project/commands/cmd_i2ceeprom_read.c"/>
-          <file file_name="../../project/commands/cmd_i2ceeprom_write.c"/>
-          <file file_name="../../project/commands/cmd_lm75b_gettemp.c"/>
-          <file file_name="../../project/commands/cmd_sd_dir.c"/>
-          <file file_name="../../project/commands/cmd_sysinfo.c"/>
+          <file file_name="../../project/commands/cmd_chibi_addr.c">
+            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+          </file>
+          <file file_name="../../project/commands/cmd_chibi_tx.c">
+            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+          </file>
+          <file file_name="../../project/commands/cmd_deepsleep.c">
+            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+          </file>
+          <file file_name="../../project/commands/cmd_hello.c">
+            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+          </file>
+          <file file_name="../../project/commands/cmd_i2ceeprom_read.c">
+            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+          </file>
+          <file file_name="../../project/commands/cmd_i2ceeprom_write.c">
+            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+          </file>
+          <file file_name="../../project/commands/cmd_lm75b_gettemp.c">
+            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+          </file>
+          <file file_name="../../project/commands/cmd_sd_dir.c">
+            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+          </file>
+          <file file_name="../../project/commands/cmd_sysinfo.c">
+            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+          </file>
           <folder Name="drawing">
             <file file_name="../../project/commands/drawing/cmd_button.c"/>
             <file file_name="../../project/commands/drawing/cmd_circle.c">

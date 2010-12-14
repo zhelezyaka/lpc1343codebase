@@ -96,7 +96,7 @@ static bool _lm75bInitialised = false;
     @brief  Writes an 8 bit values over I2C
 */
 /**************************************************************************/
-static lm75bError_e lm75bWrite8 (uint8_t reg, uint32_t value)
+lm75bError_e lm75bWrite8 (uint8_t reg, uint32_t value)
 {
   // Clear write buffers
   for ( i = 0; i < I2C_BUFSIZE; i++ )
@@ -118,7 +118,7 @@ static lm75bError_e lm75bWrite8 (uint8_t reg, uint32_t value)
     @brief  Reads a 16 bit values over I2C
 */
 /**************************************************************************/
-static lm75bError_e lm75bRead16(uint8_t reg, int32_t *value)
+lm75bError_e lm75bRead16(uint8_t reg, int32_t *value)
 {
   // Clear write buffers
   for ( i = 0; i < I2C_BUFSIZE; i++ )

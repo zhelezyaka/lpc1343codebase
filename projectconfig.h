@@ -518,9 +518,6 @@
   #if !defined CFG_PRINTF_UART && !defined CFG_PRINTF_USBCDC
     #error "CFG_PRINTF_UART or CFG_PRINTF_USBCDC must be defined for for CFG_INTERFACE Input/Output"
   #endif
-  #if defined CFG_PN532
-    #error "CFG_INTERFACE and CFG_PN532 can not be defined at the same time"
-  #endif
 #endif
 
 #ifdef CFG_CHIBI
