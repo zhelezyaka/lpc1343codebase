@@ -648,35 +648,35 @@ DRESULT disk_ioctl (
 
 void disk_timerproc (void)
 {
-  // static BYTE pv;
+  static BYTE pv;
   BYTE n;
-  // BYTE s;
+  BYTE s;
 
   n = Timer1;						/* 100Hz decrement timer */
   if (n) Timer1 = --n;
   n = Timer2;
   if (n) Timer2 = --n;
 
-  //  n = pv;
-  //  pv = 0;
-  //  // pv = SOCKPORT & (SOCKWP | SOCKINS);	/* Sample socket switch */
-  //  pv = gpioGetValue(CFG_SDCARD_CDPORT, CFG_SDCARD_CDPIN);
-  //  
-  //  /* Have contacts stabled? */
-  //  if (n == pv) 
-  //  {
-  //    s = Stat;
-  //    
-  //    /* write protect NOT supported */
-  //    
-  //    /* check card detect */
-  //    if (!pv)			       /* (Socket empty) */
-  //            s |= (STA_NODISK | STA_NOINIT);
-  //    else				       /* (Card inserted) */
-  //            s &= ~STA_NODISK;
-  //    
-  //    Stat = s;
-  //  }
+  n = pv;
+  pv = 0;
+  /* Sample card detect pin */
+  pv = gpioGetValue(CFG_SDCARD_CDPORT, CFG_SDCARD_CDPIN);
+    
+  /* Have contacts stabled? */
+  if (n == pv) 
+  {
+    s = Stat;
+      
+    /* write protect NOT supported */
+      
+    /* check card detect */
+    if (!pv)                            /* (Socket empty) */
+      s |= (STA_NODISK | STA_NOINIT);
+    else				/* (Card inserted) */
+      s &= ~STA_NODISK;
+    
+    Stat = s;
+  }
 }
 
 

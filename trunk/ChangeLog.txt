@@ -1,6 +1,11 @@
 v0.70 - Ongoing
 ===============
 
+- Added 'lcdBacklightOn()' and 'lcdBacklightOff()' to
+  lcd.h
+- Added 'CFG_TFTLCD_TS_THRESHOLD' to projectconfig.h
+  to configure touch-screen sensitivity when waiting
+  for a touch event
 - Modified 'core/gpio/gpio.c' to reduce the compiled code
   size. Repetitive switches where only the registers
   change were modified to use temporary registers and

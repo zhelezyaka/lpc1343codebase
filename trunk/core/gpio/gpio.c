@@ -189,7 +189,7 @@ void gpioSetDir (uint32_t portNum, uint32_t bitPos, gpioDirection_t dir)
   if (!_gpioInitialised) gpioInit();
 
   // Get the appropriate register (handled this way to optimise code size)
-  REG32 *gpiodir;
+  REG32 *gpiodir = &GPIO_GPIO0DIR;
   switch (portNum)
   {
     case 0:
@@ -269,7 +269,7 @@ void gpioSetValue (uint32_t portNum, uint32_t bitPos, uint32_t bitVal)
 
 
   // Get the appropriate register (handled this way to optimise code size)
-  REG32 *gpiodata;
+  REG32 *gpiodata = &GPIO_GPIO0DATA;
   switch (portNum)
   {
     case 0:
@@ -332,7 +332,9 @@ void gpioSetInterrupt (uint32_t portNum, uint32_t bitPos, gpioInterruptSense_t s
   if (!_gpioInitialised) gpioInit();
 
   // Get the appropriate register (handled this way to optimise code size)
-  REG32 *gpiois, *gpioibe, *gpioiev;
+  REG32 *gpiois  = &GPIO_GPIO0IS;
+  REG32 *gpioibe = &GPIO_GPIO0IBE;
+  REG32 *gpioiev = &GPIO_GPIO0IEV;
   switch (portNum)
   {
     case 0:

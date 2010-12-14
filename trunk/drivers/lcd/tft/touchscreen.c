@@ -285,7 +285,7 @@ void tsWaitForEvent(tsTouchData_t* data)
   z1 = z2 = 0;
 
   // Wait for touch
-  while (z2 < 8)
+  while (z2 < CFG_TFTLCD_TS_THRESHOLD)
   {
     tsReadZ(&z1, &z2);
   }

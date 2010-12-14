@@ -440,6 +440,11 @@
                                 support for larger fonts generated with
                                 Dot Factory 
                                 http://www.pavius.net/downloads/tools/53-the-dot-factory
+    CFG_TFTLCD_TS_THRESHOLD     Minimum threshold to trigger a touch event
+                                with the touch screen (and exit from
+                                'tsWaitForEvent' in touchscreen.c).  Should
+                                be an 8-bit value somewhere between 8 and 32
+                                in normal circumstances.
 
     PIN LAYOUT:                 The pin layout that is used by this driver
                                 can be seen in the following schematic:
@@ -450,6 +455,7 @@
     -----------------------------------------------------------------------*/
     // #define CFG_TFTLCD
     #define CFG_TFTLCD_INCLUDESMALLFONTS   (0)
+    #define CFG_TFTLCD_TS_THRESHOLD        (25)
 /*=========================================================================*/
 
 
