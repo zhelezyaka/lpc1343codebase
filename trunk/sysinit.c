@@ -119,26 +119,19 @@
 /**************************************************************************/
 void systemInit()
 {
-  // Setup the cpu and core clock
-  cpuInit();
+  cpuInit();                                // Configure the CPU
+  systickInit(CFG_SYSTICK_DELAY_IN_MS);     // Start systick timer
+  gpioInit();                               // Enable GPIO
+  pmuInit();                                // Configure power management
 
-  // Initialise the systick timer
-  systickInit(CFG_SYSTICK_DELAY_IN_MS);
-
-  // Initialise GPIO
-  gpioInit();
+  // Set LED pin as output and turn LED off
+  gpioSetDir(CFG_LED_PORT, CFG_LED_PIN, 1);
+  gpioSetValue(CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF);
 
   // Initialise UART with the default baud rate
   #ifdef CFG_PRINTF_UART
     uartInit(CFG_UART_BAUDRATE);
   #endif
-
-  // Initialise power management unit
-  pmuInit();
-
-  // Set LED pin as output and turn LED off
-  gpioSetDir(CFG_LED_PORT, CFG_LED_PIN, 1);
-  gpioSetValue(CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF);
 
   // Initialise EEPROM
   #ifdef CFG_I2CEEPROM
@@ -170,6 +163,8 @@ void systemInit()
     }
   #endif
 
+  // Printf can now be used with UART or USBCDC
+
   // Initialise PN532
   #ifdef CFG_PN532
     pn532Init();
@@ -182,8 +177,6 @@ void systemInit()
     st7565BLEnable();       // Enable the backlight
     st7565Refresh();        // Refresh the screen
   #endif
-
-  // Printf can now be used with UART, USBCDC or the ST7565
 
   // Initialise TFT LCD Display (ILI9235 240x320 pixel, 8-bit data bus)
   #ifdef CFG_TFTLCD
@@ -225,7 +218,7 @@ void systemInit()
     printf("%-40s : 0x%04X%s", "Chibi Initialised", pcb->src_addr, CFG_PRINTF_NEWLINE);
   #endif
 
-  // Start the command line interface if requested
+  // Start the command line interface
   #ifdef CFG_INTERFACE
     printf("%sType 'help' for a list of available commands%s", CFG_PRINTF_NEWLINE, CFG_PRINTF_NEWLINE);
     cmdInit();

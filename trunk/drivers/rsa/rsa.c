@@ -27,7 +27,7 @@
 
 #include "rsa.h"
 
-static huge_t modexp(huge_t a, huge_t b, huge_t n) 
+huge_t modexp(huge_t a, huge_t b, huge_t n) 
 {
   huge_t y;
   y = 1;

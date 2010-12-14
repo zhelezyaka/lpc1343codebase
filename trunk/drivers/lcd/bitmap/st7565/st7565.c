@@ -124,7 +124,7 @@ void sendByte(uint8_t byte)
     @brief  Draws a single graphic character using the supplied font
 */
 /**************************************************************************/
-static void drawChar(uint16_t x, uint16_t y, uint8_t c, struct FONT_DEF font)
+void drawChar(uint16_t x, uint16_t y, uint8_t c, struct FONT_DEF font)
 {
   uint8_t col, column[font.u8Width];
 

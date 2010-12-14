@@ -1,6 +1,15 @@
 v0.70 - Ongoing
 ===============
 
+- Modified 'core/gpio/gpio.c' to reduce the compiled code
+  size. Repetitive switches where only the registers
+  change were modified to use temporary registers and
+  execute the code only once.
+- Added the source and binaries for TheDotFactory to
+  'tools/dotfactory' for convenience sake. See:
+  http://www.pavius.net/downloads/tools/53-the-dot-factory
+- Removed 'drivers/lcd/tft/tscalibration.c' and moved
+  the relevant code to touchscreen.c
 - Removed the imgconv tool from 'tools/imgconv' (see
   point below for more information)
 - Removed the previous custom image code and replaced

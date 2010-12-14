@@ -42,7 +42,7 @@
 #include "core/cmd/cmd.h"
 #include "project/commands.h"       // Generic helper functions
 
-#ifdef CFG_TFTLCD    
+#if defined CFG_TFTLCD && defined CFG_SDCARD
   #include "drivers/lcd/tft/lcd.h"    
   #include "drivers/lcd/tft/drawing.h"  
 

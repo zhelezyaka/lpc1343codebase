@@ -53,8 +53,8 @@ OBJS += lm75b.o
 
 # TFT LCD support (ILI9325)
 VPATH += drivers/lcd/tft drivers/lcd/tft/hw drivers/lcd/tft/fonts
-OBJS += ILI9325.o drawing.o touchscreen.o tscalibration.o bmp.o
-OBJS += consolas9.o consolas11.o consolas16.o
+OBJS += ILI9325.o drawing.o touchscreen.o bmp.o
+OBJS += inconsolata9.o inconsolata11.o inconsolata16.o
 
 # Bitmap LCD support (ST7565)
 VPATH += drivers/lcd drivers/lcd/bitmap/st7565

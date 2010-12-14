@@ -145,12 +145,12 @@
         </VirtualDirectory>
         <VirtualDirectory Name="fonts">
           <File Name="../../drivers/lcd/tft/fonts/bitmapfonts.h"/>
-          <File Name="../../drivers/lcd/tft/fonts/consolas9.c"/>
-          <File Name="../../drivers/lcd/tft/fonts/consolas9.h"/>
-          <File Name="../../drivers/lcd/tft/fonts/consolas11.c"/>
-          <File Name="../../drivers/lcd/tft/fonts/consolas11.h"/>
-          <File Name="../../drivers/lcd/tft/fonts/consolas16.c"/>
-          <File Name="../../drivers/lcd/tft/fonts/consolas16.h"/>
+          <File Name="../../drivers/lcd/tft/fonts/inconsolata9.c"/>
+          <File Name="../../drivers/lcd/tft/fonts/inconsolata9.h"/>
+          <File Name="../../drivers/lcd/tft/fonts/inconsolata11.c"/>
+          <File Name="../../drivers/lcd/tft/fonts/inconsolata11.h"/>
+          <File Name="../../drivers/lcd/tft/fonts/inconsolata16.c"/>
+          <File Name="../../drivers/lcd/tft/fonts/inconsolata16.h"/>
         </VirtualDirectory>
         <File Name="../../drivers/lcd/tft/drawing.c"/>
         <File Name="../../drivers/lcd/tft/drawing.h"/>
@@ -158,8 +158,6 @@
         <File Name="../../drivers/lcd/tft/touchscreen.c"/>
         <File Name="../../drivers/lcd/tft/touchscreen.h"/>
         <File Name="../../drivers/lcd/tft/colors.h"/>
-        <File Name="../../drivers/lcd/tft/tscalibration.c"/>
-        <File Name="../../drivers/lcd/tft/tscalibration.h"/>
         <File Name="../../drivers/lcd/tft/bmp.c"/>
         <File Name="../../drivers/lcd/tft/bmp.h"/>
       </VirtualDirectory>

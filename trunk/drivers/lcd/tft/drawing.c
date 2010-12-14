@@ -58,7 +58,7 @@
     @brief  Draws a single bitmap character
 */
 /**************************************************************************/
-static void drawCharBitmap(const uint16_t xPixel, const uint16_t yPixel, uint16_t color, const uint8_t *glyph, uint8_t glyphHeightPages, uint8_t glyphWidthBits)
+void drawCharBitmap(const uint16_t xPixel, const uint16_t yPixel, uint16_t color, const uint8_t *glyph, uint8_t glyphHeightPages, uint8_t glyphWidthBits)
 {
   uint16_t verticalPage, horizBit, currentY, currentX;
   uint16_t indexIntoGlyph;
@@ -98,7 +98,7 @@ static void drawCharBitmap(const uint16_t xPixel, const uint16_t yPixel, uint16_
     @brief  Draws a single smallfont character
 */
 /**************************************************************************/
-static void drawCharSmall(uint16_t x, uint16_t y, uint16_t color, uint8_t c, struct FONT_DEF font)
+void drawCharSmall(uint16_t x, uint16_t y, uint16_t color, uint8_t c, struct FONT_DEF font)
 {
   uint8_t col, column[font.u8Width];
 
@@ -143,7 +143,7 @@ static void drawCharSmall(uint16_t x, uint16_t y, uint16_t color, uint8_t c, str
     @brief  Helper method to accurately draw individual circle points
 */
 /**************************************************************************/
-static void drawCirclePoints(int cx, int cy, int x, int y, uint16_t color)
+void drawCirclePoints(int cx, int cy, int x, int y, uint16_t color)
 {    
   if (x == 0) 
   {
@@ -282,10 +282,10 @@ void drawStringSmall(uint16_t x, uint16_t y, uint16_t color, char* text, struct 
 
     @code 
 
-    #include "drivers/lcd/tft/fonts/consolas9.h"
+    #include "drivers/lcd/tft/fonts/inconsolata9.h"
     
-    drawString(1,   90,   GREEN,    &consolas9ptFontInfo,   "Consolas 9 (38 chars wide)");
-    drawString(1,   105,  GREEN,    &consolas9ptFontInfo,   "12345678901234567890123456789012345678");
+    drawString(1,   90,   GREEN,    &inconsolata9ptFontInfo,   "inconsolata 9 (38 chars wide)");
+    drawString(1,   105,  GREEN,    &inconsolata9ptFontInfo,   "12345678901234567890123456789012345678");
 
     @endcode
 */
@@ -699,11 +699,11 @@ void drawProgressBar ( uint16_t x, uint16_t y, uint16_t width, uint16_t height, 
     @code 
 
     #include "drivers/lcd/tft/drawing.h"  
-    #include "drivers/lcd/tft/fonts/consolas16.h"
+    #include "drivers/lcd/tft/fonts/inconsolata16.h"
 
-    // Draw two buttons using Consolas16
-    drawButton(20, 20, 200, 35, &consolas16ptFontInfo, 16, "System Settings", FALSE);
-    drawButton(20, 65, 200, 35, &consolas16ptFontInfo, 16, "Refresh", FALSE);
+    // Draw two buttons using inconsolata16
+    drawButton(20, 20, 200, 35, &inconsolata16ptFontInfo, 16, "System Settings", FALSE);
+    drawButton(20, 65, 200, 35, &inconsolata16ptFontInfo, 16, "Refresh", FALSE);
 
     @endcode
 */
