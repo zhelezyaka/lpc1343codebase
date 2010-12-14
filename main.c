@@ -42,6 +42,8 @@
   #include "core/cmd/cmd.h"
 #endif
 
+#include "drivers/lcd/tft/touchscreen.h"
+
 /**************************************************************************/
 /*! 
     Approximates a 1 millisecond delay using "nop".  This is less

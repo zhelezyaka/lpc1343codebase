@@ -272,15 +272,29 @@ void lcdInit(void)
   // Disable pullups
   ILI9325_DISABLEPULLUPS();
   
-  // Set backlight
+  // Set backlight pin to input and turn it on
   gpioSetDir(ILI9325_BL_PORT, ILI9325_BL_PIN, 1);      // set to output
-  gpioSetValue(ILI9325_BL_PORT, ILI9325_BL_PIN, 0);    // turn on
+  lcdBacklightOn();
 
   // Initialize the display
   ili9325InitDisplay();
 
   // Fill black
   lcdFillRGB(COLOR_BLACK);
+}
+
+/*************************************************/
+void lcdBacklightOn(void)
+{
+  // Enable backlight
+  gpioSetValue(ILI9325_BL_PORT, ILI9325_BL_PIN, 0);
+}
+
+/*************************************************/
+void lcdBacklightOff(void)
+{
+  // Disable backlight
+  gpioSetValue(ILI9325_BL_PORT, ILI9325_BL_PIN, 1);
 }
 
 /*************************************************/
