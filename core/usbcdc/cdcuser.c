@@ -29,7 +29,7 @@
 unsigned char BulkBufOut [USB_CDC_BUFSIZE];            // Buffer to store USB OUT packet
 unsigned char NotificationBuf [10];
 
-CDC_LINE_CODING CDC_LineCoding  = {9600, 0, 0, 8};
+CDC_LINE_CODING CDC_LineCoding  = {CFG_USBCDC_BAUDRATE, 0, 0, 8};
 unsigned short  CDC_SerialState = 0x0000;
 unsigned short  CDC_DepInEmpty  = 1;                   // Data IN EP is empty
 
@@ -358,7 +358,7 @@ extern void usbcdcSendByte(uint8_t c)
 {
   // Ugly delay required ... need to add buffer and handle this better! :-)
   uint32_t i, delay;
-  delay = ((CFG_CPU_CCLK/SCB_SYSAHBCLKDIV) / 2500);
+  delay = ((CFG_CPU_CCLK/SCB_SYSAHBCLKDIV) / 25000);
   for ( i = 0; i < delay; i++ )
   {
     __asm("nop");
@@ -368,4 +368,5 @@ extern void usbcdcSendByte(uint8_t c)
   USB_WriteEP (CDC_DEP_IN, (unsigned char *)&c, 1);
   CDC_DepInEmpty = 1;
 }
+
 
