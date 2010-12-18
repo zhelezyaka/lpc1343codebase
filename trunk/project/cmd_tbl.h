@@ -109,7 +109,7 @@ cmd_t cmd_tbl[] =
   { "gp",             2,  2,  0, cmd_getpixel          , "Reads a single pixel from the LCD"                   , "'gp <x> <y>'" },
   { "line",           5,  5,  0, cmd_line              , "Draws a line"                                        , "'line <x1> <y1> <x2> <y2> <color>'" },
   { "p",              3,  3,  0, cmd_pixel             , "Draws a single pixel"                                , "'p <x> <y> <color>'" },
-  { "progress",       8,  8,  0, cmd_progress          , "Draws a progress bar"                                , "'progress <x> <y> <w> <h> <percent> <bordercolor> <backgroundcolor> <fillcolor>'" },
+  { "progress",       7,  7,  0, cmd_progress          , "Draws a progress bar"                                , "'progress <x> <y> <w> <h> <percent> <bordercolor> <fillcolor>'" },
   #ifdef CFG_SDCARD
   { "bmp",            3,  3,  0, cmd_bmp               , "Draws a bitmap image from the SD card"               , "'bmp <x> <y> <filename>'" },
   #endif

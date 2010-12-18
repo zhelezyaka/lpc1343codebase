@@ -62,7 +62,35 @@ void cmd_bmp(uint8_t argc, char **argv)
   filename = argv[2];
 
   // Render image
-  drawBitmapImage(x, y, filename);
+  bmp_error_t error;
+  error = drawBitmapImage(x, y, filename);
+
+  switch (error)
+  {
+    case BMP_ERROR_SDINITFAIL:
+      printf("Unable to initialise SD card%s", CFG_PRINTF_NEWLINE);
+      break;
+    case BMP_ERROR_FILENOTFOUND:
+      printf("File not found: '%s'%s", filename, CFG_PRINTF_NEWLINE);
+      break;
+    case BMP_ERROR_NOTABITMAP:
+      printf("Not a bitmap image: '%s'%s", filename, CFG_PRINTF_NEWLINE);
+      break;
+    case BMP_ERROR_INVALIDBITDEPTH:
+      printf("Not a 24-bit image%s", CFG_PRINTF_NEWLINE);
+      break;
+    case BMP_ERROR_INVALIDDIMENSIONS:
+      printf("Image can not exceed %d x %d pixels%s", CFG_TFTLCD_WIDTH, CFG_TFTLCD_HEIGHT, CFG_PRINTF_NEWLINE);
+      break;
+    case BMP_ERROR_COMPRESSEDDATA:
+      printf("Compressed images not supported%s", CFG_PRINTF_NEWLINE);
+      break;
+    case BMP_ERROR_PREMATUREEOF:
+      printf("EOF prematurely reached%s", CFG_PRINTF_NEWLINE);
+	  break;
+    case BMP_ERROR_NONE:
+	  break;
+  }
 }
 
 #endif  

@@ -160,6 +160,10 @@
         <File Name="../../drivers/lcd/tft/colors.h"/>
         <File Name="../../drivers/lcd/tft/bmp.c"/>
         <File Name="../../drivers/lcd/tft/bmp.h"/>
+        <VirtualDirectory Name="dialogues">
+          <File Name="../../drivers/lcd/tft/dialogues/alphanumeric.c"/>
+          <File Name="../../drivers/lcd/tft/dialogues/alphanumeric.h"/>
+        </VirtualDirectory>
       </VirtualDirectory>
       <VirtualDirectory Name="bitmap">
         <VirtualDirectory Name="st7565">

@@ -171,6 +171,9 @@
               <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
             </file>
             <file file_name="../../drivers/lcd/tft/bmp.c"/>
+            <folder Name="dialogues">
+              <file file_name="../../drivers/lcd/tft/dialogues/alphanumeric.c"/>
+            </folder>
           </folder>
           <file file_name="../../drivers/lcd/smallfonts.c">
             <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>

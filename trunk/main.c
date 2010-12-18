@@ -42,7 +42,8 @@
   #include "core/cmd/cmd.h"
 #endif
 
-#include "drivers/lcd/tft/touchscreen.h"
+#include "drivers/lcd/tft/drawing.h"
+#include "drivers/lcd/tft/dialogues/alphanumeric.h"
 
 /**************************************************************************/
 /*! 

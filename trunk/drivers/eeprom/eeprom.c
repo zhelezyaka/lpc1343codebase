@@ -125,6 +125,7 @@ uint16_t eepromReadU16(uint16_t addr)
   if (error) { };
 
   memcpy(&results, buf, sizeof(uint16_t));
+
   return results;
 }
 

@@ -1,6 +1,20 @@
 v0.70 - Ongoing
 ===============
 
+- Added a dialogue box for the TFT LCD/Touchscreen
+  to input alpha-numeric data and return the
+  results as a string ('drivers/lcd/tft/dialogues/*')
+- Added touch screen calibration code and UI
+  ('drivers/lcd/tft/touchscreen.c')
+- Fixed a bug in ILI9325.c to make sure that the LCD
+  is reset during initialisation
+- ** IMPORTANT ** Changed 'core/i2c/*' to fix a number
+  of bugs (thanks Rob65!) ... though this means all
+  i2c peripherals and drivers will need to be tested.
+- Added 'colorscheme_t' to drawing.h to try to use a
+  standard color palette across GUI controls and make
+  it easy to change later.  Currently only the button
+  and progress bar make use of this.
 - Added 'lcdBacklightOn()' and 'lcdBacklightOff()' to
   lcd.h
 - Added 'CFG_TFTLCD_TS_THRESHOLD' to projectconfig.h

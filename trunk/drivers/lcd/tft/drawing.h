@@ -51,6 +51,13 @@
   #include "bmp.h"
 #endif
 
+typedef enum
+{
+  COLORSCHEME_DEFAULT = 0,
+  COLORSCHEME_DARKGRAY = 1,
+  COLORSCHEME_BLUE = 2
+} colorscheme_t;
+
 void      drawTestPattern     ( void );
 void      drawPixel           ( uint16_t x, uint16_t y, uint16_t color );
 void      drawFill            ( uint16_t color );
@@ -61,8 +68,8 @@ void      drawCircle          ( uint16_t xCenter, uint16_t yCenter, uint16_t rad
 void      drawRectangle       ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color );
 void      drawRectangleFilled ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color );
 void      drawImage           ( uint16_t x, uint16_t y, uint16_t *data );
-void      drawProgressBar     ( uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t borderColor, uint16_t fillColor, uint16_t barBorderColor, uint16_t barFillColor, uint8_t progress );
-void      drawButton          ( uint16_t x, uint16_t y, uint16_t width, uint16_t height, const FONT_INFO *fontInfo, uint16_t fontHeight, char* text, bool pressed );
+void      drawProgressBar     ( uint16_t x, uint16_t y, uint16_t width, uint16_t height, colorscheme_t colorScheme, uint16_t barBorderColor, uint16_t barFillColor, uint8_t progress );
+void      drawButton          ( uint16_t x, uint16_t y, uint16_t width, uint16_t height, const FONT_INFO *fontInfo, uint16_t fontHeight, char* text, colorscheme_t colorScheme, bool pressed );
 uint16_t  drawRGB24toRGB565   ( uint8_t r, uint8_t g, uint8_t b );
 
 #if defined CFG_TFTLCD_INCLUDESMALLFONTS & CFG_TFTLCD_INCLUDESMALLFONTS == 1

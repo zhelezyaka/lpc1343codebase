@@ -120,7 +120,7 @@ static bool _mcp24aaInitialised = false;
 mcp24aaError_e mcp24aaInit()
 {
   // Initialise I2C
-  if (i2cInit(I2CMODE_MASTER) == false)
+  if (i2cInit(I2CMASTER) == false)
   {
     return MCP24AA_ERROR_I2CINIT;    /* Fatal error */
   }
@@ -247,7 +247,7 @@ mcp24aaError_e mcp24aaWriteBuffer (uint16_t address, uint8_t *buffer, uint32_t b
   i2cEngine();
 
   // Wait at least 10ms
-  systickDelay(10 / CFG_SYSTICK_DELAY_IN_MS);
+  systickDelay(10);
   
   return MCP24AA_ERROR_OK;
 }

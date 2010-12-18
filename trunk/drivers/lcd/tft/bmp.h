@@ -136,8 +136,7 @@ typedef enum
   BMP_ERROR_NOTABITMAP = 10,          /* First two bytes of the image not 'BM' */
   BMP_ERROR_INVALIDBITDEPTH = 11,     /* Image is not 24-bits */
   BMP_ERROR_COMPRESSEDDATA = 12,      /* Image contains compressed data (not supported) */
-  BMP_ERROR_INVALIDWIDTH = 13,        /* Image is > 240 pixels wide */
-  BMP_ERROR_INVALIDHEIGHT = 14,        /* Image is > 320 pixels high */
+  BMP_ERROR_INVALIDDIMENSIONS = 13,   /* Image is > CFG_TFTLCD_WIDTH pixels wide or > CFG_TFTLCD_HEIGHT pixels high */
   BMP_ERROR_PREMATUREEOF = 14         /* EOF reached unexpectedly in pixel data */
 } bmp_error_t;
 

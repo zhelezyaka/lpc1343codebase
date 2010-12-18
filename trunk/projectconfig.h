@@ -258,7 +258,7 @@
                               this varies with the number of commands
                               present
     -----------------------------------------------------------------------*/
-    // #define CFG_INTERFACE
+    #define CFG_INTERFACE
     #define CFG_INTERFACE_MAXMSGSIZE    (80)
     #define CFG_INTERFACE_PROMPT        "LPC1343 >> "
 /*=========================================================================*/
@@ -352,13 +352,13 @@
     #define CFG_EEPROM_RESERVED                 (0x00FF)              // Protect first 256 bytes of memory
     #define CFG_EEPROM_CHIBI_IEEEADDR           (uint16_t)(0x0000)    // 8
     #define CFG_EEPROM_CHIBI_SHORTADDR          (uint16_t)(0x0009)    // 2
-    #define CFG_EEPROM_TOUCHSCREEN_CONFIGURED   (uint8_t) (0x0010)    // 1
-    #define CFG_EEPROM_TOUCHSCREEN_OFFSET_MIDX  (uint16_t)(0x0011)    // 2
-    #define CFG_EEPROM_TOUCHSCREEN_OFFSET_MIDY  (uint16_t)(0x0013)    // 2
-    #define CFG_EEPROM_TOUCHSCREEN_OFFSET_TLX   (uint16_t)(0x0015)    // 2
-    #define CFG_EEPROM_TOUCHSCREEN_OFFSET_TLY   (uint16_t)(0x0017)    // 2
-    #define CFG_EEPROM_TOUCHSCREEN_OFFSET_BRX   (uint16_t)(0x0019)    // 2
-    #define CFG_EEPROM_TOUCHSCREEN_OFFSET_BRY   (uint16_t)(0x001B)    // 2
+    #define CFG_EEPROM_TOUCHSCREEN_CALIBRATED   (uint16_t)(0x0010)    // 1
+    #define CFG_EEPROM_TOUCHSCREEN_OFFSET_LEFT  (uint16_t)(0x0011)    // 2
+    #define CFG_EEPROM_TOUCHSCREEN_OFFSET_RIGHT (uint16_t)(0x0013)    // 2
+    #define CFG_EEPROM_TOUCHSCREEN_OFFSET_TOP   (uint16_t)(0x0015)    // 2
+    #define CFG_EEPROM_TOUCHSCREEN_OFFSET_BOT   (uint16_t)(0x0017)    // 2
+    #define CFG_EEPROM_TOUCHSCREEN_OFFSET_DIVX  (uint16_t)(0x0019)    // 2
+    #define CFG_EEPROM_TOUCHSCREEN_OFFSET_DIVY  (uint16_t)(0x001B)    // 2
 /*=========================================================================*/
 
 
@@ -445,6 +445,8 @@
                                 'tsWaitForEvent' in touchscreen.c).  Should
                                 be an 8-bit value somewhere between 8 and 32
                                 in normal circumstances.
+    CFG_TFTLCD_TS_KEYPADDELAY   The delay in milliseconds between key
+                                presses on the dialogue boxes
 
     PIN LAYOUT:                 The pin layout that is used by this driver
                                 can be seen in the following schematic:
@@ -455,7 +457,10 @@
     -----------------------------------------------------------------------*/
     // #define CFG_TFTLCD
     #define CFG_TFTLCD_INCLUDESMALLFONTS   (0)
-    #define CFG_TFTLCD_TS_THRESHOLD        (25)
+    #define CFG_TFTLCD_WIDTH               (240)
+    #define CFG_TFTLCD_HEIGHT              (320)
+    #define CFG_TFTLCD_TS_THRESHOLD        (32)
+    #define CFG_TFTLCD_TS_KEYPADDELAY      (200)
 /*=========================================================================*/
 
 
@@ -547,6 +552,9 @@
   #endif
   #ifdef CFG_PWM
     #error "CFG_TFTLCD and CFG_PWM can not be defined at the same time since they both use pin 1.9."
+  #endif
+  #if !defined CFG_I2CEEPROM
+    #error "CFG_TFTLCD requires CFG_I2CEEPROM to store and retrieve configuration settings"
   #endif
 #endif
 
