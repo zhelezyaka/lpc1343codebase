@@ -59,6 +59,8 @@ void cmd_line(uint8_t argc, char **argv);
 void cmd_pixel(uint8_t argc, char **argv);
 void cmd_progress(uint8_t argc, char **argv);
 void cmd_getpixel(uint8_t argc, char **argv);
+void cmd_gettext(uint8_t argc, char **argv);
+void cmd_calibrate(uint8_t argc, char **argv);
 #ifdef CFG_SDCARD
 void cmd_bmp(uint8_t argc, char **argv);
 #endif
@@ -103,15 +105,17 @@ cmd_t cmd_tbl[] =
 
   #ifdef CFG_TFTLCD
   { "btn",            5,  99, 0, cmd_button            , "Draws a button"                                      , "'btn <x> <y> <w> <h> <enabled> [<text>]'" },
+  { "calibrate",      0,  0,  0, cmd_calibrate         , "Calibrates the touch screen"                         , "'calibrate' has no parameters'" },
   { "circle",         4,  4,  0, cmd_circle            , "Draws a circle"                                      , "'circle <x> <y> <radius> <color>'" },
   { "clr",            0,  1,  0, cmd_clear             , "Fills the screen with a 16-bit (RGB565) color"       , "'clr [<color>]'" },
   { "clr24",          3,  3,  0, cmd_clear24           , "Fills the screen with a 24-bit (RGB) color"          , "'clr24 <r> <g> <b>'" },
+  { "gettext",        0,  0,  0, cmd_gettext           , "Displays an alpha-numeric input dialogue"            , "'gettext' has no parameters" },
   { "gp",             2,  2,  0, cmd_getpixel          , "Reads a single pixel from the LCD"                   , "'gp <x> <y>'" },
   { "line",           5,  5,  0, cmd_line              , "Draws a line"                                        , "'line <x1> <y1> <x2> <y2> <color>'" },
   { "p",              3,  3,  0, cmd_pixel             , "Draws a single pixel"                                , "'p <x> <y> <color>'" },
   { "progress",       7,  7,  0, cmd_progress          , "Draws a progress bar"                                , "'progress <x> <y> <w> <h> <percent> <bordercolor> <fillcolor>'" },
   #ifdef CFG_SDCARD
-  { "bmp",            3,  3,  0, cmd_bmp               , "Draws a bitmap image from the SD card"               , "'bmp <x> <y> <filename>'" },
+  { "bmp",            3,  3,  0, cmd_bmp               , "Loads a bitmap image from the SD card"               , "'bmp <x> <y> <filename>'" },
   #endif
   #endif
 

@@ -264,6 +264,8 @@
             </file>
             <file file_name="../../project/commands/drawing/cmd_clear.c"/>
             <file file_name="../../project/commands/drawing/cmd_bmp.c"/>
+            <file file_name="../../project/commands/drawing/cmd_gettext.c"/>
+            <file file_name="../../project/commands/drawing/cmd_calibrate.c"/>
           </folder>
         </folder>
         <file file_name="../../project/cmd_tbl.h"/>

@@ -79,6 +79,13 @@
 #define ALPHA_COL4_LEFT     ((ALPHA_BTN_SPACING * 4) + (ALPHA_BTN_WIDTH * 3))
 #define ALPHA_COL5_LEFT     ((ALPHA_BTN_SPACING * 5) + (ALPHA_BTN_WIDTH * 4))
 
+/* Control which 'page' is currently shown on the keypad */
+static uint8_t alphaPage = 0;
+
+/* Keeps track of the string contents */
+static uint8_t alphaString[80];
+static uint8_t *alphaString_ptr;
+
 /* For quick retrieval of button X/Y locqtions */
 uint32_t alphaBtnX[5] =     { ALPHA_COL1_LEFT, ALPHA_COL2_LEFT, ALPHA_COL3_LEFT, 
                               ALPHA_COL4_LEFT, ALPHA_COL5_LEFT };
@@ -122,13 +129,6 @@ char alphaKeys[4][6][5] =  {  {  { 'A', 'B', 'C', 'D', '<' },
                                  { '.', '0', ' ', ' ', ' ' },
                                  { ' ', ' ', ' ', ' ', '*'},
                                  { ' ', ' ', ' ', ' ', '>' }  }  };
-
-/* Control which 'page' is currently shown on the keypad */
-static uint8_t alphaPage = 0;
-
-/* Keeps track of the string contents */
-static uint8_t alphaString[80];
-static uint8_t *alphaString_ptr;
 
 /**************************************************************************/
 /*! 
@@ -299,7 +299,7 @@ char* alphaShowDialogue(void)
   char result;
 
   /* Initialise the string buffer */
-  *alphaString = '\0';
+  memset(&alphaString[0], 0, sizeof(alphaString));
   alphaString_ptr = alphaString;
   alphaPage = 0;
 

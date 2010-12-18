@@ -1,6 +1,7 @@
-v0.70 - Ongoing
-===============
+v0.70 - 18 Dec 2010
+===================
 
+- Added 'calibrate' and 'gettext' commands to the CLI
 - Added a dialogue box for the TFT LCD/Touchscreen
   to input alpha-numeric data and return the
   results as a string ('drivers/lcd/tft/dialogues/*')
