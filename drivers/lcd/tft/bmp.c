@@ -92,8 +92,8 @@ bmp_error_t bmpParseBitmap(uint16_t x, uint16_t y, FIL file)
     return BMP_ERROR_INVALIDBITDEPTH;
 
   // Check image dimensions
-  if ((infoHeader.width > 240) | (infoHeader.height > 320))
-    return BMP_ERROR_INVALIDWIDTH;
+  if ((infoHeader.width > CFG_TFTLCD_WIDTH) | (infoHeader.height > CFG_TFTLCD_HEIGHT))
+    return BMP_ERROR_INVALIDDIMENSIONS;
 
   // Make sure image is not compressed
   if (infoHeader.compression != BMP_COMPRESSION_NONE) 
@@ -115,6 +115,8 @@ bmp_error_t bmpParseBitmap(uint16_t x, uint16_t y, FIL file)
     for (px = 0; px < infoHeader.width; px++)
     {
       // Render pixel
+      // ToDo: This is a brutally slow way of rendering bitmaps ...
+      //        update to pass one row of data at a time
       drawPixel(x + px, y + py - 1, drawRGB24toRGB565(buffer[(px * 3) + 2], buffer[(px * 3) + 1], buffer[(px * 3)]));
     }
   }

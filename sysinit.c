@@ -178,11 +178,9 @@ void systemInit()
     st7565Refresh();        // Refresh the screen
   #endif
 
-  // Initialise TFT LCD Display (ILI9235 240x320 pixel, 8-bit data bus)
+  // Initialise TFT LCD Display
   #ifdef CFG_TFTLCD
     lcdInit();
-    tsInit();
-    drawRectangleFilled(0, 0, 239, 319, COLOR_BLACK);
   #endif
 
   // Initialise SD Card
@@ -191,16 +189,15 @@ void systemInit()
     stat = disk_initialize(0);
     if (stat & STA_NOINIT) 
     {
-      printf("%-40s : %s%s", "SD", "Not Initialised", CFG_PRINTF_NEWLINE);
+      // Not intitialised
     }
     if (stat & STA_NODISK) 
     {
-      printf("%-40s : %s%s", "SD", "No Disk", CFG_PRINTF_NEWLINE);
+      // No disk
     }
     if (stat == 0)
     {
       // SD Card Initialised
-      printf("%-40s : %s%s", "SD", "Initialised", CFG_PRINTF_NEWLINE);
     }
   #endif
 

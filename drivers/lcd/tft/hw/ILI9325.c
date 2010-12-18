@@ -6,7 +6,8 @@
     @section  DESCRIPTION
 
     Driver to the ILI9325 240x320 pixel TFT LCD driver.  This driver
-    uses an 8-bit interface and a 16-bit RGB565 colour palette.
+    uses an 8-bit interface and a 16-bit RGB565 colour palette.  Should
+    also work with SPFD5408B and ST7783 Displays.
 
     @section  UPDATES
 
@@ -43,6 +44,8 @@
 */
 /**************************************************************************/
 #include "ILI9325.h"
+#include "core/systick/systick.h"
+#include "drivers/lcd/tft/touchscreen.h"
 
 /*************************************************/
 /* Private Methods                               */
@@ -276,11 +279,20 @@ void lcdInit(void)
   gpioSetDir(ILI9325_BL_PORT, ILI9325_BL_PIN, 1);      // set to output
   lcdBacklightOn();
 
+  // Set reset pin to output
+  gpioSetDir(ILI9325_RES_PORT, ILI9325_RES_PIN, 1);    // Set to output
+  gpioSetValue(ILI9325_RES_PORT, ILI9325_RES_PIN, 0);  // Low to reset
+  systickDelay(50);
+  gpioSetValue(ILI9325_RES_PORT, ILI9325_RES_PIN, 1);  // High to exit
+
   // Initialize the display
   ili9325InitDisplay();
 
   // Fill black
   lcdFillRGB(COLOR_BLACK);
+  
+  // Initialise the touch screen (and calibrate if necessary)
+  tsInit();
 }
 
 /*************************************************/

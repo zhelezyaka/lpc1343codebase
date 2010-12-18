@@ -37,14 +37,13 @@
 
 #include "core/adc/adc.h"
 #include "core/gpio/gpio.h"
+#include "core/systick/systick.h"
 #include "drivers/eeprom/eeprom.h"
-
-// Required for touch screen cqlibrqtion
 #include "drivers/lcd/tft/drawing.h"
 #include "drivers/lcd/tft/fonts/inconsolata11.h"
 
 static bool _tsInitialised = FALSE;
-static bool _tsCalibrated = FALSE;
+static tsCalibrationData_t _calibration;
 
 /**************************************************************************/
 /*                                                                        */
@@ -59,7 +58,7 @@ static bool _tsCalibrated = FALSE;
 /**************************************************************************/
 void tsCalibCenterText(char* text, uint16_t y, uint16_t color)
 {
-  drawString((240 - drawGetStringWidth(&inconsolata11ptFontInfo, text)) / 2, y, color, &inconsolata11ptFontInfo, text);
+  drawString((CFG_TFTLCD_WIDTH - drawGetStringWidth(&inconsolata11ptFontInfo, text)) / 2, y, color, &inconsolata11ptFontInfo, text);
 }
 
 /**************************************************************************/
@@ -173,7 +172,7 @@ uint32_t tsReadY(void)
 
 /**************************************************************************/
 /*!
-    @brief  Converts Z variables into an 8-bit 'pressure' value
+    @brief  Converts Z variables into 'pressure' value (0..255)
 */
 /**************************************************************************/
 uint8_t tsCalculatePressure(uint32_t x, uint32_t z1, uint32_t z2)
@@ -191,7 +190,7 @@ uint8_t tsCalculatePressure(uint32_t x, uint32_t z1, uint32_t z2)
   }
   else
   {
-    return t;
+    return (uint8_t)t;
   }
 }
 
@@ -215,10 +214,21 @@ void tsInit(void)
   // Set initialisation flag
   _tsInitialised = TRUE;
 
-  // Check/Load calibration data
-  if (!_tsCalibrated)
+  // Check if the touch-screen has been calibrated
+  if (eepromReadU8(CFG_EEPROM_TOUCHSCREEN_CALIBRATED) == 1)
   {
-    // ToDo
+    // Load calibration data
+    _calibration.offsetLeft   = eepromReadU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_LEFT);
+    _calibration.offsetRight  = eepromReadU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_RIGHT);
+    _calibration.offsetTop    = eepromReadU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_TOP);
+    _calibration.offsetBottom = eepromReadU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_BOT);
+    _calibration.divisorX     = eepromReadU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_DIVX);
+    _calibration.divisorY     = eepromReadU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_DIVY);
+  }
+  else
+  {
+    // Start touch-screen calibration
+    tsCalibrate();
   }
 }
 
@@ -229,19 +239,77 @@ void tsInit(void)
 /**************************************************************************/
 void tsCalibrate(void)
 {
-  // Clear the screen
-  drawRectangleFilled(0, 0, 239, 319, COLOR_WHITE);
+  uint32_t z1, z2;
+  z1 = z2 = 0;
 
-  // Display starup text
+  /* -------------- Welcome Screen --------------- */
+  drawFill(COLOR_WHITE);
   tsCalibCenterText("To begin calibrating the", 50, COLOR_DARKGRAY);
   tsCalibCenterText("touch screen please click", 65, COLOR_DARKGRAY);
   tsCalibCenterText("on the center dot", 80, COLOR_DARKGRAY);
+  tsCalibDrawTestPoint(CFG_TFTLCD_WIDTH / 2, CFG_TFTLCD_HEIGHT / 2, 5);
 
-  // Draw test circle
-  tsCalibDrawTestPoint(120, 160, 5);
+  // Wait for touch
+  while (z2 < CFG_TFTLCD_TS_THRESHOLD) 
+  { 
+    tsReadZ(&z1, &z2); 
+  }
+  systickDelay(250);
 
-  // Draw cancel button
-  drawButton(20, 200, 200, 60, &inconsolata11ptFontInfo, 7, "Cancel", FALSE);
+  /* -------------- CALIBRATE X --------------- */
+  drawFill(COLOR_WHITE);
+  tsCalibCenterText("Touch the center of the", 50, COLOR_DARKGRAY);
+  tsCalibCenterText("upper left circle using", 65, COLOR_DARKGRAY);
+  tsCalibCenterText("a pen or stylus", 80, COLOR_DARKGRAY);
+  tsCalibDrawTestPoint(5, 5, 5);
+
+  // Wait for touch
+  z1 = z2 = 0;
+  while (z2 < CFG_TFTLCD_TS_THRESHOLD) 
+  {
+    tsReadZ(&z1, &z2); 
+  }
+
+  _calibration.offsetLeft = tsReadY();
+  _calibration.offsetTop = tsReadX();
+
+  // Delay to avoid multiple touch events
+  systickDelay(250);
+
+  /* -------------- CALIBRATE Y --------------- */
+  drawFill(COLOR_WHITE);
+  tsCalibCenterText("Touch the center of the", 50, COLOR_DARKGRAY);
+  tsCalibCenterText("bottom right circle using", 65, COLOR_DARKGRAY);
+  tsCalibCenterText("a pen or stylus", 80, COLOR_DARKGRAY);
+  tsCalibDrawTestPoint(CFG_TFTLCD_WIDTH - 5, CFG_TFTLCD_HEIGHT - 5, 5);
+
+  // Wait for touch
+  z1 = z2 = 0;
+  while (z2 < CFG_TFTLCD_TS_THRESHOLD)
+  {
+    tsReadZ(&z1, &z2);
+  }
+  _calibration.offsetRight = (1024 - tsReadY());
+  _calibration.offsetBottom = (1024 - tsReadX());
+
+  _calibration.divisorX = ((1024 - (_calibration.offsetLeft + _calibration.offsetRight)) * 100) / CFG_TFTLCD_WIDTH;
+  _calibration.divisorY = ((1024 - (_calibration.offsetTop + _calibration.offsetBottom)) * 100) / CFG_TFTLCD_HEIGHT;
+
+  /* -------------- Test Results --------------- */
+  // ToDo: Confirm values and redo calibration if necessary
+
+  /* -------------- Persist Data --------------- */
+  // Persist data to EEPROM
+  eepromWriteU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_LEFT, _calibration.offsetLeft);
+  eepromWriteU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_RIGHT, _calibration.offsetRight);
+  eepromWriteU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_TOP, _calibration.offsetTop);
+  eepromWriteU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_BOT, _calibration.offsetBottom);
+  eepromWriteU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_DIVX, _calibration.divisorX);
+  eepromWriteU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_DIVY, _calibration.divisorY);
+  eepromWriteU8(CFG_EEPROM_TOUCHSCREEN_CALIBRATED, 1);
+
+  // Clear the screen
+  drawFill(COLOR_BLACK);
 }
 
 /**************************************************************************/
@@ -263,13 +331,12 @@ void tsCalibrate(void)
     tsWaitForEvent(&data);
 
     // A valid touch event occurred ... parse data
-    if (data.x > 100 && data.x < 300)
+    if (data.x > 100 && data.x < 200)
     {
       // Do something
-      printf("Touch Event: X = %d, Y = %d, Pressure = %d %s", 
+      printf("Touch Event: X = %d, Y = %d %s", 
           (int)data.x, 
           (int)data.y, 
-          (int)data.pressure, 
           CFG_PRINTF_NEWLINE);
     }
 
@@ -281,7 +348,7 @@ void tsWaitForEvent(tsTouchData_t* data)
   if (!_tsInitialised) tsInit();
 
   // Read Z for pressure
-  uint32_t z1, z2;
+  uint32_t z1, z2, xRaw, yRaw;
   z1 = z2 = 0;
 
   // Wait for touch
@@ -290,8 +357,15 @@ void tsWaitForEvent(tsTouchData_t* data)
     tsReadZ(&z1, &z2);
   }
 
-  // Set results
-  data->x = tsReadX();
-  data->y = tsReadY();
-  data->pressure = tsCalculatePressure(data->x, z1, z2);
+  // Get raw conversion results
+  xRaw = tsReadY();    // X and Y are reversed
+  yRaw = tsReadX();    // X and Y are reverse
+
+  // Normalise X
+  data->x = ((xRaw - _calibration.offsetLeft > 1024 ? 0 : xRaw - _calibration.offsetLeft) * 100) / _calibration.divisorX;
+  if (data->x > CFG_TFTLCD_WIDTH - 1) data->x = CFG_TFTLCD_WIDTH - 1;
+
+  // Normalise Y
+  data->y = ((yRaw - _calibration.offsetTop > 1024 ? 0 : yRaw - _calibration.offsetTop) * 100) / _calibration.divisorY;
+  if (data->y > CFG_TFTLCD_HEIGHT - 1) data->y = CFG_TFTLCD_HEIGHT - 1;
 }

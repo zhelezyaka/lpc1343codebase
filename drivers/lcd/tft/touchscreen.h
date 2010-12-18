@@ -68,8 +68,18 @@ typedef struct
 {
   uint32_t x;
   uint32_t y;
-  uint8_t  pressure;
 } tsTouchData_t;
+
+typedef struct
+{
+  bool calibrated;
+  uint16_t offsetLeft;
+  uint16_t offsetRight;
+  uint16_t offsetTop;
+  uint16_t offsetBottom;
+  uint16_t divisorX;
+  uint16_t divisorY;
+} tsCalibrationData_t;
 
 // Method Prototypes
 void          tsInit ( void );
