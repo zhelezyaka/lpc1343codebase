@@ -263,6 +263,7 @@
             <file file_name="../../project/commands/drawing/cmd_calibrate.c"/>
             <file file_name="../../project/commands/drawing/cmd_text.c"/>
             <file file_name="../../project/commands/drawing/cmd_textw.c"/>
+            <file file_name="../../project/commands/drawing/cmd_tswait.c"/>
           </folder>
         </folder>
         <file file_name="../../project/cmd_tbl.h"/>

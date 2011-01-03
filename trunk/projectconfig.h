@@ -430,7 +430,7 @@
     PIN LAYOUT:                 The pin layout that is used by this driver
                                 can be seen in the following schematic:
                                 /tools/schematics/Breakout_TFTLCD_ILI9325_v1.3
-								
+
     DEPENDENCIES:               TFTLCD requires the use of pins 1.8, 1.9,
                                 1.10, 1.11, 3.3 and 2.1-9.
     -----------------------------------------------------------------------*/
