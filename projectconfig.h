@@ -56,7 +56,6 @@
     SDCARD      . .  .  .     . . . . . . . . .     X . . .
     PWM         . X  .  .     . . . . . . . . .     . . . .
     STEPPER     . .  .  .     . . . . . . . . .     X X X X
-    PN532       . .  .  .     . . . . . . . . .     . . . .
     CHIBI       X X  X  .     . . . . . . . . .     . . . .
     TFTLCD      X X  X  X     X X X X X X X X X     . . . X
     ST7565      . .  .  .     X X X X X X . . .     . . . .
@@ -70,7 +69,6 @@
     PMU [1]     .     .     X     .       .       . . . .     .
     USB         .     .     .     X       .       . . . .     .
     STEPPER     .     .     X     .       .       . . . .     .
-    PN532       .     .     .     .       .       . . . .     X
     CHIBI       x     .     .     .       X       . . . .     .
     TFTLCD      .     .     .     .       .       X X X X     .
     ST7565      .     .     .     .       .       . . . .     .
@@ -88,7 +86,7 @@
     FIRMWARE VERSION SETTINGS
     -----------------------------------------------------------------------*/
     #define CFG_FIRMWARE_VERSION_MAJOR            (0)
-    #define CFG_FIRMWARE_VERSION_MINOR            (7)
+    #define CFG_FIRMWARE_VERSION_MINOR            (8)
     #define CFG_FIRMWARE_VERSION_REVISION         (0)
 /*=========================================================================*/
 
@@ -103,7 +101,7 @@
                     other peripherals to determine timing.
 
     -----------------------------------------------------------------------*/
-    #define CFG_CPU_CCLK                (72000000)
+    #define CFG_CPU_CCLK                (72000000)  // 1 tick = 13.88nS
 /*=========================================================================*/
 
 
@@ -376,25 +374,6 @@
 
 
 /*=========================================================================
-    PN532 NFC TRANSCEIVER
-    -----------------------------------------------------------------------
-
-    CFG_PN532                 If defined, drivers for an optional PN532
-                              Near-Field Communication (NFC) transceiver
-                              will be included during build (requires
-                              external HW)
-
-    @warning                  This code is in development and should not
-                              be used.  It is provided here to make
-                              collaborative development easier by having
-                              the core files in the code repository.
-
-    -----------------------------------------------------------------------*/
-    // #define CFG_PN532
-/*=========================================================================*/
-
-
-/*=========================================================================
     CHIBI WIRELESS STACK
     -----------------------------------------------------------------------
 
@@ -519,10 +498,6 @@
 
 #if defined CFG_USBCDC && defined CFG_USBHID
   #error "Only one USB class can be defined at a time (CFG_USBCDC or CFG_USBHID)"
-#endif
-
-#if defined CFG_PRINTF_UART && defined CFG_PN532
-  #error "CFG_PRINTF_UART and CFG_PN532 can not be defined at the same time (use CFG_PRINTF_USBCDC instead)"
 #endif
 
 #ifdef CFG_INTERFACE

@@ -40,6 +40,13 @@
 
 #include "projectconfig.h"
 
+typedef enum
+{
+  COLORSCHEME_DEFAULT = 0,
+  COLORSCHEME_DARKGRAY = 1,
+  COLORSCHEME_BLUE = 2
+} colorscheme_t;
+
 // Basic Color definitions
 #define	COLOR_BLACK         0x0000
 #define	COLOR_BLUE          0x001F

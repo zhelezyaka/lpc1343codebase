@@ -5,9 +5,12 @@
 
     @section  DESCRIPTION
 
-    Driver to the ILI9325 240x320 pixel TFT LCD driver.  This driver
-    uses an 8-bit interface and a 16-bit RGB565 colour palette.  Should
-    also work with SPFD5408B and ST7783 Displays.
+    Driver for ILI9325 240x320 pixel TFT LCD displays.
+    
+    This driver uses an 8-bit interface and a 16-bit RGB565 colour palette.
+    Should also work with SPFD5408B, ST7783 or OTM3225A-based LCDs, though
+    there are sometimes minor differences (for example vertical scrolling
+    via register 0x6A isn't supported with the ST7783 controller).
 
     @section  UPDATES
 
@@ -67,10 +70,10 @@ void ili9325WriteCmd(uint16_t command)
 {
   // Compiled with -Os on GCC 4.4 this works out to 25 cycles
   // (versus 36 compiled with no optimisations).  I'm not sure it
-  // cen be improved further, so that means 25 cycles for continuous
-  // writes (cmd, data, data, data, ...) or ~150 cycles for a 
-  // random pixel (Set X [cmd+data], Set Y [cmd+data],
-  // Set color [cmd+data]).
+  // can be improved further, so that means 25 cycles/350nS for
+  // continuous writes (cmd, data, data, data, ...) or ~150 cycles/
+  // ~2.1uS for a random pixel (Set X [cmd+data], Set Y [cmd+data],
+  // Set color [cmd+data]) (times assumes 72MHz clock).
 
   CLR_CS_CD_SET_RD_WR;  // Saves 18 commands compared to "CLR_CS; CLR_CD; SET_RD; SET_WR;" 
   ILI9325_GPIO2DATA_DATA = (command >> (8 - ILI9325_DATA_OFFSET));
@@ -392,4 +395,19 @@ uint16_t lcdGetPixel(uint16_t x, uint16_t y)
   ili9325SetCursor(x, y);
   ili9325WriteCmd(0x0022);
   return ili9325ReadData();
+}
+
+/*************************************************/
+void lcdScroll(int16_t pixels, uint16_t fillColor)
+{
+  // Note: Not all ILI9325 imitations support HW vertical scrolling!
+  // ST7781 - Not supported (ex. RFTechWorld 2.8" displays)
+  // OTM3225A - Supported
+  int16_t y = pixels;
+  while (y < 0)
+    y += 320;
+  while (y >= 320)
+    y -= 320;
+  ili9325WriteCmd(0x6A);
+  ili9325WriteData(y);
 }

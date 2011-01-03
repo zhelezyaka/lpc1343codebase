@@ -51,13 +51,6 @@
   #include "bmp.h"
 #endif
 
-typedef enum
-{
-  COLORSCHEME_DEFAULT = 0,
-  COLORSCHEME_DARKGRAY = 1,
-  COLORSCHEME_BLUE = 2
-} colorscheme_t;
-
 void      drawTestPattern     ( void );
 void      drawPixel           ( uint16_t x, uint16_t y, uint16_t color );
 void      drawFill            ( uint16_t color );

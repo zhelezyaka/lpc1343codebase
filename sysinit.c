@@ -76,11 +76,6 @@
   #include "drivers/lcd/smallfonts.h"
 #endif
 
-#ifdef CFG_PN532
-  #include "core/uart/uart.h"
-  #include "drivers/nfc/pn532/pn532.h"
-#endif
-
 #ifdef CFG_TFTLCD
   #include "drivers/lcd/tft/lcd.h"
   #include "drivers/lcd/tft/touchscreen.h"
@@ -164,11 +159,6 @@ void systemInit()
   #endif
 
   // Printf can now be used with UART or USBCDC
-
-  // Initialise PN532
-  #ifdef CFG_PN532
-    pn532Init();
-  #endif
 
   // Initialise the ST7565 128x64 pixel display
   #ifdef CFG_ST7565
