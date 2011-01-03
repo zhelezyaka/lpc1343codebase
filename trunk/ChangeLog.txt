@@ -1,6 +1,7 @@
 v0.80 - Ongoing
 ===============
 
+- Added 'cmd_tswait' to wait for a touch event
 - Removed 'drivers/nfc/pn532' until proper drivers
   can be written
 - Added 'cmd_text' and 'cmd_textw' to the CLI to

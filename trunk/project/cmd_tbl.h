@@ -119,7 +119,7 @@ cmd_t cmd_tbl[] =
   { "progress",       7,  7,  0, cmd_progress          , "Draws a progress bar"                                , "'progress <x> <y> <w> <h> <percent> <bordercolor> <fillcolor>'" },
   { "text",           5, 99,  0, cmd_text              , "Renders text on the LCD"                             , "'text <x> <y> <color> <fontnumber> <message>'" },
   { "textw",          2, 99,  0, cmd_textw             , "Gets the width in pixels of the supplied text"       , "'textw <fontnumber> <message>'" },
-  { "tswait",         0,  0,  0, cmd_tswait            , "Waits for a touch-screen event"                      , "'tswait' has no parameters" },
+  { "tswait",         0,  1,  0, cmd_tswait            , "Waits for a touch-screen event"                      , "'tswait [<timeoutMS>]'" },
   #ifdef CFG_SDCARD
   { "bmp",            3,  3,  0, cmd_bmp               , "Loads a bitmap image from the SD card"               , "'bmp <x> <y> <filename>'" },
   #endif

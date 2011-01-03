@@ -84,6 +84,6 @@ typedef struct
 // Method Prototypes
 void          tsInit ( void );
 void          tsCalibrate ( void );
-void          tsWaitForEvent ( tsTouchData_t* data );
+int32_t       tsWaitForEvent(tsTouchData_t* data, uint32_t timeoutMS);
 
 #endif

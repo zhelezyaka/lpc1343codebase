@@ -54,12 +54,31 @@
 void cmd_tswait(uint8_t argc, char **argv)
 {
   tsTouchData_t data;
+  int32_t delay;
+  int32_t error = 0;
+
+  getNumber (argv[0], &delay);
+
+  // Validate delay
+  if (delay < 0)
+  {
+    printf("Invalid timeout%s", CFG_PRINTF_NEWLINE);
+    return;
+  }
 
   // Cause a blocking delay until a valid touch event occurs
-  tsWaitForEvent(&data);
+  error = tsWaitForEvent(&data, delay > 0 ? delay : 0);
 
-  // A valid touch event occurred ... parse data
-  printf("%d, %d%s",(int)data.x, (int)data.y, CFG_PRINTF_NEWLINE);
+  if (!error)
+  {
+    // A valid touch event occurred ... parse data
+    printf("%d, %d%s",(int)data.x, (int)data.y, CFG_PRINTF_NEWLINE);
+  }
+  else
+  {
+    // Timeout occured (send error code instead)
+    printf("-1%s", CFG_PRINTF_NEWLINE);
+  }
 
   return;
 }
