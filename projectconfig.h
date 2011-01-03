@@ -175,7 +175,7 @@
 
     DEPENDENCIES:             SDCARD requires the use of SSP0.
     -----------------------------------------------------------------------*/
-    #define CFG_SDCARD
+    // #define CFG_SDCARD
     #define CFG_SDCARD_READONLY         (1)   // Must be 0 or 1
     #define CFG_SDCARD_CDPORT           (3)
     #define CFG_SDCARD_CDPIN            (0)
@@ -434,7 +434,7 @@
     DEPENDENCIES:               TFTLCD requires the use of pins 1.8, 1.9,
                                 1.10, 1.11, 3.3 and 2.1-9.
     -----------------------------------------------------------------------*/
-    #define CFG_TFTLCD
+    // #define CFG_TFTLCD
     #define CFG_TFTLCD_INCLUDESMALLFONTS   (0)
     #define CFG_TFTLCD_WIDTH               (240)
     #define CFG_TFTLCD_HEIGHT              (320)
