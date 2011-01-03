@@ -30,14 +30,11 @@ OBJS += cmd_sysinfo.o cmd_sd_dir.o
 VPATH += project/commands/drawing
 OBJS += cmd_button.o cmd_circle.o cmd_clear.o cmd_line.o cmd_pixel.o
 OBJS += cmd_progress.o cmd_bmp.o cmd_gettext.o cmd_calibrate.o
+OBJS += cmd_text.o cmd_textw.o
 
 ##########################################################################
 # Optional driver files 
 ##########################################################################
-
-# PN532 NFC Transceiver
-# VPATH += drivers/nfc/pn532
-# OBJS += pn532.o
 
 # Chibi Light-Weight Wireless Stack (AT86RF212)
 VPATH += drivers/chibi
@@ -158,6 +155,7 @@ firmware: $(OBJS) $(SYS_OBJS)
 	-@echo ""
 	$(OBJCOPY) $(OCFLAGS) -O binary $(OUTFILE).elf $(OUTFILE).bin
 	$(OBJCOPY) $(OCFLAGS) -O ihex $(OUTFILE).elf $(OUTFILE).hex
+	-@echo ""
 	$(LPCRC) firmware.bin
 
 clean:

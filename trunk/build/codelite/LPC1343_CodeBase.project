@@ -174,12 +174,6 @@
       <File Name="../../drivers/lcd/smallfonts.c"/>
       <File Name="../../drivers/lcd/smallfonts.h"/>
     </VirtualDirectory>
-    <VirtualDirectory Name="nfc">
-      <VirtualDirectory Name="pn532">
-        <File Name="../../drivers/nfc/pn532/pn532.c"/>
-        <File Name="../../drivers/nfc/pn532/pn532.h"/>
-      </VirtualDirectory>
-    </VirtualDirectory>
     <VirtualDirectory Name="motor">
       <VirtualDirectory Name="stepper">
         <File Name="../../drivers/motor/stepper/stepper.c"/>
@@ -235,6 +229,8 @@
         <File Name="../../project/commands/drawing/cmd_bmp.c"/>
         <File Name="../../project/commands/drawing/cmd_calibrate.c"/>
         <File Name="../../project/commands/drawing/cmd_gettext.c"/>
+        <File Name="../../project/commands/drawing/cmd_text.c"/>
+        <File Name="../../project/commands/drawing/cmd_textw.c"/>
       </VirtualDirectory>
     </VirtualDirectory>
   </VirtualDirectory>

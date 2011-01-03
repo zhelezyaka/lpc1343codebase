@@ -1,9 +1,10 @@
 /**************************************************************************/
 /*! 
-    @file     lcd.h
+    @file     cmd_text.c
     @author   K. Townsend (microBuilder.eu)
-    @date     22 March 2010
-    @version  0.10
+
+    @brief    Code to execute for cmd_text in the 'core/cmd'
+              command-line interpretter.
 
     @section LICENSE
 
@@ -35,24 +36,58 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 /**************************************************************************/
-#ifndef __LCD_H__
-#define __LCD_H__
+#include <stdio.h>
+#include <string.h>
 
 #include "projectconfig.h"
-#include "colors.h"
+#include "core/cmd/cmd.h"
+#include "project/commands.h"       // Generic helper functions
 
-// Any LCD needs to implement these common methods, which allow the low-level
-// initialisation and pixel-setting details to be abstracted away from the
-// higher level drawing and graphics code.
+#ifdef CFG_TFTLCD    
+  #include "drivers/lcd/tft/lcd.h"    
+  #include "drivers/lcd/tft/drawing.h"  
+  #include "drivers/lcd/tft/fonts/inconsolata9.h"
+  #include "drivers/lcd/tft/fonts/inconsolata11.h"
 
-extern void     lcdInit(void);
-extern void     lcdTest(void);
-extern uint16_t lcdGetPixel(uint16_t x, uint16_t y);
-extern void     lcdFillRGB(uint16_t data);
-extern void     lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color);
-extern void     lcdDrawHLine(uint16_t x0, uint16_t x1, uint16_t y, uint16_t color);
-extern void     lcdBacklightOn(void);
-extern void     lcdBacklightOff(void);
-extern void     lcdScroll(int16_t pixels, uint16_t fillColor);
+/**************************************************************************/
+/*! 
+    Displays the supplied text on the LCD.
+*/
+/**************************************************************************/
+void cmd_text(uint8_t argc, char **argv)
+{
+  int32_t x, y, color;
+  int32_t font;
+  uint8_t i, len;
+  char *data_ptr, data[80];
+  
+  // Convert supplied parameters
+  getNumber (argv[0], &x);
+  getNumber (argv[1], &y);
+  getNumber (argv[2], &color);
+  getNumber (argv[3], &font);
 
-#endif
+  // Get message contents
+  data_ptr = data;
+  for (i=0; i<argc-4; i++)
+  {
+    len = strlen(argv[i+4]);
+    strcpy((char *)data_ptr, (char *)argv[i+4]);
+    data_ptr += len;
+    *data_ptr++ = ' ';
+  }
+  *data_ptr++ = '\0';
+
+  if (font == 1)
+  {
+    drawString((uint16_t)x, (uint16_t)y, (uint16_t)color, &inconsolata11ptFontInfo, (char *)&data);
+    return;
+  }
+  else
+  {
+    // Use 9 point font as default
+    drawString((uint16_t)x, (uint16_t)y, (uint16_t)color, &inconsolata9ptFontInfo, (char *)&data);
+  }
+}
+
+#endif  

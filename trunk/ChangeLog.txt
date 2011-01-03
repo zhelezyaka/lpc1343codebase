@@ -1,3 +1,12 @@
+v0.80 - Ongoing
+===============
+
+- Removed 'drivers/nfc/pn532' until proper drivers
+  can be written
+- Added 'cmd_text' and 'cmd_textw' to the CLI to
+  render text on the LCD and get the width in
+  pixels of the specified text before rendering.
+
 v0.70 - 18 Dec 2010
 ===================
 

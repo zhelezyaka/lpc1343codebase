@@ -42,9 +42,6 @@
   #include "core/cmd/cmd.h"
 #endif
 
-#include "drivers/lcd/tft/drawing.h"
-#include "drivers/lcd/tft/dialogues/alphanumeric.h"
-
 /**************************************************************************/
 /*! 
     Approximates a 1 millisecond delay using "nop".  This is less
@@ -65,6 +62,20 @@ void delayms(uint32_t ms)
     __asm volatile ("nop");
     delay--;
   }
+}
+
+/**************************************************************************/
+/*! 
+    Prints a hexadecimal value in plain characters
+*/
+/**************************************************************************/
+void print_hex(const byte_t* pbtData, const size_t szBytes)
+{
+  size_t szPos;
+  for (szPos=0; szPos < szBytes; szPos++) {
+    printf("%02x ",pbtData[szPos]);
+  }
+  printf(CFG_PRINTF_NEWLINE);
 }
 
 /**************************************************************************/
