@@ -326,35 +326,79 @@ void tsCalibrate(void)
 
     // Create an object to hold the eventual event data
     tsTouchData_t data;
+    int32_t error;
 
-    // Cause a blocking delay until a valid touch event occurs
-    tsWaitForEvent(&data);
+    // Cause a blocking delay until a touch event or 5s timeout
+    error = tsWaitForEvent(&data, 5000);
 
-    // A valid touch event occurred ... parse data
-    if (data.x > 100 && data.x < 200)
+    if (!error)
     {
-      // Do something
-      printf("Touch Event: X = %d, Y = %d %s", 
-          (int)data.x, 
-          (int)data.y, 
-          CFG_PRINTF_NEWLINE);
+      // A valid touch event occurred ... parse data
+      if (data.x > 100 && data.x < 200)
+      {
+        // Do something
+        printf("Touch Event: X = %d, Y = %d %s", 
+            (int)data.x, 
+            (int)data.y, 
+            CFG_PRINTF_NEWLINE);
+      }
+    }
+    else
+    {
+      // Timeout occurred with no touch event
+      printf("Timeout occurred %s", CFG_PRINTF_NEWLINE);
     }
 
     @endcode
 */
 /**************************************************************************/
-void tsWaitForEvent(tsTouchData_t* data)
+int32_t tsWaitForEvent(tsTouchData_t* data, uint32_t timeoutMS)
 {
   if (!_tsInitialised) tsInit();
 
-  // Read Z for pressure
   uint32_t z1, z2, xRaw, yRaw;
   z1 = z2 = 0;
 
-  // Wait for touch
-  while (z2 < CFG_TFTLCD_TS_THRESHOLD)
+  // Handle timeout if delay > 0 milliseconds
+  if (timeoutMS)
   {
-    tsReadZ(&z1, &z2);
+    uint32_t startTick = systickGetTicks();
+    // Systick rollover may occur while waiting for timeout
+    if (startTick > 0xFFFFFFFF - timeoutMS)
+    {
+      // Wait for timeout or touch event
+      while (z2 < CFG_TFTLCD_TS_THRESHOLD)
+      {
+        // Throw alert if timeout delay has been passed
+        if ((systickGetTicks() < startTick) && (systickGetTicks() >= (timeoutMS - (0xFFFFFFFF - startTick))))
+        {
+          return -1;
+        }      
+        tsReadZ(&z1, &z2);
+      }
+    }
+    // No systick rollover will occur ... calculate timeout the simple way
+    else
+    {
+      // Wait in infinite loop
+      while (z2 < CFG_TFTLCD_TS_THRESHOLD)
+      {
+        // Throw timeout if delay has been passed
+        if ((systickGetTicks() - startTick) > timeoutMS)
+        {
+          return -1;
+        }
+        tsReadZ(&z1, &z2);
+      }
+    }
+  }
+  // No timeout requested ... wait forever
+  else
+  {
+    while (z2 < CFG_TFTLCD_TS_THRESHOLD)
+    {
+      tsReadZ(&z1, &z2);
+    }
   }
 
   // Get raw conversion results
@@ -368,4 +412,7 @@ void tsWaitForEvent(tsTouchData_t* data)
   // Normalise Y
   data->y = ((yRaw - _calibration.offsetTop > 1024 ? 0 : yRaw - _calibration.offsetTop) * 100) / _calibration.divisorY;
   if (data->y > CFG_TFTLCD_HEIGHT - 1) data->y = CFG_TFTLCD_HEIGHT - 1;
+
+  // Indicate no timeout occurred
+  return 0;
 }
