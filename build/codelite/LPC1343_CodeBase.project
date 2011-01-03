@@ -231,6 +231,7 @@
         <File Name="../../project/commands/drawing/cmd_gettext.c"/>
         <File Name="../../project/commands/drawing/cmd_text.c"/>
         <File Name="../../project/commands/drawing/cmd_textw.c"/>
+        <File Name="../../project/commands/drawing/cmd_tswait.c"/>
       </VirtualDirectory>
     </VirtualDirectory>
   </VirtualDirectory>
