@@ -130,7 +130,7 @@
 
     -----------------------------------------------------------------------*/
     #define CFG_UART_BAUDRATE           (115200)
-    #define CFG_UART_BUFSIZE            (128)
+    #define CFG_UART_BUFSIZE            (512)
 /*=========================================================================*/
 
 
@@ -194,8 +194,6 @@
     CFG_USBCDC_BAUDRATE       The default TX/RX speed.  This value is used 
                               when initialising USBCDC, and should be a 
                               standard value like 57600, 9600, etc.
-    CFG_USBCDC_BUFSIZE        The size in bytes of the USB CDC transmit
-                              FIFO buffer
     CFG_USBCDC_INITTIMEOUT    The maximum delay in milliseconds to wait for
                               USB to connect.  Must be a multiple of 10!
 
@@ -205,7 +203,6 @@
     // #define CFG_USBHID
     #define CFG_USBCDC
     #define CFG_USBCDC_BAUDRATE         (115200)
-    #define CFG_USBCDC_BUFSIZE          (64)
     #define CFG_USBCDC_INITTIMEOUT      (5000)
 /*=========================================================================*/
 
@@ -246,19 +243,36 @@
                               incoming command
     CFG_INTERFACE_PROMPT      The command prompt to display at the start
                               of every new data entry line
+    CFG_INTERFACE_SILENTMODE  If this is set to 1 only text generated in
+                              response to commands will be send to the
+                              output buffer.  The command prompt will not
+                              be displayed and incoming text will not be
+                              echoed back to the output buffer (allowing
+                              you to see the text you have input).  This
+                              is normally only desirable in a situation
+                              where another MCU is communicating with 
+                              the LPC1343.
+    CFG_INTERFACE_ENABLEIRQ   If this is set to 1 the IRQ pin will be
+                              set high when a command starts executing
+                              and will go low when the command has
+                              finished executing or the LCD is not busy.
+                              This allows another device to know when a
+                              new command can safely be sent.
+    CFG_INTERFACE_IRQPORT     The gpio port for the IRQ/busy pin
+    CFG_INTERFACE_IRQPIN      The gpio pin number for the IRQ/busy pin
 
     NOTE:                     The command-line interface will use either
                               USB-CDC or UART depending on whether
                               CFG_PRINTF_UART or CFG_PRINTF_USBCDC are 
                               selected.
-
-    NOTE: CFG_INTERFACE =     ~6.0 KB Flash and 240 bytes SRAM (-Os), but
-                              this varies with the number of commands
-                              present
     -----------------------------------------------------------------------*/
-    #define CFG_INTERFACE
-    #define CFG_INTERFACE_MAXMSGSIZE    (80)
+    // #define CFG_INTERFACE
+    #define CFG_INTERFACE_MAXMSGSIZE    (256)
     #define CFG_INTERFACE_PROMPT        "LPC1343 >> "
+    #define CFG_INTERFACE_SILENTMODE    (0)
+    #define CFG_INTERFACE_ENABLEIRQ     (1)
+    #define CFG_INTERFACE_IRQPORT       (2)
+    #define CFG_INTERFACE_IRQPIN        (0)
 /*=========================================================================*/
 
 
@@ -503,6 +517,9 @@
 #ifdef CFG_INTERFACE
   #if !defined CFG_PRINTF_UART && !defined CFG_PRINTF_USBCDC
     #error "CFG_PRINTF_UART or CFG_PRINTF_USBCDC must be defined for for CFG_INTERFACE Input/Output"
+  #endif
+  #if defined CFG_PRINTF_USBCDC && CFG_INTERFACE_SILENTMODE == 1
+    #error "CFG_INTERFACE_SILENTMODE typically isn't enabled with CFG_PRINTF_USBCDC"
   #endif
 #endif
 

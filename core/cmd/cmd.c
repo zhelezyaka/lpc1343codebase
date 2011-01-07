@@ -63,6 +63,10 @@
   static char usbcdcBuf [32];
 #endif
 
+#if CFG_INTERFACE_ENABLEIRQ == 1
+  #include "core/gpio/gpio.h"
+#endif
+
 static uint8_t msg[CFG_INTERFACE_MAXMSGSIZE];
 static uint8_t *msg_ptr;
 
@@ -121,13 +125,17 @@ void cmdRx(uint8_t c)
         // terminate the msg and reset the msg ptr. then send
         // it to the handler for processing.
         *msg_ptr = '\0';
+        #if CFG_INTERFACE_SILENTMODE == 0
         printf("%s", CFG_PRINTF_NEWLINE);
+        #endif
         cmdParse((char *)msg);
         msg_ptr = msg;
         break;
     
     case '\b':
+        #if CFG_INTERFACE_SILENTMODE == 0
         printf("%c",c);
+        #endif
         if (msg_ptr > msg)
         {
             msg_ptr--;
@@ -135,7 +143,9 @@ void cmdRx(uint8_t c)
         break;
 
     default:
+        #if CFG_INTERFACE_SILENTMODE == 0
         printf("%c",c);
+        #endif
         *msg_ptr++ = c;
         break;
   }
@@ -149,8 +159,10 @@ void cmdRx(uint8_t c)
 /**************************************************************************/
 static void cmdMenu()
 {
+  #if CFG_INTERFACE_SILENTMODE == 0
   printf(CFG_PRINTF_NEWLINE);
   printf(CFG_INTERFACE_PROMPT);
+  #endif
 }
 
 /**************************************************************************/
@@ -182,7 +194,7 @@ void cmdParse(char *cmd)
       {
         if ((argc == 2) && !strcmp (argv [1], "?"))
         {
-          // Display paramter help menu on 'command ?'
+          // Display parameter help menu on 'command ?'
           printf ("%s%s%s", cmd_tbl[i].description, CFG_PRINTF_NEWLINE, CFG_PRINTF_NEWLINE);
           printf ("%s%s", cmd_tbl[i].parameters, CFG_PRINTF_NEWLINE);
         }
@@ -200,8 +212,16 @@ void cmdParse(char *cmd)
         }
         else
         {
+          #if CFG_INTERFACE_ENABLEIRQ != 0
+          // Set the IRQ pin high at start of a command
+          gpioSetValue(CFG_INTERFACE_IRQPORT, CFG_INTERFACE_IRQPIN, 1);
+          #endif
           // Dispatch command to the appropriate function
           cmd_tbl[i].func(argc - 1, &argv [1]);
+          #if CFG_INTERFACE_ENABLEIRQ  != 0
+          // Set the IRQ pin low to signal the end of a command
+          gpioSetValue(CFG_INTERFACE_IRQPORT, CFG_INTERFACE_IRQPIN, 0);
+          #endif
         }
 
         // Refresh the command prompt
@@ -210,7 +230,9 @@ void cmdParse(char *cmd)
       }
   }
   printf("Command not recognized: '%s'%s%s", cmd, CFG_PRINTF_NEWLINE, CFG_PRINTF_NEWLINE);
+  #if CFG_INTERFACE_SILENTMODE == 0
   printf("Type 'help' for a list of all available commands%s", CFG_PRINTF_NEWLINE);
+  #endif
 
   cmdMenu();
 }
@@ -231,11 +253,23 @@ void cmdInit()
   }
   #endif
 
+  #if CFG_INTERFACE_ENABLEIRQ != 0
+  // Set IRQ pin as output
+  gpioSetDir(CFG_INTERFACE_IRQPORT, CFG_INTERFACE_IRQPIN, gpioDirection_Output);
+  gpioSetValue(CFG_INTERFACE_IRQPORT, CFG_INTERFACE_IRQPIN, 1);
+  #endif
+
   // init the msg ptr
   msg_ptr = msg;
 
   // Show the menu
   cmdMenu();
+
+  // Set the IRQ pin low to indicate that 
+  #if CFG_INTERFACE_ENABLEIRQ  != 0
+  // Set the IRQ pin low to signal the end of a command
+  gpioSetValue(CFG_INTERFACE_IRQPORT, CFG_INTERFACE_IRQPIN, 0);
+  #endif
 }
 
 /**************************************************************************/

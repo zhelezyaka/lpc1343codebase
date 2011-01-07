@@ -218,9 +218,6 @@
           <file file_name="../../project/commands/cmd_chibi_tx.c">
             <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
           </file>
-          <file file_name="../../project/commands/cmd_deepsleep.c">
-            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
-          </file>
           <file file_name="../../project/commands/cmd_hello.c">
             <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
           </file>
@@ -261,9 +258,15 @@
             <file file_name="../../project/commands/drawing/cmd_bmp.c"/>
             <file file_name="../../project/commands/drawing/cmd_gettext.c"/>
             <file file_name="../../project/commands/drawing/cmd_calibrate.c"/>
-            <file file_name="../../project/commands/drawing/cmd_text.c"/>
-            <file file_name="../../project/commands/drawing/cmd_textw.c"/>
-            <file file_name="../../project/commands/drawing/cmd_tswait.c"/>
+            <file file_name="../../project/commands/drawing/cmd_text.c">
+              <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+            </file>
+            <file file_name="../../project/commands/drawing/cmd_textw.c">
+              <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+            </file>
+            <file file_name="../../project/commands/drawing/cmd_tswait.c">
+              <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+            </file>
           </folder>
         </folder>
         <file file_name="../../project/cmd_tbl.h"/>

@@ -25,8 +25,8 @@
 #include "cdc.h"
 #include "cdcuser.h"
 
-// unsigned char BulkBufIn  [USB_CDC_BUFSIZE];            // Buffer to store USB IN  packet
-unsigned char BulkBufOut [USB_CDC_BUFSIZE];            // Buffer to store USB OUT packet
+// unsigned char BulkBufIn  [64];            // Buffer to store USB IN  packet
+unsigned char BulkBufOut [64];            // Buffer to store USB OUT packet
 unsigned char NotificationBuf [10];
 
 CDC_LINE_CODING CDC_LineCoding  = {CFG_USBCDC_BAUDRATE, 0, 0, 8};
@@ -38,7 +38,7 @@ unsigned short  CDC_DepInEmpty  = 1;                   // Data IN EP is empty
   much faster than  UART transmits
  *---------------------------------------------------------------------------*/
 /* Buffer masks */
-#define CDC_BUF_SIZE               (64)               // Output buffer in bytes (power 2)
+#define CDC_BUF_SIZE               (64)   // Output buffer in bytes (power 2)
                                                        // large enough for file transfer
 #define CDC_BUF_MASK               (CDC_BUF_SIZE-1ul)
 

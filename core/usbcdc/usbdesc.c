@@ -119,14 +119,14 @@ const uint8_t USB_ConfigDescriptor[] = {
   USB_ENDPOINT_DESCRIPTOR_TYPE,      /* bDescriptorType */
   USB_ENDPOINT_OUT(3),               /* bEndpointAddress */
   USB_ENDPOINT_TYPE_BULK,            /* bmAttributes */
-  WBVAL(USB_CDC_BUFSIZE),            /* wMaxPacketSize */
+  WBVAL(64),                         /* wMaxPacketSize */
   0x00,                              /* bInterval: ignore for Bulk transfer */
 /* Endpoint, EP3 Bulk In */
   USB_ENDPOINT_DESC_SIZE,            /* bLength */
   USB_ENDPOINT_DESCRIPTOR_TYPE,      /* bDescriptorType */
   USB_ENDPOINT_IN(3),                /* bEndpointAddress */
   USB_ENDPOINT_TYPE_BULK,            /* bmAttributes */
-  WBVAL(USB_CDC_BUFSIZE),            /* wMaxPacketSize */
+  WBVAL(64),                         /* wMaxPacketSize */
   0x00,                              /* bInterval: ignore for Bulk transfer */
 /* Terminator */
   0                                  /* bLength */

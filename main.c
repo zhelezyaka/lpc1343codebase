@@ -97,10 +97,10 @@ int main (void)
   while (1)
   {
     #ifdef CFG_INTERFACE
-      // Handle any incoming command line input
+      // Check for any incoming commands on the CLI
       cmdPoll();
     #else
-      // Toggle LED @ 1 Hz
+      // Toggle LED @ 1 Hz instead of using the CLI
       systickDelay(1000);
       if (gpioGetValue(CFG_LED_PORT, CFG_LED_PIN))  
         gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_ON);
