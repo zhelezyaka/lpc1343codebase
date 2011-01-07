@@ -212,7 +212,6 @@
     <VirtualDirectory Name="commands">
       <File Name="../../project/commands/cmd_chibi_addr.c"/>
       <File Name="../../project/commands/cmd_chibi_tx.c"/>
-      <File Name="../../project/commands/cmd_deepsleep.c"/>
       <File Name="../../project/commands/cmd_hello.c"/>
       <File Name="../../project/commands/cmd_i2ceeprom_read.c"/>
       <File Name="../../project/commands/cmd_i2ceeprom_write.c"/>

@@ -60,6 +60,21 @@ void cmd_sysinfo(uint8_t argc, char **argv)
 {
   printf("%-30s : %d.%d MHz %s", "Core System Clock", CFG_CPU_CCLK / 1000000, CFG_CPU_CCLK % 1000000, CFG_PRINTF_NEWLINE);
   printf("%-30s : %d mS %s", "Systick Timer Delay", CFG_SYSTICK_DELAY_IN_MS, CFG_PRINTF_NEWLINE);
+  printf("%-30s : v%d.%d.%d %s", "Firmware Version", CFG_FIRMWARE_VERSION_MAJOR, CFG_FIRMWARE_VERSION_MINOR, CFG_FIRMWARE_VERSION_REVISION, CFG_PRINTF_NEWLINE);
+
+  // CLI and buffer Settings
+  #ifdef CFG_INTERFACE
+    printf("%-30s : %d bytes %s", "Max. Command Length", CFG_INTERFACE_MAXMSGSIZE, CFG_PRINTF_NEWLINE);
+  #endif
+  #ifdef CFG_PRINTF_UART
+    printf("%-30s : %d bytes %s", "UART Buffer", CFG_UART_BUFSIZE, CFG_PRINTF_NEWLINE);
+  #endif
+
+  // TFT LCD Settings (if CFG_TFTLCD enabled)
+  #ifdef CFG_TFTLCD
+    printf("%-30s : %d %s", "LCD Width", CFG_TFTLCD_WIDTH, CFG_PRINTF_NEWLINE);
+    printf("%-30s : %d %s", "LCD Height", CFG_TFTLCD_HEIGHT, CFG_PRINTF_NEWLINE);
+  #endif
 
   // Wireless Settings (if CFG_CHIBI enabled)
   #ifdef CFG_CHIBI
@@ -77,6 +92,4 @@ void cmd_sysinfo(uint8_t argc, char **argv)
     temp *= 125;
     printf("%-30s : %d.%d C %s", "System Temperature", temp / 1000, temp % 1000, CFG_PRINTF_NEWLINE);
   #endif
-
-  // printf("%-30s : %s", "<Property Name>", CFG_PRINTF_NEWLINE);
 }

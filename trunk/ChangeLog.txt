@@ -1,6 +1,16 @@
 v0.80 - Ongoing
 ===============
 
+- Fixed a bug with the USB CDC buffer
+- Added SILENTMODE to the CLI to disable the
+  command prompt and echo of input characters
+  (see CFG_INTERFACE_SILENTMODE).  Useful
+  when another MCU is use the CLI rather than
+  a human.
+- Added IRQ pin to the CLI to indicate when a 
+  command is being processed (pin = low) and
+  when it has completed or a new command can
+  be processed (pin = high).
 - Added 'cmd_tswait' to wait for a touch event
 - Removed 'drivers/nfc/pn532' until proper drivers
   can be written

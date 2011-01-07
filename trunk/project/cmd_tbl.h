@@ -88,8 +88,6 @@ void cmd_lm75b_gettemp(uint8_t argc, char **argv);
 void cmd_sd_dir(uint8_t argc, char **argv);
 #endif
 
-void cmd_deepsleep(uint8_t argc, char **argv);
-
 /**************************************************************************/
 /*! 
     Command list for the command-line interpreter and the name of the
@@ -142,8 +140,6 @@ cmd_t cmd_tbl[] =
   #ifdef CFG_SDCARD
   { "sd-dir",         0,  1,  0,  cmd_sd_dir           , "List all files in the specified directory"           , "'sd-dir [<path>]'" },
   #endif
-
-  { "sleep",          0,  0,  0,  cmd_deepsleep        , "Put the device into deep sleep for ~10 seconds"      , "'sleep' has no parameters" },
 };
 
 #endif

@@ -151,10 +151,10 @@ void systemInit()
     // Wait until USB is configured or timeout occurs
     uint32_t usbTimeout = 0; 
     while ( usbTimeout < CFG_USBCDC_INITTIMEOUT / 10 )
-    { 
+    {
       if (USB_Configuration) break;
       systickDelay(10);             // Wait 10ms
-      usbTimeout++; 
+      usbTimeout++;
     }
   #endif
 
