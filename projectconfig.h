@@ -59,6 +59,7 @@
     CHIBI       X X  X  .     . . . . . . . . .     . . . .
     TFTLCD      X X  X  X     X X X X X X X X X     . . . X
     ST7565      . .  .  .     X X X X X X . . .     . . . .
+    SSD1306     . .  .  .     X X X . X X . . .     . . . .
 
                 TIMERS                    SSP     ADC         UART
                 ======================    ===     =======     ====
@@ -72,6 +73,7 @@
     CHIBI       x     .     .     .       X       . . . .     .
     TFTLCD      .     .     .     .       .       X X X X     .
     ST7565      .     .     .     .       .       . . . .     .
+    SSD1306     .     .     .     .       .       . . . .     .
     INTERFACE   .     .     .     .       .       . . . .     X[2]
 
     [1]  PMU uses 32-bit Timer 0 for SW wakeup from deep-sleep.  This timer
@@ -266,7 +268,7 @@
                               CFG_PRINTF_UART or CFG_PRINTF_USBCDC are 
                               selected.
     -----------------------------------------------------------------------*/
-    // #define CFG_INTERFACE
+    #define CFG_INTERFACE
     #define CFG_INTERFACE_MAXMSGSIZE    (256)
     #define CFG_INTERFACE_PROMPT        "LPC1343 >> "
     #define CFG_INTERFACE_SILENTMODE    (0)
@@ -450,23 +452,29 @@
     -----------------------------------------------------------------------*/
     // #define CFG_TFTLCD
     #define CFG_TFTLCD_INCLUDESMALLFONTS   (0)
-    #define CFG_TFTLCD_WIDTH               (240)
-    #define CFG_TFTLCD_HEIGHT              (320)
-    #define CFG_TFTLCD_TS_THRESHOLD        (32)
+    #define CFG_TFTLCD_TS_THRESHOLD        (40)
     #define CFG_TFTLCD_TS_KEYPADDELAY      (200)
 /*=========================================================================*/
 
 
 /*=========================================================================
-    ST7565 128x64 Graphic LCD
+    128x64 Graphic LCDs
     -----------------------------------------------------------------------
 
-    CFG_ST7565                  If defined, this will cause drivers for
-                                the 128x64 pixel ST7565 LCD to be included
+    CFG_ST7565                If defined, this will cause drivers for
+                              the 128x64 pixel ST7565 LCD to be included
+    CFG_SSD1306               If defined, this will cause drivers for
+                              the 128x64 pixel SSD1306 OLED display to be
+                              included
 
-    DEPENDENCIES:               CFG_ST7565 requires the use of pins 2.1-6.
+    Note:                     LPC1114 @ 36MHz and the ST7565 with the
+                              backlight enabled consumes ~35mA
+
+    DEPENDENCIES:             ST7565 requires the use of pins 2.1-6.
+    DEPENDENCIES:             SSD1306 requires the use of pins 2.1-6.
     -----------------------------------------------------------------------*/
     // #define CFG_ST7565
+    // #define CFG_SSD1306
 /*=========================================================================*/
 
 
@@ -542,6 +550,9 @@
   #ifdef CFG_ST7565
     #error "CFG_TFTLCD and CFG_ST7565 can not be defined at the same time."
   #endif
+  #ifdef CFG_SSD1306
+    #error "CFG_TFTLCD and CFG_SSD1306 can not be defined at the same time."
+  #endif
   #ifdef CFG_PWM
     #error "CFG_TFTLCD and CFG_PWM can not be defined at the same time since they both use pin 1.9."
   #endif
@@ -553,6 +564,12 @@
 #ifdef CFG_SDCARD
   #ifdef CFG_STEPPER
     #error  "CFG_SDCARD and CFG_STEPPER can not be defined at the same time since they both use pin 3.0."
+  #endif
+#endif
+
+#ifdef CFG_ST7565
+  #ifdef CFG_SSD1306
+    #error "CFG_ST7565 and CFG_SSD1306 can not be defined at the same time"
   #endif
 #endif
 

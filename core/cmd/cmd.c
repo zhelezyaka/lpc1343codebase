@@ -201,13 +201,13 @@ void cmdParse(char *cmd)
         else if ((argc - 1) < cmd_tbl[i].minArgs)
         {
           // Too few arguments supplied
-          printf ("Too few arguments to command (%d expected)%s", cmd_tbl[i].minArgs, CFG_PRINTF_NEWLINE);
+          printf ("Too few arguments (%d expected)%s", cmd_tbl[i].minArgs, CFG_PRINTF_NEWLINE);
           printf ("%sType '%s ?' for more information%s%s", CFG_PRINTF_NEWLINE, cmd_tbl[i].command, CFG_PRINTF_NEWLINE, CFG_PRINTF_NEWLINE);
         }
         else if ((argc - 1) > cmd_tbl[i].maxArgs)
         {
           // Too many arguments supplied
-          printf ("Too many arguments to command (%d maximum)%s", cmd_tbl[i].maxArgs, CFG_PRINTF_NEWLINE);
+          printf ("Too many arguments (%d maximum)%s", cmd_tbl[i].maxArgs, CFG_PRINTF_NEWLINE);
           printf ("%sType '%s ?' for more information%s%s", CFG_PRINTF_NEWLINE, cmd_tbl[i].command, CFG_PRINTF_NEWLINE, CFG_PRINTF_NEWLINE);
         }
         else
@@ -231,7 +231,7 @@ void cmdParse(char *cmd)
   }
   printf("Command not recognized: '%s'%s%s", cmd, CFG_PRINTF_NEWLINE, CFG_PRINTF_NEWLINE);
   #if CFG_INTERFACE_SILENTMODE == 0
-  printf("Type 'help' for a list of all available commands%s", CFG_PRINTF_NEWLINE);
+  printf("Type '?' for a list of all available commands%s", CFG_PRINTF_NEWLINE);
   #endif
 
   cmdMenu();
@@ -245,18 +245,18 @@ void cmdParse(char *cmd)
 void cmdInit()
 {
   #if defined CFG_INTERFACE && defined CFG_INTERFACE_UART
-  // Check if UART is already initialised
-  uart_pcb_t *pcb = uartGetPCB();
-  if (!pcb->initialised)
-  {
-    uartInit(CFG_UART_BAUDRATE);
-  }
+    // Check if UART is already initialised
+    uart_pcb_t *pcb = uartGetPCB();
+    if (!pcb->initialised)
+    {
+      uartInit(CFG_UART_BAUDRATE);
+    }
   #endif
 
   #if CFG_INTERFACE_ENABLEIRQ != 0
-  // Set IRQ pin as output
-  gpioSetDir(CFG_INTERFACE_IRQPORT, CFG_INTERFACE_IRQPIN, gpioDirection_Output);
-  gpioSetValue(CFG_INTERFACE_IRQPORT, CFG_INTERFACE_IRQPIN, 1);
+    // Set IRQ pin as output
+    gpioSetDir(CFG_INTERFACE_IRQPORT, CFG_INTERFACE_IRQPIN, gpioDirection_Output);
+    gpioSetValue(CFG_INTERFACE_IRQPORT, CFG_INTERFACE_IRQPIN, 1);
   #endif
 
   // init the msg ptr
@@ -267,8 +267,8 @@ void cmdInit()
 
   // Set the IRQ pin low to indicate that 
   #if CFG_INTERFACE_ENABLEIRQ  != 0
-  // Set the IRQ pin low to signal the end of a command
-  gpioSetValue(CFG_INTERFACE_IRQPORT, CFG_INTERFACE_IRQPIN, 0);
+    // Set the IRQ pin low to signal the end of a command
+    gpioSetValue(CFG_INTERFACE_IRQPORT, CFG_INTERFACE_IRQPIN, 0);
   #endif
 }
 
@@ -281,15 +281,15 @@ void cmd_help(uint8_t argc, char **argv)
 {
   size_t i;
 
-  printf("Command                Description%s", CFG_PRINTF_NEWLINE);
-  printf("-------                -----------%s", CFG_PRINTF_NEWLINE);
+  printf("Command      Description%s", CFG_PRINTF_NEWLINE);
+  printf("-------      -----------%s", CFG_PRINTF_NEWLINE);
 
   // Display full command list
   for (i=0; i < CMD_COUNT; i++)
   {
     if (!cmd_tbl[i].hidden) 
     {
-      printf ("%-20s   %s%s", cmd_tbl[i].command, cmd_tbl[i].description, CFG_PRINTF_NEWLINE);
+      printf ("%-10s   %s%s", cmd_tbl[i].command, cmd_tbl[i].description, CFG_PRINTF_NEWLINE);
     }
   }
 

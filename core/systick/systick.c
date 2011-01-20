@@ -68,7 +68,7 @@
 volatile uint32_t fatTicks = 0;
 #endif
 
-volatile uint32_t msTicks;             // 1ms tick counter
+volatile uint32_t msTicks = 0;             // 1ms tick counter
 
 /**************************************************************************/
 /*! 

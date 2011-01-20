@@ -1,9 +1,9 @@
 /**************************************************************************/
 /*! 
-    @file     cmd_hello.c
+    @file     cmd_orientation.c
     @author   K. Townsend (microBuilder.eu)
 
-    @brief    Code to execute for cmd_hello in the 'core/cmd'
+    @brief    Code to execute for cmd_orientation in the 'core/cmd'
               command-line interpretter.
 
     @section LICENSE
@@ -42,20 +42,42 @@
 #include "core/cmd/cmd.h"
 #include "project/commands.h"       // Generic helper functions
 
+#ifdef CFG_TFTLCD    
+  #include "drivers/lcd/tft/lcd.h"    
+  #include "drivers/lcd/tft/drawing.h"  
+
 /**************************************************************************/
 /*! 
-    'hello' command handler
+    Changes the LCD orientation
 */
 /**************************************************************************/
-void cmd_hello(uint8_t argc, char **argv)
+void cmd_orientation(uint8_t argc, char **argv)
 {
-  if (argc > 0)
-  {
-    printf("Hello %s%s", argv[0],CFG_PRINTF_NEWLINE);
+  int32_t value;
+  
+  if (argc == 0)
+  {    
+    printf("%d%s", lcdGetOrientation(), CFG_PRINTF_NEWLINE);
+    return;
   }
-  else
+
+  // Convert supplied parameters
+  getNumber (argv[0], &value);
+
+  switch (value)
   {
-    printf("Hello World!%s", CFG_PRINTF_NEWLINE);
+    case 0:
+      lcdSetOrientation(LCD_ORIENTATION_PORTRAIT);
+      break;
+    case 1:
+      lcdSetOrientation(LCD_ORIENTATION_LANDSCAPE);
+      break;
+    default:
+      printf("Invalid value: Enter 0 or 1%s", CFG_PRINTF_NEWLINE);
+      return;
   }
+
+  return;
 }
 
+#endif  

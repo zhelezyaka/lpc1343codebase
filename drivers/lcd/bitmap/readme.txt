@@ -8,3 +8,5 @@ for 16-bit TFT LCDs.
 
 ST7565             Driver for  128x64 pixel I2C-based displays (available from
                    Adafruit Industries, for example).
+SSD1306            Driver for 128x64 pixel OLED displays (also available from
+                   Adafruit Industries).

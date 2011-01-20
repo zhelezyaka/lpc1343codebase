@@ -23,14 +23,14 @@ VPATH += project
 OBJS += commands.o
 
 VPATH += project/commands
-OBJS += cmd_chibi_addr.o cmd_chibi_tx.o cmd_hello.o
+OBJS += cmd_chibi_addr.o cmd_chibi_tx.o
 OBJS += cmd_i2ceeprom_read.o cmd_i2ceeprom_write.o cmd_lm75b_gettemp.o
-OBJS += cmd_sysinfo.o cmd_sd_dir.o cmd_tswait.o
+OBJS += cmd_sysinfo.o cmd_sd_dir.o cmd_tswait.o cmd_orientation.o
 
 VPATH += project/commands/drawing
 OBJS += cmd_button.o cmd_circle.o cmd_clear.o cmd_line.o cmd_pixel.o
 OBJS += cmd_progress.o cmd_bmp.o cmd_gettext.o cmd_calibrate.o
-OBJS += cmd_text.o cmd_textw.o
+OBJS += cmd_text.o cmd_textw.o cmd_rectangle.o
 
 ##########################################################################
 # Optional driver files 
@@ -48,16 +48,19 @@ OBJS += eeprom.o mcp24aa.o
 VPATH += drivers/sensors/lm75b
 OBJS += lm75b.o
 
-# TFT LCD support (ILI9325)
+# TFT LCD support
 VPATH += drivers/lcd/tft drivers/lcd/tft/hw drivers/lcd/tft/fonts
 VPATH += drivers/lcd/tft/dialogues
-OBJS += ILI9325.o drawing.o touchscreen.o bmp.o
+OBJS += drawing.o touchscreen.o bmp.o alphanumeric.o
 OBJS += inconsolata9.o inconsolata11.o inconsolata16.o
-OBJS += alphanumeric.o
+# LCD Driver (Only one can be included at a time!)
+OBJS += ILI9325.o
+# OBJS += st7783.o
 
-# Bitmap LCD support (ST7565)
+# Bitmap LCD support (ST7565, SSD1306, etc.)
 VPATH += drivers/lcd drivers/lcd/bitmap/st7565
-OBJS += smallfonts.o st7565.o
+VPATH += drivers/lcd/bitmap/ssd1306
+OBJS += smallfonts.o st7565.o ssd1306.o
 
 # ChaN FatFS and SD card support
 VPATH += drivers/fatfs
@@ -84,8 +87,8 @@ VPATH += core/ssp core/systick core/timer16 core/timer32 core/uart
 VPATH += core/usbhid-rom core/libc core/wdt core/usbcdc core/pwm
 OBJS += adc.o cpu.o cmd.o gpio.o i2c.o pmu.o ssp.o systick.o timer16.o
 OBJS += timer32.o uart.o uart_buf.o usbconfig.o usbhid.o stdio.o string.o
-OBJS += wdt.o cdcuser.o usbcore.o usbdesc.o usbhw.o usbuser.o sysinit.o
-OBJS += pwm.o
+OBJS += wdt.o cdcuser.o cdc_buf.o usbcore.o usbdesc.o usbhw.o usbuser.o 
+OBJS += sysinit.o pwm.o
 
 ##########################################################################
 # GNU GCC compiler prefix and location

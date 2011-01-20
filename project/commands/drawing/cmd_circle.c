@@ -53,13 +53,18 @@
 /**************************************************************************/
 void cmd_circle(uint8_t argc, char **argv)
 {
-  int32_t x, y, r, c;
+  int32_t x, y, r, c, filled;
+  filled = 0;
   
   // Convert supplied parameters
   getNumber (argv[0], &x);
   getNumber (argv[1], &y);
   getNumber (argv[2], &r);
   getNumber (argv[3], &c);
+  if (argc == 5)
+  {
+    getNumber (argv[4], &filled);
+  }
 
   // ToDo: Validate data!
   if (c < 0 || c > 0xFFFF)
@@ -73,7 +78,10 @@ void cmd_circle(uint8_t argc, char **argv)
     return;
   }
 
-  drawCircle(x, y, r, (uint16_t)c);
+  if (filled)
+    drawCircleFilled(x, y, r, (uint16_t)c);
+  else
+    drawCircle(x, y, r, (uint16_t)c);
 }
 
 #endif  

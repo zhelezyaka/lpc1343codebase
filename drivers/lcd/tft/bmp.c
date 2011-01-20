@@ -92,7 +92,7 @@ bmp_error_t bmpParseBitmap(uint16_t x, uint16_t y, FIL file)
     return BMP_ERROR_INVALIDBITDEPTH;
 
   // Check image dimensions
-  if ((infoHeader.width > CFG_TFTLCD_WIDTH) | (infoHeader.height > CFG_TFTLCD_HEIGHT))
+  if ((infoHeader.width > lcdGetWidth()) | (infoHeader.height > lcdGetHeight()))
     return BMP_ERROR_INVALIDDIMENSIONS;
 
   // Make sure image is not compressed

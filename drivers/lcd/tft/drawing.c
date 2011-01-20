@@ -192,7 +192,7 @@ void drawCirclePoints(int cx, int cy, int x, int y, uint16_t color)
 /**************************************************************************/
 void drawPixel(uint16_t x, uint16_t y, uint16_t color)
 {
-  if ((x >= CFG_TFTLCD_WIDTH) || (y >= CFG_TFTLCD_HEIGHT))
+  if ((x >= lcdGetWidth()) || (y >= lcdGetHeight()))
   {
     // Pixel out of range
     return;
@@ -494,6 +494,54 @@ void drawCircle (uint16_t xCenter, uint16_t yCenter, uint16_t radius, uint16_t c
 
 /**************************************************************************/
 /*!
+    @brief  Draws a filled circle
+
+    @param[in]  xCenter
+                The horizontal center of the circle
+    @param[in]  yCenter
+                The vertical center of the circle
+    @param[in]  radius
+                The circle's radius in pixels
+    @param[in]  color
+                Color used when drawing
+*/
+/**************************************************************************/
+void drawCircleFilled (uint16_t xCenter, uint16_t yCenter, uint16_t radius, uint16_t color)
+{
+  int16_t f = 1 - radius;
+  int16_t ddF_x = 1;
+  int16_t ddF_y = -2 * radius;
+  int16_t x = 0;
+  int16_t y = radius;
+
+  // lcdDrawVLine(xCenter, yCenter-radius, 2*radius, color);
+  drawLine(xCenter, yCenter-radius, xCenter, (yCenter-radius) + (2*radius), color);
+  
+  while (x<y) 
+  {
+    if (f >= 0) 
+    {
+      y--;
+      ddF_y += 2;
+      f += ddF_y;
+    }
+    x++;
+    ddF_x += 2;
+    f += ddF_x;
+    
+    // lcdDrawVLine(xCenter+x, yCenter-y, 2*y, color);
+    // lcdDrawVLine(xCenter-x, yCenter-y, 2*y, color);
+    // lcdDrawVLine(xCenter+y, yCenter-x, 2*x, color);
+    // lcdDrawVLine(xCenter-y, yCenter-x, 2*x, color);
+    drawLine(xCenter+x, yCenter-y, xCenter+x, (yCenter-y) + (2*y), color);
+    drawLine(xCenter-x, yCenter-y, xCenter-x, (yCenter-y) + (2*y), color);
+    drawLine(xCenter+y, yCenter-x, xCenter+y, (yCenter-x) + (2*x), color);
+    drawLine(xCenter-y, yCenter-x, xCenter-y, (yCenter-x) + (2*x), color);
+  }
+}
+
+/**************************************************************************/
+/*!
     @brief  Draws a simple (empty) rectangle
 
     @param[in]  x0
@@ -557,7 +605,7 @@ void drawRectangleFilled ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, u
 
   if (y1 < y0)
   {
-    // Swich y1 and y0
+    // Switch y1 and y0
     y = y1;
     y1 = y0;
     y0 = y;
@@ -565,7 +613,7 @@ void drawRectangleFilled ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, u
 
   if (x1 < x0)
   {
-    // Swich x1 and x0
+    // Switch x1 and x0
     x = x1;
     x1 = x0;
     x0 = x;
@@ -614,8 +662,6 @@ uint16_t drawRGB24toRGB565(uint8_t r, uint8_t g, uint8_t b)
                 Starting y location
     @param[in]  width
                 Total width of the progress bar in pixels
-    @param[in]  colorScheme
-                The standardised color scheme to use for this bar
     @param[in]  barBorderColor
                 16-bit color for the inner bar's border
     @param[in]  barFillColor
@@ -629,35 +675,20 @@ uint16_t drawRGB24toRGB565(uint8_t r, uint8_t g, uint8_t b)
     #include "drivers/lcd/tft/drawing.h"
 
     // Draw a the progress bar
-    drawProgressBar(10, 200, 100, 20, COLORSCHEME_DEFAULT, COLOR_BLACK, COLOR_BLUE, 90);
+    drawProgressBar(10, 200, 100, 20, COLOR_BLACK, COLOR_BLUE, 90);
 
     @endcode
 */
 /**************************************************************************/
-void drawProgressBar ( uint16_t x, uint16_t y, uint16_t width, uint16_t height, colorscheme_t colorScheme, uint16_t barBorderColor, uint16_t barFillColor, uint8_t progress )
+void drawProgressBar ( uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t barBorderColor, uint16_t barFillColor, uint8_t progress )
 {
   // Note: Color definitions are contained in 'colors.h'
   uint16_t bg1, bg2,  border;
 
-  // Set color scheme
-  switch (colorScheme)
-  {
-    case (COLORSCHEME_BLUE):
-      bg1       = COLOR_PROGRESSBAR_BLUE_BACKGROUND1;
-      bg2       = COLOR_PROGRESSBAR_BLUE_BACKGROUND2;
-      border    = COLOR_PROGRESSBAR_BLUE_BORDER;
-      break;
-    case (COLORSCHEME_DARKGRAY):
-      bg1       = COLOR_PROGRESSBAR_GRAY_BACKGROUND1;
-      bg2       = COLOR_PROGRESSBAR_GRAY_BACKGROUND2;
-      border    = COLOR_PROGRESSBAR_GRAY_BORDER;
-      break;
-    default:
-      bg1       = COLOR_PROGRESSBAR_BACKGROUND1;
-      bg2       = COLOR_PROGRESSBAR_BACKGROUND2;
-      border    = COLOR_PROGRESSBAR_BORDER;
-      break;
-  }
+  // Set colors
+  bg1       = COLOR_PROGRESSBAR_BACKGROUND1;
+  bg2       = COLOR_PROGRESSBAR_BACKGROUND2;
+  border    = COLOR_PROGRESSBAR_BORDER;
 
   // Draw border with rounded corners
   drawLine(x+2, y, x + width - 2, y, border);
@@ -710,8 +741,6 @@ void drawProgressBar ( uint16_t x, uint16_t y, uint16_t width, uint16_t height, 
                 The height in pixels of the font (used for centering)
     @param[in]  text
                 The text to render on the button
-    @param[in]  colorScheme
-                The standardised color scheme to use for ths button
     @param[in]  pressed
                 Whether the button should be rendered in its 'pressed'
                 (TRUE) or 'default' (FALSE) state.
@@ -724,54 +753,27 @@ void drawProgressBar ( uint16_t x, uint16_t y, uint16_t width, uint16_t height, 
     #include "drivers/lcd/tft/fonts/inconsolata16.h"
 
     // Draw two buttons using inconsolata16
-    drawButton(20, 20, 200, 35, &inconsolata16ptFontInfo, 16, "System Settings", COLORSCHEME_DEFAULT, FALSE);
-    drawButton(20, 65, 200, 35, &inconsolata16ptFontInfo, 16, "Refresh", COLORSCHEME_DEFAULT, FALSE);
+    drawButton(20, 20, 200, 35, &inconsolata16ptFontInfo, 16, "System Settings", FALSE);
+    drawButton(20, 65, 200, 35, &inconsolata16ptFontInfo, 16, "Refresh", FALSE);
 
     @endcode
 */
 /**************************************************************************/
-void drawButton(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const FONT_INFO *fontInfo, uint16_t fontHeight, char* text, colorscheme_t colorScheme, bool pressed)
+void drawButton(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const FONT_INFO *fontInfo, uint16_t fontHeight, char* text, bool pressed)
 {
   // Note: Color definitions are contained in 'colors.h'
   uint16_t bgactive1, bg1, bgactive2, bg2, border, highlight, highlightdarker, font, fontactive;
 
-  // Set color scheme
-  switch (colorScheme)
-  {
-    case (COLORSCHEME_BLUE):
-      bgactive1       = COLOR_BUTTON_BLUE_BACKGROUNDACTIVE1;
-      bg1             = COLOR_BUTTON_BLUE_BACKGROUND1;
-      bgactive2       = COLOR_BUTTON_BLUE_BACKGROUNDACTIVE2;
-      bg2             = COLOR_BUTTON_BLUE_BACKGROUND2;
-      border          = COLOR_BUTTON_BLUE_BORDER;
-      highlight       = COLOR_BUTTON_BLUE_HIGHLIGHT;
-      highlightdarker = COLOR_BUTTON_BLUE_HIGHLIGHTDARKER;
-      font            = COLOR_BUTTON_BLUE_FONT;
-      fontactive      = COLOR_BUTTON_BLUE_FONTACTIVE;
-      break;
-    case (COLORSCHEME_DARKGRAY):
-      bgactive1       = COLOR_BUTTON_GRAY_BACKGROUNDACTIVE1;
-      bg1             = COLOR_BUTTON_GRAY_BACKGROUND1;
-      bgactive2       = COLOR_BUTTON_GRAY_BACKGROUNDACTIVE2;
-      bg2             = COLOR_BUTTON_GRAY_BACKGROUND2;
-      border          = COLOR_BUTTON_GRAY_BORDER;
-      highlight       = COLOR_BUTTON_GRAY_HIGHLIGHT;
-      highlightdarker = COLOR_BUTTON_GRAY_HIGHLIGHTDARKER;
-      font            = COLOR_BUTTON_GRAY_FONT;
-      fontactive      = COLOR_BUTTON_GRAY_FONTACTIVE;
-      break;
-    default:
-      bgactive1       = COLOR_BUTTON_BACKGROUNDACTIVE1;
-      bg1             = COLOR_BUTTON_BACKGROUND1;
-      bgactive2       = COLOR_BUTTON_BACKGROUNDACTIVE2;
-      bg2             = COLOR_BUTTON_BACKGROUND2;
-      border          = COLOR_BUTTON_BORDER;
-      highlight       = COLOR_BUTTON_HIGHLIGHT;
-      highlightdarker = COLOR_BUTTON_HIGHLIGHTDARKER;
-      font            = COLOR_BUTTON_FONT;
-      fontactive      = COLOR_BUTTON_FONTACTIVE;
-      break;
-  }
+  // Set colors
+  bgactive1       = COLOR_BUTTON_BACKGROUNDACTIVE1;
+  bg1             = COLOR_BUTTON_BACKGROUND1;
+  bgactive2       = COLOR_BUTTON_BACKGROUNDACTIVE2;
+  bg2             = COLOR_BUTTON_BACKGROUND2;
+  border          = COLOR_BUTTON_BORDER;
+  highlight       = COLOR_BUTTON_HIGHLIGHT;
+  highlightdarker = COLOR_BUTTON_HIGHLIGHTDARKER;
+  font            = COLOR_BUTTON_FONT;
+  fontactive      = COLOR_BUTTON_FONTACTIVE;
 
   // Draw background
   drawRectangleFilled(x + 1, y + 1, x + width - 1, y + height - 1, pressed ? bgactive1 : bg1);
@@ -825,4 +827,5 @@ bmp_error_t drawBitmapImage(uint16_t x, uint16_t y, char *filename)
 {
   return bmpDrawBitmap(x, y, filename);
 }
+
 #endif

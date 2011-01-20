@@ -65,14 +65,21 @@
 #endif
 
 #ifdef CFG_USBCDC
+  volatile unsigned int lastTick;
   #include "core/usbcdc/usb.h"
   #include "core/usbcdc/usbcore.h"
   #include "core/usbcdc/usbhw.h"
   #include "core/usbcdc/cdcuser.h"
+  #include "core/usbcdc/cdc_buf.h"
 #endif
 
 #ifdef CFG_ST7565
   #include "drivers/lcd/bitmap/st7565/st7565.h"
+  #include "drivers/lcd/smallfonts.h"
+#endif
+
+#ifdef CFG_SSD1306
+  #include "drivers/lcd/bitmap/ssd1306/ssd1306.h"
   #include "drivers/lcd/smallfonts.h"
 #endif
 
@@ -145,6 +152,7 @@ void systemInit()
 
   // Initialise USB CDC
   #ifdef CFG_USBCDC
+    lastTick = systickGetTicks();   // Used to control output/printf timing
     CDC_Init();                     // Initialise VCOM
     USB_Init();                     // USB Initialization
     USB_Connect(TRUE);              // USB Connect
@@ -164,8 +172,13 @@ void systemInit()
   #ifdef CFG_ST7565
     st7565Init();
     st7565ClearScreen();    // Clear the screen  
-    st7565BLEnable();       // Enable the backlight
-    st7565Refresh();        // Refresh the screen
+    st7565Backlight(1);     // Enable the backlight
+  #endif
+
+  // Initialise the SSD1306 OLED display
+  #ifdef CFG_SSD1306
+    ssd1306Init(SSD1306_SWITCHCAPVCC);
+    ssd1306ClearScreen();   // Clear the screen  
   #endif
 
   // Initialise TFT LCD Display
@@ -175,20 +188,20 @@ void systemInit()
 
   // Initialise SD Card
   #ifdef CFG_SDCARD
-    DSTATUS stat;
-    stat = disk_initialize(0);
-    if (stat & STA_NOINIT) 
-    {
-      // Not intitialised
-    }
-    if (stat & STA_NODISK) 
-    {
-      // No disk
-    }
-    if (stat == 0)
-    {
-      // SD Card Initialised
-    }
+    // DSTATUS stat;
+    // stat = disk_initialize(0);
+    // if (stat & STA_NOINIT) 
+    // {
+    //   // Not intitialised
+    // }
+    // if (stat & STA_NODISK) 
+    // {
+    //   // No disk
+    // }
+    // if (stat == 0)
+    // {
+    //   // SD Card Initialised
+    // }
   #endif
 
   // Initialise Chibi
@@ -202,12 +215,11 @@ void systemInit()
     // mcp24aaWriteBuffer(CFG_CHIBI_EEPROM_IEEEADDR, (uint8_t *)&addr_ieee, 8);
     chb_init();
     chb_pcb_t *pcb = chb_get_pcb();
-    printf("%-40s : 0x%04X%s", "Chibi Initialised", pcb->src_addr, CFG_PRINTF_NEWLINE);
+    // printf("%-40s : 0x%04X%s", "Chibi Initialised", pcb->src_addr, CFG_PRINTF_NEWLINE);
   #endif
 
   // Start the command line interface
   #ifdef CFG_INTERFACE
-    printf("%sType 'help' for a list of available commands%s", CFG_PRINTF_NEWLINE, CFG_PRINTF_NEWLINE);
     cmdInit();
   #endif
 }
@@ -227,10 +239,31 @@ void __putchar(const char c)
     uartSendByte(c);
   #endif
 
+  // This is a terribly ugly way to do this, but there must be
+  // at least 1ms between USB frames (of up to 64 bytes) ... the
+  // way this is implemented below is slow, but should at
+  // least avoid dropped characters, etc.  Needs to be rewritten
+  // with something much better performing though!
   #ifdef CFG_PRINTF_USBCDC
-    // Send output to USB if connected
-    if (USB_Configuration)
-      usbcdcSendByte(c);
+    if (USB_Configuration) 
+    {
+      cdcBufferWrite(c);
+      // Check if we can flush the buffer now or if we need to wait
+      unsigned int currentTick = systickGetTicks();
+      if (currentTick != lastTick)
+      {
+        while (cdcBufferDataPending())
+        {
+          // Read up to 64 bytes as long as possible
+          uint8_t frame[64];
+          uint32_t bytesRead = cdcBufferReadLen(frame, 64);
+          // debug_printf("%d,", bytesRead);
+          USB_WriteEP (CDC_DEP_IN, frame, bytesRead);
+          systickDelay(1);
+        }
+        lastTick = currentTick;
+      }
+    }
   #endif
 
   #ifdef CFG_PRINTF_CWDEBUG

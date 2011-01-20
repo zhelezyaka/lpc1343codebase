@@ -49,7 +49,14 @@
 #include "core/timer32/timer32.h"
 #include "pmu.h"
 
-#define PMU_WDTCLOCKSPEED_HZ 10000
+#ifdef CFG_CHIBI
+  #include "drivers/chibi/chb_drvr.h"
+#endif
+#define PMU_WDTCLOCKSPEED_HZ 7812
+
+void pmuSetupHW(void);
+void pmuRestoreHW(void);
+
 
 /**************************************************************************/
 /*! 
@@ -59,6 +66,18 @@
 void WAKEUP_IRQHandler(void)
 {
   uint32_t regVal;
+
+  // Reconfigure system clock/PLL
+  cpuPllSetup(CPU_MULTIPLIER_6);
+
+  // Clear match bit on timer
+  TMR_TMR32B0EMR = 0;
+
+  // Clear pending bits
+  SCB_STARTRSRP0CLR = SCB_STARTRSRP0CLR_MASK;
+
+  // Clear SLEEPDEEP bit
+  SCB_SCR &= ~SCB_SCR_SLEEPDEEP;
 
   // Disable the deep sleep timer
   TMR_TMR32B0TCR = TMR_TMR32B0TCR_COUNTERENABLE_DISABLED;
@@ -71,15 +90,12 @@ void WAKEUP_IRQHandler(void)
     SCB_STARTRSRP0CLR = regVal;
   }
 
-  // Reconfigure system clock/PLL
-  cpuPllSetup(CPU_MULTIPLIER_6);
-
-  // Reconfigure system clock/PLL
-  cpuPllSetup(CPU_MULTIPLIER_6);
-
   // Reconfigure CT32B0
   timer32Init(0, TIMER32_DEFAULTINTERVAL);
   timer32Enable(0);
+
+  // Perform peripheral specific and custom wakeup tasks
+  pmuRestoreHW();
 
   /* See tracker for bug report. */
   __asm volatile ("NOP");
@@ -94,26 +110,13 @@ void WAKEUP_IRQHandler(void)
 /**************************************************************************/
 static void pmuWDTClockInit (void)
 {
-  /* Configure watchdog clock */
-  /* Freq. = 0.5MHz, div = 50: WDT_OSC = 10kHz  */
-  SCB_WDTOSCCTRL = SCB_WDTOSCCTRL_FREQSEL_0_5MHZ | 
-                   SCB_WDTOSCCTRL_DIVSEL_DIV50;
-
-  /* Set clock source (use internal oscillator) */
-  // SCB_WDTCLKSEL = SCB_WDTCLKSEL_SOURCE_INPUTCLOCK;
-  SCB_WDTCLKSEL = SCB_WDTCLKSEL_SOURCE_INTERNALOSC;
-  SCB_WDTCLKUEN = SCB_WDTCLKUEN_UPDATE;
-  SCB_WDTCLKUEN = SCB_WDTCLKUEN_DISABLE;
-  SCB_WDTCLKUEN = SCB_WDTCLKUEN_UPDATE;
-
-  /* Wait until updated */
-  while (!(SCB_WDTCLKUEN & SCB_WDTCLKUEN_UPDATE));
-
-  /* Set divider */
-  SCB_WDTCLKDIV = SCB_WDTCLKDIV_DIV1;
-
   /* Enable WDT clock */
   SCB_PDRUNCFG &= ~(SCB_PDRUNCFG_WDTOSC);
+
+  /* Configure watchdog clock */
+  /* Freq. = 0.5MHz, div = 64: WDT_OSC = 7.8125kHz  */
+  SCB_WDTOSCCTRL = SCB_WDTOSCCTRL_FREQSEL_0_5MHZ | 
+                   SCB_WDTOSCCTRL_DIVSEL_DIV64;
 
   // Switch main clock to WDT output
   SCB_MAINCLKSEL = SCB_MAINCLKSEL_SOURCE_WDTOSC;
@@ -215,6 +218,9 @@ void pmuSleep()
 /**************************************************************************/
 void pmuDeepSleep(uint32_t sleepCtrl, uint32_t wakeupSeconds)
 {
+  // Setup the board for deep sleep mode, shutting down certain
+  // peripherals and remapping pins for lower power
+  pmuSetupHW();
   SCB_PDAWAKECFG = SCB_PDRUNCFG;
   sleepCtrl |= (1 << 9) | (1 << 11);
   SCB_PDSLEEPCFG = sleepCtrl;
@@ -231,9 +237,6 @@ void pmuDeepSleep(uint32_t sleepCtrl, uint32_t wakeupSeconds)
 
     // Disable internal pullup on 0.1
     gpioSetPullup(&IOCON_PIO0_1, gpioPullupMode_Inactive);
-
-    // Reconfigure clock to run from WDTOSC
-    pmuWDTClockInit();
 
     /* Enable the clock for CT32B0 */
     SCB_SYSAHBCLKCTRL |= (SCB_SYSAHBCLKCTRL_CT32B0);
@@ -302,6 +305,9 @@ void pmuDeepSleep(uint32_t sleepCtrl, uint32_t wakeupSeconds)
 
     /* Enable Port 0.1 as wakeup source. */
     SCB_STARTERP0 |= SCB_STARTERP0_ERPIO0_1;
+
+    // Reconfigure clock to run from WDTOSC
+    pmuWDTClockInit();
   
     /* Start the timer */
     TMR_TMR32B0TCR = TMR_TMR32B0TCR_COUNTERENABLE_ENABLED;
@@ -352,6 +358,9 @@ void pmuPowerDown( void )
 {
   uint32_t regVal;
 
+  // Make sure HW and external devices are in low power mode
+  pmuSetupHW();
+
   if ( (PMU_PMUCTRL & ((0x1<<8) | (PMU_PMUCTRL_DPDFLAG))) != 0x0 )
   {
     /* Check sleep and deep power down bits. If sleep and/or
@@ -380,4 +389,30 @@ void pmuPowerDown( void )
     __asm volatile ("WFI");
   }
   return;
+}
+
+/**************************************************************************/
+/*! 
+    @brief  Configures parts and system peripherals to use lower power
+            before entering sleep mode
+*/
+/**************************************************************************/
+void pmuSetupHW(void)
+{
+  #ifdef CFG_CHIBI
+    chb_sleep(TRUE);
+  #endif
+}
+
+/**************************************************************************/
+/*! 
+    @brief  Restores parts and system peripherals to an appropriate
+            state after waking up from deep-sleep mode
+*/
+/**************************************************************************/
+void pmuRestoreHW(void)
+{
+  #ifdef CFG_CHIBI
+    // ToDo: Reinitialise Chibi after wakeup?
+  #endif
 }

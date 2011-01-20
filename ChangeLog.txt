@@ -1,6 +1,25 @@
 v0.80 - Ongoing
 ===============
 
+- Added driver for SSD1306 OLED displays
+  to '/drivers/bitmap/ssd1306'
+- Changed commands in the CLI to single
+  characters and shortened descriptions
+  to save flash space (~0.7KB)
+- Updated ILI9325 to allow the screen
+  orientation to be changed to portrait
+  of landscape mode.
+- Added cmd_orientation to change the LCD
+  orientation from the CLI
+- Fixed a bug in the PMU Wakeup interrupt
+  handler
+- Added a circular buffer for outgoing CDC
+  data (cdc_buf.c) since you can only feed one
+  frame per ms (max 64 bytes).  The speed needs
+  to be improved finding the right balance
+  between caching data and sending it to the EP,
+  but this should avoid any dropped characters.
+  More testing will be needed to improve this.
 - Fixed a bug with the USB CDC buffer
 - Added SILENTMODE to the CLI to disable the
   command prompt and echo of input characters

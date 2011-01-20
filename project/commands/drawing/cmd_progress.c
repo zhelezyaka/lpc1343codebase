@@ -77,7 +77,7 @@ void cmd_progress(uint8_t argc, char **argv)
   }
 
   // Draw the progress bar
-  drawProgressBar(x, y, w, h, COLORSCHEME_DEFAULT, border, fill, percent);
+  drawProgressBar(x, y, w, h, border, fill, percent);
 }
 
 #endif  
