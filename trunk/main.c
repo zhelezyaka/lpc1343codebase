@@ -42,6 +42,15 @@
   #include "core/cmd/cmd.h"
 #endif
 
+#ifdef CFG_TFTLCD
+  #include "drivers/lcd/tft/lcd.h"
+  #include "drivers/lcd/tft/drawing.h"
+  #include "drivers/lcd/tft/touchscreen.h"
+  #include "drivers/lcd/tft/dialogues/alphanumeric.h"  
+  #include "drivers/lcd/tft/fonts/inconsolata11.h"
+  #include "drivers/lcd/tft/bmp.h"
+#endif
+
 /**************************************************************************/
 /*! 
     Approximates a 1 millisecond delay using "nop".  This is less
@@ -66,27 +75,8 @@ void delayms(uint32_t ms)
 
 /**************************************************************************/
 /*! 
-    Prints a hexadecimal value in plain characters
-*/
-/**************************************************************************/
-void print_hex(const byte_t* pbtData, const size_t szBytes)
-{
-  size_t szPos;
-  for (szPos=0; szPos < szBytes; szPos++) {
-    printf("%02x ",pbtData[szPos]);
-  }
-  printf(CFG_PRINTF_NEWLINE);
-}
-
-/**************************************************************************/
-/*! 
     Main program entry point.  After reset, normal code execution will
     begin here.
-
-    Note: CFG_INTERFACE is normally enabled by default.  If you wish to
-          enable the blinking LED code in main, you will need to open
-          projectconfig.h, comment out "#define CFG_INTERFACE" and
-          rebuild the project.
 */
 /**************************************************************************/
 int main (void)
@@ -96,6 +86,8 @@ int main (void)
 
   while (1)
   {
+    // Run the CLI or blink and LED depending on whether CFG_INTERFACE
+    // is commented out or not in projectconfig.h
     #ifdef CFG_INTERFACE
       // Check for any incoming commands on the CLI
       cmdPoll();

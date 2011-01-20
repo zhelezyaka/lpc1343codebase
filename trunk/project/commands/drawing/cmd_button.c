@@ -74,7 +74,7 @@ void cmd_button(uint8_t argc, char **argv)
   if (argc == 5)
   {
     // Render the button with no text
-    drawButton(x, y, w, h, &inconsolata11ptFontInfo, 7, NULL, COLORSCHEME_DEFAULT, pressed ? TRUE : FALSE);
+    drawButton(x, y, w, h, &inconsolata11ptFontInfo, 7, NULL, pressed ? TRUE : FALSE);
   }
   else
   {
@@ -91,7 +91,7 @@ void cmd_button(uint8_t argc, char **argv)
     *data_ptr++ = '\0';
 
     // Render the button with text
-    drawButton(x, y, w, h, &inconsolata11ptFontInfo, 7, (char *)&data, COLORSCHEME_DEFAULT, pressed ? TRUE : FALSE);
+    drawButton(x, y, w, h, &inconsolata11ptFontInfo, 7, (char *)&data, pressed ? TRUE : FALSE);
   }
 }
 

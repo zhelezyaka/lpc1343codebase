@@ -47,20 +47,20 @@
 
 // Function prototypes for the command table
 void cmd_help(uint8_t argc, char **argv);         // handled by core/cmd/cmd.c
-void cmd_hello(uint8_t argc, char **argv);
 void cmd_sysinfo(uint8_t argc, char **argv);
 
 #ifdef CFG_TFTLCD
 void cmd_button(uint8_t argc, char **argv);
 void cmd_circle(uint8_t argc, char **argv);
 void cmd_clear(uint8_t argc, char **argv);
-void cmd_clear24(uint8_t argc, char **argv);
 void cmd_line(uint8_t argc, char **argv);
+void cmd_rectangle(uint8_t argc, char **argv);
 void cmd_pixel(uint8_t argc, char **argv);
 void cmd_progress(uint8_t argc, char **argv);
 void cmd_getpixel(uint8_t argc, char **argv);
 void cmd_gettext(uint8_t argc, char **argv);
 void cmd_calibrate(uint8_t argc, char **argv);
+void cmd_orientation(uint8_t argc, char **argv);
 void cmd_text(uint8_t argc, char **argv);
 void cmd_textw(uint8_t argc, char **argv);
 void cmd_tswait(uint8_t argc, char **argv);
@@ -71,7 +71,6 @@ void cmd_bmp(uint8_t argc, char **argv);
 
 #ifdef CFG_CHIBI
 void cmd_chibi_addr(uint8_t argc, char **argv);
-void cmd_chibi_ieeeaddr(uint8_t argc, char **argv);
 void cmd_chibi_tx(uint8_t argc, char **argv);
 #endif
 
@@ -99,46 +98,46 @@ void cmd_sd_dir(uint8_t argc, char **argv);
 /**************************************************************************/
 cmd_t cmd_tbl[] = 
 {
-  // command name, min args, max args, hidden, function name, command description, syntax description
-  { "help",           0,  0,  0, cmd_help              , "Displays a list of all available commands"           , "'help' has no parameters" },
-  { "hello",          0,  1,  0, cmd_hello             , "Displays \'Hello World!\'"                           , "'hello [<name>]'" },
-  { "sysinfo",        0,  0,  0, cmd_sysinfo           , "Displays current system configuration settings"      , "'sysinfo' has no parameters" },
+  // command name, min args, max args, hidden, function name, command description, syntax
+  { "?",    0,  0,  0, cmd_help              , "Help"                           , "'?' has no parameters" },
+  { "V",    0,  0,  0, cmd_sysinfo           , "System Info"                    , "'V' has no parameters" },
+
+  #ifdef CFG_I2CEEPROM
+  { "e",    1,  1,  0, cmd_i2ceeprom_read    , "EEPROM Read"                    , "'e <addr>'" },
+  { "w",    2,  2,  0, cmd_i2ceeprom_write   , "EEPROM Write"                   , "'w <addr> <val>'" },
+  #endif
 
   #ifdef CFG_TFTLCD
-  { "btn",            5,  99, 0, cmd_button            , "Draws a button"                                      , "'btn <x> <y> <w> <h> <enabled> [<text>]'" },
-  { "calibrate",      0,  0,  0, cmd_calibrate         , "Calibrates the touch screen"                         , "'calibrate' has no parameters'" },
-  { "circle",         4,  4,  0, cmd_circle            , "Draws a circle"                                      , "'circle <x> <y> <radius> <color>'" },
-  { "clr",            0,  1,  0, cmd_clear             , "Fills the screen with a 16-bit (RGB565) color"       , "'clr [<color>]'" },
-  { "clr24",          3,  3,  0, cmd_clear24           , "Fills the screen with a 24-bit (RGB) color"          , "'clr24 <r> <g> <b>'" },
-  { "gettext",        0,  0,  0, cmd_gettext           , "Displays an alpha-numeric input dialogue"            , "'gettext' has no parameters" },
-  { "gp",             2,  2,  0, cmd_getpixel          , "Reads a single pixel from the LCD"                   , "'gp <x> <y>'" },
-  { "line",           5,  5,  0, cmd_line              , "Draws a line"                                        , "'line <x1> <y1> <x2> <y2> <color>'" },
-  { "p",              3,  3,  0, cmd_pixel             , "Draws a single pixel"                                , "'p <x> <y> <color>'" },
-  { "progress",       7,  7,  0, cmd_progress          , "Draws a progress bar"                                , "'progress <x> <y> <w> <h> <percent> <bordercolor> <fillcolor>'" },
-  { "text",           5, 99,  0, cmd_text              , "Renders text on the LCD"                             , "'text <x> <y> <color> <fontnumber> <message>'" },
-  { "textw",          2, 99,  0, cmd_textw             , "Gets the width in pixels of the supplied text"       , "'textw <fontnumber> <message>'" },
-  { "tswait",         0,  1,  0, cmd_tswait            , "Waits for a touch-screen event"                      , "'tswait [<timeoutMS>]'" },
+  { "b",    5,  99, 0, cmd_button            , "Button"                         , "'b <x> <y> <w> <h> <enbld> [<txt>]'" },
   #ifdef CFG_SDCARD
-  { "bmp",            3,  3,  0, cmd_bmp               , "Loads a bitmap image from the SD card"               , "'bmp <x> <y> <filename>'" },
+  { "B",    3,  3,  0, cmd_bmp               , "Bitmap (SD Card)"               , "'B <x> <y> <file>'" },
   #endif
+  { "c",    4,  5,  0, cmd_circle            , "Circle"                         , "'c <x> <y> <radius> <color> <filled[0|1]>'" },
+  { "C",    0,  0,  0, cmd_calibrate         , "Calibrate Touch Screen"         , "'C' has no parameters'" },
+  { "F",    0,  1,  0, cmd_clear             , "Fill"                           , "'F [<color>]'" },
+  { "l",    5,  5,  0, cmd_line              , "Line"                           , "'L <x1> <y1> <x2> <y2> <color>'" },
+  { "o",    0,  1,  0, cmd_orientation       , "LCD Orientation"                , "'o [<0>|<1>]'" },
+  { "p",    3,  3,  0, cmd_pixel             , "Draw Pixel"                     , "'p <x> <y> <color>'" },
+  { "P",    7,  7,  0, cmd_progress          , "Progress Bar"                   , "'P <x> <y> <w> <h> <%> <brdrcolor> <fillcolor>'" },
+  { "r",    6,  7,  0, cmd_rectangle         , "Rectangle"                      , "'r <x1> <y1> <x2> <y2> <color> <filled[0|1]>'" },
+  { "R",    2,  2,  0, cmd_getpixel          , "Read Pixel"                     , "'R <x> <y>'" },
+  { "s",    2, 99,  0, cmd_textw             , "Text Width"                     , "'s <fontnum> <msg>'" },
+  { "t",    5, 99,  0, cmd_text              , "Text"                           , "'t <x> <y> <clr> <fontnum[0|1]> <msg>'" },
+  { "T",    0,  0,  0, cmd_gettext           , "Alpha-Numeric Dialogue Box"     , "'T' has no parameters" },
+  { "W",    0,  1,  0, cmd_tswait            , "Wait for Touch Event"           , "'W [<timeoutMS>]'" },
   #endif
 
   #ifdef CFG_CHIBI
-  { "chb-addr",       0,  1,  0, cmd_chibi_addr        , "Gets/sets the 16-bit node address"                   , "'chb-addr [<1-65534>|<OxFFFE>]'" },
-  { "chb-send",       2, 99,  0, cmd_chibi_tx          , "Transmits the supplied text/value"                   , "'chb-send <destaddr> <message>'" },
-  #endif
-
-  #ifdef CFG_I2CEEPROM
-  { "eeprom-read",    1,  1,  0, cmd_i2ceeprom_read    , "Reads one byte from EEPROM"                          , "'eeprom-read <addr>'" },
-  { "eeprom-write",   2,  2,  0, cmd_i2ceeprom_write   , "Writes one byte to EEPROM"                           , "'eeprom-write <addr> <value>'" },
+  { "A",    0,  1,  0, cmd_chibi_addr        , "Get/Set 16-bit Node Address"    , "'A [<1-65534>|<OxFFFE>]'" },
+  { "S",    2, 99,  0, cmd_chibi_tx          , "Send to Target Node(s)"         , "'S <destaddr> <msg>'" },
   #endif
 
   #ifdef CFG_LM75B
-  { "lm75b-read",     0,  0,  0, cmd_lm75b_gettemp     , "Gets the temp. in degrees celsius"                   , "'lm75b-read' has no parameters" },
+  { "m",    0,  0,  0, cmd_lm75b_gettemp     , "Temperature (Celsius)"          , "'m' has no parameters" },
   #endif
 
   #ifdef CFG_SDCARD
-  { "sd-dir",         0,  1,  0,  cmd_sd_dir           , "List all files in the specified directory"           , "'sd-dir [<path>]'" },
+  { "d",    0,  1,  0,  cmd_sd_dir           , "Dir (SD Card)"                  , "'d [<path>]'" },
   #endif
 };
 

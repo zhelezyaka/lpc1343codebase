@@ -77,7 +77,7 @@ void cmd_tswait(uint8_t argc, char **argv)
   else
   {
     // Timeout occured (send error code instead)
-    printf("-1%s", CFG_PRINTF_NEWLINE);
+    printf("-1 %s", CFG_PRINTF_NEWLINE);
   }
 
   return;

@@ -71,28 +71,4 @@ void cmd_clear(uint8_t argc, char **argv)
   drawFill((uint16_t)col);
 }
 
-/**************************************************************************/
-/*! 
-    Fills the LCD with the supplied 24-bit RGB color
-*/
-/**************************************************************************/
-void cmd_clear24(uint8_t argc, char **argv)
-{
-  // Try to convert supplied value to an integer
-  int32_t r, g, b;
-  getNumber (argv[0], &r);
-  getNumber (argv[1], &g);
-  getNumber (argv[2], &b);
-  
-  // Check for invalid values (getNumber may complain about this as well)
-  if (r < 0 || r > 0xFF || g < 0 || g > 0xFF || b < 0 || b > 0xFF)
-  {
-    printf("Invalid RGB Values%s", CFG_PRINTF_NEWLINE);
-    return;
-  }
-
-  // Fill the screen
-  drawFill(drawRGB24toRGB565((uint8_t)r, (uint8_t)g, (uint8_t)b));
-}
-
 #endif  

@@ -1,20 +1,17 @@
 /**************************************************************************/
 /*! 
-    @file     ILI9325.c
+    @file     st7783.c
     @author   K. Townsend (microBuilder.eu)
 
     @section  DESCRIPTION
 
-    Driver for ILI9325 240x320 pixel TFT LCD displays.
+    Driver for st7783 240x320 pixel TFT LCD displays.
     
     This driver uses an 8-bit interface and a 16-bit RGB565 colour palette.
-    Should also work with SPFD5408B or OTM3225A-based LCDs, though
-    there are sometimes minor differences (for example vertical scrolling
-    via register 0x6A isn't supported on all controllers).
 
     @section  UPDATES
 
-    26-11-2010: ili9325ReadData contributed by Adafruit Industries
+    26-11-2010: st7783ReadData contributed by Adafruit Industries
 
     @section  LICENSE
 
@@ -46,7 +43,7 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 /**************************************************************************/
-#include "ILI9325.h"
+#include "st7783.h"
 #include "core/systick/systick.h"
 #include "drivers/lcd/tft/touchscreen.h"
 
@@ -57,7 +54,7 @@ static lcdOrientation_t lcdOrientation = LCD_ORIENTATION_PORTRAIT;
 /*************************************************/
 
 /*************************************************/
-void ili9325Delay(unsigned int t)
+void st7783Delay(unsigned int t)
 {
   unsigned char t1;
   while(t--)
@@ -68,7 +65,7 @@ void ili9325Delay(unsigned int t)
 }
 
 /*************************************************/
-void ili9325WriteCmd(uint16_t command) 
+void st7783WriteCmd(uint16_t command) 
 {
   // Compiled with -Os on GCC 4.4 this works out to 25 cycles
   // (versus 36 compiled with no optimisations).  I'm not sure it
@@ -78,28 +75,28 @@ void ili9325WriteCmd(uint16_t command)
   // Set color [cmd+data]) (times assumes 72MHz clock).
 
   CLR_CS_CD_SET_RD_WR;  // Saves 18 commands compared to "CLR_CS; CLR_CD; SET_RD; SET_WR;" 
-  ILI9325_GPIO2DATA_DATA = (command >> (8 - ILI9325_DATA_OFFSET));
+  ST7783_GPIO2DATA_DATA = (command >> (8 - ST7783_DATA_OFFSET));
   CLR_WR;
   SET_WR;
-  ILI9325_GPIO2DATA_DATA = command << ILI9325_DATA_OFFSET;
+  ST7783_GPIO2DATA_DATA = command << ST7783_DATA_OFFSET;
   CLR_WR;
   SET_WR_CS;            // Saves 7 commands compared to "SET_WR; SET_CS;"
 }
 
 /*************************************************/
-void ili9325WriteData(uint16_t data)
+void st7783WriteData(uint16_t data)
 {
   CLR_CS_SET_CD_RD_WR;  // Saves 18 commands compared to SET_CD; SET_RD; SET_WR; CLR_CS"
-  ILI9325_GPIO2DATA_DATA = (data >> (8 - ILI9325_DATA_OFFSET));
+  ST7783_GPIO2DATA_DATA = (data >> (8 - ST7783_DATA_OFFSET));
   CLR_WR;
   SET_WR;
-  ILI9325_GPIO2DATA_DATA = data << ILI9325_DATA_OFFSET;
+  ST7783_GPIO2DATA_DATA = data << ST7783_DATA_OFFSET;
   CLR_WR;
   SET_WR_CS;            // Saves 7 commands compared to "SET_WR, SET_CS;"
 }
 
 /*************************************************/
-uint16_t ili9325ReadData(void)
+uint16_t st7783ReadData(void)
 {
   // ToDo: Optimise this method!
 
@@ -111,23 +108,23 @@ uint16_t ili9325ReadData(void)
   CLR_CS;
   
   // set inputs
-  ILI9325_GPIO2DATA_SETINPUT;
+  ST7783_GPIO2DATA_SETINPUT;
   CLR_RD;
-  ili9325Delay(100);
-  high = ILI9325_GPIO2DATA_DATA;  
-  high >>= ILI9325_DATA_OFFSET;
+  st7783Delay(100);
+  high = ST7783_GPIO2DATA_DATA;  
+  high >>= ST7783_DATA_OFFSET;
   high &= 0xFF;
   SET_RD;
   
   CLR_RD;
-  ili9325Delay(100);
-  low = ILI9325_GPIO2DATA_DATA;
-  low >>= ILI9325_DATA_OFFSET;
+  st7783Delay(100);
+  low = ST7783_GPIO2DATA_DATA;
+  low >>= ST7783_DATA_OFFSET;
   low &=0xFF;
   SET_RD;
   
   SET_CS;
-  ILI9325_GPIO2DATA_SETOUTPUT;
+  ST7783_GPIO2DATA_SETOUTPUT;
 
   d = high;
   d <<= 8;
@@ -137,21 +134,21 @@ uint16_t ili9325ReadData(void)
 }
 
 /*************************************************/
-uint16_t ili9325Read(uint16_t addr)
+uint16_t st7783Read(uint16_t addr)
 {
-  ili9325WriteCmd(addr);
-  return ili9325ReadData();
+  st7783WriteCmd(addr);
+  return st7783ReadData();
 }
 
 /*************************************************/
-void ili9325Command(uint16_t command, uint16_t data)
+void st7783Command(uint16_t command, uint16_t data)
 {
-  ili9325WriteCmd(command);
-  ili9325WriteData(data);
+  st7783WriteCmd(command);
+  st7783WriteData(data);
 }
 
 /*************************************************/
-uint16_t ili9325BGR2RGB(uint16_t color)   
+uint16_t st7783BGR2RGB(uint16_t color)   
 {   
   uint16_t r, g, b;   
    
@@ -165,44 +162,44 @@ uint16_t ili9325BGR2RGB(uint16_t color)
 /*************************************************/
 /* Returns the 4-hexdigit controller code        */
 /*************************************************/
-uint16_t ili9325Type(void)
+uint16_t st7783Type(void)
 {
-  ili9325WriteCmd(0x0);
-  return ili9325ReadData();
+  st7783WriteCmd(0x0);
+  return st7783ReadData();
 }
 
 /*************************************************/
-void ili9325SetCursor(uint16_t x, uint16_t y)
+void st7783SetCursor(uint16_t x, uint16_t y)
 {
-  // uint16_t he, ve;
-  uint16_t al, ah;
+  uint16_t he, ve, al, ah;
   
-  if (lcdOrientation == LCD_ORIENTATION_LANDSCAPE)
+  switch (lcdOrientation) 
   {
-    //he = ILI9325_HEIGHT-1-x;
-    //ve = ILI9325_WIDTH-1-y;
-    al = y;
-    ah = x;
+  case LCD_ORIENTATION_LANDSCAPE:
+          he = ST7783_WIDTH-1-y;
+          ve = ST7783_HEIGHT-1-x;
+          al = y;
+          ah = x;
+          break;
+  case LCD_ORIENTATION_PORTRAIT:
+  default:
+          he = ST7783_WIDTH-1;
+          ve = ST7783_HEIGHT-1;
+          al = x;
+          ah = y;
+          break;
   }
-  else
-  {
-    //he = ILI9325_WIDTH-1;
-    //ve = ILI9325_HEIGHT-1;
-    al = x;
-    ah = y;
-  }
-
-  //ili9325Command(0x0051, he);
-  //ili9325Command(0x0053, ve);
-  ili9325Command(0x0020, al);
-  ili9325Command(0x0021, ah);
+  st7783Command(0x0051, he);
+  st7783Command(0x0053, ve);
+  st7783Command(0x0020, al);
+  st7783Command(0x0021, ah);
 }
 
 /*************************************************/
-void ili9325InitDisplay(void)
+void st7783InitDisplay(void)
 {
   // Clear data line
-  GPIO_GPIO2DATA &= ~ILI9325_DATA_MASK;
+  GPIO_GPIO2DATA &= ~ST7783_DATA_MASK;
     
   SET_RD;
   SET_WR;
@@ -211,75 +208,78 @@ void ili9325InitDisplay(void)
 
   // Reset display
   CLR_RESET;
-  ili9325Delay(10000);
+  st7783Delay(10000);
   SET_RESET;
-  ili9325Delay(500);
+  st7783Delay(500);
 
-  ili9325Command(0x0001, 0x0100);     // Driver Output Control Register (R01h)
-  ili9325Command(0x0002, 0x0700);     // LCD Driving Waveform Control (R02h)
-  ili9325Command(0x0003, 0x1030);     // Entry Mode (R03h)  
-  ili9325Command(0x0008, 0x0302);
-  ili9325Command(0x0009, 0x0000);
-  ili9325Command(0x000A, 0x0000);     // Fmark On
-  ili9325Command(0x0010, 0x0000);     // Power Control 1 (R10h)
-  ili9325Command(0x0011, 0x0007);     // Power Control 2 (R11h)
-  ili9325Command(0x0012, 0x0000);     // Power Control 3 (R12h)
-  ili9325Command(0x0013, 0x0000);     // Power Control 4 (R13h)
-  ili9325Delay(1000);  
-  ili9325Command(0x0010, 0x14B0);     // Power Control 1 (R10h)  
-  ili9325Delay(500);  
-  ili9325Command(0x0011, 0x0007);     // Power Control 2 (R11h)  
-  ili9325Delay(500);  
-  ili9325Command(0x0012, 0x008E);     // Power Control 3 (R12h)
-  ili9325Command(0x0013, 0x0C00);     // Power Control 4 (R13h)
-  ili9325Command(0x0029, 0x0015);     // NVM read data 2 (R29h)
-  ili9325Delay(500);
-  ili9325Command(0x0030, 0x0000);     // Gamma Control 1
-  ili9325Command(0x0031, 0x0107);     // Gamma Control 2
-  ili9325Command(0x0032, 0x0000);     // Gamma Control 3
-  ili9325Command(0x0035, 0x0203);     // Gamma Control 6
-  ili9325Command(0x0036, 0x0402);     // Gamma Control 7
-  ili9325Command(0x0037, 0x0000);     // Gamma Control 8
-  ili9325Command(0x0038, 0x0207);     // Gamma Control 9
-  ili9325Command(0x0039, 0x0000);     // Gamma Control 10
-  ili9325Command(0x003C, 0x0203);     // Gamma Control 13
-  ili9325Command(0x003D, 0x0403);     // Gamma Control 14
-  ili9325Command(0x0050, 0x0000);     // Window Horizontal RAM Address Start (R50h)
-  ili9325Command(0x0051, 240 - 1);    // Window Horizontal RAM Address End (R51h)
-  ili9325Command(0x0052, 0X0000);     // Window Vertical RAM Address Start (R52h)
-  ili9325Command(0x0053, 320 - 1);    // Window Vertical RAM Address End (R53h)
-  ili9325Command(0x0060, 0xa700);     // Driver Output Control (R60h)
-  ili9325Command(0x0061, 0x0003);     // Driver Output Control (R61h) - enable VLE
-  ili9325Command(0x0090, 0X0010);     // Panel Interface Control 1 (R90h)
+  st7783Command(0x00FF, 0x0001);
+  st7783Command(0x00F3, 0x0008);
+  st7783WriteCmd(0x00F3);
+
+  st7783Command(0x0001, 0x0100);     // Driver Output Control Register (R01h)
+  st7783Command(0x0002, 0x0700);     // LCD Driving Waveform Control (R02h)
+  st7783Command(0x0003, 0x1030);     // Entry Mode (R03h)  
+  st7783Command(0x0008, 0x0302);
+  st7783Command(0x0009, 0x0000);
+  st7783Command(0x0010, 0x0000);     // Power Control 1 (R10h)
+  st7783Command(0x0011, 0x0007);     // Power Control 2 (R11h)  
+  st7783Command(0x0012, 0x0000);     // Power Control 3 (R12h)
+  st7783Command(0x0013, 0x0000);     // Power Control 4 (R13h)
+  st7783Delay(1000);  
+  st7783Command(0x0010, 0x14B0);     // Power Control 1 (R10h)  
+  st7783Delay(500);  
+  st7783Command(0x0011, 0x0007);     // Power Control 2 (R11h)  
+  st7783Delay(500);  
+  st7783Command(0x0012, 0x008E);     // Power Control 3 (R12h)
+  st7783Command(0x0013, 0x0C00);     // Power Control 4 (R13h)
+  st7783Command(0x0029, 0x0015);     // NVM read data 2 (R29h)
+  st7783Delay(500);
+  st7783Command(0x0030, 0x0000);     // Gamma Control 1
+  st7783Command(0x0031, 0x0107);     // Gamma Control 2
+  st7783Command(0x0032, 0x0000);     // Gamma Control 3
+  st7783Command(0x0035, 0x0203);     // Gamma Control 6
+  st7783Command(0x0036, 0x0402);     // Gamma Control 7
+  st7783Command(0x0037, 0x0000);     // Gamma Control 8
+  st7783Command(0x0038, 0x0207);     // Gamma Control 9
+  st7783Command(0x0039, 0x0000);     // Gamma Control 10
+  st7783Command(0x003C, 0x0203);     // Gamma Control 13
+  st7783Command(0x003D, 0x0403);     // Gamma Control 14
+  st7783Command(0x0050, 0x0000);     // Window Horizontal RAM Address Start (R50h)
+  st7783Command(0x0051, 240 - 1);    // Window Horizontal RAM Address End (R51h)
+  st7783Command(0x0052, 0X0000);     // Window Vertical RAM Address Start (R52h)
+  st7783Command(0x0053, 320 - 1);    // Window Vertical RAM Address End (R53h)
+  st7783Command(0x0060, 0xa700);     // Driver Output Control (R60h)
+  st7783Command(0x0061, 0x0001);     // Driver Output Control (R61h)
+  st7783Command(0x0090, 0X0029);     // Panel Interface Control 1 (R90h)
 
   // Display On
-  ili9325Command(0x0007, 0x0133);     // Display Control (R07h)
-  ili9325Delay(500);
-  ili9325WriteCmd(0x0022);
+  st7783Command(0x0007, 0x0133);     // Display Control (R07h)
+  st7783Delay(500);
+  st7783WriteCmd(0x0022);
 }
 
 /*************************************************/
-void ili9325Home(void)
+void st7783Home(void)
 {
-  ili9325SetCursor(0, 0);
-  ili9325WriteCmd(0x0022);            // Write Data to GRAM (R22h)
+  st7783SetCursor(0, 0);
+  st7783WriteCmd(0x0022);            // Write Data to GRAM (R22h)
 }
 
 /*************************************************/
-void ili9325SetWindow(uint16_t x, uint16_t y, uint16_t height, uint16_t width)
+void st7783SetWindow(uint16_t x, uint16_t y, uint16_t height, uint16_t width)
 {
   // Window horizontal RAM address start
-  if (x >= height) ili9325Command(0x50, (x - height + 1));
-  else ili9325Command(0x50, 0);
+  if (x >= height) st7783Command(0x50, (x - height + 1));
+  else st7783Command(0x50, 0);
   // Window horizontal GRAM address end
-  ili9325Command(0x51, x);
+  st7783Command(0x51, x);
   // Window vertical GRAM address start
-  if (y >= width) ili9325Command(0x52, (y - width + 1));
-  else ili9325Command(0x52, 0);
+  if (y >= width) st7783Command(0x52, (y - width + 1));
+  else st7783Command(0x52, 0);
   // Window vertical GRAM address end
-  ili9325Command(0x53, y);
+  st7783Command(0x53, y);
 
-  ili9325SetCursor(x, y);
+  st7783SetCursor(x, y);
 }
 
 /*************************************************/
@@ -290,29 +290,29 @@ void ili9325SetWindow(uint16_t x, uint16_t y, uint16_t height, uint16_t width)
 void lcdInit(void)
 {
   // Set control line pins to output
-  gpioSetDir(ILI9325_CS_PORT, ILI9325_CS_PIN, 1);
-  gpioSetDir(ILI9325_CD_PORT, ILI9325_CD_PIN, 1);
-  gpioSetDir(ILI9325_WR_PORT, ILI9325_WR_PIN, 1);
-  gpioSetDir(ILI9325_RD_PORT, ILI9325_RD_PIN, 1);
+  gpioSetDir(ST7783_CS_PORT, ST7783_CS_PIN, 1);
+  gpioSetDir(ST7783_CD_PORT, ST7783_CD_PIN, 1);
+  gpioSetDir(ST7783_WR_PORT, ST7783_WR_PIN, 1);
+  gpioSetDir(ST7783_RD_PORT, ST7783_RD_PIN, 1);
   
   // Set data port pins to output
-  ILI9325_GPIO2DATA_SETOUTPUT;
+  ST7783_GPIO2DATA_SETOUTPUT;
 
   // Disable pullups
-  ILI9325_DISABLEPULLUPS();
+  ST7783_DISABLEPULLUPS();
   
   // Set backlight pin to input and turn it on
-  gpioSetDir(ILI9325_BL_PORT, ILI9325_BL_PIN, 1);      // set to output
+  gpioSetDir(ST7783_BL_PORT, ST7783_BL_PIN, 1);      // set to output
   lcdBacklightOn();
 
   // Set reset pin to output
-  gpioSetDir(ILI9325_RES_PORT, ILI9325_RES_PIN, 1);    // Set to output
-  gpioSetValue(ILI9325_RES_PORT, ILI9325_RES_PIN, 0);  // Low to reset
+  gpioSetDir(ST7783_RES_PORT, ST7783_RES_PIN, 1);    // Set to output
+  gpioSetValue(ST7783_RES_PORT, ST7783_RES_PIN, 0);  // Low to reset
   systickDelay(50);
-  gpioSetValue(ILI9325_RES_PORT, ILI9325_RES_PIN, 1);  // High to exit
+  gpioSetValue(ST7783_RES_PORT, ST7783_RES_PIN, 1);  // High to exit
 
   // Initialize the display
-  ili9325InitDisplay();
+  st7783InitDisplay();
 
   // Set lcd to default orientation
   lcdSetOrientation(lcdOrientation);
@@ -328,34 +328,34 @@ void lcdInit(void)
 void lcdBacklightOn(void)
 {
   // Enable backlight
-  gpioSetValue(ILI9325_BL_PORT, ILI9325_BL_PIN, 0);
+  gpioSetValue(ST7783_BL_PORT, ST7783_BL_PIN, 0);
 }
 
 /*************************************************/
 void lcdBacklightOff(void)
 {
   // Disable backlight
-  gpioSetValue(ILI9325_BL_PORT, ILI9325_BL_PIN, 1);
+  gpioSetValue(ST7783_BL_PORT, ST7783_BL_PIN, 1);
 }
 
 /*************************************************/
 void lcdTest(void)
 {
   uint32_t i,j;
-  ili9325Home();
+  st7783Home();
   
   for(i=0;i<320;i++)
   {
     for(j=0;j<240;j++)
     {
-      if(i>279)ili9325WriteData(COLOR_WHITE);
-      else if(i>239)ili9325WriteData(COLOR_BLUE);
-      else if(i>199)ili9325WriteData(COLOR_GREEN);
-      else if(i>159)ili9325WriteData(COLOR_CYAN);
-      else if(i>119)ili9325WriteData(COLOR_RED);
-      else if(i>79)ili9325WriteData(COLOR_MAGENTA);
-      else if(i>39)ili9325WriteData(COLOR_YELLOW);
-      else ili9325WriteData(COLOR_BLACK);
+      if(i>279)st7783WriteData(COLOR_WHITE);
+      else if(i>239)st7783WriteData(COLOR_BLUE);
+      else if(i>199)st7783WriteData(COLOR_GREEN);
+      else if(i>159)st7783WriteData(COLOR_CYAN);
+      else if(i>119)st7783WriteData(COLOR_RED);
+      else if(i>79)st7783WriteData(COLOR_MAGENTA);
+      else if(i>39)st7783WriteData(COLOR_YELLOW);
+      else st7783WriteData(COLOR_BLACK);
     }
   }
 }
@@ -364,21 +364,21 @@ void lcdTest(void)
 void lcdFillRGB(uint16_t data)
 {
   unsigned int i;
-  ili9325Home();
+  st7783Home();
   
   uint32_t pixels = 320*240;
   for ( i=0; i < pixels; i++ )
   {
-    ili9325WriteData(data);
+    st7783WriteData(data);
   } 
 }
 
 /*************************************************/
 void lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color)
 {
-  ili9325SetCursor(x, y);
-  ili9325WriteCmd(0x0022);  // Write Data to GRAM (R22h)
-  ili9325WriteData(color);
+  st7783SetCursor(x, y);
+  st7783WriteCmd(0x0022);  // Write Data to GRAM (R22h)
+  st7783WriteData(color);
 }
 
 /*************************************************/
@@ -394,11 +394,11 @@ void lcdDrawHLine(uint16_t x0, uint16_t x1, uint16_t y, uint16_t color)
     x1 = x0;
     x0 = x;
   }
-  ili9325SetCursor(x0, y);
-  ili9325WriteCmd(0x0022);  // Write Data to GRAM (R22h)
+  st7783SetCursor(x0, y);
+  st7783WriteCmd(0x0022);  // Write Data to GRAM (R22h)
   for (pixels = 0; pixels < x1 - x0 + 1; pixels++)
   {
-    ili9325WriteData(color);
+    st7783WriteData(color);
   }
 }
 
@@ -407,14 +407,14 @@ uint16_t lcdGetPixel(uint16_t x, uint16_t y)
 {
   uint16_t preFetch = 0;
 
-  ili9325SetCursor(x, y);
-  ili9325WriteCmd(0x0022);
-  preFetch = ili9325ReadData();
+  st7783SetCursor(x, y);
+  st7783WriteCmd(0x0022);
+  preFetch = st7783ReadData();
 
   // Eeek ... why does this need to be done twice for a proper value?!?
-  ili9325SetCursor(x, y);
-  ili9325WriteCmd(0x0022);
-  return ili9325ReadData();
+  st7783SetCursor(x, y);
+  st7783WriteCmd(0x0022);
+  return st7783ReadData();
 }
 
 /*************************************************/
@@ -428,13 +428,13 @@ void lcdSetOrientation(lcdOrientation_t orientation)
       entryMode = 0x1030;
       break;
     case LCD_ORIENTATION_LANDSCAPE:
-      entryMode = 0x1028;   // ORG = 1
+      entryMode = 0x1028;
       break;
   }
-  ili9325WriteCmd(0x0003);
-  ili9325WriteData(entryMode);
+  st7783WriteCmd(0x0003);
+  st7783WriteData(entryMode);
   lcdOrientation = orientation;
-  ili9325SetCursor(0, 0);
+  st7783SetCursor(0, 0);
 }
 
 /*************************************************/
@@ -449,11 +449,11 @@ uint16_t lcdGetWidth(void)
   switch (lcdOrientation) 
   {
     case LCD_ORIENTATION_PORTRAIT:
-      return ILI9325_WIDTH;
+      return ST7783_WIDTH;
       break;
     case LCD_ORIENTATION_LANDSCAPE:
     default:
-      return ILI9325_HEIGHT;
+      return ST7783_HEIGHT;
   }
 }
 
@@ -463,28 +463,22 @@ uint16_t lcdGetHeight(void)
   switch (lcdOrientation) 
   {
     case LCD_ORIENTATION_PORTRAIT:
-      return ILI9325_HEIGHT;
+      return ST7783_HEIGHT;
       break;
     case LCD_ORIENTATION_LANDSCAPE:
     default:
-      return ILI9325_WIDTH;
+      return ST7783_WIDTH;
   }
 }
 
 /*************************************************/
 void lcdScroll(int16_t pixels, uint16_t fillColor)
 {
-  int16_t y = pixels;
-  while (y < 0)
-    y += 320;
-  while (y >= 320)
-    y -= 320;
-  ili9325WriteCmd(0x6A);
-  ili9325WriteData(y);
+  // Not implemented in ST7783
 }
 
 /*************************************************/
 uint16_t lcdGetControllerID(void)
 {
-  return ili9325Type();
+  return st7783Type();
 }

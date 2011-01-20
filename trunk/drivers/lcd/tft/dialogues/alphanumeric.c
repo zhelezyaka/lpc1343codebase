@@ -62,9 +62,12 @@
    having to rewrite all the individual pixel-level code                  */
 
 #define ALPHA_BTN_SPACING   (5)
-#define ALPHA_BTN_WIDTH     ((CFG_TFTLCD_WIDTH - (ALPHA_BTN_SPACING * 6)) / 5)
-#define ALPHA_KEYPAD_TOP    ((CFG_TFTLCD_HEIGHT / 6) + (ALPHA_BTN_SPACING * 2))
-#define ALPHA_BTN_HEIGHT    (((CFG_TFTLCD_HEIGHT - ALPHA_KEYPAD_TOP) - (ALPHA_BTN_SPACING * 7)) / 6)
+#define ALPHA_BTN_WIDTH     ((lcdGetWidth() - (ALPHA_BTN_SPACING * 6)) / 5)
+#define ALPHA_KEYPAD_TOP    ((lcdGetHeight() / 6) + (ALPHA_BTN_SPACING * 2))
+#define ALPHA_BTN_HEIGHT    (((lcdGetHeight() - ALPHA_KEYPAD_TOP) - (ALPHA_BTN_SPACING * 7)) / 6)
+// #define ALPHA_BTN_WIDTH     ((240 - (ALPHA_BTN_SPACING * 6)) / 5)
+// #define ALPHA_KEYPAD_TOP    ((320 / 6) + (ALPHA_BTN_SPACING * 2))
+// #define ALPHA_BTN_HEIGHT    (((320 - ALPHA_KEYPAD_TOP) - (ALPHA_BTN_SPACING * 7)) / 6)
 
 /* X/Y positions for buttons */
 #define ALPHA_ROW1_TOP      (ALPHA_KEYPAD_TOP + ALPHA_BTN_SPACING)
@@ -87,10 +90,7 @@ static uint8_t alphaString[80];
 static uint8_t *alphaString_ptr;
 
 /* For quick retrieval of button X/Y locqtions */
-uint32_t alphaBtnX[5] =     { ALPHA_COL1_LEFT, ALPHA_COL2_LEFT, ALPHA_COL3_LEFT, 
-                              ALPHA_COL4_LEFT, ALPHA_COL5_LEFT };
-uint32_t alphaBtnY[6] =     { ALPHA_ROW1_TOP, ALPHA_ROW2_TOP, ALPHA_ROW3_TOP, 
-                              ALPHA_ROW4_TOP, ALPHA_ROW5_TOP, ALPHA_ROW6_TOP };
+uint32_t alphaBtnX[5], alphaBtnY[6];
 
 /* Array showing which characters should be displayed on each alphaPage */
 /* You can rearrange the keypad by modifying the array contents below   */
@@ -144,19 +144,19 @@ void alphaRenderButton(uint8_t alphaPage, uint8_t col, uint8_t row, bool selecte
   {
     case '<':
       // Backspace
-      drawButton (alphaBtnX[col], alphaBtnY[row], ALPHA_BTN_WIDTH, ALPHA_BTN_HEIGHT, &inconsolata11ptFontInfo, 7, "<", COLORSCHEME_DARKGRAY, selected); 
+      drawButton (alphaBtnX[col], alphaBtnY[row], ALPHA_BTN_WIDTH, ALPHA_BTN_HEIGHT, &inconsolata11ptFontInfo, 7, "<", selected); 
       break;
     case '*':
       // Page Shift
-      drawButton (alphaBtnX[col], alphaBtnY[row], ALPHA_BTN_WIDTH, ALPHA_BTN_HEIGHT, &inconsolata11ptFontInfo, 7, "^", COLORSCHEME_DARKGRAY, selected); 
+      drawButton (alphaBtnX[col], alphaBtnY[row], ALPHA_BTN_WIDTH, ALPHA_BTN_HEIGHT, &inconsolata11ptFontInfo, 7, "^", selected); 
       break;
     case '>':
       // OK
-      drawButton (alphaBtnX[col], alphaBtnY[row], ALPHA_BTN_WIDTH, ALPHA_BTN_HEIGHT, &inconsolata11ptFontInfo, 7, "OK", COLORSCHEME_DARKGRAY, selected); 
+      drawButton (alphaBtnX[col], alphaBtnY[row], ALPHA_BTN_WIDTH, ALPHA_BTN_HEIGHT, &inconsolata11ptFontInfo, 7, "OK", selected); 
       break;
     default:
       // Standard character
-      drawButton (alphaBtnX[col], alphaBtnY[row], ALPHA_BTN_WIDTH, ALPHA_BTN_HEIGHT, &inconsolata11ptFontInfo, 7, key, COLORSCHEME_DEFAULT, selected); 
+      drawButton (alphaBtnX[col], alphaBtnY[row], ALPHA_BTN_WIDTH, ALPHA_BTN_HEIGHT, &inconsolata11ptFontInfo, 7, key, selected); 
       break;
   }
 }
@@ -180,7 +180,7 @@ void alphaRefreshScreen(void)
   }
 
   /* Render Text */
-  drawRectangleFilled(0, 0, CFG_TFTLCD_WIDTH - 1, ALPHA_KEYPAD_TOP - (ALPHA_BTN_SPACING * 2), 0xFFFF);
+  drawRectangleFilled(0, 0, lcdGetWidth() - 1, ALPHA_KEYPAD_TOP - (ALPHA_BTN_SPACING * 2), 0xFFFF);
   drawString(ALPHA_BTN_SPACING, ALPHA_BTN_SPACING, COLOR_BLACK, &inconsolata11ptFontInfo, (char *)&alphaString);
 }
 
@@ -298,6 +298,20 @@ char* alphaShowDialogue(void)
 {
   char result;
 
+  /* These need to be instantiated here since the width and height of 
+     the lcd is retrieved dynamically dependin on screen rotation     */
+  alphaBtnX[0] = ALPHA_COL1_LEFT;
+  alphaBtnX[1] = ALPHA_COL2_LEFT;
+  alphaBtnX[2] = ALPHA_COL3_LEFT;
+  alphaBtnX[3] = ALPHA_COL4_LEFT;
+  alphaBtnX[4] = ALPHA_COL5_LEFT;
+  alphaBtnY[0] = ALPHA_ROW1_TOP;
+  alphaBtnY[1] = ALPHA_ROW2_TOP;
+  alphaBtnY[2] = ALPHA_ROW3_TOP;
+  alphaBtnY[3] = ALPHA_ROW4_TOP;
+  alphaBtnY[4] = ALPHA_ROW5_TOP;
+  alphaBtnY[5] = ALPHA_ROW6_TOP;
+
   /* Initialise the string buffer */
   memset(&alphaString[0], 0, sizeof(alphaString));
   alphaString_ptr = alphaString;
@@ -305,8 +319,8 @@ char* alphaShowDialogue(void)
 
   /* Draw the background and render the buttons */
   drawFill(COLOR_WHITE);
-  drawRectangleFilled(0, ALPHA_KEYPAD_TOP - ALPHA_BTN_SPACING, CFG_TFTLCD_WIDTH - 1, CFG_TFTLCD_HEIGHT - 1, COLOR_DARKERGRAY);
-  drawLine(0, (ALPHA_KEYPAD_TOP - ALPHA_BTN_SPACING) + 1, CFG_TFTLCD_WIDTH - 1, (ALPHA_KEYPAD_TOP - ALPHA_BTN_SPACING) + 1, COLOR_LIGHTGRAY);
+  drawRectangleFilled(0, ALPHA_KEYPAD_TOP - ALPHA_BTN_SPACING, lcdGetWidth() - 1, lcdGetHeight() - 1, COLOR_DARKERGRAY);
+  drawLine(0, (ALPHA_KEYPAD_TOP - ALPHA_BTN_SPACING) + 1, lcdGetWidth() - 1, (ALPHA_KEYPAD_TOP - ALPHA_BTN_SPACING) + 1, COLOR_LIGHTGRAY);
   alphaRefreshScreen();
 
   /* Capture results until the 'OK' button is pressed */

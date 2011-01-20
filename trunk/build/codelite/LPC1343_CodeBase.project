@@ -87,6 +87,8 @@
       <File Name="../../core/usbcdc/usbreg.h"/>
       <File Name="../../core/usbcdc/usbuser.c"/>
       <File Name="../../core/usbcdc/usbuser.h"/>
+      <File Name="../../core/usbcdc/cdc_buf.c"/>
+      <File Name="../../core/usbcdc/cdc_buf.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="pwm">
       <File Name="../../core/pwm/pwm.c"/>
@@ -136,12 +138,10 @@
     <VirtualDirectory Name="lcd">
       <VirtualDirectory Name="tft">
         <VirtualDirectory Name="hw">
-          <File Name="../../drivers/lcd/tft/hw/ILI9320.c"/>
-          <File Name="../../drivers/lcd/tft/hw/ILI9320.h"/>
           <File Name="../../drivers/lcd/tft/hw/ILI9325.c"/>
           <File Name="../../drivers/lcd/tft/hw/ILI9325.h"/>
-          <File Name="../../drivers/lcd/tft/hw/SPFD5420A.c"/>
-          <File Name="../../drivers/lcd/tft/hw/SPFD5420A.h"/>
+          <File Name="../../drivers/lcd/tft/hw/st7783.c"/>
+          <File Name="../../drivers/lcd/tft/hw/st7783.h"/>
         </VirtualDirectory>
         <VirtualDirectory Name="fonts">
           <File Name="../../drivers/lcd/tft/fonts/bitmapfonts.h"/>
@@ -169,6 +169,10 @@
         <VirtualDirectory Name="st7565">
           <File Name="../../drivers/lcd/bitmap/ST7565/ST7565.c"/>
           <File Name="../../drivers/lcd/bitmap/ST7565/ST7565.h"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="ssd1306">
+          <File Name="../../drivers/lcd/bitmap/ssd1306/ssd1306.c"/>
+          <File Name="../../drivers/lcd/bitmap/ssd1306/ssd1306.h"/>
         </VirtualDirectory>
       </VirtualDirectory>
       <File Name="../../drivers/lcd/smallfonts.c"/>
@@ -212,7 +216,6 @@
     <VirtualDirectory Name="commands">
       <File Name="../../project/commands/cmd_chibi_addr.c"/>
       <File Name="../../project/commands/cmd_chibi_tx.c"/>
-      <File Name="../../project/commands/cmd_hello.c"/>
       <File Name="../../project/commands/cmd_i2ceeprom_read.c"/>
       <File Name="../../project/commands/cmd_i2ceeprom_write.c"/>
       <File Name="../../project/commands/cmd_lm75b_gettemp.c"/>
@@ -231,6 +234,8 @@
         <File Name="../../project/commands/drawing/cmd_text.c"/>
         <File Name="../../project/commands/drawing/cmd_textw.c"/>
         <File Name="../../project/commands/drawing/cmd_tswait.c"/>
+        <File Name="../../project/commands/drawing/cmd_orientation.c"/>
+        <File Name="../../project/commands/drawing/cmd_rectangle.c"/>
       </VirtualDirectory>
     </VirtualDirectory>
   </VirtualDirectory>

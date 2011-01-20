@@ -45,14 +45,26 @@
 // initialisation and pixel-setting details to be abstracted away from the
 // higher level drawing and graphics code.
 
+typedef enum 
+{
+  LCD_ORIENTATION_PORTRAIT = 0,
+  LCD_ORIENTATION_LANDSCAPE = 1
+} lcdOrientation_t;
+
 extern void     lcdInit(void);
 extern void     lcdTest(void);
 extern uint16_t lcdGetPixel(uint16_t x, uint16_t y);
 extern void     lcdFillRGB(uint16_t data);
 extern void     lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color);
 extern void     lcdDrawHLine(uint16_t x0, uint16_t x1, uint16_t y, uint16_t color);
+extern void     lcdDrawVLine(uint16_t x, uint16_t y0, uint16_t y1, uint16_t color);
 extern void     lcdBacklightOn(void);
 extern void     lcdBacklightOff(void);
 extern void     lcdScroll(int16_t pixels, uint16_t fillColor);
+extern uint16_t lcdGetWidth(void);
+extern uint16_t lcdGetHeight(void);
+extern void     lcdSetOrientation(lcdOrientation_t orientation);
+extern uint16_t lcdGetControllerID(void);
+extern lcdOrientation_t lcdGetOrientation(void);
 
 #endif

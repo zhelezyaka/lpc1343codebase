@@ -47,15 +47,6 @@
 volatile uint32_t chibi_counter  = 0;
 #endif
 
-volatile uint32_t gpio0_counter = 0;
-volatile uint32_t gpio1_counter = 0;
-volatile uint32_t gpio2_counter = 0;
-volatile uint32_t gpio3_counter = 0;
-volatile uint32_t p0_1_counter  = 0;
-volatile uint32_t p1_1_counter  = 0;
-volatile uint32_t p2_1_counter  = 0;
-volatile uint32_t p3_1_counter  = 0;
-
 static bool _gpioInitialised = false;
 
 /**************************************************************************/
@@ -67,12 +58,9 @@ void PIOINT0_IRQHandler(void)
 {
   uint32_t regVal;
 
-  gpio0_counter++;
-
   regVal = gpioIntStatus(0, 1);
   if (regVal)
   {
-    p0_1_counter++;
     gpioIntClear(0, 1);
   }		
   return;
@@ -87,8 +75,6 @@ void PIOINT1_IRQHandler(void)
 {
   uint32_t regVal;
 
-  gpio1_counter++;
-
 #ifdef CFG_CHIBI
   // Check for interrupt on 1.8
   regVal = gpioIntStatus(1, 8);
@@ -102,7 +88,6 @@ void PIOINT1_IRQHandler(void)
   regVal = gpioIntStatus(1, 1);
   if ( regVal )
   {
-    p1_1_counter++;
     gpioIntClear(1, 1);
   }
 #endif
@@ -119,11 +104,9 @@ void PIOINT2_IRQHandler(void)
 {
   uint32_t regVal;
 
-  gpio2_counter++;
   regVal = gpioIntStatus(2, 1);
   if ( regVal )
   {
-    p2_1_counter++;
     gpioIntClear(2, 1);
   }		
   return;
@@ -138,11 +121,9 @@ void PIOINT3_IRQHandler(void)
 {
   uint32_t regVal;
 
-  gpio3_counter++;
   regVal = gpioIntStatus(3, 1);
   if ( regVal )
   {
-    p3_1_counter++;
     gpioIntClear(3, 1);
   }		
   return;

@@ -24,6 +24,7 @@
 #include "usbcore.h"
 #include "cdc.h"
 #include "cdcuser.h"
+#include "cdc_buf.h"
 
 // unsigned char BulkBufIn  [64];            // Buffer to store USB IN  packet
 unsigned char BulkBufOut [64];            // Buffer to store USB OUT packet
@@ -128,6 +129,7 @@ void CDC_Init (void)
   CDC_SerialState = CDC_GetSerialState();
 
   CDC_BUF_RESET(CDC_OutBuf);
+  cdcBufferInit();
 }
 
 
@@ -318,18 +320,7 @@ void CDC_BulkOut(void)
  *---------------------------------------------------------------------------*/
 unsigned short CDC_GetSerialState (void) 
 {
-  // unsigned short temp;
-
   CDC_SerialState = 0;
-  //  ser_LineState (&temp);
-  //
-  //  if (temp & 0x8000)  CDC_SerialState |= CDC_SERIAL_STATE_RX_CARRIER;
-  //  if (temp & 0x2000)  CDC_SerialState |= CDC_SERIAL_STATE_TX_CARRIER;
-  //  if (temp & 0x0010)  CDC_SerialState |= CDC_SERIAL_STATE_BREAK;
-  //  if (temp & 0x4000)  CDC_SerialState |= CDC_SERIAL_STATE_RING;
-  //  if (temp & 0x0008)  CDC_SerialState |= CDC_SERIAL_STATE_FRAMING;
-  //  if (temp & 0x0004)  CDC_SerialState |= CDC_SERIAL_STATE_PARITY;
-  //  if (temp & 0x0002)  CDC_SerialState |= CDC_SERIAL_STATE_OVERRUN;
 
   return (CDC_SerialState);
 }
@@ -353,20 +344,3 @@ void CDC_NotificationIn (void)
 
   USB_WriteEP (CDC_CEP_IN, &NotificationBuf[0], 10);   // send notification
 }
-
-extern void usbcdcSendByte(uint8_t c)
-{
-  // Ugly delay required ... need to add buffer and handle this better! :-)
-  uint32_t i, delay;
-  delay = ((CFG_CPU_CCLK/SCB_SYSAHBCLKDIV) / 25000);
-  for ( i = 0; i < delay; i++ )
-  {
-    __asm("nop");
-  }
-
-  // Send byte to EP
-  USB_WriteEP (CDC_DEP_IN, (unsigned char *)&c, 1);
-  CDC_DepInEmpty = 1;
-}
-
-

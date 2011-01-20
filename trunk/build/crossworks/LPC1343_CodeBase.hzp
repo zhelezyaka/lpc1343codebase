@@ -89,6 +89,7 @@
           <file file_name="../../core/usbcdc/usbuser.c">
             <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
           </file>
+          <file file_name="../../core/usbcdc/cdc_buf.c"/>
         </folder>
         <folder Name="pwm">
           <file file_name="../../core/pwm/pwm.c"/>
@@ -151,12 +152,18 @@
             <folder Name="st7565">
               <file file_name="../../drivers/lcd/bitmap/st7565/st7565.c"/>
             </folder>
+            <folder Name="ssd1306">
+              <file file_name="../../drivers/lcd/bitmap/ssd1306/ssd1306.c"/>
+            </folder>
           </folder>
           <folder Name="tft">
             <folder Name="hw">
               <file file_name="../../drivers/lcd/tft/hw/ILI9325.c">
                 <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
                 <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+              </file>
+              <file file_name="../../drivers/lcd/tft/hw/st7783.c">
+                <configuration Name="THUMB Flash Release" build_exclude_from_build="Yes"/>
               </file>
             </folder>
             <folder Name="fonts">
@@ -218,9 +225,6 @@
           <file file_name="../../project/commands/cmd_chibi_tx.c">
             <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
           </file>
-          <file file_name="../../project/commands/cmd_hello.c">
-            <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
-          </file>
           <file file_name="../../project/commands/cmd_i2ceeprom_read.c">
             <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
           </file>
@@ -267,6 +271,8 @@
             <file file_name="../../project/commands/drawing/cmd_tswait.c">
               <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
             </file>
+            <file file_name="../../project/commands/drawing/cmd_orientation.c"/>
+            <file file_name="../../project/commands/drawing/cmd_rectangle.c"/>
           </folder>
         </folder>
         <file file_name="../../project/cmd_tbl.h"/>
