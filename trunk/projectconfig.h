@@ -125,7 +125,9 @@
 
     CFG_UART_BAUDRATE         The default UART speed.  This value is used 
                               when initialising UART, and should be a 
-                              standard value like 57600, 9600, etc.
+                              standard value like 57600, 9600, etc.  
+                              NOTE: This value may be overridden if
+                              another value is stored in EEPROM!
     CFG_UART_BUFSIZE          The length in bytes of the UART RX FIFO. This
                               will determine the maximum number of received
                               characters to store in memory.
@@ -217,9 +219,6 @@
                               redirected to UART
     CFG_PRINTF_USBCDC         Will cause all printf statements to be
                               redirect to USB Serial
-    CFG_PRINTF_CWDEBUG        Will cause all printf statements to be
-                              redirected to the Crossworks
-                              debug_printf statement (Crossworks only)
     CFG_PRINTF_NEWLINE        This should be either "\r\n" for Windows or
                               "\n" for *nix
 
@@ -230,7 +229,6 @@
     -----------------------------------------------------------------------*/
     // #define CFG_PRINTF_UART
     #define CFG_PRINTF_USBCDC
-    // #define CFG_PRINTF_CWDEBUG
     #define CFG_PRINTF_NEWLINE          "\r\n"
 /*=========================================================================*/
 
@@ -347,7 +345,7 @@
           0 1 2 3 4 5 6 7 8 9 A B C D E F
     000x  x x x x x x x x . x x . . . . .   Chibi
     001x  x x x x x x x x x x x x x . . .   Touch Screen Calibration
-    002x  . . . . . . . . . . . . . . . .
+    002x  x x x x . . . . . . . . . . . .   UART
     003x  . . . . . . . . . . . . . . . .
     004x  . . . . . . . . . . . . . . . .
     005x  . . . . . . . . . . . . . . . .
@@ -373,6 +371,7 @@
     #define CFG_EEPROM_TOUCHSCREEN_OFFSET_BOT   (uint16_t)(0x0017)    // 2
     #define CFG_EEPROM_TOUCHSCREEN_OFFSET_DIVX  (uint16_t)(0x0019)    // 2
     #define CFG_EEPROM_TOUCHSCREEN_OFFSET_DIVY  (uint16_t)(0x001B)    // 2
+    #define CFG_EEPROM_UART_SPEED               (uint32_t)(0x0020)    // 4
 /*=========================================================================*/
 
 

@@ -1,9 +1,9 @@
 /**************************************************************************/
 /*! 
-    @file     cmd_circle.c
+    @file     cmd_uart.c
     @author   K. Townsend (microBuilder.eu)
 
-    @brief    Code to execute for cmd_circle in the 'core/cmd'
+    @brief    Code to execute for cmd_uart in the 'core/cmd'
               command-line interpretter.
 
     @section LICENSE
@@ -42,61 +42,47 @@
 #include "core/cmd/cmd.h"
 #include "project/commands.h"       // Generic helper functions
 
-#ifdef CFG_TFTLCD    
-  #include "drivers/lcd/tft/lcd.h"    
-  #include "drivers/lcd/tft/drawing.h"  
+#ifdef CFG_I2CEEPROM
+  #include "drivers/eeprom/eeprom.h"
+  #include "core/uart/uart.h"
 
 /**************************************************************************/
 /*! 
-    Displays a circle on the LCD.
+    Gets or sets the UART speed from EEPROM.
 */
 /**************************************************************************/
-void cmd_circle(uint8_t argc, char **argv)
+void cmd_uart(uint8_t argc, char **argv)
 {
-  int32_t x, y, r, c, filled, border;
-  filled = 0;
-  
-  // Convert supplied parameters
-  getNumber (argv[0], &x);
-  getNumber (argv[1], &y);
-  getNumber (argv[2], &r);
-  getNumber (argv[3], &c);
-  if (argc >= 5)
+  if (argc > 0)
   {
-    getNumber (argv[4], &filled);
-  }
-  if (argc == 6)
-  {
-    getNumber (argv[5], &border);
-    if (border < 0 || border > 0xFFFF)
+    // Try to convert supplied value to an integer
+    int32_t speed;
+    getNumber (argv[0], &speed);
+    
+    // Check for invalid values (getNumber may complain about this as well)
+    if (speed < 9600 || speed  > 115200)
     {
-      printf("Invalid Border Color%s", CFG_PRINTF_NEWLINE);
+      printf("Invalid baud rate: 9600-115200 required.%s", CFG_PRINTF_NEWLINE);
       return;
     }
-  }
 
-  // ToDo: Validate data!
-  if (c < 0 || c > 0xFFFF)
-  {
-    printf("Invalid Color%s", CFG_PRINTF_NEWLINE);
-    return;
+    // Write baud rate to EEPROM and reinitialise UART if using it
+    printf("Setting UART to: %d%s", (int)speed, CFG_PRINTF_NEWLINE);
+    eepromWriteU32(CFG_EEPROM_UART_SPEED, speed);
+    #ifdef CFG_PRINTF_UART
+    uartInit(speed);
+    #endif
   }
-  if (r < 1)
-  {
-    printf("Invalid Radius%s", CFG_PRINTF_NEWLINE);
-    return;
-  }
-
-  if (filled)
-    drawCircleFilled(x, y, r, (uint16_t)c);
   else
-    drawCircle(x, y, r, (uint16_t)c);
-
-  // Draw border if requested
-  if (argc == 6)
   {
-    drawCircle(x, y, r, (uint16_t)border);
+    // Display the current baud rate
+    #ifdef CFG_PRINTF_UART
+      uart_pcb_t *pcb = uartGetPCB();
+      printf("%d%s", pcb->baudrate, CFG_PRINTF_NEWLINE);
+    #else
+      printf("UART not initialised (using USBCDC)%s", CFG_PRINTF_NEWLINE);
+    #endif
   }
 }
 
-#endif  
+#endif

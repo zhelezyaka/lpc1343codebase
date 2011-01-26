@@ -1,8 +1,29 @@
 This folder contains a number of tools that may be useful when developing with
-the LPC1343 Reference Board
+the LPC1343 Reference Board:
+
 
 ===============================================================================
-  lpcrc
+  /dotfactory
+  -----------------------------------------------------------------------------
+  An open-source (GPL) Windows-based program to convert TTF fonts to .c
+  source files.  This application is included here for convenience sake and
+  can be used to convert TTF fonts for use with the TFT LCD display with
+  minor modifications to the generated source files.  See the existing fonts
+  in 'drivers/lcd/tft/fonts' for an example.
+===============================================================================
+
+
+===============================================================================
+  /examples
+  -----------------------------------------------------------------------------
+  Example software showing how to use the LPC1343 to accomplish certain tasks
+  or how to use it with external devices, such as communicating with the PC
+  using USB HID, etc.
+===============================================================================
+
+
+===============================================================================
+  /lpcrc
   -----------------------------------------------------------------------------
   This utility fixes the CRC of any .bin files generated with GCC from the
   command line.  You must use this utility to patch any compiled firmware that
@@ -20,7 +41,7 @@ the LPC1343 Reference Board
 
 
 ===============================================================================
-  schematics
+  /schematics
   -----------------------------------------------------------------------------
   Schematics showing the pin connections that are assumed to be used by the
   LPC1343 Code Base.
@@ -28,7 +49,7 @@ the LPC1343 Reference Board
 
           
 ===============================================================================
-  testfirmware
+  /testfirmware
   -----------------------------------------------------------------------------
   Various pre-compiled binaires files that can be used to test the
   functionality of the LPC1343.  This firmware assumes that the board follows
@@ -36,12 +57,3 @@ the LPC1343 Reference Board
 ===============================================================================
 
 
-===============================================================================
-  dotfactory
-  -----------------------------------------------------------------------------
-  An open-source (GPL) Windows-based program to convert TTF fonts to .c
-  source files.  This application is included here for convenience sake and
-  can be used to convert TTF fonts for use with the TFT LCD display with
-  minor modifications to the generated source files.  See the existing fonts
-  in 'drivers/lcd/tft/fonts' for an example.
-===============================================================================

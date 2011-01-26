@@ -53,7 +53,7 @@
 /**************************************************************************/
 void cmd_rectangle(uint8_t argc, char **argv)
 {
-  int32_t x1, y1, x2, y2, c, filled;
+  int32_t x1, y1, x2, y2, c, filled, border;
   filled = 0;
 
   // Convert supplied parameters
@@ -62,9 +62,18 @@ void cmd_rectangle(uint8_t argc, char **argv)
   getNumber (argv[2], &x2);
   getNumber (argv[3], &y2);
   getNumber (argv[4], &c);
-  if (argc == 6)
+  if (argc >= 6)
   {
     getNumber (argv[5], &filled);
+  }
+  if (argc == 7)
+  {
+    getNumber (argv[6], &border);
+    if (border < 0 || border > 0xFFFF)
+    {
+      printf("Invalid Border Color%s", CFG_PRINTF_NEWLINE);
+      return;
+    }
   }
 
   // ToDo: Validate data!
@@ -78,6 +87,11 @@ void cmd_rectangle(uint8_t argc, char **argv)
     drawRectangleFilled(x1, y1, x2, y2, (uint16_t)c);
   else
     drawRectangle(x1, y1, x2, y2, (uint16_t)c);
+
+  if (argc == 7)
+  {
+    drawRectangle(x1, y1, x2, y2, (uint16_t)border);
+  }
 }
 
 #endif  

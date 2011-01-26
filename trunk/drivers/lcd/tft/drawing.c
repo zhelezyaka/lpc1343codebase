@@ -410,6 +410,15 @@ void drawLine ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t col
     return;
   }
 
+  if (x0 == x1)
+  {
+    // ToDo: This may actually be slower than drawing individual pixels on 
+    // short lines ... Set a minimum line size to use the 'optimised' method
+    // (which changes the screen orientation) ?
+    lcdDrawVLine(x0, y0, y1, color);
+    return;
+  }
+
   // Draw non horizontal line
   int dy = y1 - y0;
   int dx = x1 - x0;
@@ -514,7 +523,6 @@ void drawCircleFilled (uint16_t xCenter, uint16_t yCenter, uint16_t radius, uint
   int16_t x = 0;
   int16_t y = radius;
 
-  // lcdDrawVLine(xCenter, yCenter-radius, 2*radius, color);
   drawLine(xCenter, yCenter-radius, xCenter, (yCenter-radius) + (2*radius), color);
   
   while (x<y) 
@@ -528,11 +536,9 @@ void drawCircleFilled (uint16_t xCenter, uint16_t yCenter, uint16_t radius, uint
     x++;
     ddF_x += 2;
     f += ddF_x;
-    
-    // lcdDrawVLine(xCenter+x, yCenter-y, 2*y, color);
-    // lcdDrawVLine(xCenter-x, yCenter-y, 2*y, color);
-    // lcdDrawVLine(xCenter+y, yCenter-x, 2*x, color);
-    // lcdDrawVLine(xCenter-y, yCenter-x, 2*x, color);
+
+    // ToDo: This will cause pixel flooding if radius is bigger than
+    // screen dimenstions (due to integer value overflow)!
     drawLine(xCenter+x, yCenter-y, xCenter+x, (yCenter-y) + (2*y), color);
     drawLine(xCenter-x, yCenter-y, xCenter-x, (yCenter-y) + (2*y), color);
     drawLine(xCenter+y, yCenter-x, xCenter+y, (yCenter-x) + (2*x), color);

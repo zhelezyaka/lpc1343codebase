@@ -237,6 +237,7 @@
         <File Name="../../project/commands/drawing/cmd_orientation.c"/>
         <File Name="../../project/commands/drawing/cmd_rectangle.c"/>
       </VirtualDirectory>
+      <File Name="../../project/commands/cmd_uart.c"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">

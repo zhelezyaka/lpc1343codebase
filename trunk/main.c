@@ -33,22 +33,11 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 /**************************************************************************/
-#include <stdio.h>
-
 #include "projectconfig.h"
 #include "sysinit.h"
 
 #ifdef CFG_INTERFACE
   #include "core/cmd/cmd.h"
-#endif
-
-#ifdef CFG_TFTLCD
-  #include "drivers/lcd/tft/lcd.h"
-  #include "drivers/lcd/tft/drawing.h"
-  #include "drivers/lcd/tft/touchscreen.h"
-  #include "drivers/lcd/tft/dialogues/alphanumeric.h"  
-  #include "drivers/lcd/tft/fonts/inconsolata11.h"
-  #include "drivers/lcd/tft/bmp.h"
 #endif
 
 /**************************************************************************/
@@ -84,20 +73,29 @@ int main (void)
   // Configure cpu and mandatory peripherals
   systemInit();
 
+  uint32_t currentSecond, lastSecond;
+  currentSecond = lastSecond = 0;
+
   while (1)
   {
-    // Run the CLI or blink and LED depending on whether CFG_INTERFACE
-    // is commented out or not in projectconfig.h
-    #ifdef CFG_INTERFACE
-      // Check for any incoming commands on the CLI
-      cmdPoll();
-    #else
-      // Toggle LED @ 1 Hz instead of using the CLI
-      systickDelay(1000);
-      if (gpioGetValue(CFG_LED_PORT, CFG_LED_PIN))  
-        gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_ON);
-      else 
-        gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF);
+    // Toggle LED once per second ... rollover = 136 years :)
+    currentSecond = systickGetSecondsActive();
+    if (currentSecond != lastSecond)
+    {
+      lastSecond = currentSecond;
+      if (gpioGetValue(CFG_LED_PORT, CFG_LED_PIN) == CFG_LED_OFF)
+      {
+        gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_ON); 
+      }
+      else
+      {
+        gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF); 
+      }
+    }
+
+    // Poll for CLI input if CFG_INTERFACE is enabled in projectconfig.h
+    #ifdef CFG_INTERFACE 
+      cmdPoll(); 
     #endif
   }
 }

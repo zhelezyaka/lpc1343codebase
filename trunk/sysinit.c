@@ -39,10 +39,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef CFG_PRINTF_CWDEBUG
-  #include <cross_studio_io.h>
-#endif
-
 #include "sysinit.h"
 
 #include "core/cpu/cpu.h"
@@ -91,6 +87,7 @@
 
 #ifdef CFG_I2CEEPROM
   #include "drivers/eeprom/mcp24aa/mcp24aa.h"
+  #include "drivers/eeprom/eeprom.h"
 #endif
 
 #ifdef CFG_PWM
@@ -130,14 +127,22 @@ void systemInit()
   gpioSetDir(CFG_LED_PORT, CFG_LED_PIN, 1);
   gpioSetValue(CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF);
 
-  // Initialise UART with the default baud rate
-  #ifdef CFG_PRINTF_UART
-    uartInit(CFG_UART_BAUDRATE);
-  #endif
-
   // Initialise EEPROM
   #ifdef CFG_I2CEEPROM
     mcp24aaInit();
+  #endif
+
+  // Initialise UART with the default baud rate
+  #ifdef CFG_PRINTF_UART
+    uint32_t uart = eepromReadU32(CFG_EEPROM_UART_SPEED);
+    if ((uart == 0xFFFFFFFF) || (uart > 115200))
+    {
+      uartInit(CFG_UART_BAUDRATE);  // Use default baud rate
+    }
+    else
+    {
+      uartInit(uart);               // Use baud rate from EEPROM
+    }
   #endif
 
   // Initialise PWM (requires 16-bit Timer 1 and P1.9)
@@ -264,11 +269,6 @@ void __putchar(const char c)
         lastTick = currentTick;
       }
     }
-  #endif
-
-  #ifdef CFG_PRINTF_CWDEBUG
-    // Send output to the Crossworks debug interface
-    debug_printf("%c", c);
   #endif
 }
 

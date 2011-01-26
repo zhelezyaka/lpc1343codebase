@@ -272,6 +272,7 @@ void uartInit(uint32_t baudrate)
 
   /* Set the initialised flag in the protocol control block */
   pcb.initialised = 1;
+  pcb.baudrate = baudrate;
 
   /* Enable the UART Interrupt */
   NVIC_EnableIRQ(UART_IRQn);

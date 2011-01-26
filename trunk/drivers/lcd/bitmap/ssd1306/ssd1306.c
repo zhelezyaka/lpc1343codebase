@@ -267,10 +267,9 @@ uint8_t ssd1306GetPixel(uint8_t x, uint8_t y)
     @brief Clears the screen
 */
 /**************************************************************************/
-void ssd1306ClearScreen(void) 
+void ssd1306ClearScreen() 
 {
   memset(buffer, 0, 1024);
-  ssd1306Refresh();
 }
 
 /**************************************************************************/
