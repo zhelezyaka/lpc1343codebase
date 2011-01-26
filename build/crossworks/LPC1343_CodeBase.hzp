@@ -94,6 +94,10 @@
         <folder Name="pwm">
           <file file_name="../../core/pwm/pwm.c"/>
         </folder>
+        <folder Name="libc">
+          <file file_name="../../core/libc/stdio.c"/>
+          <file file_name="../../core/libc/string.c"/>
+        </folder>
       </folder>
       <file file_name="../../lpc134x.h"/>
       <file file_name="../../projectconfig.h"/>
@@ -274,6 +278,7 @@
             <file file_name="../../project/commands/drawing/cmd_orientation.c"/>
             <file file_name="../../project/commands/drawing/cmd_rectangle.c"/>
           </folder>
+          <file file_name="../../project/commands/cmd_uart.c"/>
         </folder>
         <file file_name="../../project/cmd_tbl.h"/>
       </folder>
@@ -287,7 +292,7 @@
       </file>
       <file file_name="flash_placement.xml"/>
     </folder>
-    <configuration Name="Release" gcc_optimization_level="Optimize For Size"/>
+    <configuration Name="Release" arm_fp_abi="Soft" gcc_optimization_level="Optimize For Size" link_IOLibraryName="none"/>
     <configuration Name="Debug" build_remove_unused_symbols="Yes"/>
   </project>
   <configuration Name="THUMB Flash Debug" inherited_configurations="THUMB;Flash;Debug"/>

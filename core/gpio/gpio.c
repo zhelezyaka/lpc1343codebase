@@ -246,7 +246,7 @@ uint32_t gpioGetValue (uint32_t portNum, uint32_t bitPos)
 /**************************************************************************/
 void gpioSetValue (uint32_t portNum, uint32_t bitPos, uint32_t bitVal)
 {
-  if (!_gpioInitialised) gpioInit();
+  // if (!_gpioInitialised) gpioInit();
 
 
   // Get the appropriate register (handled this way to optimise code size)

@@ -1,6 +1,16 @@
-v0.80 - Ongoing
-===============
+v0.80 - 27 Jan 2011
+===================
 
+- Added optimised lcdDrawVLine using orientation
+  though this should only be used on lines
+  greate than 20 pixels or so to see any real
+  advantage
+- Added cmd_uart to allow the HW UART speed
+  to be set in EEPROM (between 9600 and
+  115200).  Use the 'U' command.
+- Updated Crossworks projects files to use
+  custom printf in 'core/libc' (gains about
+  1.3KB in release mode)
 - Added driver for SSD1306 OLED displays
   to '/drivers/bitmap/ssd1306'
 - Changed commands in the CLI to single

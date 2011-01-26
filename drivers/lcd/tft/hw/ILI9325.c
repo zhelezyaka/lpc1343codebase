@@ -174,26 +174,19 @@ uint16_t ili9325Type(void)
 /*************************************************/
 void ili9325SetCursor(uint16_t x, uint16_t y)
 {
-  // uint16_t he, ve;
   uint16_t al, ah;
   
   if (lcdOrientation == LCD_ORIENTATION_LANDSCAPE)
   {
-    //he = ILI9325_HEIGHT-1-x;
-    //ve = ILI9325_WIDTH-1-y;
     al = y;
     ah = x;
   }
   else
   {
-    //he = ILI9325_WIDTH-1;
-    //ve = ILI9325_HEIGHT-1;
     al = x;
     ah = y;
   }
 
-  //ili9325Command(0x0051, he);
-  //ili9325Command(0x0053, ve);
   ili9325Command(0x0020, al);
   ili9325Command(0x0021, ah);
 }
@@ -245,9 +238,9 @@ void ili9325InitDisplay(void)
   ili9325Command(0x003C, 0x0203);     // Gamma Control 13
   ili9325Command(0x003D, 0x0403);     // Gamma Control 14
   ili9325Command(0x0050, 0x0000);     // Window Horizontal RAM Address Start (R50h)
-  ili9325Command(0x0051, 240 - 1);    // Window Horizontal RAM Address End (R51h)
+  ili9325Command(0x0051, ILI9325_WIDTH - 1);    // Window Horizontal RAM Address End (R51h)
   ili9325Command(0x0052, 0X0000);     // Window Vertical RAM Address Start (R52h)
-  ili9325Command(0x0053, 320 - 1);    // Window Vertical RAM Address End (R53h)
+  ili9325Command(0x0053, ILI9325_HEIGHT - 1);    // Window Vertical RAM Address End (R53h)
   ili9325Command(0x0060, 0xa700);     // Driver Output Control (R60h)
   ili9325Command(0x0061, 0x0003);     // Driver Output Control (R61h) - enable VLE
   ili9325Command(0x0090, 0X0010);     // Panel Interface Control 1 (R90h)
@@ -301,9 +294,9 @@ void lcdInit(void)
   // Disable pullups
   ILI9325_DISABLEPULLUPS();
   
-  // Set backlight pin to input and turn it on
+  // Set backlight pin to output and turn it on
   gpioSetDir(ILI9325_BL_PORT, ILI9325_BL_PIN, 1);      // set to output
-  lcdBacklightOn();
+  lcdBacklight(TRUE);
 
   // Set reset pin to output
   gpioSetDir(ILI9325_RES_PORT, ILI9325_RES_PIN, 1);    // Set to output
@@ -325,17 +318,10 @@ void lcdInit(void)
 }
 
 /*************************************************/
-void lcdBacklightOn(void)
+void lcdBacklight(bool state)
 {
-  // Enable backlight
-  gpioSetValue(ILI9325_BL_PORT, ILI9325_BL_PIN, 0);
-}
-
-/*************************************************/
-void lcdBacklightOff(void)
-{
-  // Disable backlight
-  gpioSetValue(ILI9325_BL_PORT, ILI9325_BL_PIN, 1);
+  // Set the backlight
+  gpioSetValue(ILI9325_BL_PORT, ILI9325_BL_PIN, state ? 0 : 1);
 }
 
 /*************************************************/
@@ -394,12 +380,39 @@ void lcdDrawHLine(uint16_t x0, uint16_t x1, uint16_t y, uint16_t color)
     x1 = x0;
     x0 = x;
   }
+
+  // Check limits
+  if (x1 >= lcdGetWidth())
+  {
+    x1 = lcdGetWidth() - 1;
+  }
+  if (x0 >= lcdGetWidth())
+  {
+    x0 = lcdGetWidth() - 1;
+  }
+
   ili9325SetCursor(x0, y);
   ili9325WriteCmd(0x0022);  // Write Data to GRAM (R22h)
   for (pixels = 0; pixels < x1 - x0 + 1; pixels++)
   {
     ili9325WriteData(color);
   }
+}
+
+/*************************************************/
+void lcdDrawVLine(uint16_t x, uint16_t y0, uint16_t y1, uint16_t color)
+{
+  // Allows for slightly better performance than setting individual pixels
+  lcdOrientation_t orientation = lcdOrientation;
+
+  // Switch orientation
+  lcdSetOrientation(orientation == LCD_ORIENTATION_PORTRAIT ? LCD_ORIENTATION_LANDSCAPE : LCD_ORIENTATION_PORTRAIT);
+
+  // Draw horizontal line like usual
+  lcdDrawHLine(y0, y1, lcdGetHeight() - (x + 1), color);
+
+  // Switch orientation back
+  lcdSetOrientation(orientation);
 }
 
 /*************************************************/
@@ -421,19 +434,24 @@ uint16_t lcdGetPixel(uint16_t x, uint16_t y)
 void lcdSetOrientation(lcdOrientation_t orientation)
 {
   uint16_t entryMode = 0x1030;
+  uint16_t outputControl = 0x0100;
 
   switch (orientation)
   {
     case LCD_ORIENTATION_PORTRAIT:
       entryMode = 0x1030;
+      outputControl = 0x0100;
       break;
     case LCD_ORIENTATION_LANDSCAPE:
-      entryMode = 0x1028;   // ORG = 1
+      entryMode = 0x1028;
+      outputControl = 0x0000;
       break;
   }
-  ili9325WriteCmd(0x0003);
-  ili9325WriteData(entryMode);
+
+  ili9325Command(0x0003, entryMode);
+  ili9325Command(0x0001, outputControl);
   lcdOrientation = orientation;
+
   ili9325SetCursor(0, 0);
 }
 

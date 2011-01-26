@@ -301,9 +301,9 @@ void lcdInit(void)
   // Disable pullups
   ST7783_DISABLEPULLUPS();
   
-  // Set backlight pin to input and turn it on
+  // Set backlight pin to output and turn it on
   gpioSetDir(ST7783_BL_PORT, ST7783_BL_PIN, 1);      // set to output
-  lcdBacklightOn();
+  lcdBacklight(TRUE);
 
   // Set reset pin to output
   gpioSetDir(ST7783_RES_PORT, ST7783_RES_PIN, 1);    // Set to output
@@ -325,17 +325,10 @@ void lcdInit(void)
 }
 
 /*************************************************/
-void lcdBacklightOn(void)
+void lcdBacklight(bool state)
 {
-  // Enable backlight
-  gpioSetValue(ST7783_BL_PORT, ST7783_BL_PIN, 0);
-}
-
-/*************************************************/
-void lcdBacklightOff(void)
-{
-  // Disable backlight
-  gpioSetValue(ST7783_BL_PORT, ST7783_BL_PIN, 1);
+  // Set the backlight
+  gpioSetValue(ST7783_BL_PORT, ST7783_BL_PIN, state ? 0 : 1);
 }
 
 /*************************************************/
@@ -400,6 +393,22 @@ void lcdDrawHLine(uint16_t x0, uint16_t x1, uint16_t y, uint16_t color)
   {
     st7783WriteData(color);
   }
+}
+
+/*************************************************/
+void lcdDrawVLine(uint16_t x, uint16_t y0, uint16_t y1, uint16_t color)
+{
+  // Allows for slightly better performance than setting individual pixels
+  lcdOrientation_t orientation = lcdOrientation;
+
+  // Switch orientation
+  lcdSetOrientation(orientation == LCD_ORIENTATION_PORTRAIT ? LCD_ORIENTATION_LANDSCAPE : LCD_ORIENTATION_PORTRAIT);
+
+  // Draw horizontal line like usual
+  lcdDrawHLine(y0, y1, lcdGetHeight() - x, color);
+
+  // Switch orientation back
+  lcdSetOrientation(orientation);
 }
 
 /*************************************************/

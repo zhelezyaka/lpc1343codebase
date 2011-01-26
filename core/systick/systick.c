@@ -68,7 +68,8 @@
 volatile uint32_t fatTicks = 0;
 #endif
 
-volatile uint32_t msTicks = 0;             // 1ms tick counter
+volatile uint32_t systickTicks = 0;             // 1ms tick counter
+volatile uint32_t systickRollovers = 0;
 
 /**************************************************************************/
 /*! 
@@ -77,7 +78,10 @@ volatile uint32_t msTicks = 0;             // 1ms tick counter
 /**************************************************************************/
 void SysTick_Handler (void)
 {
-  msTicks++;
+  systickTicks++;
+
+  // Increment rollover counter
+  if (systickTicks == 0xFFFFFFFF) systickRollovers++;
 
   #ifdef CFG_SDCARD
   fatTicks++;
@@ -108,7 +112,7 @@ static uint32_t systickConfig(uint32_t ticks)
   }
 
   // Reset counter
-  msTicks = 0;
+  systickTicks = 0;
                      
   // Set reload register
   SYSTICK_STRELOAD  = (ticks & SYSTICK_STRELOAD_MASK) - 1;
@@ -164,7 +168,7 @@ void systickInit (uint32_t delayMs)
 void systickDelay (uint32_t delayTicks) 
 {
   uint32_t curTicks;
-  curTicks = msTicks;
+  curTicks = systickTicks;
 
   // Make sure delay is at least 1 tick in case of division, etc.
   if (delayTicks == 0) delayTicks = 1;
@@ -172,14 +176,14 @@ void systickDelay (uint32_t delayTicks)
   if (curTicks > 0xFFFFFFFF - delayTicks)
   {
     // Rollover will occur during delay
-    while (msTicks >= curTicks)
+    while (systickTicks >= curTicks)
     {
-      while (msTicks < (delayTicks - (0xFFFFFFFF - curTicks)));
+      while (systickTicks < (delayTicks - (0xFFFFFFFF - curTicks)));
     }      
   }
   else
   {
-    while ((msTicks - curTicks) < delayTicks);
+    while ((systickTicks - curTicks) < delayTicks);
   }
 }
 
@@ -192,5 +196,34 @@ void systickDelay (uint32_t delayTicks)
 /**************************************************************************/
 uint32_t systickGetTicks(void)
 {
-  return msTicks;
+  return systickTicks;
 }
+
+/**************************************************************************/
+/*! 
+    @brief      Returns the current value of the systick timer rollover 
+                counter. This value is incremented by one every time the
+                tick counter rolls over from 0xFFFFFFFF to 0.
+*/
+/**************************************************************************/
+uint32_t systickGetRollovers(void)
+{
+  return systickRollovers;
+}
+
+/**************************************************************************/
+/*! 
+    @brief      Returns the approximate number of seconds that the
+                systick timer has been running.
+*/
+/**************************************************************************/
+uint32_t systickGetSecondsActive(void)
+{
+  uint32_t currentTick = systickTicks;
+  uint32_t rollovers = systickRollovers;
+  uint32_t secsActive = currentTick / (1000 / CFG_SYSTICK_DELAY_IN_MS);
+  secsActive += rollovers * (0xFFFFFFFF / (1000 / CFG_SYSTICK_DELAY_IN_MS));
+
+  return secsActive;
+}
+

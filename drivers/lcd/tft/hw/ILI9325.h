@@ -41,18 +41,18 @@
 #include "drivers/lcd/tft/lcd.h"
 #include "core/gpio/gpio.h"
 
-#define ILI9325_WIDTH           (240)
-#define ILI9325_HEIGHT          (320)
+#define ILI9325_WIDTH             (240)
+#define ILI9325_HEIGHT            (320)
 
 // Control pins
-#define ILI9325_CS_PORT         1     // CS (LCD Pin 7)
-#define ILI9325_CS_PIN          8
-#define ILI9325_CD_PORT         1     // CS/RS (LCD Pin 8)
-#define ILI9325_CD_PIN          9
-#define ILI9325_WR_PORT         1     // WR (LCD Pin 9)
-#define ILI9325_WR_PIN          10
-#define ILI9325_RD_PORT         1     // RD (LCD Pin 10)
-#define ILI9325_RD_PIN          11
+#define ILI9325_CS_PORT           1     // CS (LCD Pin 7)
+#define ILI9325_CS_PIN            8
+#define ILI9325_CD_PORT           1     // CS/RS (LCD Pin 8)
+#define ILI9325_CD_PIN            9
+#define ILI9325_WR_PORT           1     // WR (LCD Pin 9)
+#define ILI9325_WR_PIN            10
+#define ILI9325_RD_PORT           1     // RD (LCD Pin 10)
+#define ILI9325_RD_PIN            11
 
 // These combined pin definitions are for optimisation purposes.
 // If the pin values above are modified the bit equivalents
@@ -64,24 +64,24 @@
 #define ILI9325_CS_CD_RD_WR_PINS  0xF00   // 8 + 9 + 11 + 10
 
 // Backlight and Reset pins
-#define ILI9325_RES_PORT        3     // LCD Reset  (LCD Pin 31)
-#define ILI9325_RES_PIN         3
-#define ILI9325_BL_PORT         2     // Backlight Enable (LCD Pin 16)
-#define ILI9325_BL_PIN          9
+#define ILI9325_RES_PORT          3     // LCD Reset  (LCD Pin 31)
+#define ILI9325_RES_PIN           3
+#define ILI9325_BL_PORT           2     // Backlight Enable (LCD Pin 16)
+#define ILI9325_BL_PIN            9
 
 // Data pins
 // Note: data pins must be consecutive and on the same port
-#define ILI9325_DATA_PORT       2     // 8-Pin Data Port
-#define ILI9325_DATA_PIN1       1
-#define ILI9325_DATA_PIN2       2
-#define ILI9325_DATA_PIN3       3
-#define ILI9325_DATA_PIN4       4
-#define ILI9325_DATA_PIN5       5
-#define ILI9325_DATA_PIN6       6
-#define ILI9325_DATA_PIN7       7
-#define ILI9325_DATA_PIN8       8
-#define ILI9325_DATA_MASK       0x000001FE
-#define ILI9325_DATA_OFFSET     1     // Offset = PIN1
+#define ILI9325_DATA_PORT         2     // 8-Pin Data Port
+#define ILI9325_DATA_PIN1         1
+#define ILI9325_DATA_PIN2         2
+#define ILI9325_DATA_PIN3         3
+#define ILI9325_DATA_PIN4         4
+#define ILI9325_DATA_PIN5         5
+#define ILI9325_DATA_PIN6         6
+#define ILI9325_DATA_PIN7         7
+#define ILI9325_DATA_PIN8         8
+#define ILI9325_DATA_MASK         0x000001FE
+#define ILI9325_DATA_OFFSET       1    // Offset = PIN1
 
 // Placed here to try to keep all pin specific values in header file
 #define ILI9325_DISABLEPULLUPS() do { gpioSetPullup(&IOCON_PIO2_1, gpioPullupMode_Inactive); \
