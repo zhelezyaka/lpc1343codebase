@@ -1,3 +1,9 @@
+v0.8.5 - Ongoing
+================
+
+- Added some simple examples in the 'tools/examples'
+  folder.
+
 v0.80 - 27 Jan 2011
 ===================
 
