@@ -33,8 +33,15 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 /**************************************************************************/
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
 #include "projectconfig.h"
 #include "sysinit.h"
+
+#include "core/gpio/gpio.h"
+#include "core/systick/systick.h"
 
 #ifdef CFG_INTERFACE
   #include "core/cmd/cmd.h"
@@ -52,8 +59,8 @@
 /**************************************************************************/
 void delayms(uint32_t ms)
 {
-  uint32_t delay = ms * ((CFG_CPU_CCLK / 100) / 80);      // Release Mode (-Os)
-  // uint32_t delay = ms * ((CFG_CPU_CCLK / 100) / 140);  // Debug Mode (No optimisations)
+  uint32_t delay = ms * ((CFG_CPU_CCLK / 100) / 45);      // Release Mode (-Os)
+  // uint32_t delay = ms * ((CFG_CPU_CCLK / 100) / 120);  // Debug Mode (No optimisations)
 
   while (delay > 0)
   {
@@ -68,12 +75,10 @@ void delayms(uint32_t ms)
     begin here.
 */
 /**************************************************************************/
-int main (void)
+int main(void)
 {
   // Configure cpu and mandatory peripherals
   systemInit();
-
-  lcdInit();
 
   uint32_t currentSecond, lastSecond;
   currentSecond = lastSecond = 0;
@@ -100,4 +105,6 @@ int main (void)
       cmdPoll(); 
     #endif
   }
+
+  return 0;
 }

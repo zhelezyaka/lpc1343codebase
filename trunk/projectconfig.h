@@ -57,8 +57,9 @@
     PWM         . X  .  .     . . . . . . . . .     . . . .
     STEPPER     . .  .  .     . . . . . . . . .     X X X X
     CHIBI       X X  X  .     . . . . . . . . .     . . . .
-    TFTLCD      X X  X  X     X X X X X X X X X     . . . X
-    ST7565      . .  .  .     X X X X X X . . .     . . . .
+    ILI9325     X X  X  X     X X X X X X X X X     . . . X
+    ST7565      X X  X  X     X X X X X X X X X     . . . X
+    ST7735      . .  .  .     X X X X X X . . .     . . . .
     SSD1306     . .  .  .     X X X . X X . . .     . . . .
 
                 TIMERS                    SSP     ADC         UART
@@ -71,8 +72,9 @@
     USB         .     .     .     X       .       . . . .     .
     STEPPER     .     .     X     .       .       . . . .     .
     CHIBI       x     .     .     .       X       . . . .     .
-    TFTLCD      .     .     .     .       .       X X X X     .
-    ST7565      .     .     .     .       .       . . . .     .
+    ILI9325     .     .     .     .       .       X X X X     .
+    ST7565      .     .     .     .       .       X X X X     .
+    ST7535      .     .     .     .       .       . . . .     .
     SSD1306     .     .     .     .       .       . . . .     .
     INTERFACE   .     .     .     .       .       . . . .     X[2]
 
@@ -89,7 +91,7 @@
     -----------------------------------------------------------------------*/
     #define CFG_FIRMWARE_VERSION_MAJOR            (0)
     #define CFG_FIRMWARE_VERSION_MINOR            (8)
-    #define CFG_FIRMWARE_VERSION_REVISION         (0)
+    #define CFG_FIRMWARE_VERSION_REVISION         (5)
 /*=========================================================================*/
 
 
@@ -179,7 +181,7 @@
 
     DEPENDENCIES:             SDCARD requires the use of SSP0.
     -----------------------------------------------------------------------*/
-    // #define CFG_SDCARD
+    #define CFG_SDCARD
     #define CFG_SDCARD_READONLY         (1)   // Must be 0 or 1
     #define CFG_SDCARD_CDPORT           (3)
     #define CFG_SDCARD_CDPIN            (0)
@@ -440,7 +442,7 @@
                                 be an 8-bit value somewhere between 8 and 32
                                 in normal circumstances.
     CFG_TFTLCD_TS_KEYPADDELAY   The delay in milliseconds between key
-                                presses on the dialogue boxes
+                                presses in dialogue boxes
 
     PIN LAYOUT:                 The pin layout that is used by this driver
                                 can be seen in the following schematic:
@@ -449,7 +451,7 @@
     DEPENDENCIES:               TFTLCD requires the use of pins 1.8, 1.9,
                                 1.10, 1.11, 3.3 and 2.1-9.
     -----------------------------------------------------------------------*/
-    // #define CFG_TFTLCD
+    #define CFG_TFTLCD
     #define CFG_TFTLCD_INCLUDESMALLFONTS   (0)
     #define CFG_TFTLCD_TS_THRESHOLD        (40)
     #define CFG_TFTLCD_TS_KEYPADDELAY      (200)
