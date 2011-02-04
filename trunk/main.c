@@ -73,8 +73,6 @@ int main (void)
   // Configure cpu and mandatory peripherals
   systemInit();
 
-  lcdInit();
-
   uint32_t currentSecond, lastSecond;
   currentSecond = lastSecond = 0;
 
