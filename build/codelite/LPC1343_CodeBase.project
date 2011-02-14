@@ -142,6 +142,8 @@
           <File Name="../../drivers/lcd/tft/hw/ILI9325.h"/>
           <File Name="../../drivers/lcd/tft/hw/st7783.c"/>
           <File Name="../../drivers/lcd/tft/hw/st7783.h"/>
+          <File Name="../../drivers/lcd/tft/hw/st7735.c"/>
+          <File Name="../../drivers/lcd/tft/hw/st7735.h"/>
         </VirtualDirectory>
         <VirtualDirectory Name="fonts">
           <File Name="../../drivers/lcd/tft/fonts/bitmapfonts.h"/>

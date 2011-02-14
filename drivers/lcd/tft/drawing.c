@@ -247,8 +247,8 @@ void drawTestPattern(void)
 
     #include "drivers/lcd/fonts/smallfonts.h"
     
-    drawStringSmall(1, 210, WHITE, "5x8 System (Max 40 Characters)", Font_System5x8);
-    drawStringSmall(1, 220, WHITE, "7x8 System (Max 30 Characters)", Font_System7x8);
+    drawStringSmall(1, 210, COLOR_WHITE, "5x8 System (Max 40 Characters)", Font_System5x8);
+    drawStringSmall(1, 220, COLOR_WHITE, "7x8 System (Max 30 Characters)", Font_System7x8);
 
     @endcode
 */

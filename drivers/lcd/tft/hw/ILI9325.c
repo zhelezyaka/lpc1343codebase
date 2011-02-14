@@ -51,6 +51,7 @@
 #include "drivers/lcd/tft/touchscreen.h"
 
 static lcdOrientation_t lcdOrientation = LCD_ORIENTATION_PORTRAIT;
+static lcdProperties_t ili9325Properties = { 240, 320, TRUE, TRUE };
 
 /*************************************************/
 /* Private Methods                               */
@@ -238,9 +239,9 @@ void ili9325InitDisplay(void)
   ili9325Command(0x003C, 0x0203);     // Gamma Control 13
   ili9325Command(0x003D, 0x0403);     // Gamma Control 14
   ili9325Command(0x0050, 0x0000);     // Window Horizontal RAM Address Start (R50h)
-  ili9325Command(0x0051, ILI9325_WIDTH - 1);    // Window Horizontal RAM Address End (R51h)
+  ili9325Command(0x0051, ili9325Properties.width - 1);    // Window Horizontal RAM Address End (R51h)
   ili9325Command(0x0052, 0X0000);     // Window Vertical RAM Address Start (R52h)
-  ili9325Command(0x0053, ILI9325_HEIGHT - 1);    // Window Vertical RAM Address End (R53h)
+  ili9325Command(0x0053, ili9325Properties.height - 1);    // Window Vertical RAM Address End (R53h)
   ili9325Command(0x0060, 0xa700);     // Driver Output Control (R60h)
   ili9325Command(0x0061, 0x0003);     // Driver Output Control (R61h) - enable VLE
   ili9325Command(0x0090, 0X0010);     // Panel Interface Control 1 (R90h)
@@ -393,7 +394,7 @@ void lcdDrawHLine(uint16_t x0, uint16_t x1, uint16_t y, uint16_t color)
 
   ili9325SetCursor(x0, y);
   ili9325WriteCmd(0x0022);  // Write Data to GRAM (R22h)
-  for (pixels = 0; pixels < x1 - x0 + 1; pixels++)
+  for (pixels = 0; pixels < x1 - (x0 + 1); pixels++)
   {
     ili9325WriteData(color);
   }
@@ -467,11 +468,11 @@ uint16_t lcdGetWidth(void)
   switch (lcdOrientation) 
   {
     case LCD_ORIENTATION_PORTRAIT:
-      return ILI9325_WIDTH;
+      return ili9325Properties.width;
       break;
     case LCD_ORIENTATION_LANDSCAPE:
     default:
-      return ILI9325_HEIGHT;
+      return ili9325Properties.height;
   }
 }
 
@@ -481,11 +482,11 @@ uint16_t lcdGetHeight(void)
   switch (lcdOrientation) 
   {
     case LCD_ORIENTATION_PORTRAIT:
-      return ILI9325_HEIGHT;
+      return ili9325Properties.height;
       break;
     case LCD_ORIENTATION_LANDSCAPE:
     default:
-      return ILI9325_WIDTH;
+      return ili9325Properties.width;
   }
 }
 
@@ -505,4 +506,10 @@ void lcdScroll(int16_t pixels, uint16_t fillColor)
 uint16_t lcdGetControllerID(void)
 {
   return ili9325Type();
+}
+
+/*************************************************/
+lcdProperties_t lcdGetProperties(void)
+{
+    return ili9325Properties;
 }
