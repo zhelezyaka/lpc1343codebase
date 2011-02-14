@@ -203,8 +203,6 @@
     CFG_USBCDC_INITTIMEOUT    The maximum delay in milliseconds to wait for
                               USB to connect.  Must be a multiple of 10!
 
-    NOTE: CFG_USBHID =        ~0.5 KB Flash and 36 bytes SRAM (-Os)
-    NOTE: CFG_USBCDC =        ~4.0 KB Flash and 272 bytes SRAM (-Os)
     -----------------------------------------------------------------------*/
     // #define CFG_USBHID
     #define CFG_USBCDC

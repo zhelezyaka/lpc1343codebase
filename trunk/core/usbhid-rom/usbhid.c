@@ -33,17 +33,36 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 /**************************************************************************/
+#include <string.h>
 
 #include "core/usbhid-rom/usb.h"
 #include "core/usbhid-rom/usbconfig.h"
 #include "core/rom_drivers.h"
 #include "core/gpio/gpio.h"
+#include "core/adc/adc.h"
+#include "core/systick/systick.h"
 
 #include "usbhid.h"
 
 USB_DEV_INFO DeviceInfo;
 HID_DEVICE_INFO HidDevInfo;
 ROM ** rom = (ROM **)0x1fff1ff8;
+
+typedef struct usbhid_out_s
+{
+  uint16_t gpio1Dir;
+  uint16_t gpio1Data;
+  uint16_t gpio2Dir;
+  uint16_t gpio2Data;
+  uint16_t gpio3Dir;
+  uint16_t gpio3Data;
+  uint16_t adc0;
+  uint16_t adc1;
+  uint16_t adc2;
+  uint16_t adc3;
+  uint32_t systicks;
+  uint32_t rollovers;
+} usbhid_out_t;
 
 /**************************************************************************/
 /*! 
@@ -53,17 +72,46 @@ ROM ** rom = (ROM **)0x1fff1ff8;
 /**************************************************************************/
 void usbHIDGetInReport (uint8_t src[], uint32_t length)
 {
-  uint8_t PCInReportData = 0;
-  
-  // ToDo: Move this logic elsewhere to keep code 'generic'
+  usbhid_out_t out;
 
-  // If LED enabled set bit 0 to 1
-  if (!gpioGetValue(CFG_LED_PORT, CFG_LED_PIN))
-  {
-    PCInReportData |= 1<<0;
-  }
+  out.gpio1Dir = GPIO_GPIO1DIR;
+  out.gpio1Data = GPIO_GPIO1DATA;
+  out.gpio2Dir = GPIO_GPIO2DIR;
+  out.gpio2Data = GPIO_GPIO2DATA;
+  out.gpio3Dir = GPIO_GPIO3DIR;
+  out.gpio3Data = GPIO_GPIO3DATA;
+  out.adc0 = adcRead(0);
+  out.adc1 = adcRead(1);
+  out.adc2 = adcRead(2);
+  out.adc3 = adcRead(3);
+  out.systicks = systickGetTicks();
+  out.rollovers = systickGetRollovers();
 
-  src[0] = PCInReportData;
+  size_t i = 0;
+  memcpy(&src[i], &out.gpio1Dir, sizeof out.gpio1Dir);
+  i += sizeof out.gpio1Dir;
+  memcpy(&src[i], &out.gpio1Data, sizeof out.gpio1Data);
+  i += sizeof out.gpio1Data;
+  memcpy(&src[i], &out.gpio2Dir, sizeof out.gpio2Dir);
+  i += sizeof out.gpio2Dir;
+  memcpy(&src[i], &out.gpio2Data, sizeof out.gpio2Data);
+  i += sizeof out.gpio2Data;
+  memcpy(&src[i], &out.gpio3Dir, sizeof out.gpio3Dir);
+  i += sizeof out.gpio3Dir;
+  memcpy(&src[i], &out.gpio3Data, sizeof out.gpio3Data);
+  i += sizeof out.gpio3Data;
+  memcpy(&src[i], &out.adc0, sizeof out.adc0);
+  i += sizeof out.adc0;
+  memcpy(&src[i], &out.adc1, sizeof out.adc1);
+  i += sizeof out.adc1;
+  memcpy(&src[i], &out.adc2, sizeof out.adc2);
+  i += sizeof out.adc2;
+  memcpy(&src[i], &out.adc3, sizeof out.adc3);
+  i += sizeof out.adc3;
+  memcpy(&src[i], &out.systicks, sizeof out.systicks);
+  i += sizeof out.systicks;
+  memcpy(&src[i], &out.rollovers, sizeof out.rollovers);
+  i += sizeof out.rollovers;
 }
 
 /**************************************************************************/
@@ -137,7 +185,7 @@ void usbHIDInit (void)
   HidDevInfo.idProduct = USB_PROD_ID;
   HidDevInfo.bcdDevice = USB_DEVICE; 
   HidDevInfo.StrDescPtr = (uint32_t)&USB_HIDStringDescriptor[0];
-  HidDevInfo.InReportCount = 1;
+  HidDevInfo.InReportCount = sizeof(usbhid_out_t);
   HidDevInfo.OutReportCount = 1;
   HidDevInfo.SampleInterval = 0x20;
   HidDevInfo.InReport = usbHIDGetInReport;

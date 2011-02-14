@@ -41,9 +41,6 @@
 #include "drivers/lcd/tft/lcd.h"
 #include "core/gpio/gpio.h"
 
-#define ST7783_WIDTH           (240)
-#define ST7783_HEIGHT          (320)
-
 // Control pins
 #define ST7783_CS_PORT         1     // CS (LCD Pin 7)
 #define ST7783_CS_PIN          8

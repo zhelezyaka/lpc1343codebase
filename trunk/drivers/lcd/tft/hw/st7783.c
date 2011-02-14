@@ -48,6 +48,7 @@
 #include "drivers/lcd/tft/touchscreen.h"
 
 static lcdOrientation_t lcdOrientation = LCD_ORIENTATION_PORTRAIT;
+static lcdProperties_t st7783Properties = { 240, 320, TRUE, TRUE };
 
 /*************************************************/
 /* Private Methods                               */
@@ -176,15 +177,15 @@ void st7783SetCursor(uint16_t x, uint16_t y)
   switch (lcdOrientation) 
   {
   case LCD_ORIENTATION_LANDSCAPE:
-          he = ST7783_WIDTH-1-y;
-          ve = ST7783_HEIGHT-1-x;
+          he = st7783Properties.width-1-y;
+          ve = st7783Properties.height-1-x;
           al = y;
           ah = x;
           break;
   case LCD_ORIENTATION_PORTRAIT:
   default:
-          he = ST7783_WIDTH-1;
-          ve = ST7783_HEIGHT-1;
+          he = st7783Properties.width-1;
+          ve = st7783Properties.height-1;
           al = x;
           ah = y;
           break;
@@ -245,9 +246,9 @@ void st7783InitDisplay(void)
   st7783Command(0x003C, 0x0203);     // Gamma Control 13
   st7783Command(0x003D, 0x0403);     // Gamma Control 14
   st7783Command(0x0050, 0x0000);     // Window Horizontal RAM Address Start (R50h)
-  st7783Command(0x0051, 240 - 1);    // Window Horizontal RAM Address End (R51h)
+  st7783Command(0x0051, st7783Properties.width - 1);    // Window Horizontal RAM Address End (R51h)
   st7783Command(0x0052, 0X0000);     // Window Vertical RAM Address Start (R52h)
-  st7783Command(0x0053, 320 - 1);    // Window Vertical RAM Address End (R53h)
+  st7783Command(0x0053, st7783Properties.height - 1);    // Window Vertical RAM Address End (R53h)
   st7783Command(0x0060, 0xa700);     // Driver Output Control (R60h)
   st7783Command(0x0061, 0x0001);     // Driver Output Control (R61h)
   st7783Command(0x0090, 0X0029);     // Panel Interface Control 1 (R90h)
@@ -458,11 +459,11 @@ uint16_t lcdGetWidth(void)
   switch (lcdOrientation) 
   {
     case LCD_ORIENTATION_PORTRAIT:
-      return ST7783_WIDTH;
+      return st7783Properties.width;
       break;
     case LCD_ORIENTATION_LANDSCAPE:
     default:
-      return ST7783_HEIGHT;
+      return st7783Properties.height;
   }
 }
 
@@ -472,11 +473,11 @@ uint16_t lcdGetHeight(void)
   switch (lcdOrientation) 
   {
     case LCD_ORIENTATION_PORTRAIT:
-      return ST7783_HEIGHT;
+      return st7783Properties.height;
       break;
     case LCD_ORIENTATION_LANDSCAPE:
     default:
-      return ST7783_WIDTH;
+      return st7783Properties.width;
   }
 }
 
@@ -490,4 +491,10 @@ void lcdScroll(int16_t pixels, uint16_t fillColor)
 uint16_t lcdGetControllerID(void)
 {
   return st7783Type();
+}
+
+/*************************************************/
+lcdProperties_t lcdGetProperties(void)
+{
+    return st7783Properties;
 }

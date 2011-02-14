@@ -51,6 +51,15 @@ typedef enum
   LCD_ORIENTATION_LANDSCAPE = 1
 } lcdOrientation_t;
 
+// This struct is used to indicate the capabilities of different LCDs
+typedef struct
+{
+  uint16_t width;         // LCD width in pixels (default orientation)
+  uint16_t height;        // LCD height in pixels (default orientation)
+  bool     touchscreen;   // Whether the LCD has a touch screen
+  bool     orientation;   // Whether the LCD orientation can be modified
+} lcdProperties_t;
+
 extern void     lcdInit(void);
 extern void     lcdTest(void);
 extern uint16_t lcdGetPixel(uint16_t x, uint16_t y);
@@ -65,5 +74,6 @@ extern uint16_t lcdGetHeight(void);
 extern void     lcdSetOrientation(lcdOrientation_t orientation);
 extern uint16_t lcdGetControllerID(void);
 extern lcdOrientation_t lcdGetOrientation(void);
+extern lcdProperties_t lcdGetProperties(void);
 
 #endif

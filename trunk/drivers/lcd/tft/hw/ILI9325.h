@@ -41,9 +41,6 @@
 #include "drivers/lcd/tft/lcd.h"
 #include "core/gpio/gpio.h"
 
-#define ILI9325_WIDTH             (240)
-#define ILI9325_HEIGHT            (320)
-
 // Control pins
 #define ILI9325_CS_PORT           1     // CS (LCD Pin 7)
 #define ILI9325_CS_PIN            8

@@ -1,6 +1,13 @@
 v0.8.5 - Ongoing
 ================
 
+- Added lcdProperties_t to lcd.h to indicate the
+  properties of different LCDs (to determine if
+  there is a touch screen present, whether the
+  screen orientation can be changed, etc.)
+- Added basic ST7735 LCD driver (128x160 pixel TFT
+  LCD using 6-pin SPI-esque interface).  Work in
+  progress (no orientation support, etc.).
 - Added some simple examples in the 'tools/examples'
   folder.
 

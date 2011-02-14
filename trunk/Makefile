@@ -55,6 +55,7 @@ OBJS += drawing.o touchscreen.o bmp.o alphanumeric.o
 OBJS += inconsolata9.o inconsolata11.o inconsolata16.o
 # LCD Driver (Only one can be included at a time!)
 OBJS += ILI9325.o
+# OBJS += st7735.o
 # OBJS += st7783.o
 
 # Bitmap LCD support (ST7565, SSD1306, etc.)
