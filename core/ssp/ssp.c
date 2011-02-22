@@ -161,11 +161,19 @@ void sspInit (uint8_t portNum, sspClockPolarity_t polarity, sspClockPhase_t phas
     /* Set P0.9 to SSP MOSI */
     IOCON_PIO0_9 &= ~IOCON_PIO0_9_FUNC_MASK;
     IOCON_PIO0_9 |= IOCON_PIO0_9_FUNC_MOSI0;
-  
+
     /* Set 2.11 to SSP SCK (0.6 and 0.10 can also be used) */ 
+    #ifdef CFG_SSP0_SCKPIN_2_11
     IOCON_SCKLOC = IOCON_SCKLOC_SCKPIN_PIO2_11; 
     IOCON_PIO2_11 = IOCON_PIO2_11_FUNC_SCK0;  
-  
+    #endif
+
+    /* Set 0.6 to SSP SCK (2.11 and 0.10 can also be used) */ 
+    #ifdef CFG_SSP0_SCKPIN_0_6
+    IOCON_SCKLOC = IOCON_SCKLOC_SCKPIN_PIO0_6; 
+    IOCON_PIO0_6 = IOCON_PIO0_6_FUNC_SCK;
+    #endif
+
     /* Set P0.2/SSEL to GPIO output and high */
     IOCON_PIO0_2 &= ~IOCON_PIO0_2_FUNC_MASK;
     IOCON_PIO0_2 |= IOCON_PIO0_2_FUNC_GPIO;

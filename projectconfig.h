@@ -61,6 +61,7 @@
     ST7565      X X  X  X     X X X X X X X X X     . . . X
     ST7735      . .  .  .     X X X X X X . . .     . . . .
     SSD1306     . .  .  .     X X X . X X . . .     . . . .
+    MCP121      . .  .  .     . . . . . . . . .     . X . .
 
                 TIMERS                    SSP     ADC         UART
                 ======================    ===     =======     ====
@@ -137,6 +138,19 @@
     -----------------------------------------------------------------------*/
     #define CFG_UART_BAUDRATE           (115200)
     #define CFG_UART_BUFSIZE            (512)
+/*=========================================================================*/
+
+
+/*=========================================================================
+    SSP
+    -----------------------------------------------------------------------
+
+    CFG_SSP0_SCKPIN_2_11      Indicates which pin should be used for SCK0
+    CFG_SSP0_SCKPIN_0_6
+
+    -----------------------------------------------------------------------*/
+    #define CFG_SSP0_SCKPIN_2_11
+    // #define CFG_SSP0_SCKPIN_0_6
 /*=========================================================================*/
 
 
@@ -392,29 +406,35 @@
     CHIBI WIRELESS STACK
     -----------------------------------------------------------------------
 
-    CFG_CHIBI                 If defined, the CHIBI wireless stack will be
-                              included during build.  Requires external HW.
-    CFG_CHIBI_MODE            The mode to use when receiving and transmitting
-                              with Chibi.  See chb_drvr.h for possible values
-    CFG_CHIBI_POWER           The power level to use when transmitting.  See
-                              chb_drvr.h for possible values
-    CFG_CHIBI_CHANNEL         802.15.4 Channel (ex. 1)
-    CFG_CHIBI_PANID           16-bit PAN Identifier (ex.0x1234)
-    CFG_CHIBI_BUFFERSIZE      The size of the message buffer in bytes.
+    CFG_CHIBI                   If defined, the CHIBI wireless stack will be
+                                included during build.  Requires external HW.
+    CFG_CHIBI_MODE              The mode to use when receiving and transmitting
+                                wireless data.  See chb_drvr.h for possible values
+    CFG_CHIBI_POWER             The power level to use when transmitting.  See
+                                chb_drvr.h for possible values
+    CFG_CHIBI_CHANNEL           802.15.4 Channel (0 = 868MHz, 1-10 = 915MHz)
+    CFG_CHIBI_PANID             16-bit PAN Identifier (ex.0x1234)
+    CFG_CHIBI_PROMISCUOUS       Set to 1 to enabled promiscuous mode or
+                                0 to disable it.  If promiscuous mode is
+                                enabled be sure to set CFG_CHIBI_BUFFERSIZE
+                                to an appropriately large value (ex. 1024)
+    CFG_CHIBI_BUFFERSIZE        The size of the message buffer in bytes
 
-    NOTE: CFG_CHIBI =         ~4.0 KB Flash and 184 bytes SRAM (-Os)
+    DEPENDENCIES:               Chibi requires the use of SSP0, 16-bit timer
+                                0 and pins 3.1, 3.2, 3.3.  It also requires
+                                the presence of CFG_I2CEEPROM.
 
-    DEPENDENCIES:             Chibi requires the use of SSP0, 16-bit
-                              timer 0 (for us delays) and pins 1.8, 1.9,
-                              and 1.10.  It also requires the presence of
-                              CFG_I2CEEPROM.
+    NOTE:                       These settings are not relevant to all boards!
+                                'tools/schematics/AT86RF212LPC1114_v1.6.pdf'
+                                show how 'CHIBI' is meant to be connected
     -----------------------------------------------------------------------*/
     // #define CFG_CHIBI
     #define CFG_CHIBI_MODE              (0)                 // OQPSK_868MHZ
     #define CFG_CHIBI_POWER             (0xE9)              // CHB_PWR_EU2_3DBM
     #define CFG_CHIBI_CHANNEL           (0)                 // 868-868.6 MHz
     #define CFG_CHIBI_PANID             (0x1234)
-    #define CFG_CHIBI_BUFFERSIZE        (128)
+    #define CFG_CHIBI_PROMISCUOUS       (1)
+    #define CFG_CHIBI_BUFFERSIZE        (1024)
 /*=========================================================================*/
 
 
@@ -521,6 +541,14 @@
   #error "Only one USB class can be defined at a time (CFG_USBCDC or CFG_USBHID)"
 #endif
 
+#if defined CFG_SSP0_SCKPIN_2_11 && defined CFG_SSP0_SCKPIN_0_6
+  #error "Only one SCK pin can be defined at a time for SSP0"
+#endif
+
+#if !defined CFG_SSP0_SCKPIN_2_11 && !defined CFG_SSP0_SCKPIN_0_6
+  #error "An SCK pin must be selected for SSP0 (CFG_SSP0_SCKPIN_2_11 or CFG_SSP0_SCKPIN_0_6)"
+#endif
+
 #ifdef CFG_INTERFACE
   #if !defined CFG_PRINTF_UART && !defined CFG_PRINTF_USBCDC
     #error "CFG_PRINTF_UART or CFG_PRINTF_USBCDC must be defined for for CFG_INTERFACE Input/Output"
@@ -542,6 +570,9 @@
   #endif
   #ifdef CFG_PWM
     #error "CFG_CHIBI and CFG_PWM can not be defined at the same time since they both use pin 1.9."
+  #endif
+  #if CFG_CHIBI_PROMISCUOUS != 0 && CFG_CHIBI_PROMISCUOUS != 1
+    #error "CFG_CHIBI_PROMISCUOUS must be equal to either 1 or 0"
   #endif
 #endif
 

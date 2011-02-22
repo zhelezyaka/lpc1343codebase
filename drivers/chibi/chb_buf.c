@@ -36,7 +36,8 @@
 #include "projectconfig.h"
 
 static U8 chb_buf[CFG_CHIBI_BUFFERSIZE];
-static U32 rd_ptr, wr_ptr, len;
+static volatile U32 rd_ptr, wr_ptr;
+static volatile U32 len;
 
 /**************************************************************************/
 /*!
