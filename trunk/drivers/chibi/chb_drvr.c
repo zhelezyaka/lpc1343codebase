@@ -41,6 +41,9 @@
 #include "core/systick/systick.h"
 #include "core/timer16/timer16.h"
 
+// store string messages in flash rather than RAM
+const char chb_err_overflow[] = "BUFFER FULL. TOSSING INCOMING DATA\r\n";
+const char chb_err_init[] = "RADIO NOT INITIALIZED PROPERLY\r\n";
 /**************************************************************************/
 /*!
 
@@ -285,7 +288,7 @@ static void chb_frame_read()
 {
     U8 i, len, data;
 
-    CHB_ENTER_CRIT();
+    // CHB_ENTER_CRIT();
     CHB_SPI_ENABLE();
 
     /*Send frame read command and read the length.*/
@@ -293,18 +296,35 @@ static void chb_frame_read()
     len = chb_xfer_byte(0);
 
     /*Check for correct frame length.*/
-
-    // TODO: CHECK FOR THE CRC VALID BIT TO QUALIFY THE FRAME
-    // check the length of the frame to make sure the incoming frame
-    // doesn't overflow the buffer
     if ((len >= CHB_MIN_FRAME_LENGTH) && (len <= CHB_MAX_FRAME_LENGTH))
     {
-        chb_buf_write(len);
-        
-        for (i=0; i<len; i++)
+        // check to see if there is room to write the frame in the buffer. if not, then drop it
+        if (len < (CFG_CHIBI_BUFFERSIZE - chb_buf_get_len()))
         {
-            data = chb_xfer_byte(0);
-            chb_buf_write(data);
+            chb_buf_write(len);
+            
+            for (i=0; i<len; i++)
+            {
+                data = chb_xfer_byte(0);
+                chb_buf_write(data);
+            }
+        }
+        else
+        {
+            // we've overflowed the buffer. toss the data and do some housekeeping
+            chb_pcb_t *pcb = chb_get_pcb();
+
+            // read out the data and throw it away
+            for (i=0; i<len; i++)
+            {
+                data = chb_xfer_byte(0);
+            }
+
+            // Increment the overflow stat
+            pcb->overflow++;
+
+            // print the error message
+            printf(chb_err_overflow);
         }
     }
 
@@ -529,8 +549,8 @@ U8 chb_set_state(U8 state)
         if (curr_state == TX_ARET_ON)
         {
             /* First do intermediate state transition to RX_ON, then to RX_AACK_ON. */
-            chb_reg_read_mod_write(TRX_STATE, CMD_RX_ON, 0x1f);
-            chb_delay_us(TIME_PLL_ON_RX_ON);
+            chb_reg_read_mod_write(TRX_STATE, CMD_PLL_ON, 0x1f);
+            chb_delay_us(TIME_RX_ON_PLL_ON);
         }
         break;
     }
@@ -643,25 +663,8 @@ U8 chb_tx(U8 *hdr, U8 *data, U8 len)
     // write frame to buffer. first write header into buffer (add 1 for len byte), then data. 
     chb_frame_write(hdr, CHB_HDR_SZ + 1, data, len);
 
-    // TEST - check data in buffer
-    //{
-    //    U8 i, len, tmp[30];
-    //    
-    //    len = 1 + CHB_HDR_SZ + len;
-    //    chb_sram_read(0, len, tmp);
-    //    for (i=0; i<len; i++)
-    //    {
-    //        printf("%02X ", tmp[i]);
-    //    }
-    //    printf("\n");
-    //    state = chb_get_state();
-    //    printf("State = %02X.\n", state);
-    //}
-    //TEST
-
-    //Do frame transmission. Toggle the SLP_TR pin to initiate the frame transmission.
-    CHB_SLPTR_ENABLE();
-    CHB_SLPTR_DISABLE();
+    //Do frame transmission
+    chb_reg_read_mod_write(TRX_STATE, CMD_TX_START, 0x1F);
 
     // wait for the transmission to end, signalled by the TRX END flag
     while (!pcb->tx_end);
@@ -708,9 +711,10 @@ static void chb_radio_init()
     // re-enable intps while we config the radio
     chb_reg_write(IRQ_MASK, (1<<IRQ_RX_START) | (1<<IRQ_TRX_END));
 
-    // set autocrc mode
-    chb_reg_read_mod_write(TRX_CTRL_1, 1 << CHB_AUTO_CRC_POS, 1 << CHB_AUTO_CRC_POS);
-
+    #if (CFG_CHIBI_PROMISCUOUS == 0)
+      // set autocrc mode
+      chb_reg_read_mod_write(TRX_CTRL_1, 1 << CHB_AUTO_CRC_POS, 1 << CHB_AUTO_CRC_POS);
+    #endif
     // set up default phy modulation, data rate and power (Ex. OQPSK, 100 kbps, 868 MHz, 3dBm)
     chb_set_mode(CFG_CHIBI_MODE);       // Defined in projectconfig.h
     chb_set_pwr(CFG_CHIBI_POWER);       // Defined in projectconfig.h
@@ -718,7 +722,7 @@ static void chb_radio_init()
 
     // set fsm state
     // put trx in rx auto ack mode
-    chb_set_state(RX_AACK_ON);
+    chb_set_state(RX_STATE);
 
     // set pan ID
     chb_reg_write16(PAN_ID_0, CFG_CHIBI_PANID); // Defined in projectconfig.h
@@ -762,7 +766,11 @@ static void chb_radio_init()
     gpioIntEnable (CHB_EINTPORT,
                    CHB_EINTPIN); 
 
-    while (chb_get_state() != RX_AACK_ON);
+    if (chb_get_state() != RX_STATE)
+    {
+        // ERROR occurred initializing the radio. Print out error message.
+        printf(chb_err_init);
+    }
 }
 
 /**************************************************************************/
@@ -800,36 +808,33 @@ void chb_drvr_init()
 
 /**************************************************************************/
 /*!
-
+    Enable or disable the radio's sleep mode.
 */
 /**************************************************************************/
-U8 chb_radio_sleep(void)
+void chb_sleep(U8 enb)
 {
-  uint32_t timeout = 0;
-
-  // Set mode to TRX_OFF
-  while ( timeout < 10 )
+  if (enb)
   {
-    uint8_t status = chb_set_state(TRX_OFF);
-    if (status == RADIO_SUCCESS)
-    {
-      break;
-    }
-    timeout++;
-  }
+    // first we need to go to TRX OFF state
+    chb_set_state(TRX_OFF);
 
-  if ( timeout == 10 )
-  {
-    return 1;
+    // set the SLPTR pin
+    // CHB_SLPTR_PORT |= _BV(CHB_SLPTR_PIN);
+    CHB_SLPTR_ENABLE();
   }
   else
   {
-    // Set SLP_TR high to enter sleep mode (stops after 35 clock cycles)
-    CHB_SLPTR_ENABLE();
-    return 0;
+    // make sure the SLPTR pin is low first
+    // CHB_SLPTR_PORT &= ~(_BV(CHB_SLPTR_PIN));
+    CHB_SLPTR_DISABLE();
+
+    // we need to allow some time for the PLL to lock
+    chb_delay_us(TIME_SLEEP_TO_TRX_OFF);
+
+    // Turn the transceiver back on
+    chb_set_state(RX_STATE);
   }
 }
-
 /**************************************************************************/
 /*!
 
@@ -884,7 +889,7 @@ void chb_ISR_Handler (void)
                 pcb->tx_end = true;
             }
             intp_src &= ~CHB_IRQ_TRX_END_MASK;
-            while (chb_set_state(RX_AACK_ON) != RADIO_SUCCESS);
+            while (chb_set_state(RX_STATE) != RADIO_SUCCESS);
         }
         else if (intp_src & CHB_IRQ_TRX_UR_MASK)
         {

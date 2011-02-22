@@ -4,8 +4,8 @@
  *      Version: V1.00
  *---------------------------------------------------------------------------*/
 
-#ifndef __UART_H__ 
-#define __UART_H__
+#ifndef __CDC_BUF_H__ 
+#define __CDC_BUF_H__
 
 #include "projectconfig.h"
 
@@ -20,12 +20,12 @@ typedef struct _cdc_buffer_t
   uint8_t buf[CFG_CDC_BUFFERSIZE];
 } cdc_buffer_t;
 
-cdc_buffer_t *cdcGetBuffer();
-void cdcBufferInit();
-uint8_t cdcBufferRead();
-uint32_t cdcBufferReadLen(uint8_t* buf, uint32_t len);
-void cdcBufferWrite(uint8_t data);
-void cdcBufferClearFIFO();
-uint8_t cdcBufferDataPending();
+cdc_buffer_t * cdcGetBuffer();
+void           cdcBufferInit();
+uint8_t        cdcBufferRead();
+uint32_t       cdcBufferReadLen(uint8_t* buf, uint32_t len);
+void           cdcBufferWrite(uint8_t data);
+void           cdcBufferClearFIFO();
+uint8_t        cdcBufferDataPending();
 
 #endif

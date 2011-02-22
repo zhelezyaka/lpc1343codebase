@@ -1,15 +1,17 @@
 v0.8.5 - Ongoing
 ================
 
-- Added lcdProperties_t to lcd.h to indicate the
-  properties of different LCDs (to determine if
-  there is a touch screen present, whether the
+- Added an option to projectconfig.h to select which pin to use for
+  SCK on SSP0, since the QFN33 package doesn't have all the same
+  pins.
+- Updated Chibi to v0.91 (adds sleep method and promiscuous mode to allow
+  Chibi to act as an 802.15.4 packet sniffer, etc.).
+- Added lcdProperties_t to lcd.h to indicate the properties of different
+  LCDs (to determine if there is a touch screen present, whether the
   screen orientation can be changed, etc.)
-- Added basic ST7735 LCD driver (128x160 pixel TFT
-  LCD using 6-pin SPI-esque interface).  Work in
-  progress (no orientation support, etc.).
-- Added some simple examples in the 'tools/examples'
-  folder.
+- Added basic ST7735 LCD driver (128x160 pixel TFT LCD using 6-pin
+  SPI-esque interface).  Work in progress (no orientation support, etc.).
+- Added some simple examples in the 'tools/examples' folder.
 
 v0.80 - 27 Jan 2011
 ===================

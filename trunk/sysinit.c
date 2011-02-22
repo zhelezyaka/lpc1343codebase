@@ -191,33 +191,15 @@ void systemInit()
     lcdInit();
   #endif
 
-  // Initialise SD Card
-  #ifdef CFG_SDCARD
-    // DSTATUS stat;
-    // stat = disk_initialize(0);
-    // if (stat & STA_NOINIT) 
-    // {
-    //   // Not intitialised
-    // }
-    // if (stat & STA_NODISK) 
-    // {
-    //   // No disk
-    // }
-    // if (stat == 0)
-    // {
-    //   // SD Card Initialised
-    // }
-  #endif
-
   // Initialise Chibi
   // Warning: CFG_CHIBI must be disabled if no antenna is connected,
   // otherwise the SW will halt during initialisation
   #ifdef CFG_CHIBI
     // Write addresses to EEPROM for the first time if necessary
-    // uint16_t addr_short = 0x0001;
-    // uint64_t addr_ieee =  0x0000000000000001;
-    // mcp24aaWriteBuffer(CFG_CHIBI_EEPROM_SHORTADDR, (uint8_t *)&addr_short, 2);
-    // mcp24aaWriteBuffer(CFG_CHIBI_EEPROM_IEEEADDR, (uint8_t *)&addr_ieee, 8);
+    // uint16_t addr_short = 0x0025;
+    // uint64_t addr_ieee =  0x0000000000000025;
+    // mcp24aaWriteBuffer(CFG_EEPROM_CHIBI_SHORTADDR, (uint8_t *)&addr_short, 2);
+    // mcp24aaWriteBuffer(CFG_EEPROM_CHIBI_IEEEADDR, (uint8_t *)&addr_ieee, 8);
     chb_init();
     chb_pcb_t *pcb = chb_get_pcb();
     // printf("%-40s : 0x%04X%s", "Chibi Initialised", pcb->src_addr, CFG_PRINTF_NEWLINE);
