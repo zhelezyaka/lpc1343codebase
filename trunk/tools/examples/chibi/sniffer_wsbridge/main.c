@@ -123,7 +123,7 @@ int main(void)
                   uint32_t bytesRead = 0;
                   while (cdcBufferDataPending())
                   {
-                    // Read up to 64 bytes as long as possible
+                    // Read 64 byte chunks until end of data
                     bytesRead = cdcBufferReadLen(frame, 64);
                     // debug_printf("%d,", bytesRead);
                     USB_WriteEP (CDC_DEP_IN, frame, bytesRead);

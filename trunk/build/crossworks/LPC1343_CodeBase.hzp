@@ -65,7 +65,9 @@
             <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
           </file>
         </folder>
-        <folder Name="isp"/>
+        <folder Name="iap">
+          <file file_name="../../core/iap/iap.c"/>
+        </folder>
         <folder Name="cmd">
           <file file_name="../../core/cmd/cmd.c">
             <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>

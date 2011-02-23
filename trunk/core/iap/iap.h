@@ -1,9 +1,7 @@
 /**************************************************************************/
 /*! 
-    @file     cpu.h
+    @file     iap.h
     @author   K. Townsend (microBuilder.eu)
-    @date     22 March 2010
-    @version  0.10
 
     @section LICENSE
 
@@ -36,28 +34,18 @@
 */
 /**************************************************************************/
 
-#ifndef _CPU_H_
-#define _CPU_H_
+#ifndef _IAP_H_
+#define _IAP_H_
 
 #include "projectconfig.h"
 
-/**************************************************************************/
-/*! 
-    @brief Indicates the value for the PLL multiplier
-*/
-/**************************************************************************/
-typedef enum
+typedef struct
 {
-  CPU_MULTIPLIER_1 = 0,
-  CPU_MULTIPLIER_2,
-  CPU_MULTIPLIER_3,
-  CPU_MULTIPLIER_4,
-  CPU_MULTIPLIER_5,
-  CPU_MULTIPLIER_6
-}
-cpuMultiplier_t;
+  unsigned int ReturnCode;
+  unsigned int Result[4];
+} IAP_return_t;
 
-void cpuPllSetup (cpuMultiplier_t multiplier);
-void cpuInit (void);
+IAP_return_t iapReadCPUPartID(void);
+IAP_return_t iapReadSerialNumber(void);
 
 #endif

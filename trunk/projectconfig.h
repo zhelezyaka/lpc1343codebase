@@ -433,8 +433,8 @@
     #define CFG_CHIBI_POWER             (0xE9)              // CHB_PWR_EU2_3DBM
     #define CFG_CHIBI_CHANNEL           (0)                 // 868-868.6 MHz
     #define CFG_CHIBI_PANID             (0x1234)
-    #define CFG_CHIBI_PROMISCUOUS       (1)
-    #define CFG_CHIBI_BUFFERSIZE        (1024)
+    #define CFG_CHIBI_PROMISCUOUS       (0)
+    #define CFG_CHIBI_BUFFERSIZE        (128)
 /*=========================================================================*/
 
 
