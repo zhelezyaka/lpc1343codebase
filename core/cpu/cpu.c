@@ -167,26 +167,3 @@ void cpuInit (void)
   // Setup PLL (etc.)
   cpuPllSetup(CPU_MULTIPLIER_6);
 }
-
-/**************************************************************************/
-/*! 
-    @brief Get's the CPU Device ID
-*/
-/**************************************************************************/
-cpuDeviceID_t cpuGetDeviceID (void)
-{
-  switch (SCB_DEVICEID)
-  {
-    case (SCB_DEVICEID_LPC1311FHN33):
-      return cpuDeviceID_LPC1311;
-    case (SCB_DEVICEID_LPC1313FHN33):
-      return cpuDeviceID_LPC1313;
-    case (SCB_DEVICEID_LPC1342FHN33):
-      return cpuDeviceID_LPC1342;
-    case (SCB_DEVICEID_LPC1343FHN33):
-      return cpuDeviceID_LPC1343;
-    default:
-      return cpuDeviceID_Unknown;
-  }
-  return cpuDeviceID_Unknown;
-}

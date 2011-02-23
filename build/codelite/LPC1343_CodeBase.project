@@ -94,6 +94,10 @@
       <File Name="../../core/pwm/pwm.c"/>
       <File Name="../../core/pwm/pwm.h"/>
     </VirtualDirectory>
+    <VirtualDirectory Name="iap">
+      <File Name="../../core/iap/iap.c"/>
+      <File Name="../../core/iap/iap.h"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="drivers">
     <VirtualDirectory Name="chibi">
