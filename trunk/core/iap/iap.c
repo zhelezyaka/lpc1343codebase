@@ -1,6 +1,7 @@
 /**************************************************************************/
 /*! 
     @file     iap.c
+    Source:   http://knowledgebase.nxp.com/showthread.php?t=1594
 */
 /**************************************************************************/
 #include "iap.h"
@@ -12,7 +13,7 @@ uint32_t param_table[5];
  
 /**************************************************************************/
 /*! 
-    Sends the IAP command
+    Sends the IAP command and stores the result
 */
 /**************************************************************************/
 void iap_entry(uint32_t param_tab[], uint32_t result_tab[])
@@ -24,7 +25,7 @@ void iap_entry(uint32_t param_tab[], uint32_t result_tab[])
  
 /**************************************************************************/
 /*! 
-    Returns the CPU's 32-bit CPU Part ID (4 words long)
+    Returns the CPU's 32-bit CPU Part ID
 
     @section Example
 
