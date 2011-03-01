@@ -299,7 +299,7 @@ char* alphaShowDialogue(void)
   char result;
 
   /* These need to be instantiated here since the width and height of 
-     the lcd is retrieved dynamically dependin on screen rotation     */
+     the lcd is retrieved dynamically depending on screen orientation */
   alphaBtnX[0] = ALPHA_COL1_LEFT;
   alphaBtnX[1] = ALPHA_COL2_LEFT;
   alphaBtnX[2] = ALPHA_COL3_LEFT;

@@ -366,6 +366,8 @@ DSTATUS disk_initialize (
         gpioSetDir( CFG_SDCARD_CDPORT, CFG_SDCARD_CDPIN, gpioDirection_Input ); /* Card Detect */
         gpioSetPullup (&IOCON_PIO3_0, gpioPullupMode_Inactive);
 
+        // Wait 20ms for card detect to stabilise
+        systickDelay(20);        
 
 	if (drv) return STA_NOINIT;			/* Supports only single drive */
 	if (Stat & STA_NODISK) return Stat;	/* No card in the socket */

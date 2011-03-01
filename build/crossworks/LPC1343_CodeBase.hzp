@@ -166,11 +166,12 @@
             <folder Name="hw">
               <file file_name="../../drivers/lcd/tft/hw/ILI9325.c">
                 <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
-                <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+                <configuration Name="THUMB Flash Release" build_exclude_from_build="Yes"/>
               </file>
               <file file_name="../../drivers/lcd/tft/hw/st7735.c">
                 <configuration Name="THUMB Flash Release" build_exclude_from_build="Yes"/>
               </file>
+              <file file_name="../../drivers/lcd/tft/hw/st7783.c"/>
             </folder>
             <folder Name="fonts">
               <file file_name="../../drivers/lcd/tft/fonts/inconsolata9.c"/>
@@ -284,6 +285,7 @@
         </folder>
         <file file_name="../../project/cmd_tbl.h"/>
       </folder>
+      <file file_name="../../pn532.h"/>
     </folder>
     <folder Name="System Files">
       <file file_name="$(TargetsDir)/LPC1000/include/CMSIS/system_LPC13xx.c"/>

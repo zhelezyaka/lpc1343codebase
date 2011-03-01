@@ -105,7 +105,7 @@ void WAKEUP_IRQHandler(void)
 
 /**************************************************************************/
 /*! 
-    Setup the clock for the watchdog timer.  The default setting is 10kHz.
+    Setup the clock for the watchdog timer.  The default is 7.8125kHz.
 */
 /**************************************************************************/
 static void pmuWDTClockInit (void)
@@ -413,6 +413,7 @@ void pmuSetupHW(void)
 void pmuRestoreHW(void)
 {
   #ifdef CFG_CHIBI
-    // ToDo: Reinitialise Chibi after wakeup?
+    // Wakeup Chibi/Transceiver
+    chb_sleep(FALSE);
   #endif
 }
