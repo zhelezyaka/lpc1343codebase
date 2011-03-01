@@ -22,7 +22,7 @@
     systemInit();             // Configure cpu and mandatory peripherals
 
     stepperInit(200);         // Initialise driver for 200-step motor
-    stepperSetSpeed(60);      // Set speed to 60 rpm (1 revolutions per second)
+    stepperSetSpeed(60);      // Set speed to 60 rpm (1 revolution per second)
 
     while (1)
     {
@@ -77,8 +77,8 @@
 #include "core/timer32/timer32.h"
 
 static int64_t  stepperPosition = 0;          // The current position (in steps) relative to 'Home'
-static uint32_t stepperStepNumber = 0;        // The current position (in steps) relative to 0Â°
-static uint32_t stepperStepsPerRotation = 0;  // Number of steps in a full 360Â° rotation
+static uint32_t stepperStepNumber = 0;        // The current position (in steps) relative to 0°
+static uint32_t stepperStepsPerRotation = 0;  // Number of steps in a full 360° rotation
 static uint32_t stepperStepDelay = 0;         // Delay in CPU ticks between individual steps
 
 /**************************************************************************/

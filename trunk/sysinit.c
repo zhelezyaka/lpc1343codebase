@@ -43,6 +43,7 @@
 
 #include "core/cpu/cpu.h"
 #include "core/pmu/pmu.h"
+#include "core/adc/adc.h"
 
 #ifdef CFG_PRINTF_UART
   #include "core/uart/uart.h"
@@ -122,6 +123,7 @@ void systemInit()
   systickInit(CFG_SYSTICK_DELAY_IN_MS);     // Start systick timer
   gpioInit();                               // Enable GPIO
   pmuInit();                                // Configure power management
+  adcInit();                                // Config adc pins to save power
 
   // Set LED pin as output and turn LED off
   gpioSetDir(CFG_LED_PORT, CFG_LED_PIN, 1);
