@@ -174,7 +174,7 @@ mcp24aaError_e mcp24aaReadBuffer (uint16_t address, uint8_t *buffer, uint32_t bu
   I2CWriteLength = 3;
   I2CReadLength = bufferLength;
   I2CMasterBuffer[0] = MCP24AA_ADDR;                    // I2C device address
-  I2CMasterBuffer[1] = ((address >> 8) & 0xFF);         // Address (high byte)
+  I2CMasterBuffer[1] = (address >> 8);                  // Address (high byte)
   I2CMasterBuffer[2] = (address & 0xFF);                // Address (low byte)
   // If you wish to read, you need to append the address w/read bit, though this
   // needs to be placed one bit higher than the size of I2CWriteLength which 
@@ -236,7 +236,7 @@ mcp24aaError_e mcp24aaWriteBuffer (uint16_t address, uint8_t *buffer, uint32_t b
   I2CWriteLength = 3 + bufferLength;
   I2CReadLength = 0;
   I2CMasterBuffer[0] = MCP24AA_ADDR;                // I2C device address
-  I2CMasterBuffer[1] = ((address >> 8) & (0xFF));   // Address (high byte)
+  I2CMasterBuffer[1] = (address >> 8);              // Address (high byte)
   I2CMasterBuffer[2] = (address & 0xFF);            // Address (low byte)
   for (i = 0; i < bufferLength; i++)
   {

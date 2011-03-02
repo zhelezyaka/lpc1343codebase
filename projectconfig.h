@@ -48,8 +48,8 @@
     are using by enabling one of the following definitions. The code base
     will then try to configure itself accordingly for that board.
     -----------------------------------------------------------------------*/
-    #define CFG_BRD_LPC1343_REFDESIGN
-    // #define CFG_BRD_LPC1343_TFTLCDSTANDALONE
+    // #define CFG_BRD_LPC1343_REFDESIGN
+    #define CFG_BRD_LPC1343_TFTLCDSTANDALONE
     // #define CFG_BRD_LPC1343_802154USBSTICK
 /*=========================================================================*/
 
@@ -421,7 +421,7 @@
     #endif
 
     #ifdef CFG_BRD_LPC1343_802154USBSTICK
-      #define CFG_INTERFACE
+      // #define CFG_INTERFACE
       #define CFG_INTERFACE_MAXMSGSIZE    (256)
       #define CFG_INTERFACE_PROMPT        "CMD >> "
       #define CFG_INTERFACE_SILENTMODE    (0)
@@ -506,17 +506,17 @@
     -----------------------------------------------------------------------*/
     #ifdef CFG_BRD_LPC1343_REFDESIGN
       #define CFG_I2CEEPROM
-      #define CFG_I2CEEPROM_SIZE          (4096)
+      #define CFG_I2CEEPROM_SIZE          (3072)
     #endif
 
     #ifdef CFG_BRD_LPC1343_TFTLCDSTANDALONE
       #define CFG_I2CEEPROM
-      #define CFG_I2CEEPROM_SIZE          (4096)
+      #define CFG_I2CEEPROM_SIZE          (3072)
     #endif
 
     #ifdef CFG_BRD_LPC1343_802154USBSTICK
       #define CFG_I2CEEPROM
-      #define CFG_I2CEEPROM_SIZE          (4096)
+      #define CFG_I2CEEPROM_SIZE          (3072)
     #endif
 /*=========================================================================*/
 

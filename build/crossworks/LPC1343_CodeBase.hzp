@@ -174,9 +174,23 @@
               <file file_name="../../drivers/lcd/tft/hw/st7783.c"/>
             </folder>
             <folder Name="fonts">
-              <file file_name="../../drivers/lcd/tft/fonts/inconsolata9.c"/>
-              <file file_name="../../drivers/lcd/tft/fonts/inconsolata11.c"/>
-              <file file_name="../../drivers/lcd/tft/fonts/inconsolata16.c"/>
+              <file file_name="../../drivers/lcd/tft/fonts/veramono11.c">
+                <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+              </file>
+              <file file_name="../../drivers/lcd/tft/fonts/veramonobold11.c">
+                <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+              </file>
+              <file file_name="../../drivers/lcd/tft/fonts/veramono9.c">
+                <configuration Name="THUMB Flash Release" build_exclude_from_build="Yes"/>
+              </file>
+              <file file_name="../../drivers/lcd/tft/fonts/veramonobold9.c">
+                <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+              </file>
+              <file file_name="../../drivers/lcd/tft/fonts/dejavusansmono8.c"/>
+              <file file_name="../../drivers/lcd/tft/fonts/dejavusansmonobold8.c"/>
+              <file file_name="../../drivers/lcd/tft/fonts/dejavusanscondensed9.c"/>
+              <file file_name="../../drivers/lcd/tft/fonts/dejavusans9.c"/>
+              <file file_name="../../drivers/lcd/tft/fonts/dejavusansbold9.c"/>
             </folder>
             <file file_name="../../drivers/lcd/tft/drawing.c">
               <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>

@@ -282,10 +282,10 @@ void drawStringSmall(uint16_t x, uint16_t y, uint16_t color, char* text, struct 
 
     @code 
 
-    #include "drivers/lcd/tft/fonts/inconsolata9.h"
+    #include "drivers/lcd/tft/fonts/veramono9.h"
     
-    drawString(1,   90,   COLOR_BLACK,    &inconsolata9ptFontInfo,   "inconsolata 9 (38 chars wide)");
-    drawString(1,   105,  COLOR_BLACK,    &inconsolata9ptFontInfo,   "12345678901234567890123456789012345678");
+    drawString(0, 90,  COLOR_BLACK, &bitstreamVeraSansMono9ptFontInfo, "Vera Mono 9 (30 chars wide)");
+    drawString(0, 105, COLOR_BLACK, &bitstreamVeraSansMono9ptFontInfo, "123456789012345678901234567890");
 
     @endcode
 */
@@ -756,11 +756,11 @@ void drawProgressBar ( uint16_t x, uint16_t y, uint16_t width, uint16_t height, 
     @code 
 
     #include "drivers/lcd/tft/drawing.h"  
-    #include "drivers/lcd/tft/fonts/inconsolata16.h"
+    #include "drivers/lcd/tft/fonts/veramono9.h"
 
-    // Draw two buttons using inconsolata16
-    drawButton(20, 20, 200, 35, &inconsolata16ptFontInfo, 16, "System Settings", FALSE);
-    drawButton(20, 65, 200, 35, &inconsolata16ptFontInfo, 16, "Refresh", FALSE);
+    // Draw two buttons using Vera Mono 9
+    drawButton(20, 20, 200, 35, &bitstreamVeraSansMono9ptFontInfo, 7, "System Settings", FALSE);
+    drawButton(20, 65, 200, 35, &bitstreamVeraSansMono9ptFontInfo, 7, "Refresh", FALSE);
 
     @endcode
 */

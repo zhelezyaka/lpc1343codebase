@@ -54,7 +54,7 @@
 #include "drivers/lcd/tft/lcd.h"
 #include "drivers/lcd/tft/drawing.h"
 #include "drivers/lcd/tft/touchscreen.h"
-#include "drivers/lcd/tft/fonts/inconsolata11.h"
+#include "drivers/lcd/tft/fonts/dejavusans9.h"
 
 /* This kind of messes with your head, but defining the pixel locations
    this way allows the calculator example to be rendered on another
@@ -144,19 +144,19 @@ void alphaRenderButton(uint8_t alphaPage, uint8_t col, uint8_t row, bool selecte
   {
     case '<':
       // Backspace
-      drawButton (alphaBtnX[col], alphaBtnY[row], ALPHA_BTN_WIDTH, ALPHA_BTN_HEIGHT, &inconsolata11ptFontInfo, 7, "<", selected); 
+      drawButton (alphaBtnX[col], alphaBtnY[row], ALPHA_BTN_WIDTH, ALPHA_BTN_HEIGHT, &dejaVuSans9ptFontInfo, 7, "<", selected); 
       break;
     case '*':
       // Page Shift
-      drawButton (alphaBtnX[col], alphaBtnY[row], ALPHA_BTN_WIDTH, ALPHA_BTN_HEIGHT, &inconsolata11ptFontInfo, 7, "^", selected); 
+      drawButton (alphaBtnX[col], alphaBtnY[row], ALPHA_BTN_WIDTH, ALPHA_BTN_HEIGHT, &dejaVuSans9ptFontInfo, 7, "^", selected); 
       break;
     case '>':
       // OK
-      drawButton (alphaBtnX[col], alphaBtnY[row], ALPHA_BTN_WIDTH, ALPHA_BTN_HEIGHT, &inconsolata11ptFontInfo, 7, "OK", selected); 
+      drawButton (alphaBtnX[col], alphaBtnY[row], ALPHA_BTN_WIDTH, ALPHA_BTN_HEIGHT, &dejaVuSans9ptFontInfo, 7, "OK", selected); 
       break;
     default:
       // Standard character
-      drawButton (alphaBtnX[col], alphaBtnY[row], ALPHA_BTN_WIDTH, ALPHA_BTN_HEIGHT, &inconsolata11ptFontInfo, 7, key, selected); 
+      drawButton (alphaBtnX[col], alphaBtnY[row], ALPHA_BTN_WIDTH, ALPHA_BTN_HEIGHT, &dejaVuSans9ptFontInfo, 7, key, selected); 
       break;
   }
 }
@@ -181,7 +181,7 @@ void alphaRefreshScreen(void)
 
   /* Render Text */
   drawRectangleFilled(0, 0, lcdGetWidth() - 1, ALPHA_KEYPAD_TOP - (ALPHA_BTN_SPACING * 2), 0xFFFF);
-  drawString(ALPHA_BTN_SPACING, ALPHA_BTN_SPACING, COLOR_BLACK, &inconsolata11ptFontInfo, (char *)&alphaString);
+  drawString(ALPHA_BTN_SPACING, ALPHA_BTN_SPACING, COLOR_BLACK, &dejaVuSans9ptFontInfo, (char *)&alphaString);
 }
 
 /**************************************************************************/
