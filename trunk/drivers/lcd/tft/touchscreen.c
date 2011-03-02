@@ -41,7 +41,7 @@
 #include "drivers/eeprom/eeprom.h"
 #include "drivers/lcd/tft/lcd.h"
 #include "drivers/lcd/tft/drawing.h"
-#include "drivers/lcd/tft/fonts/inconsolata11.h"
+#include "drivers/lcd/tft/fonts/dejavusans9.h"
 
 static bool _tsInitialised = FALSE;
 static tsCalibrationData_t _calibration;
@@ -63,7 +63,7 @@ static tsCalibrationData_t _calibration;
 /**************************************************************************/
 void tsCalibCenterText(char* text, uint16_t y, uint16_t color)
 {
-  drawString((lcdGetWidth() - drawGetStringWidth(&inconsolata11ptFontInfo, text)) / 2, y, color, &inconsolata11ptFontInfo, text);
+  drawString((lcdGetWidth() - drawGetStringWidth(&dejaVuSans9ptFontInfo, text)) / 2, y, color, &dejaVuSans9ptFontInfo, text);
 }
 
 /**************************************************************************/

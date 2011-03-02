@@ -1,6 +1,23 @@
 v0.8.5 - Ongoing
 ================
 
+- Changed fonts for TTF LCDs.  DejaVu Sans 9 is now used by default
+  in the LPC1343 Code Base.  The following open source fonts have
+  been converted using The Dot Factory (see '/tools/dotfactory') and
+  can be found in '/drivers/lcd/tft/fonts':
+  
+      FONT NAME                         WIDTH
+      -------------------------------   ----------
+    - Bitstream Vera Mono 9             Fixed (8)
+    - Bitstream Vera Mono 9 Bold        Fixed (8)
+    - Bitstream Vera Mono 11            Fixed (9)
+    - Bitstream Vera Mono 11 Bold       Fixed (9)
+    - DejaVu Sans 9                     Variable
+    - DejaVu Sans 9 Bold                Variable
+    - DejaVu Sans Condensed 9           Variable
+    - DejaVu Sans Mono 8                Fixed (8)
+    - DejaVu Sans Mono 8 Bold           Fixed (8)
+    
 - Modified projectconfig.h to select the target board and configure
   the project accordingly.  This isn't ideal, but it's a lot more
   maintainable than have a seperate code base for every board since

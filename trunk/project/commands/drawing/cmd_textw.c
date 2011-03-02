@@ -46,8 +46,7 @@
 #ifdef CFG_TFTLCD    
   #include "drivers/lcd/tft/lcd.h"    
   #include "drivers/lcd/tft/drawing.h"  
-  #include "drivers/lcd/tft/fonts/inconsolata9.h"
-  #include "drivers/lcd/tft/fonts/inconsolata11.h"
+  #include "drivers/lcd/tft/fonts/dejavusans9.h"
 
 /**************************************************************************/
 /*! 
@@ -74,16 +73,8 @@ void cmd_textw(uint8_t argc, char **argv)
   }
   *data_ptr++ = '\0';
 
-  if (font == 1)
-  {
-    // Font 1 = 11 points
-    printf("%d %s", drawGetStringWidth(&inconsolata11ptFontInfo, data), CFG_PRINTF_NEWLINE);
-  }
-  else
-  {
-    // Use 9 point font as default
-    printf("%d %s", drawGetStringWidth(&inconsolata9ptFontInfo, data), CFG_PRINTF_NEWLINE);
-  }
+  // User Vera Mono 9 by default for now
+  printf("%d %s", drawGetStringWidth(&dejaVuSans9ptFontInfo, data), CFG_PRINTF_NEWLINE);
 
   return;
 }
