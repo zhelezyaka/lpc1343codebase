@@ -394,7 +394,7 @@ void lcdDrawHLine(uint16_t x0, uint16_t x1, uint16_t y, uint16_t color)
 
   ili9325SetCursor(x0, y);
   ili9325WriteCmd(0x0022);  // Write Data to GRAM (R22h)
-  for (pixels = 0; pixels < x1 - (x0 + 1); pixels++)
+  for (pixels = 0; pixels < x1 - x0 + 1; pixels++)
   {
     ili9325WriteData(color);
   }
