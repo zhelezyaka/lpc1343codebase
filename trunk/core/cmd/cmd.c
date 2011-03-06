@@ -265,9 +265,8 @@ void cmdInit()
   // Show the menu
   cmdMenu();
 
-  // Set the IRQ pin low to indicate that 
+  // Set the IRQ pin low by default
   #if CFG_INTERFACE_ENABLEIRQ  != 0
-    // Set the IRQ pin low to signal the end of a command
     gpioSetValue(CFG_INTERFACE_IRQPORT, CFG_INTERFACE_IRQPIN, 0);
   #endif
 }

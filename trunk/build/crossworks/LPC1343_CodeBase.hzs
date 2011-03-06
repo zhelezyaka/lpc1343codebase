@@ -1,7 +1,16 @@
 <!DOCTYPE CrossStudio_for_ARM_Session_File>
 <session>
  <Bookmarks/>
- <Breakpoints/>
+ <Breakpoints>
+  <BreakpointListItem group="CM3 Exceptions" type="Exception" state="2" counter="0" expression="BusFault" />
+  <BreakpointListItem group="CM3 Exceptions" type="Exception" state="2" counter="0" expression="ExceptionEntryReturnFault" />
+  <BreakpointListItem group="CM3 Exceptions" type="Exception" state="2" counter="0" expression="HardFault" />
+  <BreakpointListItem group="CM3 Exceptions" type="Exception" state="2" counter="0" expression="MemManage" />
+  <BreakpointListItem group="CM3 Exceptions" type="Exception" state="3" counter="0" expression="Reset" />
+  <BreakpointListItem group="CM3 Exceptions" type="Exception" state="2" counter="0" expression="UsageFault_CheckingError" />
+  <BreakpointListItem group="CM3 Exceptions" type="Exception" state="2" counter="0" expression="UsageFault_Coprocessor" />
+  <BreakpointListItem group="CM3 Exceptions" type="Exception" state="2" counter="0" expression="UsageFault_StateError" />
+ </Breakpoints>
  <ExecutionCountWindow/>
  <Memory1>
   <MemoryWindow autoEvaluate="0" addressText="&amp;header" numColumns="8" sizeText="sizeof(header)" dataSize="1" radix="16" addressSpace="" />
@@ -19,16 +28,11 @@
   <ProjectSessionItem path="LPC1343_CodeBase" name="unnamed" />
   <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase" name="unnamed" />
   <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files" name="unnamed" />
+  <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files;core" name="unnamed" />
+  <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files;core;cmd" name="unnamed" />
   <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files;drivers" name="unnamed" />
-  <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files;drivers;eeprom" name="unnamed" />
-  <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files;drivers;eeprom;mcp24aa" name="unnamed" />
   <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files;drivers;lcd" name="unnamed" />
   <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files;drivers;lcd;tft" name="unnamed" />
-  <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files;drivers;lcd;tft;dialogues" name="unnamed" />
-  <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files;drivers;lcd;tft;fonts" name="unnamed" />
-  <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files;project" name="unnamed" />
-  <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files;project;commands" name="unnamed" />
-  <ProjectSessionItem path="LPC1343_CodeBase;LPC1343_CodeBase;Source Files;project;commands;drawing" name="unnamed" />
  </Project>
  <Register1>
   <RegisterWindow openNodes="SSP0/SSP0CR0;SSP0/SSP0CR1;SSP0/SSP0CPSR;SYSCON" binaryNodes="GPIO1/GPIO1DATA;GPIO2/GPIO2DATA;GPIO2/GPIO2DIR;GPIO3/GPIO3DATA" hiddenNodes="" unsignedNodes="" visibleGroups="GPIO2;SSP0;GPIO1;CPU;GPIO3;SCB;SYSCON" decimalNodes="" octalNodes="" asciiNodes="" />
@@ -64,8 +68,10 @@
   <Watches active="0" update="Never" />
  </Watch4>
  <Files>
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="20" debugPath="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\main.c" y="2" path="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\main.c" left="0" selected="1" name="unnamed" top="0" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\projectconfig.h" y="413" path="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\projectconfig.h" left="0" selected="0" name="unnamed" top="393" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="8" debugPath="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\main.c" y="61" path="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\main.c" left="0" selected="0" name="unnamed" top="44" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\users\kevin\documents\my dropbox\microbuilder\code\lpc1343\lpc1343_codebase\drivers\lcd\tft\drawing.c" y="861" path="C:\users\kevin\documents\my dropbox\microbuilder\code\lpc1343\lpc1343_codebase\drivers\lcd\tft\drawing.c" left="0" selected="0" name="unnamed" top="835" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="8" debugPath="C:\users\kevin\documents\my dropbox\microbuilder\code\lpc1343\lpc1343_codebase\sysinit.c" y="211" path="C:\users\kevin\documents\my dropbox\microbuilder\code\lpc1343\lpc1343_codebase\sysinit.c" left="0" selected="0" name="unnamed" top="187" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\users\kevin\documents\my dropbox\microbuilder\code\lpc1343\lpc1343_codebase\core\cmd\cmd.c" y="269" path="C:\users\kevin\documents\my dropbox\microbuilder\code\lpc1343\lpc1343_codebase\core\cmd\cmd.c" left="0" selected="1" name="unnamed" top="6" />
  </Files>
- <ARMCrossStudioWindow activeProject="LPC1343_CodeBase" autoConnectTarget="Segger J-Link" debugSearchFileMap="" fileDialogInitialDirectory="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\drivers\lcd\tft\fonts" fileDialogDefaultFilter="" autoConnectCapabilities="388991" debugSearchPath="" buildConfiguration="THUMB Flash Release" />
+ <ARMCrossStudioWindow activeProject="LPC1343_CodeBase" autoConnectTarget="Segger J-Link" debugSearchFileMap="" fileDialogInitialDirectory="C:\Users\Kevin\Documents\My Dropbox\microBuilder\Code\LPC1343\LPC1343_CodeBase\drivers\lcd\tft\fonts" fileDialogDefaultFilter="*.c" autoConnectCapabilities="388991" debugSearchPath="" buildConfiguration="THUMB Flash Release" />
 </session>

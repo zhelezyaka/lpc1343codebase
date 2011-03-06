@@ -270,21 +270,29 @@
       <Debugger IsRemote="yes" RemoteHostName="localhost" RemoteHostPort="2331" DebuggerPath="arm-none-eabi-gdb.exe">
         <PostConnectCommands># Make sure that we are using SWD
 monitor interface SWD
+
 # Set monitor to little endian
 monitor endian little
+
 # Set monitor speed
 monitor speed 1000
+
 # Reset device
 monitor reset
+
 # Set device ID to LPC1343
 monitor flash device = LPC1343
+
 # Enable flash download
 monitor flash download = 1
 
 # Transfer the firmware to the device
 load "../../firmware.elf"
 
-monitor reset</PostConnectCommands>
+# Initializing PC and stack pointer
+monitor reg r13 = (0x00000000)
+monitor reg pc = (0x00000004)
+</PostConnectCommands>
         <StartupCommands/>
       </Debugger>
       <PreBuild/>

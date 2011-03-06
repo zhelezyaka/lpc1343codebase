@@ -1,6 +1,12 @@
-v0.8.5 - Ongoing
-================
+v0.8.5 - 7 March 2011
+=====================
 
+- Fixed a problem with GDB script when deploying firmware
+  with Segger J-Link in CodeLite.  Code will now deploy
+  and start executing properly when F5 is pressed (assuming
+  the Segger GDB Server software is running in the background).
+- Interrupts are now disabled while feeding the watchdog as per
+  a warning in the usermanual.
 - Changed fonts for TTF LCDs.  DejaVu Sans 9 is now used by default
   in the LPC1343 Code Base.  The following open source fonts have
   been converted using The Dot Factory (see '/tools/dotfactory') and
