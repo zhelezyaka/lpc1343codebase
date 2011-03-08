@@ -4,10 +4,8 @@
 */
 /**************************************************************************/
 #include <string.h>
-
 #include "pn532.h"
 #include "core/systick/systick.h"
-
 #ifdef PN532_INTERFACE_UART
 #include "core/uart/uart.h"
 #endif
@@ -27,7 +25,8 @@ static byte_t abtRx[256];   // Receive buffer
 void print_hex(const byte_t* pbtData, const size_t szBytes)
 {
   size_t szPos;
-  for (szPos=0; szPos < szBytes; szPos++) {
+  for (szPos=0; szPos < szBytes; szPos++) 
+  {
     printf("%02x ",pbtData[szPos]);
   }
   printf(CFG_PRINTF_NEWLINE);
@@ -40,7 +39,8 @@ void print_hex(const byte_t* pbtData, const size_t szBytes)
 /**************************************************************************/
 void pn532BuildFrame(byte_t * pbtFrame, size_t * pszFrame, const byte_t * pbtData, const size_t szData)
 {
-  if (szData <= PN532_NORMAL_FRAME__DATA_MAX_LEN) {
+  if (szData <= PN532_NORMAL_FRAME__DATA_MAX_LEN) 
+  {
     // LEN - Packet length = data length (len) + checksum (1) + end of stream marker (1)
     pbtFrame[3] = szData + 1;
     // LCS - Packet length checksum
@@ -53,7 +53,8 @@ void pn532BuildFrame(byte_t * pbtFrame, size_t * pszFrame, const byte_t * pbtDat
     // DCS - Calculate data payload checksum
     byte_t btDCS = (256 - 0xD4);
 	size_t szPos;
-    for (szPos = 0; szPos < szData; szPos++) {
+    for (szPos = 0; szPos < szData; szPos++) 
+    {
       btDCS -= pbtData[szPos];
     }
     pbtFrame[6 + szData] = btDCS;
@@ -62,7 +63,9 @@ void pn532BuildFrame(byte_t * pbtFrame, size_t * pszFrame, const byte_t * pbtDat
     pbtFrame[szData + 7] = 0x00;
 
     (*pszFrame) = szData + PN532_NORMAL_FRAME__OVERHEAD;
-  } else {
+  } 
+  else 
+  {
     // FIXME: Build extended frame
     // abort();
   }
@@ -84,6 +87,7 @@ bool pn532Send(const byte_t * pbtData, const size_t szData)
   printf("Sending  (%02d): ", szFrame);
   print_hex(abtFrame, szFrame);
 
+  // Send frame via the appropriate serial bus
   #ifdef PN532_INTERFACE_UART
   uartSend (abtFrame, szFrame);
   #endif
@@ -93,7 +97,8 @@ bool pn532Send(const byte_t * pbtData, const size_t szData)
   uart_pcb_t *pcb = uartGetPCB();
   // FIXME: How long should we wait for ACK?
   systickDelay(10);
-  if (pcb->rxfifo.len < 6) {
+  if (pcb->rxfifo.len < 6) 
+  {
     PN532_DEBUG ("%s", "Unable to read ACK\r\n");
     return false;
   }
@@ -106,7 +111,9 @@ bool pn532Send(const byte_t * pbtData, const size_t szData)
   abtRxBuf[3] = uartRxBufferRead();
   abtRxBuf[4] = uartRxBufferRead();
   abtRxBuf[5] = uartRxBufferRead();
-  if (0 != (memcmp (abtRxBuf, abtAck, 6))) {
+  // Make sure the received ACK matches the prototype
+  if (0 != (memcmp (abtRxBuf, abtAck, 6))) 
+  {
     PN532_DEBUG ("%s", "Invalid ACK\r\n");
     return false;
   }  
@@ -123,33 +130,44 @@ bool pn532ReadResponse(void)
 {
   size_t szRxLen;
 
+  // Read response from the appropriate serial bus
   #ifdef PN532_INTERFACE_UART
-  // Read response and print to screen
-  if (!uartRxBufferReadArray(abtRx, &szRxLen)) {
+  if (!uartRxBufferReadArray(abtRx, &szRxLen)) 
+  {
     return false;
   }
+  #endif
+
+  // Send the raw frame data to printf by default
   printf("Received (%02d): ",szRxLen);
   print_hex(abtRx,szRxLen);
 
   // Check preamble
   const byte_t pn53x_preamble[3] = { 0x00, 0x00, 0xff };
-  if (0 != (memcmp (abtRx, pn53x_preamble, 3))) {
+  if (0 != (memcmp (abtRx, pn53x_preamble, 3))) 
+  {
     PN532_DEBUG("%s", "Frame preamble+start code mismatch\r\n");
     return false;
   }
 
-  if ((0x01 == abtRx[3]) && (0xff == abtRx[4])) {
+  // Check the frame type
+  if ((0x01 == abtRx[3]) && (0xff == abtRx[4])) 
+  {
     // Error frame
     PN532_DEBUG("%s", "Application level error detected\r\n");
     return false;
-  } else if ((0xff == abtRx[3]) && (0xff == abtRx[4])) {
+  } 
+  else if ((0xff == abtRx[3]) && (0xff == abtRx[4])) 
+  {
     // Extended frame
-    // FIXME: Code this
     PN532_DEBUG("%s", "Extended frames currently unsupported\r\n");
     return false;
-  } else {
+  } 
+  else 
+  {
     // Normal frame
-    if (256 != (abtRx[3] + abtRx[4])) {
+    if (256 != (abtRx[3] + abtRx[4])) 
+    {
       // TODO: Retry
       PN532_DEBUG("%s", "Length checksum mismatch\r\n");
       return false;
@@ -158,7 +176,6 @@ bool pn532ReadResponse(void)
   }
 
   return true;
-  #endif
 }
 
 /* ======================================================================
@@ -191,8 +208,9 @@ void pn532Init(void)
   #ifdef PN532_INTERFACE_UART
   PN532_DEBUG("Initialising UART (%d)\r\n", PN532_UART_BAUDRATE);
   uartInit(PN532_UART_BAUDRATE);
-  uartRxBufferInit();
   #endif
+
+  // ToDo: Reset PN532
 
   pcb.initialised = TRUE;
   pcb.awake = FALSE;
@@ -211,7 +229,7 @@ void pn532Wakeup(void)
 
   #ifdef PN532_INTERFACE_UART
   uartSend(abtWakeUp,sizeof(abtWakeUp));
-  systickDelay(100);    // ToDo: Check IRQ for response rather than using an ugly, naive delay
+  systickDelay(100);
   pn532ReadResponse();
   #endif
 
@@ -250,6 +268,7 @@ void pn532Wakeup(void)
 /**************************************************************************/
 void pn532SendCommand(byte_t * abtCommand, size_t szLen)
 {
+  // Wakeup the PN532 if this hasn't already been done
   if (pcb.awake == FALSE) pn532Wakeup();
 
   pn532Send(abtCommand, szLen);
