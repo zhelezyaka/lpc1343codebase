@@ -66,15 +66,17 @@ int main (void)
   // Wait 5 second for someone to open the USB connection
   systickDelay(5000);
   pn532Init();
+  pn532Wakeup();
 
-  byte_t abtCommand[] = { PN532_COMMAND_GETFIRMWAREVERSION };
+  // Try to initialise one ISO14443A target at 106kbps 
+  byte_t abtCommand[] = { PN532_COMMAND_INLISTPASSIVETARGET, 0x01, PN532_MODULATION_ISO14443A };
   
   while (1)
   {
     // Wait for one second
     systickDelay(1000);
 
-    pn532SendCommand(abtCommand);
+    pn532SendCommand(abtCommand, sizeof(abtCommand));
         
     if (gpioGetValue(CFG_LED_PORT, CFG_LED_PIN))  
       gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_ON);
