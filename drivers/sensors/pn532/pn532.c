@@ -167,7 +167,9 @@ bool pn532ReadResponse(void)
 
 /**************************************************************************/
 /*! 
-
+    @brief      Gets a reference to the PN532 peripheral control block,
+                which can be used to determine that state of the PN532
+                IC, buffers, etc.
 */
 /**************************************************************************/
 pn532_pcb_t *pn532GetPCB()
@@ -177,7 +179,8 @@ pn532_pcb_t *pn532GetPCB()
 
 /**************************************************************************/
 /*! 
-
+    @brief      Initialises the appropriate serial bus (UART, etc.),and
+                sets up any buffers or peripherals required by the PN532.
 */
 /**************************************************************************/
 void pn532Init(void)
@@ -197,7 +200,7 @@ void pn532Init(void)
 
 /**************************************************************************/
 /*! 
-    Sends the wakeup sequence
+    @brief      Sends the wakeup sequence to the PN532.
 */
 /**************************************************************************/
 void pn532Wakeup(void)
@@ -217,7 +220,32 @@ void pn532Wakeup(void)
 
 /**************************************************************************/
 /*! 
+    @brief      Sends a byte array of command and parameter data to the
+                PN532, starting with the command byte.  The frame's
+                preamble, checksums, postamble and frame identifier (0xD4)
+                will all be automatically added.
 
+    @param[in]  abtCommand
+                The byte array containg the command and any
+                optional paramaters
+    @param[in]  szLen
+                The number of bytes in abtCommand
+
+    @section Example
+
+    @code
+
+    #include "drivers/sensors/pn532/pn532.h"
+    ...
+    pn532Init();
+    pn532Wakeup();
+
+    // Try to initialise one ISO14443A target at 106kbps 
+    byte_t abtCommand[] = { PN532_COMMAND_INLISTPASSIVETARGET, 0x01, 
+                            PN532_MODULATION_ISO14443A };
+    pn532SendCommand(abtCommand, sizeof(abtCommand));
+
+    @endcode
 */
 /**************************************************************************/
 void pn532SendCommand(byte_t * abtCommand, size_t szLen)

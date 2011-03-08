@@ -51,7 +51,6 @@
 #define PN532_UART_BAUDRATE                   (115200)
 
 // PN532 Protocol control block
-// ToDo: Add busy/IRQ flags, etc.
 typedef struct _pn532_pcb_t
 {
   BOOL initialised;
