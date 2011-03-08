@@ -60,6 +60,15 @@ typedef struct _pn532_pcb_t
 
 enum
 {
+  PN532_MODULATION_ISO14443A          = 0x00,
+  PN532_MODULATION_FELICA_212KBPS     = 0x01,
+  PN532_MODULATION_FELICA_424KBPS     = 0x02,
+  PN532_MODULATION_ISO14443B          = 0x03,
+  PN532_MODULATION_JEWEL              = 0x04
+};
+
+enum
+{
   PN532_COMMAND_DIAGNOSE              = 0x00,
   PN532_COMMAND_GETFIRMWAREVERSION    = 0x02,
   PN532_COMMAND_GETGENERALSTATUS      = 0x04,
@@ -97,6 +106,6 @@ enum
 pn532_pcb_t *pn532GetPCB();
 void pn532Init();
 void pn532Wakeup(void);
-void pn532SendCommand(byte_t * abtCommand);
+void pn532SendCommand(byte_t * abtCommand, size_t szLen);
 
 #endif

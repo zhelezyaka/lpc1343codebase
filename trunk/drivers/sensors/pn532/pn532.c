@@ -220,11 +220,11 @@ void pn532Wakeup(void)
 
 */
 /**************************************************************************/
-void pn532SendCommand(byte_t * abtCommand)
+void pn532SendCommand(byte_t * abtCommand, size_t szLen)
 {
   if (pcb.awake == FALSE) pn532Wakeup();
 
-  pn532Send(abtCommand, sizeof(abtCommand));
+  pn532Send(abtCommand, szLen);
   systickDelay(100);
   pn532ReadResponse();
 }
