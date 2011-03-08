@@ -106,7 +106,7 @@
     -----------------------------------------------------------------------*/
     #define CFG_FIRMWARE_VERSION_MAJOR            (0)
     #define CFG_FIRMWARE_VERSION_MINOR            (8)
-    #define CFG_FIRMWARE_VERSION_REVISION         (5)
+    #define CFG_FIRMWARE_VERSION_REVISION         (6)
 /*=========================================================================*/
 
 
