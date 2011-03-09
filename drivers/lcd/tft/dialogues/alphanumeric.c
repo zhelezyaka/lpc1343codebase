@@ -319,7 +319,7 @@ char* alphaShowDialogue(void)
 
   /* Draw the background and render the buttons */
   drawFill(COLOR_WHITE);
-  drawRectangleFilled(0, ALPHA_KEYPAD_TOP - ALPHA_BTN_SPACING, lcdGetWidth() - 1, lcdGetHeight() - 1, COLOR_DARKERGRAY);
+  drawRectangleFilled(0, ALPHA_KEYPAD_TOP - ALPHA_BTN_SPACING, lcdGetWidth() - 1, lcdGetHeight() - 1, COLOR_DARKGRAY);
   drawLine(0, (ALPHA_KEYPAD_TOP - ALPHA_BTN_SPACING) + 1, lcdGetWidth() - 1, (ALPHA_KEYPAD_TOP - ALPHA_BTN_SPACING) + 1, COLOR_LIGHTGRAY);
   alphaRefreshScreen();
 
