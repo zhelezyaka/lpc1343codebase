@@ -57,7 +57,11 @@ static lcdProperties_t ili9325Properties = { 240, 320, TRUE, TRUE };
 /* Private Methods                               */
 /*************************************************/
 
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Causes a brief delay (10 ticks per unit)
+*/
+/**************************************************************************/
 void ili9325Delay(unsigned int t)
 {
   unsigned char t1;
@@ -68,7 +72,11 @@ void ili9325Delay(unsigned int t)
   }
 }
 
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Writes the supplied 16-bit command using an 8-bit interface
+*/
+/**************************************************************************/
 void ili9325WriteCmd(uint16_t command) 
 {
   // Compiled with -Os on GCC 4.4 this works out to 25 cycles
@@ -87,7 +95,11 @@ void ili9325WriteCmd(uint16_t command)
   SET_WR_CS;            // Saves 7 commands compared to "SET_WR; SET_CS;"
 }
 
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Writes the supplied 16-bit data using an 8-bit interface
+*/
+/**************************************************************************/
 void ili9325WriteData(uint16_t data)
 {
   CLR_CS_SET_CD_RD_WR;  // Saves 18 commands compared to SET_CD; SET_RD; SET_WR; CLR_CS"
@@ -99,7 +111,11 @@ void ili9325WriteData(uint16_t data)
   SET_WR_CS;            // Saves 7 commands compared to "SET_WR, SET_CS;"
 }
 
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Reads a 16-bit value from the 8-bit data bus
+*/
+/**************************************************************************/
 uint16_t ili9325ReadData(void)
 {
   // ToDo: Optimise this method!
@@ -137,21 +153,33 @@ uint16_t ili9325ReadData(void)
   return d;
 }
 
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Reads a 16-bit value
+*/
+/**************************************************************************/
 uint16_t ili9325Read(uint16_t addr)
 {
   ili9325WriteCmd(addr);
   return ili9325ReadData();
 }
 
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Sends a 16-bit command + 16-bit data
+*/
+/**************************************************************************/
 void ili9325Command(uint16_t command, uint16_t data)
 {
   ili9325WriteCmd(command);
   ili9325WriteData(data);
 }
 
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Reverses a 16-bit color from BGR to RGB
+*/
+/**************************************************************************/
 uint16_t ili9325BGR2RGB(uint16_t color)   
 {   
   uint16_t r, g, b;   
@@ -163,16 +191,22 @@ uint16_t ili9325BGR2RGB(uint16_t color)
   return( (b<<11) + (g<<5) + (r<<0) );
 }  
 
-/*************************************************/
-/* Returns the 4-hexdigit controller code        */
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Returns the 16-bit (4-hexdigit) controller code
+*/
+/**************************************************************************/
 uint16_t ili9325Type(void)
 {
-  ili9325WriteCmd(0x0);
+  ili9325WriteCmd(ILI9325_COMMANDS_DRIVERCODEREAD);
   return ili9325ReadData();
 }
 
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Sets the cursor to the specified X/Y position
+*/
+/**************************************************************************/
 void ili9325SetCursor(uint16_t x, uint16_t y)
 {
   uint16_t al, ah;
@@ -188,11 +222,15 @@ void ili9325SetCursor(uint16_t x, uint16_t y)
     ah = y;
   }
 
-  ili9325Command(0x0020, al);
-  ili9325Command(0x0021, ah);
+  ili9325Command(ILI9325_COMMANDS_HORIZONTALGRAMADDRESSSET, al);
+  ili9325Command(ILI9325_COMMANDS_VERTICALGRAMADDRESSSET, ah);
 }
 
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Sends the initialisation sequence to the display controller
+*/
+/**************************************************************************/
 void ili9325InitDisplay(void)
 {
   // Clear data line
@@ -209,69 +247,92 @@ void ili9325InitDisplay(void)
   SET_RESET;
   ili9325Delay(500);
 
-  ili9325Command(0x0001, 0x0100);     // Driver Output Control Register (R01h)
-  ili9325Command(0x0002, 0x0700);     // LCD Driving Waveform Control (R02h)
-  ili9325Command(0x0003, 0x1030);     // Entry Mode (R03h)  
-  ili9325Command(0x0008, 0x0302);
-  ili9325Command(0x0009, 0x0000);
-  ili9325Command(0x000A, 0x0000);     // Fmark On
-  ili9325Command(0x0010, 0x0000);     // Power Control 1 (R10h)
-  ili9325Command(0x0011, 0x0007);     // Power Control 2 (R11h)
-  ili9325Command(0x0012, 0x0000);     // Power Control 3 (R12h)
-  ili9325Command(0x0013, 0x0000);     // Power Control 4 (R13h)
+  ili9325Command(ILI9325_COMMANDS_DRIVEROUTPUTCONTROL1, 0x0100);  // Driver Output Control Register (R01h)
+  ili9325Command(ILI9325_COMMANDS_LCDDRIVINGCONTROL, 0x0700);     // LCD Driving Waveform Control (R02h)
+  ili9325Command(ILI9325_COMMANDS_ENTRYMODE, 0x1030);             // Entry Mode (R03h)  
+  ili9325Command(ILI9325_COMMANDS_DISPLAYCONTROL2, 0x0302);
+  ili9325Command(ILI9325_COMMANDS_DISPLAYCONTROL3, 0x0000);
+  ili9325Command(ILI9325_COMMANDS_DISPLAYCONTROL4, 0x0000);       // Fmark On
+  ili9325Command(ILI9325_COMMANDS_POWERCONTROL1, 0x0000);         // Power Control 1 (R10h)
+  ili9325Command(ILI9325_COMMANDS_POWERCONTROL2, 0x0007);         // Power Control 2 (R11h)
+  ili9325Command(ILI9325_COMMANDS_POWERCONTROL3, 0x0000);         // Power Control 3 (R12h)
+  ili9325Command(ILI9325_COMMANDS_POWERCONTROL4, 0x0000);         // Power Control 4 (R13h)
   ili9325Delay(1000);  
-  ili9325Command(0x0010, 0x14B0);     // Power Control 1 (R10h)  
+  ili9325Command(ILI9325_COMMANDS_POWERCONTROL1, 0x14B0);         // Power Control 1 (R10h)  
   ili9325Delay(500);  
-  ili9325Command(0x0011, 0x0007);     // Power Control 2 (R11h)  
+  ili9325Command(ILI9325_COMMANDS_POWERCONTROL2, 0x0007);         // Power Control 2 (R11h)  
   ili9325Delay(500);  
-  ili9325Command(0x0012, 0x008E);     // Power Control 3 (R12h)
-  ili9325Command(0x0013, 0x0C00);     // Power Control 4 (R13h)
-  ili9325Command(0x0029, 0x0015);     // NVM read data 2 (R29h)
+  ili9325Command(ILI9325_COMMANDS_POWERCONTROL3, 0x008E);         // Power Control 3 (R12h)
+  ili9325Command(ILI9325_COMMANDS_POWERCONTROL4, 0x0C00);         // Power Control 4 (R13h)
+  ili9325Command(ILI9325_COMMANDS_POWERCONTROL7, 0x0015);         // NVM read data 2 (R29h)
   ili9325Delay(500);
-  ili9325Command(0x0030, 0x0000);     // Gamma Control 1
-  ili9325Command(0x0031, 0x0107);     // Gamma Control 2
-  ili9325Command(0x0032, 0x0000);     // Gamma Control 3
-  ili9325Command(0x0035, 0x0203);     // Gamma Control 6
-  ili9325Command(0x0036, 0x0402);     // Gamma Control 7
-  ili9325Command(0x0037, 0x0000);     // Gamma Control 8
-  ili9325Command(0x0038, 0x0207);     // Gamma Control 9
-  ili9325Command(0x0039, 0x0000);     // Gamma Control 10
-  ili9325Command(0x003C, 0x0203);     // Gamma Control 13
-  ili9325Command(0x003D, 0x0403);     // Gamma Control 14
-  ili9325Command(0x0050, 0x0000);     // Window Horizontal RAM Address Start (R50h)
-  ili9325Command(0x0051, ili9325Properties.width - 1);    // Window Horizontal RAM Address End (R51h)
-  ili9325Command(0x0052, 0X0000);     // Window Vertical RAM Address Start (R52h)
-  ili9325Command(0x0053, ili9325Properties.height - 1);    // Window Vertical RAM Address End (R53h)
-  ili9325Command(0x0060, 0xa700);     // Driver Output Control (R60h)
-  ili9325Command(0x0061, 0x0003);     // Driver Output Control (R61h) - enable VLE
-  ili9325Command(0x0090, 0X0010);     // Panel Interface Control 1 (R90h)
+  ili9325Command(ILI9325_COMMANDS_GAMMACONTROL1, 0x0000);         // Gamma Control 1
+  ili9325Command(ILI9325_COMMANDS_GAMMACONTROL2, 0x0107);         // Gamma Control 2
+  ili9325Command(ILI9325_COMMANDS_GAMMACONTROL3, 0x0000);         // Gamma Control 3
+  ili9325Command(ILI9325_COMMANDS_GAMMACONTROL4, 0x0203);         // Gamma Control 4
+  ili9325Command(ILI9325_COMMANDS_GAMMACONTROL5, 0x0402);         // Gamma Control 5
+  ili9325Command(ILI9325_COMMANDS_GAMMACONTROL6, 0x0000);         // Gamma Control 6
+  ili9325Command(ILI9325_COMMANDS_GAMMACONTROL7, 0x0207);         // Gamma Control 7
+  ili9325Command(ILI9325_COMMANDS_GAMMACONTROL8, 0x0000);         // Gamma Control 8
+  ili9325Command(ILI9325_COMMANDS_GAMMACONTROL9, 0x0203);         // Gamma Control 9
+  ili9325Command(ILI9325_COMMANDS_GAMMACONTROL10, 0x0403);        // Gamma Control 10
+  ili9325Command(ILI9325_COMMANDS_HORIZONTALADDRESSSTARTPOSITION, 0x0000);                      // Window Horizontal RAM Address Start (R50h)
+  ili9325Command(ILI9325_COMMANDS_HORIZONTALADDRESSENDPOSITION, ili9325Properties.width - 1);   // Window Horizontal RAM Address End (R51h)
+  ili9325Command(ILI9325_COMMANDS_VERTICALADDRESSSTARTPOSITION, 0X0000);                        // Window Vertical RAM Address Start (R52h)
+  ili9325Command(ILI9325_COMMANDS_VERTICALADDRESSENDPOSITION, ili9325Properties.height - 1);    // Window Vertical RAM Address End (R53h)
+  ili9325Command(ILI9325_COMMANDS_DRIVEROUTPUTCONTROL2, 0xa700);    // Driver Output Control (R60h)
+  ili9325Command(ILI9325_COMMANDS_BASEIMAGEDISPLAYCONTROL, 0x0003); // Driver Output Control (R61h) - enable VLE
+  ili9325Command(ILI9325_COMMANDS_PANELINTERFACECONTROL1, 0X0010);  // Panel Interface Control 1 (R90h)
 
   // Display On
-  ili9325Command(0x0007, 0x0133);     // Display Control (R07h)
+  ili9325Command(ILI9325_COMMANDS_DISPLAYCONTROL1, 0x0133);     // Display Control (R07h)
   ili9325Delay(500);
-  ili9325WriteCmd(0x0022);
+  ili9325WriteCmd(ILI9325_COMMANDS_WRITEDATATOGRAM);
 }
 
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Sets the cursor to the home position (0,0)
+*/
+/**************************************************************************/
 void ili9325Home(void)
 {
   ili9325SetCursor(0, 0);
-  ili9325WriteCmd(0x0022);            // Write Data to GRAM (R22h)
+  ili9325WriteCmd(ILI9325_COMMANDS_WRITEDATATOGRAM);            // Write Data to GRAM (R22h)
 }
 
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Sets the window confines
+*/
+/**************************************************************************/
 void ili9325SetWindow(uint16_t x, uint16_t y, uint16_t height, uint16_t width)
 {
   // Window horizontal RAM address start
-  if (x >= height) ili9325Command(0x50, (x - height + 1));
-  else ili9325Command(0x50, 0);
+  if (x >= height)
+  {
+    ili9325Command(ILI9325_COMMANDS_HORIZONTALADDRESSSTARTPOSITION, (x - height + 1));
+  }
+  else
+  {
+    ili9325Command(ILI9325_COMMANDS_HORIZONTALADDRESSSTARTPOSITION, 0);
+  }
+
   // Window horizontal GRAM address end
-  ili9325Command(0x51, x);
+  ili9325Command(ILI9325_COMMANDS_HORIZONTALADDRESSENDPOSITION, x);
+
   // Window vertical GRAM address start
-  if (y >= width) ili9325Command(0x52, (y - width + 1));
-  else ili9325Command(0x52, 0);
+  if (y >= width)
+  {
+    ili9325Command(ILI9325_COMMANDS_VERTICALADDRESSSTARTPOSITION, (y - width + 1));
+  }
+  else
+  {
+    ili9325Command(ILI9325_COMMANDS_VERTICALADDRESSSTARTPOSITION, 0);
+  }
+
   // Window vertical GRAM address end
-  ili9325Command(0x53, y);
+  ili9325Command(ILI9325_COMMANDS_VERTICALADDRESSENDPOSITION, y);
 
   ili9325SetCursor(x, y);
 }
@@ -280,7 +341,11 @@ void ili9325SetWindow(uint16_t x, uint16_t y, uint16_t height, uint16_t width)
 /* Public Methods                                */
 /*************************************************/
 
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Configures any pins or HW and initialises the LCD controller
+*/
+/**************************************************************************/
 void lcdInit(void)
 {
   // Set control line pins to output
@@ -318,14 +383,22 @@ void lcdInit(void)
   tsInit();
 }
 
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Enables or disables the LCD backlight
+*/
+/**************************************************************************/
 void lcdBacklight(bool state)
 {
   // Set the backlight
   gpioSetValue(ILI9325_BL_PORT, ILI9325_BL_PIN, state ? 0 : 1);
 }
 
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Renders a simple test pattern on the LCD
+*/
+/**************************************************************************/
 void lcdTest(void)
 {
   uint32_t i,j;
@@ -347,7 +420,11 @@ void lcdTest(void)
   }
 }
 
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Fills the LCD with the specified 16-bit color
+*/
+/**************************************************************************/
 void lcdFillRGB(uint16_t data)
 {
   unsigned int i;
@@ -360,15 +437,24 @@ void lcdFillRGB(uint16_t data)
   } 
 }
 
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Draws a single pixel at the specified X/Y location
+*/
+/**************************************************************************/
 void lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color)
 {
   ili9325SetCursor(x, y);
-  ili9325WriteCmd(0x0022);  // Write Data to GRAM (R22h)
+  ili9325WriteCmd(ILI9325_COMMANDS_WRITEDATATOGRAM);  // Write Data to GRAM (R22h)
   ili9325WriteData(color);
 }
 
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Optimised routine to draw a horizontal line faster than
+            setting individual pixels
+*/
+/**************************************************************************/
 void lcdDrawHLine(uint16_t x0, uint16_t x1, uint16_t y, uint16_t color)
 {
   // Allows for slightly better performance than setting individual pixels
@@ -393,14 +479,19 @@ void lcdDrawHLine(uint16_t x0, uint16_t x1, uint16_t y, uint16_t color)
   }
 
   ili9325SetCursor(x0, y);
-  ili9325WriteCmd(0x0022);  // Write Data to GRAM (R22h)
+  ili9325WriteCmd(ILI9325_COMMANDS_WRITEDATATOGRAM);  // Write Data to GRAM (R22h)
   for (pixels = 0; pixels < x1 - x0 + 1; pixels++)
   {
     ili9325WriteData(color);
   }
 }
 
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Optimised routine to draw a vertical line faster than
+            setting individual pixels
+*/
+/**************************************************************************/
 void lcdDrawVLine(uint16_t x, uint16_t y0, uint16_t y1, uint16_t color)
 {
   // Allows for slightly better performance than setting individual pixels
@@ -416,22 +507,30 @@ void lcdDrawVLine(uint16_t x, uint16_t y0, uint16_t y1, uint16_t color)
   lcdSetOrientation(orientation);
 }
 
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Gets the 16-bit color of the pixel at the specified location
+*/
+/**************************************************************************/
 uint16_t lcdGetPixel(uint16_t x, uint16_t y)
 {
   uint16_t preFetch = 0;
 
   ili9325SetCursor(x, y);
-  ili9325WriteCmd(0x0022);
+  ili9325WriteCmd(ILI9325_COMMANDS_WRITEDATATOGRAM);
   preFetch = ili9325ReadData();
 
   // Eeek ... why does this need to be done twice for a proper value?!?
   ili9325SetCursor(x, y);
-  ili9325WriteCmd(0x0022);
+  ili9325WriteCmd(ILI9325_COMMANDS_WRITEDATATOGRAM);
   return ili9325ReadData();
 }
 
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Sets the LCD orientation to horizontal and vertical
+*/
+/**************************************************************************/
 void lcdSetOrientation(lcdOrientation_t orientation)
 {
   uint16_t entryMode = 0x1030;
@@ -449,20 +548,29 @@ void lcdSetOrientation(lcdOrientation_t orientation)
       break;
   }
 
-  ili9325Command(0x0003, entryMode);
-  ili9325Command(0x0001, outputControl);
+  ili9325Command(ILI9325_COMMANDS_ENTRYMODE, entryMode);
+  ili9325Command(ILI9325_COMMANDS_DRIVEROUTPUTCONTROL1, outputControl);
   lcdOrientation = orientation;
 
   ili9325SetCursor(0, 0);
 }
 
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Gets the current screen orientation (horizontal or vertical)
+*/
+/**************************************************************************/
 lcdOrientation_t lcdGetOrientation(void)
 {
   return lcdOrientation;
 }
 
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Gets the width in pixels of the LCD screen (varies depending
+            on the current screen orientation)
+*/
+/**************************************************************************/
 uint16_t lcdGetWidth(void)
 {
   switch (lcdOrientation) 
@@ -476,7 +584,12 @@ uint16_t lcdGetWidth(void)
   }
 }
 
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Gets the height in pixels of the LCD screen (varies depending
+            on the current screen orientation)
+*/
+/**************************************************************************/
 uint16_t lcdGetHeight(void)
 {
   switch (lcdOrientation) 
@@ -490,7 +603,12 @@ uint16_t lcdGetHeight(void)
   }
 }
 
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Scrolls the contents of the LCD screen vertically the
+            specified number of pixels using a HW optimised routine
+*/
+/**************************************************************************/
 void lcdScroll(int16_t pixels, uint16_t fillColor)
 {
   int16_t y = pixels;
@@ -498,17 +616,26 @@ void lcdScroll(int16_t pixels, uint16_t fillColor)
     y += 320;
   while (y >= 320)
     y -= 320;
-  ili9325WriteCmd(0x6A);
+  ili9325WriteCmd(ILI9325_COMMANDS_VERTICALSCROLLCONTROL);
   ili9325WriteData(y);
 }
 
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Gets the controller's 16-bit (4 hexdigit) ID
+*/
+/**************************************************************************/
 uint16_t lcdGetControllerID(void)
 {
   return ili9325Type();
 }
 
-/*************************************************/
+/**************************************************************************/
+/*! 
+    @brief  Returns the LCDs 'lcdProperties_t' that describes the LCDs
+            generic capabilities and dimensions
+*/
+/**************************************************************************/
 lcdProperties_t lcdGetProperties(void)
 {
     return ili9325Properties;

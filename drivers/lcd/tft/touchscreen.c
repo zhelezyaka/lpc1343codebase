@@ -43,39 +43,21 @@
 #include "drivers/lcd/tft/drawing.h"
 #include "drivers/lcd/tft/fonts/dejavusans9.h"
 
+#define TS_CALIBRATION_OUTOFRANGE (300)     // Maximum value for calibration
+#define TS_ADC_LIMIT              (0x03FF)  // 10-bit ADC = 0..1023
+
+#define TS_LINE1                  "Touch the center of"
+#define TS_LINE2                  "the red circle using"
+#define TS_LINE3                  "a pen or stylus"
+
 static bool _tsInitialised = FALSE;
 static tsCalibrationData_t _calibration;
-
-#define TS_LINE1 "Touch the center of"
-#define TS_LINE2 "the red circle using"
-#define TS_LINE3 "a pen or stylus"
 
 /**************************************************************************/
 /*                                                                        */
 /* ----------------------- Private Methods ------------------------------ */
 /*                                                                        */
 /**************************************************************************/
-
-/**************************************************************************/
-/*!
-    @brief  Centers a line of text horizontally
-*/
-/**************************************************************************/
-void tsCalibCenterText(char* text, uint16_t y, uint16_t color)
-{
-  drawString((lcdGetWidth() - drawGetStringWidth(&dejaVuSans9ptFontInfo, text)) / 2, y, color, &dejaVuSans9ptFontInfo, text);
-}
-
-/**************************************************************************/
-/*!
-    @brief  Draws a circular test point
-*/
-/**************************************************************************/
-void tsCalibDrawTestPoint(uint16_t x, uint16_t y, uint16_t radius)
-{
-  drawCircle(x, y, radius, COLOR_RED);
-  drawCircle(x, y, radius + 2, COLOR_MEDIUMGRAY);
-}
 
 /**************************************************************************/
 /*!
@@ -260,6 +242,39 @@ uint8_t tsCalculatePressure(uint32_t x, uint32_t z1, uint32_t z2)
 }
 
 /**************************************************************************/
+/*!
+    @brief  Centers a line of text horizontally
+*/
+/**************************************************************************/
+void tsCalibCenterText(char* text, uint16_t y, uint16_t color)
+{
+  drawString((lcdGetWidth() - drawGetStringWidth(&dejaVuSans9ptFontInfo, text)) / 2, y, color, &dejaVuSans9ptFontInfo, text);
+}
+
+/**************************************************************************/
+/*!
+    @brief  Renders the calibration screen with an appropriately
+            placed test point and waits for a touch event
+*/
+/**************************************************************************/
+void tsRenderCalibrationScreen(uint16_t x, uint16_t y, uint16_t radius)
+{
+
+  drawFill(COLOR_WHITE);
+  tsCalibCenterText(TS_LINE1, 50, COLOR_DARKGRAY);
+  tsCalibCenterText(TS_LINE2, 65, COLOR_DARKGRAY);
+  tsCalibCenterText(TS_LINE3, 80, COLOR_DARKGRAY);
+  drawCircle(x, y, radius, COLOR_RED);
+  drawCircle(x, y, radius + 2, COLOR_MEDIUMGRAY);
+
+  // Wait for touch
+  uint32_t z1, z2;
+  z1 = z2 = 0;
+  while (z2 < CFG_TFTLCD_TS_THRESHOLD) 
+    tsReadZ(&z1, &z2);
+}
+
+/**************************************************************************/
 /*                                                                        */
 /* ----------------------- Public Methods ------------------------------- */
 /*                                                                        */
@@ -304,84 +319,101 @@ void tsInit(void)
 /**************************************************************************/
 void tsCalibrate(void)
 {
-  uint32_t z1, z2;
-  z1 = z2 = 0;
-
-  /* -------------- Welcome Screen --------------- */
-  drawFill(COLOR_WHITE);
-  tsCalibCenterText(TS_LINE1, 50, COLOR_DARKGRAY);
-  tsCalibCenterText(TS_LINE2, 65, COLOR_DARKGRAY);
-  tsCalibCenterText(TS_LINE3, 80, COLOR_DARKGRAY);
-  tsCalibDrawTestPoint(lcdGetWidth() / 2, lcdGetHeight() / 2, 5);
-
-  // Wait for touch
-  while (z2 < CFG_TFTLCD_TS_THRESHOLD) 
-  { 
-    tsReadZ(&z1, &z2); 
-  }
-  systickDelay(250);
-
-  /* -------------- CALIBRATE X --------------- */
-  drawFill(COLOR_WHITE);
-  tsCalibCenterText(TS_LINE1, 50, COLOR_DARKGRAY);
-  tsCalibCenterText(TS_LINE2, 65, COLOR_DARKGRAY);
-  tsCalibCenterText(TS_LINE3, 80, COLOR_DARKGRAY);
-  tsCalibDrawTestPoint(5, 5, 5);
-
-  // Wait for touch
-  z1 = z2 = 0;
-  while (z2 < CFG_TFTLCD_TS_THRESHOLD) 
-  {
-    tsReadZ(&z1, &z2); 
-  }
-
+  // Determine screen orientation before starting calibration
   lcdOrientation_t orientation;
   orientation = lcdGetOrientation();
 
-  if (orientation == LCD_ORIENTATION_LANDSCAPE)
-  {
-    _calibration.offsetLeft = tsReadY();
-    _calibration.offsetTop = tsReadX();
-  }
-  else
-  {
-    _calibration.offsetLeft = tsReadX();
-    _calibration.offsetTop = tsReadY();
-  }
+  /* -------------- Welcome Screen --------------- */
+  tsRenderCalibrationScreen(lcdGetWidth() / 2, lcdGetHeight() / 2, 5);
 
   // Delay to avoid multiple touch events
   systickDelay(250);
 
-  /* -------------- CALIBRATE Y --------------- */
-  drawFill(COLOR_WHITE);
-  tsCalibCenterText(TS_LINE1, 50, COLOR_DARKGRAY);
-  tsCalibCenterText(TS_LINE2, 65, COLOR_DARKGRAY);
-  tsCalibCenterText(TS_LINE3, 80, COLOR_DARKGRAY);
-  tsCalibDrawTestPoint(lcdGetWidth() - 5, lcdGetHeight() - 5, 5);
+  /* -------------- CALIBRATE TOP-LEFT --------------- */
+tsTopLeft:
+  // Read X/Y depending on screen orientation
+  tsRenderCalibrationScreen(3, 3, 5);
+  _calibration.offsetLeft = orientation == LCD_ORIENTATION_LANDSCAPE ? tsReadY() : tsReadX();
+  _calibration.offsetTop = orientation == LCD_ORIENTATION_LANDSCAPE ? tsReadX() : tsReadY();
 
-  // Wait for touch
-  z1 = z2 = 0;
-  while (z2 < CFG_TFTLCD_TS_THRESHOLD)
-  {
-    tsReadZ(&z1, &z2);
-  }
+  // Make sure values are in range
+  if (_calibration.offsetLeft > TS_CALIBRATION_OUTOFRANGE || _calibration.offsetTop > TS_CALIBRATION_OUTOFRANGE)
+    goto tsTopLeft;  
 
+  // Delay to avoid multiple touch events
+  systickDelay(250);
+
+  /* -------------- CALIBRATE BOTTOM-RIGHT  --------------- */
+tsBottomRight:
+  tsRenderCalibrationScreen(lcdGetWidth() - 4, lcdGetHeight() - 4, 5);
+
+  // Read X/Y depending on screen orientation
+  _calibration.offsetRight = orientation == LCD_ORIENTATION_LANDSCAPE ? TS_ADC_LIMIT - tsReadY() : TS_ADC_LIMIT - tsReadX();
+  _calibration.offsetBottom = orientation == LCD_ORIENTATION_LANDSCAPE ? TS_ADC_LIMIT - tsReadX() : TS_ADC_LIMIT - tsReadY();
+
+  // Redo test if value is out of range
+  if (_calibration.offsetRight > TS_CALIBRATION_OUTOFRANGE || _calibration.offsetBottom > TS_CALIBRATION_OUTOFRANGE)
+    goto tsBottomRight;  
+
+  // Delay to avoid multiple touch events
+  systickDelay(250);
+
+  /* -------------- CALIBRATE TOP-RIGHT  --------------- */
+tsTopRight:
+  tsRenderCalibrationScreen(lcdGetWidth() - 4, 3, 5);
+
+  uint16_t right2, top2;
   if (orientation == LCD_ORIENTATION_LANDSCAPE)
   {
-    _calibration.offsetRight = 1024 - tsReadY();
-    _calibration.offsetBottom = 1024 - tsReadX();
+    right2 = TS_ADC_LIMIT - tsReadY();
+    top2 = tsReadX();
   }
   else
   {
-    _calibration.offsetRight = 1024 - tsReadX();
-    _calibration.offsetBottom = 1024 - tsReadY();
+    right2 = tsReadX();
+    top2 = TS_ADC_LIMIT - tsReadY();
   }
 
-  _calibration.divisorX = ((1024 - (_calibration.offsetLeft + _calibration.offsetRight)) * 100) / lcdGetWidth();
-  _calibration.divisorY = ((1024 - (_calibration.offsetTop + _calibration.offsetBottom)) * 100) / lcdGetHeight();
+  // Redo test if value is out of range
+  if (right2 > TS_CALIBRATION_OUTOFRANGE || top2 > TS_CALIBRATION_OUTOFRANGE)
+    goto tsTopRight;  
 
-  /* -------------- Test Results --------------- */
-  // ToDo: Confirm values and redo calibration if necessary
+  // Average readings
+  _calibration.offsetRight = (_calibration.offsetRight + right2) / 2;
+  _calibration.offsetTop = (_calibration.offsetTop + top2) / 2;
+
+  // Delay to avoid multiple touch events
+  systickDelay(250);
+
+  /* -------------- CALIBRATE BOTTOM-LEFT --------------- */
+tsBottomLeft:
+  tsRenderCalibrationScreen(3, lcdGetHeight() - 4, 5);
+
+  uint16_t left2, bottom2;
+  if (orientation == LCD_ORIENTATION_LANDSCAPE)
+  {
+    left2 = tsReadY();
+    bottom2 = TS_ADC_LIMIT - tsReadX();
+  }
+  else
+  {
+    left2 = TS_ADC_LIMIT - tsReadX();
+    bottom2 = tsReadY();
+  }
+
+  // Redo test if value is out of range
+  if (left2 > TS_CALIBRATION_OUTOFRANGE || bottom2 > TS_CALIBRATION_OUTOFRANGE)
+    goto tsBottomLeft;
+
+  // Average readings
+  _calibration.offsetLeft = (_calibration.offsetLeft + left2) / 2;
+  _calibration.offsetBottom = (_calibration.offsetBottom + bottom2) / 2;
+
+  // Delay to avoid multiple touch events
+  systickDelay(250);
+
+  _calibration.divisorX = ((TS_ADC_LIMIT - (_calibration.offsetLeft + _calibration.offsetRight)) * 100) / lcdGetWidth();
+  _calibration.divisorY = ((TS_ADC_LIMIT - (_calibration.offsetTop + _calibration.offsetBottom)) * 100) / lcdGetHeight();
 
   /* -------------- Persist Data --------------- */
   // Persist data to EEPROM
@@ -491,11 +523,11 @@ int32_t tsWaitForEvent(tsTouchData_t* data, uint32_t timeoutMS)
   yRaw = tsReadX();    // X and Y are reverse
 
   // Normalise X
-  data->x = ((xRaw - _calibration.offsetLeft > 1024 ? 0 : xRaw - _calibration.offsetLeft) * 100) / _calibration.divisorX;
+  data->x = ((xRaw - _calibration.offsetLeft > TS_ADC_LIMIT ? 0 : xRaw - _calibration.offsetLeft) * 100) / _calibration.divisorX;
   if (data->x > lcdGetWidth() - 1) data->x = lcdGetWidth() - 1;
 
   // Normalise Y
-  data->y = ((yRaw - _calibration.offsetTop > 1024 ? 0 : yRaw - _calibration.offsetTop) * 100) / _calibration.divisorY;
+  data->y = ((yRaw - _calibration.offsetTop > TS_ADC_LIMIT ? 0 : yRaw - _calibration.offsetTop) * 100) / _calibration.divisorY;
   if (data->y > lcdGetHeight() - 1) data->y = lcdGetHeight() - 1;
 
   // Indicate no timeout occurred
