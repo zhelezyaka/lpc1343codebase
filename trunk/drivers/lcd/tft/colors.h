@@ -51,8 +51,8 @@
 #define COLOR_WHITE         0xFFFF
 
 // Grayscale Values
-#define COLOR_DARKGRAY      0x18E3    //  30  30  30
-#define COLOR_DARKERGRAY    0x528A    //  80  80  80
+#define COLOR_DARKERGRAY    0x18E3    //  30  30  30
+#define COLOR_DARKGRAY      0x528A    //  80  80  80
 #define COLOR_MEDIUMGRAY    0x8410    // 128 128 128
 #define COLOR_LIGHTGRAY     0xCE59    // 200 200 200
 #define COLOR_PALEGRAY      0xE71C    // 225 225 225
