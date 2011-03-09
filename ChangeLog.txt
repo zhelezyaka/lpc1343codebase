@@ -4,13 +4,14 @@ v0.8.6 - Ongoing
 - Rewrote part of the touch screen calibration code to get more
   accurate results.  Each point is now tested twice and the
   results are averaged.  Values beyond a certain limit are also
-  rejected to ignore wacky reading.
+  rejected to ignore wacky readings.
 - Added a preliminary PN532 (NFC/RFID) driver.  Currently UART
   only, and only allows simple commands to be sent and responses
   are fed out to the console via printf.  Will be elaborated
   and expanded in the near future.
 - Added a preliminary ILI9328 driver while waiting for the
-  actual LCDs to arrive
+  actual LCDs to arrive, though it seems to be almost identical
+  to the ILI9325.
 - Cleaned up the ILI9325 TFT LCD driver a bit, adding a proper
   enum for the commands, etc.
   

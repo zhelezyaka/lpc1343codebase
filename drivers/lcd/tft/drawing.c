@@ -410,6 +410,7 @@ void drawLine ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t col
     return;
   }
 
+  /*
   if (x0 == x1)
   {
     // ToDo: This may actually be slower than drawing individual pixels on 
@@ -418,6 +419,7 @@ void drawLine ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t col
     lcdDrawVLine(x0, y0, y1, color);
     return;
   }
+  */
 
   // Draw non horizontal line
   int dy = y1 - y0;
