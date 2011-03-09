@@ -314,13 +314,18 @@ void tsInit(void)
 
 /**************************************************************************/
 /*!
-    @brief  Starts the screen calibration process
+    @brief  Starts the screen calibration process.  Each corner will be
+            tested, meaning that each boundary (top, left, right and 
+            bottom) will be tested twice and the readings averaged.
 */
 /**************************************************************************/
 void tsCalibrate(void)
 {
-  // Determine screen orientation before starting calibration
   lcdOrientation_t orientation;
+  uint16_t right2, top2, left2, bottom2;
+  bool passed = false;
+
+  // Determine screen orientation before starting calibration
   orientation = lcdGetOrientation();
 
   /* -------------- Welcome Screen --------------- */
@@ -330,53 +335,61 @@ void tsCalibrate(void)
   systickDelay(250);
 
   /* -------------- CALIBRATE TOP-LEFT --------------- */
-tsTopLeft:
-  // Read X/Y depending on screen orientation
-  tsRenderCalibrationScreen(3, 3, 5);
-  _calibration.offsetLeft = orientation == LCD_ORIENTATION_LANDSCAPE ? tsReadY() : tsReadX();
-  _calibration.offsetTop = orientation == LCD_ORIENTATION_LANDSCAPE ? tsReadX() : tsReadY();
-
-  // Make sure values are in range
-  if (_calibration.offsetLeft > TS_CALIBRATION_OUTOFRANGE || _calibration.offsetTop > TS_CALIBRATION_OUTOFRANGE)
-    goto tsTopLeft;  
+  passed = false;
+  while (!passed)
+  {
+    // Read X/Y depending on screen orientation
+    tsRenderCalibrationScreen(3, 3, 5);
+    _calibration.offsetLeft = orientation == LCD_ORIENTATION_LANDSCAPE ? tsReadY() : tsReadX();
+    _calibration.offsetTop = orientation == LCD_ORIENTATION_LANDSCAPE ? tsReadX() : tsReadY();
+  
+    // Make sure values are in range
+    if (_calibration.offsetLeft < TS_CALIBRATION_OUTOFRANGE && _calibration.offsetTop < TS_CALIBRATION_OUTOFRANGE)
+      passed = true;
+  }
 
   // Delay to avoid multiple touch events
   systickDelay(250);
 
   /* -------------- CALIBRATE BOTTOM-RIGHT  --------------- */
-tsBottomRight:
-  tsRenderCalibrationScreen(lcdGetWidth() - 4, lcdGetHeight() - 4, 5);
-
-  // Read X/Y depending on screen orientation
-  _calibration.offsetRight = orientation == LCD_ORIENTATION_LANDSCAPE ? TS_ADC_LIMIT - tsReadY() : TS_ADC_LIMIT - tsReadX();
-  _calibration.offsetBottom = orientation == LCD_ORIENTATION_LANDSCAPE ? TS_ADC_LIMIT - tsReadX() : TS_ADC_LIMIT - tsReadY();
-
-  // Redo test if value is out of range
-  if (_calibration.offsetRight > TS_CALIBRATION_OUTOFRANGE || _calibration.offsetBottom > TS_CALIBRATION_OUTOFRANGE)
-    goto tsBottomRight;  
+  passed = false;
+  while (!passed)
+  {
+    tsRenderCalibrationScreen(lcdGetWidth() - 4, lcdGetHeight() - 4, 5);
+  
+    // Read X/Y depending on screen orientation
+    _calibration.offsetRight = orientation == LCD_ORIENTATION_LANDSCAPE ? TS_ADC_LIMIT - tsReadY() : TS_ADC_LIMIT - tsReadX();
+    _calibration.offsetBottom = orientation == LCD_ORIENTATION_LANDSCAPE ? TS_ADC_LIMIT - tsReadX() : TS_ADC_LIMIT - tsReadY();
+  
+    // Redo test if value is out of range
+    if (_calibration.offsetRight < TS_CALIBRATION_OUTOFRANGE && _calibration.offsetBottom < TS_CALIBRATION_OUTOFRANGE)
+      passed = true;
+  }
 
   // Delay to avoid multiple touch events
   systickDelay(250);
 
   /* -------------- CALIBRATE TOP-RIGHT  --------------- */
-tsTopRight:
-  tsRenderCalibrationScreen(lcdGetWidth() - 4, 3, 5);
-
-  uint16_t right2, top2;
-  if (orientation == LCD_ORIENTATION_LANDSCAPE)
+  passed = false;
+  while (!passed)
   {
-    right2 = TS_ADC_LIMIT - tsReadY();
-    top2 = tsReadX();
+    tsRenderCalibrationScreen(lcdGetWidth() - 4, 3, 5);
+  
+    if (orientation == LCD_ORIENTATION_LANDSCAPE)
+    {
+      right2 = TS_ADC_LIMIT - tsReadY();
+      top2 = tsReadX();
+    }
+    else
+    {
+      right2 = tsReadX();
+      top2 = TS_ADC_LIMIT - tsReadY();
+    }
+  
+    // Redo test if value is out of range
+    if (right2 < TS_CALIBRATION_OUTOFRANGE && top2 < TS_CALIBRATION_OUTOFRANGE)
+      passed = true;  
   }
-  else
-  {
-    right2 = tsReadX();
-    top2 = TS_ADC_LIMIT - tsReadY();
-  }
-
-  // Redo test if value is out of range
-  if (right2 > TS_CALIBRATION_OUTOFRANGE || top2 > TS_CALIBRATION_OUTOFRANGE)
-    goto tsTopRight;  
 
   // Average readings
   _calibration.offsetRight = (_calibration.offsetRight + right2) / 2;
@@ -386,24 +399,26 @@ tsTopRight:
   systickDelay(250);
 
   /* -------------- CALIBRATE BOTTOM-LEFT --------------- */
-tsBottomLeft:
-  tsRenderCalibrationScreen(3, lcdGetHeight() - 4, 5);
-
-  uint16_t left2, bottom2;
-  if (orientation == LCD_ORIENTATION_LANDSCAPE)
+  passed = false;
+  while (!passed)
   {
-    left2 = tsReadY();
-    bottom2 = TS_ADC_LIMIT - tsReadX();
+    tsRenderCalibrationScreen(3, lcdGetHeight() - 4, 5);
+  
+    if (orientation == LCD_ORIENTATION_LANDSCAPE)
+    {
+      left2 = tsReadY();
+      bottom2 = TS_ADC_LIMIT - tsReadX();
+    }
+    else
+    {
+      left2 = TS_ADC_LIMIT - tsReadX();
+      bottom2 = tsReadY();
+    }
+  
+    // Redo test if value is out of range
+    if (left2 < TS_CALIBRATION_OUTOFRANGE && bottom2 < TS_CALIBRATION_OUTOFRANGE)
+      passed = true;
   }
-  else
-  {
-    left2 = TS_ADC_LIMIT - tsReadX();
-    bottom2 = tsReadY();
-  }
-
-  // Redo test if value is out of range
-  if (left2 > TS_CALIBRATION_OUTOFRANGE || bottom2 > TS_CALIBRATION_OUTOFRANGE)
-    goto tsBottomLeft;
 
   // Average readings
   _calibration.offsetLeft = (_calibration.offsetLeft + left2) / 2;
