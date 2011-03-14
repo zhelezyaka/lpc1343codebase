@@ -4,183 +4,31 @@
 */
 /**************************************************************************/
 #include <string.h>
+
 #include "pn532.h"
+#include "pn532_drvr.h"
 #include "core/systick/systick.h"
-#ifdef PN532_INTERFACE_UART
 #include "core/uart/uart.h"
-#endif
 
-static pn532_pcb_t pcb;     // PN532 Peripheral control block
-static byte_t abtRx[256];   // Receive buffer
-
-/* ======================================================================
-   PRIVATE FUNCTIONS
-   ====================================================================== */
+static pn532_pcb_t pcb;
 
 /**************************************************************************/
 /*! 
-    Prints a hexadecimal value in plain characters
+    @brief  Prints a hexadecimal value in plain characters
+
+    @param  pbtData   Pointer to the byte data
+    @param  szBytes   Data length in bytes
 */
 /**************************************************************************/
-void print_hex(const byte_t* pbtData, const size_t szBytes)
+void pn532PrintHex(const byte_t * pbtData, const size_t szBytes)
 {
   size_t szPos;
   for (szPos=0; szPos < szBytes; szPos++) 
   {
-    printf("%02x ",pbtData[szPos]);
+    PN532_DEBUG("%02x ", pbtData[szPos]);
   }
-  printf(CFG_PRINTF_NEWLINE);
+  PN532_DEBUG(CFG_PRINTF_NEWLINE);
 }
-
-/**************************************************************************/
-/*! 
-    Builds a standard PN532 frame
-*/
-/**************************************************************************/
-void pn532BuildFrame(byte_t * pbtFrame, size_t * pszFrame, const byte_t * pbtData, const size_t szData)
-{
-  if (szData <= PN532_NORMAL_FRAME__DATA_MAX_LEN) 
-  {
-    // LEN - Packet length = data length (len) + checksum (1) + end of stream marker (1)
-    pbtFrame[3] = szData + 1;
-    // LCS - Packet length checksum
-    pbtFrame[4] = 256 - (szData + 1);
-    // TFI
-    pbtFrame[5] = 0xD4;
-    // DATA - Copy the PN53X command into the packet buffer
-    memcpy (pbtFrame + 6, pbtData, szData);
-
-    // DCS - Calculate data payload checksum
-    byte_t btDCS = (256 - 0xD4);
-	size_t szPos;
-    for (szPos = 0; szPos < szData; szPos++) 
-    {
-      btDCS -= pbtData[szPos];
-    }
-    pbtFrame[6 + szData] = btDCS;
-
-    // 0x00 - End of stream marker
-    pbtFrame[szData + 7] = 0x00;
-
-    (*pszFrame) = szData + PN532_NORMAL_FRAME__OVERHEAD;
-  } 
-  else 
-  {
-    // FIXME: Build extended frame
-    // abort();
-  }
-}
-
-/**************************************************************************/
-/*! 
-
-*/
-/**************************************************************************/
-bool pn532Send(const byte_t * pbtData, const size_t szData)
-{
-  // Every packet must start with "00 00 ff"
-  byte_t  abtFrame[PN532_BUFFER_LEN] = { 0x00, 0x00, 0xff };
-  size_t szFrame = 0;
-
-  pn532BuildFrame (abtFrame, &szFrame, pbtData, szData);
-
-  printf("Sending  (%02d): ", szFrame);
-  print_hex(abtFrame, szFrame);
-
-  // Send frame via the appropriate serial bus
-  #ifdef PN532_INTERFACE_UART
-  uartSend (abtFrame, szFrame);
-  #endif
-
-  // Wait for ACK
-  byte_t abtRxBuf[6];
-  uart_pcb_t *pcb = uartGetPCB();
-  // FIXME: How long should we wait for ACK?
-  systickDelay(10);
-  if (pcb->rxfifo.len < 6) 
-  {
-    PN532_DEBUG ("%s", "Unable to read ACK\r\n");
-    return false;
-  }
-
-  // Read ACK ... this will also remove it from the buffer
-  const byte_t abtAck[6] = { 0x00, 0x00, 0xff, 0x00, 0xff, 0x00 };
-  abtRxBuf[0] = uartRxBufferRead();
-  abtRxBuf[1] = uartRxBufferRead();
-  abtRxBuf[2] = uartRxBufferRead();
-  abtRxBuf[3] = uartRxBufferRead();
-  abtRxBuf[4] = uartRxBufferRead();
-  abtRxBuf[5] = uartRxBufferRead();
-  // Make sure the received ACK matches the prototype
-  if (0 != (memcmp (abtRxBuf, abtAck, 6))) 
-  {
-    PN532_DEBUG ("%s", "Invalid ACK\r\n");
-    return false;
-  }  
-
-  return true;
-}
-
-/**************************************************************************/
-/*! 
-
-*/
-/**************************************************************************/
-bool pn532ReadResponse(void)
-{
-  size_t szRxLen;
-
-  // Read response from the appropriate serial bus
-  #ifdef PN532_INTERFACE_UART
-  if (!uartRxBufferReadArray(abtRx, &szRxLen)) 
-  {
-    return false;
-  }
-  #endif
-
-  // Send the raw frame data to printf by default
-  printf("Received (%02d): ",szRxLen);
-  print_hex(abtRx,szRxLen);
-
-  // Check preamble
-  const byte_t pn53x_preamble[3] = { 0x00, 0x00, 0xff };
-  if (0 != (memcmp (abtRx, pn53x_preamble, 3))) 
-  {
-    PN532_DEBUG("%s", "Frame preamble+start code mismatch\r\n");
-    return false;
-  }
-
-  // Check the frame type
-  if ((0x01 == abtRx[3]) && (0xff == abtRx[4])) 
-  {
-    // Error frame
-    PN532_DEBUG("%s", "Application level error detected\r\n");
-    return false;
-  } 
-  else if ((0xff == abtRx[3]) && (0xff == abtRx[4])) 
-  {
-    // Extended frame
-    PN532_DEBUG("%s", "Extended frames currently unsupported\r\n");
-    return false;
-  } 
-  else 
-  {
-    // Normal frame
-    if (256 != (abtRx[3] + abtRx[4])) 
-    {
-      // TODO: Retry
-      PN532_DEBUG("%s", "Length checksum mismatch\r\n");
-      return false;
-    }
-    // size_t szPayloadLen = abtRx[3] - 2;
-  }
-
-  return true;
-}
-
-/* ======================================================================
-   PUBLIC FUNCTIONS
-   ====================================================================== */
 
 /**************************************************************************/
 /*! 
@@ -189,7 +37,7 @@ bool pn532ReadResponse(void)
                 IC, buffers, etc.
 */
 /**************************************************************************/
-pn532_pcb_t *pn532GetPCB()
+pn532_pcb_t * pn532GetPCB()
 {
   return &pcb;
 }
@@ -205,35 +53,61 @@ void pn532Init(void)
   // Clear protocol control blocks
   memset(&pcb, 0, sizeof(pn532_pcb_t));
 
-  #ifdef PN532_INTERFACE_UART
-  PN532_DEBUG("Initialising UART (%d)\r\n", PN532_UART_BAUDRATE);
-  uartInit(PN532_UART_BAUDRATE);
-  #endif
+  // Initialise the underlying HW
+  pn532HWInit();
 
-  // ToDo: Reset PN532
-
+  // Set the PCB flags to an appropriate state
   pcb.initialised = TRUE;
-  pcb.awake = FALSE;
 }
 
 /**************************************************************************/
 /*! 
-    @brief      Sends the wakeup sequence to the PN532.
+    @brief      Configures the PN532 for a specific modulation and
+                baud rate
 */
 /**************************************************************************/
-void pn532Wakeup(void)
+pn532_error_t pn532Configure(pn532_modulation_t mod)
 {
-  byte_t abtWakeUp[] = { 0x55,0x55,0x00,0x00,0x00,0x00,0x00,0xff,0x03,0xfd,0xd4,0x14,0x01,0x17,0x00,0x00,0xff,0x03,0xfd,0xd4,0x14,0x01,0x17,0x00 };
+  // ToDo
 
-  PN532_DEBUG("Sending Wakeup Sequence\r\n");
+  return PN532_ERROR_NONE;
+}
 
-  #ifdef PN532_INTERFACE_UART
-  uartSend(abtWakeUp,sizeof(abtWakeUp));
-  systickDelay(100);
-  pn532ReadResponse();
-  #endif
+/**************************************************************************/
+/*! 
+    @brief      Reads the response buffer from the PN532
 
-  pcb.awake = TRUE;
+    @param      abtCommand
+                The byte array containg the command and any
+                optional paramaters
+    @param      szLen
+                The number of bytes in abtCommand
+*/
+/**************************************************************************/
+pn532_error_t pn532Read(byte_t * abtResponse, size_t * pszLen)
+{
+  if (!pcb.initialised) pn532Init();
+
+  // Try to wake the device up if it's in sleep mode
+  if (pcb.state == PN532_STATE_SLEEP)
+  {
+    pn532_error_t wakeupError = pn532Wakeup();
+    if (wakeupError)
+    {
+      return wakeupError;
+    }
+  }
+
+  // Read the response if the device is in an appropriate state
+  if (pcb.state == PN532_STATE_READY)
+  {
+    return pn532ReadResponse(abtResponse, pszLen);
+  }
+  else
+  {
+    PN532_DEBUG("Init Failed%s", CFG_PRINTF_NEWLINE);
+    return PN532_ERROR_UNABLETOINIT;
+  }
 }
 
 /**************************************************************************/
@@ -243,35 +117,36 @@ void pn532Wakeup(void)
                 preamble, checksums, postamble and frame identifier (0xD4)
                 will all be automatically added.
 
-    @param[in]  abtCommand
+    @param      abtCommand
                 The byte array containg the command and any
                 optional paramaters
-    @param[in]  szLen
+    @param      szLen
                 The number of bytes in abtCommand
-
-    @section Example
-
-    @code
-
-    #include "drivers/sensors/pn532/pn532.h"
-    ...
-    pn532Init();
-    pn532Wakeup();
-
-    // Try to initialise one ISO14443A target at 106kbps 
-    byte_t abtCommand[] = { PN532_COMMAND_INLISTPASSIVETARGET, 0x01, 
-                            PN532_MODULATION_ISO14443A };
-    pn532SendCommand(abtCommand, sizeof(abtCommand));
-
-    @endcode
 */
 /**************************************************************************/
-void pn532SendCommand(byte_t * abtCommand, size_t szLen)
+pn532_error_t pn532Write(byte_t * abtCommand, size_t szLen)
 {
-  // Wakeup the PN532 if this hasn't already been done
-  if (pcb.awake == FALSE) pn532Wakeup();
+  if (!pcb.initialised) pn532Init();
 
-  pn532Send(abtCommand, szLen);
-  systickDelay(100);
-  pn532ReadResponse();
+  // Try to wake the device up if it's in sleep mode
+  if (pcb.state == PN532_STATE_SLEEP)
+  {
+    pn532_error_t wakeupError = pn532Wakeup();
+    if (wakeupError)
+    {
+      return wakeupError;
+    }
+  }
+
+  // Send the command if the device is in an appropriate state
+  if (pcb.state == PN532_STATE_READY)
+  {
+    return pn532SendCommand(abtCommand, szLen);
+  }
+  else
+  {
+    PN532_DEBUG("Init Failed%s", CFG_PRINTF_NEWLINE);
+    return PN532_ERROR_UNABLETOINIT;
+  }
 }
+
