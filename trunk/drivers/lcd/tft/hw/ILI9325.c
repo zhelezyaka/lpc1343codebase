@@ -51,7 +51,7 @@
 #include "drivers/lcd/tft/touchscreen.h"
 
 static lcdOrientation_t lcdOrientation = LCD_ORIENTATION_PORTRAIT;
-static lcdProperties_t ili9325Properties = { 240, 320, TRUE, TRUE };
+static lcdProperties_t ili9325Properties = { 240, 320, TRUE, TRUE, TRUE };
 
 /*************************************************/
 /* Private Methods                               */

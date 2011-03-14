@@ -83,7 +83,7 @@ OBJS += mcp4725.o
 
 # RFID/NFC
 VPATH += drivers/sensors/pn532
-OBJS += pn532.o
+OBJS += pn532.o pn532_drvr.o
 
 ##########################################################################
 # Library files 

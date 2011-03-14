@@ -8,6 +8,7 @@
 #include "pn532.h"
 #include "pn532_drvr.h"
 #include "core/systick/systick.h"
+#include "core/gpio/gpio.h"
 #include "core/uart/uart.h"
 
 /**************************************************************************/
@@ -19,6 +20,9 @@ void pn532HWInit(void)
 {
   PN532_DEBUG("Initialising UART (%d)%s", PN532_UART_BAUDRATE, CFG_PRINTF_NEWLINE);
   uartInit(PN532_UART_BAUDRATE);
+
+  // Set IRQ pin as input
+  gpioSetDir(PN532_IRQ_PORT, PN532_IRQ_PORT, gpioDirection_Input);
 
   // ToDo: Reset PN532
 }

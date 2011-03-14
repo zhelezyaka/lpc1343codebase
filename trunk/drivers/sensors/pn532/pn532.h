@@ -13,9 +13,9 @@
 
 typedef enum pn532_state_e
 {
-  PN532_STATE_SLEEP   = 0x00,
-  PN532_STATE_READY   = 0x01,
-  PN532_STATE_BUSY    = 0x02
+  PN532_STATE_SLEEP,
+  PN532_STATE_READY,
+  PN532_STATE_BUSY
 }
 pn532_state_t;
 
@@ -31,7 +31,8 @@ typedef enum pn532_error_e
   PN532_ERROR_PREAMBLEMISMATCH        = 0x06,   // Frame preamble + start code mismatch
   PN532_ERROR_EXTENDEDFRAME           = 0x07,   // Extended frames currently unsupported
   PN532_ERROR_LENCHECKSUMMISMATCH     = 0x08,
-  PN532_ERROR_RESPONSEBUFFEREMPTY     = 0x09    // No response data received
+  PN532_ERROR_RESPONSEBUFFEREMPTY     = 0x09,   // No response data received
+  PN532_ERROR_WAITINGFORIRQ           = 0x0A    // Waiting for IRQ pin to indicate response ready
 } pn532_error_t;
 
 typedef enum pn532_modulation_e

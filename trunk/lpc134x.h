@@ -1759,7 +1759,7 @@
 #define IOCON_SWDIO_PIO1_3_ADMODE_ANALOG          ((unsigned int) 0x00000000)
 #define IOCON_SWDIO_PIO1_3_ADMODE_DIGITAL         ((unsigned int) 0x00000080)
 
-#define IOCON_PIO1_4 (*(pREG32 (0x40044094)))
+#define IOCON_PIO1_4                              (*(pREG32 (0x40044094)))
 #define IOCON_PIO1_4_FUNC_MASK                    ((unsigned int) 0x00000007)
 #define IOCON_PIO1_4_FUNC_GPIO                    ((unsigned int) 0x00000000)
 #define IOCON_PIO1_4_FUNC_AD5                     ((unsigned int) 0x00000001)

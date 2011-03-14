@@ -48,7 +48,7 @@
 #include "drivers/lcd/tft/touchscreen.h"
 
 static lcdOrientation_t lcdOrientation = LCD_ORIENTATION_PORTRAIT;
-static lcdProperties_t st7783Properties = { 240, 320, TRUE, TRUE };
+static lcdProperties_t st7783Properties = { 240, 320, TRUE, TRUE, FALSE };
 
 /*************************************************/
 /* Private Methods                               */
