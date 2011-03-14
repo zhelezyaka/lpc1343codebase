@@ -58,6 +58,7 @@ typedef struct
   uint16_t height;        // LCD height in pixels (default orientation)
   bool     touchscreen;   // Whether the LCD has a touch screen
   bool     orientation;   // Whether the LCD orientation can be modified
+  bool     hwscrolling;   // Whether the LCD support HW scrolling
 } lcdProperties_t;
 
 extern void     lcdInit(void);

@@ -39,6 +39,7 @@
 #include "sysinit.h"
 
 #include "drivers/sensors/pn532/pn532.h"
+#include "drivers/sensors/pn532/pn532_drvr.h"
 
 /**************************************************************************/
 /*! 
@@ -63,24 +64,76 @@ int main (void)
   // Configure cpu and mandatory peripherals
   systemInit();
   
-  // Wait 5 second for someone to open the USB connection
+  // Wait 5 second for someone to open the USB connection for printf
   systickDelay(5000);
-  pn532Init();
-  pn532Wakeup();
 
-  // Try to initialise one ISO14443A target at 106kbps 
-  byte_t abtCommand[] = { PN532_COMMAND_INLISTPASSIVETARGET, 0x01, PN532_MODULATION_ISO14443A };
-  
+  // Initialise the PN532
+  pn532Init();
+
+  byte_t response[256];
+  size_t responseLen;
+  pn532_error_t error;
+
+  // Setup command to initialise a single ISO14443A target at 106kbps 
+  byte_t abtCommand[] = { PN532_COMMAND_INLISTPASSIVETARGET, 0x01, PN532_MODULATION_ISO14443A_106KBPS };
+
   while (1)
   {
-    // Wait for one second
-    systickDelay(1000);
+    printf("%s", CFG_PRINTF_NEWLINE);
+    printf("Wait for an ISO14443A card (Mifare Classic, etc.)%s", CFG_PRINTF_NEWLINE);
 
-    pn532SendCommand(abtCommand, sizeof(abtCommand));
-        
-    if (gpioGetValue(CFG_LED_PORT, CFG_LED_PIN))  
-      gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_ON);
-    else 
-      gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF);
+    // Send the command
+    error = pn532Write(abtCommand, sizeof(abtCommand));
+
+    // Brief delay before checking for a response
+    systickDelay(25);
+
+    // Wait until we get a response or an unexpected error message
+    do
+    {
+      error = pn532Read(response, &responseLen);
+      systickDelay(25);
+    }
+    while (error == PN532_ERROR_RESPONSEBUFFEREMPTY);
+
+    // Print the card details if possible
+    if (!error)
+    {
+      /* Response for ISO14443A 106KBPS (Mifare Classic, etc.)
+         See UM0701-02 section 7.3.5 for more information
+
+         byte            Description
+         -------------   ------------------------------------------
+         b7              Tags Found
+         b8              Tag Number (only one used in this example)
+         b9..10          SENS_RES
+         b11             SEL_RES
+         b12             NFCID Length
+         b13..NFCIDLen   NFCID                                      
+         
+         SENS_RES   SEL_RES     Manufacturer/Card Type    NFCID Len
+         --------   -------     -----------------------   ---------
+         00 04      08          NXP Mifare Classic 1K     4 bytes   */
+
+      printf("%s", CFG_PRINTF_NEWLINE);
+      printf("%-12s: %d %s", "Tags Found", response[7], CFG_PRINTF_NEWLINE);
+      printf("%-12s: %02X %02X %s", "SENS_RES", response[9], response[10], CFG_PRINTF_NEWLINE);
+      printf("%-12s: %02X %s", "SEL_RES", response[11], CFG_PRINTF_NEWLINE);
+      printf("%-12s: ", "NFCID");
+      size_t pos;
+      for (pos=0; pos < response[12]; pos++) 
+      {
+        printf("%02x ", response[13 + pos]);
+      }
+      printf(CFG_PRINTF_NEWLINE);
+    }
+    else
+    {
+      // Oops .... something bad happened.  Check 'error'
+      printf("Ooops! Error %02X %s", error, CFG_PRINTF_NEWLINE);
+    }
+
+    // Wait at least one second before trying again
+    systickDelay(1000);
   }
 }

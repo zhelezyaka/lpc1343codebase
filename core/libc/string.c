@@ -126,6 +126,23 @@ void* memmove(void *s1, const void *s2, size_t n)
   return s1;
 }
 
+int memcmp(const void *av, const void *bv, size_t len)
+{
+  const unsigned char *a = av;
+  const unsigned char *b = bv;
+  size_t i;
+
+  for (i=0; i<len; i++) 
+  {
+    if (a[i] != b[i]) 
+    {
+      return (int)(a[i] - b[i]);
+    }
+  }
+  return 0;
+}
+
+
 
 //-----------------------------------------------------------------------------
 /// Search a character in the given string.
