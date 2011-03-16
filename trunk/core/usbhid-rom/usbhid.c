@@ -205,7 +205,7 @@ void usbHIDInit (void)
   for (n = 0; n < 75; n++) {__asm("nop");}
 
   (*rom)->pUSBD->init(&DeviceInfo); /* USB Initialization */
-  (*rom)->pUSBD->connect(TRUE);     /* USB Connect */
+  (*rom)->pUSBD->connect(true);     /* USB Connect */
 }
 
 /**************************************************************************/

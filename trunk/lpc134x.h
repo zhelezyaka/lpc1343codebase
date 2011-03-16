@@ -2169,8 +2169,8 @@ static inline void NVIC_DisableIRQ(IRQn_t IRQn)
 
 /* USB Command Code Register */
 #define USB_CMDCODE                               (*(pREG32 (0x40020010)))
-#define USB_CMDCODE_CMD_PHASE_READ                ((unsigned int) 0x00000100)
-#define USB_CMDCODE_CMD_PHASE_WRITE               ((unsigned int) 0x00000200)
+#define USB_CMDCODE_CMD_PHASE_WRITE               ((unsigned int) 0x00000100)
+#define USB_CMDCODE_CMD_PHASE_READ                ((unsigned int) 0x00000200)
 #define USB_CMDCODE_CMD_PHASE_COMMAND             ((unsigned int) 0x00000500)
 #define USB_CMDCODE_CMD_PHASE_MASK                ((unsigned int) 0x0000FF00)
 #define USB_CMDCODE_CMD_CODE_MASK                 ((unsigned int) 0x00FF0000)
