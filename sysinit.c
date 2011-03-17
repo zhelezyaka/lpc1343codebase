@@ -227,34 +227,6 @@ void __putchar(const char c)
     // Send output to UART
     uartSendByte(c);
   #endif
-
-  // This is a terribly ugly way to do this, but there must be
-  // at least 1ms between USB frames (of up to 64 bytes) ... the
-  // way this is implemented below is slow, but should at
-  // least avoid dropped characters, etc.  Needs to be rewritten
-  // with something much better performing though!
-  #ifdef CFG_PRINTF_USBCDC
-    if (USB_Configuration) 
-    {
-      cdcBufferWrite(c);
-      // Check if we can flush the buffer now or if we need to wait
-      unsigned int currentTick = systickGetTicks();
-      if (currentTick != lastTick)
-      {
-        uint8_t frame[64];
-        uint32_t bytesRead = 0;
-        while (cdcBufferDataPending())
-        {
-          // Read up to 64 bytes as long as possible
-          bytesRead = cdcBufferReadLen(frame, 64);
-          // debug_printf("%d,", bytesRead);
-          USB_WriteEP (CDC_DEP_IN, frame, bytesRead);
-          systickDelay(1);
-        }
-        lastTick = currentTick;
-      }
-    }
-  #endif
 }
 
 /**************************************************************************/
@@ -272,8 +244,38 @@ void __putchar(const char c)
 /**************************************************************************/
 int puts(const char * str)
 {
-  // Handle output character by character in __putchar
-  while(*str) __putchar(*str++);
+  // This is a terribly ugly way to do this, but there must be
+  // at least 1ms between USB frames (of up to 64 bytes) ... the
+  // way this is implemented below is slow, but should at
+  // least avoid dropped characters, etc.  Needs to be rewritten
+  // with something much better performing though!
+  #ifdef CFG_PRINTF_USBCDC
+    if (USB_Configuration) 
+    {
+      while(*str)
+        cdcBufferWrite(*str++);
+      // Check if we can flush the buffer now or if we need to wait
+      unsigned int currentTick = systickGetTicks();
+      if (currentTick != lastTick)
+      {
+        uint8_t frame[64];
+        uint32_t bytesRead = 0;
+        while (cdcBufferDataPending())
+        {
+          // Read up to 64 bytes as long as possible
+          bytesRead = cdcBufferReadLen(frame, 64);
+          // debug_printf("%d,", bytesRead);
+          USB_WriteEP (CDC_DEP_IN, frame, bytesRead);
+          systickDelay(1);
+        }
+        lastTick = currentTick;
+      }
+    }
+  #else
+    // Handle output character by character in __putchar
+    while(*str) __putchar(*str++);
+  #endif
+
   return 0;
 }
 

@@ -80,6 +80,8 @@ void pwmInit(void)
   SCB_SYSAHBCLKCTRL |= (SCB_SYSAHBCLKCTRL_CT16B1);
 
   /* Configure PIO1.9 as Timer1_16 MAT0 Output */
+  /* Alternatively, PIO1.10 (MAT1) can also be used though
+     the initialisation code will need to be modified */
   IOCON_PIO1_9 &= ~IOCON_PIO1_9_FUNC_MASK;
   IOCON_PIO1_9 |= IOCON_PIO1_9_FUNC_CT16B1_MAT0;  
 
