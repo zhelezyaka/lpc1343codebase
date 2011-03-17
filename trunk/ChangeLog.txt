@@ -1,6 +1,15 @@
 v0.8.6 - Ongoing
 ================
 
+- Added a PWM example using a piezo buzzer (see
+  'tools/examples/basics/pwm_piezobuzzer' for details)
+- Added ctype.c to 'core/libc'
+- Changed Crossworks project to only use libc files from
+  'core/libc' and modified the USB CDC printf to be
+  much faster by redirecting inside 'puts' rather than
+  '__putchar' (see 'sysinit.c').
+- Fixed a bug in LPC134x.h ... USB_CMDCODE write and read
+  masks were reversed
 - Added a simple example of reading the card ID from an
   ISO14443A (Mifare Classic, etc.) card using the PN532
   ('/tools/examples/sensors/pn532/ISO14443A_ID').
