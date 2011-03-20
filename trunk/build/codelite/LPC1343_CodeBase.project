@@ -135,6 +135,14 @@
         <File Name="../../drivers/sensors/pn532/pn532_drvr.c"/>
         <File Name="../../drivers/sensors/pn532/pn532_drvr.h"/>
       </VirtualDirectory>
+      <VirtualDirectory Name="tcs3414">
+        <File Name="../../drivers/sensors/tcs3414/tcs3414.c"/>
+        <File Name="../../drivers/sensors/tcs3414/tcs3414.h"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="tsl2561">
+        <File Name="../../drivers/sensors/tsl2561/tsl2561.c"/>
+        <File Name="../../drivers/sensors/tsl2561/tsl2561.h"/>
+      </VirtualDirectory>
     </VirtualDirectory>
     <VirtualDirectory Name="fatfs">
       <File Name="../../drivers/fatfs/ccsbcs.c"/>

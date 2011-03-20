@@ -306,6 +306,11 @@
                               standard value like 57600, 9600, etc.
     CFG_USBCDC_INITTIMEOUT    The maximum delay in milliseconds to wait for
                               USB to connect.  Must be a multiple of 10!
+    CFG_USBCDC_BUFFERSIZE     Size of the buffer (in bytes) that stores
+                              printf data until it can be sent out in
+                              64 byte frames.  The buffer is required since
+                              only one frame per ms can be sent using USB
+                              CDC (see 'puts' in systeminit.c).
 
     -----------------------------------------------------------------------*/
     #ifdef CFG_BRD_LPC1343_REFDESIGN
@@ -313,6 +318,7 @@
       #define CFG_USBCDC
       #define CFG_USBCDC_BAUDRATE         (115200)
       #define CFG_USBCDC_INITTIMEOUT      (5000)
+      #define CFG_USBCDC_BUFFERSIZE       (256)
     #endif
 
     #ifdef CFG_BRD_LPC1343_TFTLCDSTANDALONE
@@ -320,6 +326,7 @@
       #define CFG_USBCDC
       #define CFG_USBCDC_BAUDRATE         (115200)
       #define CFG_USBCDC_INITTIMEOUT      (5000)
+      #define CFG_USBCDC_BUFFERSIZE       (256)
     #endif
 
     #ifdef CFG_BRD_LPC1343_802154USBSTICK
@@ -327,6 +334,7 @@
       #define CFG_USBCDC
       #define CFG_USBCDC_BAUDRATE         (115200)
       #define CFG_USBCDC_INITTIMEOUT      (5000)
+      #define CFG_USBCDC_BUFFERSIZE       (256)
     #endif
 /*=========================================================================*/
 
@@ -643,7 +651,7 @@
       #define CFG_CHIBI_CHANNEL           (0)                 // 868-868.6 MHz
       #define CFG_CHIBI_PANID             (0x1234)
       #define CFG_CHIBI_PROMISCUOUS       (0)
-      #define CFG_CHIBI_BUFFERSIZE        (128)
+      #define CFG_CHIBI_BUFFERSIZE        (1024)
     #endif
 /*=========================================================================*/
 

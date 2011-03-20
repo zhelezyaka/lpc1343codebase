@@ -85,6 +85,10 @@ OBJS += mcp4725.o
 VPATH += drivers/sensors/pn532
 OBJS += pn532.o pn532_drvr.o
 
+# TAOS Light Sensors
+VPATH += drivers/sensors/tcs3414 drivers/sensors/tsl2561
+OBJS += tcs3414.o tsl2561.o
+
 ##########################################################################
 # Library files 
 ##########################################################################
