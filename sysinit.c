@@ -38,6 +38,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "sysinit.h"
 
@@ -244,11 +245,9 @@ void __putchar(const char c)
 /**************************************************************************/
 int puts(const char * str)
 {
-  // This is a terribly ugly way to do this, but there must be
-  // at least 1ms between USB frames (of up to 64 bytes) ... the
-  // way this is implemented below is slow, but should at
-  // least avoid dropped characters, etc.  Needs to be rewritten
-  // with something much better performing though!
+  // There must be at least 1ms between USB frames (of up to 64 bytes)
+  // This buffers all data and writes it out from the buffer one frame
+  // and one millisecond at a time
   #ifdef CFG_PRINTF_USBCDC
     if (USB_Configuration) 
     {
@@ -264,7 +263,6 @@ int puts(const char * str)
         {
           // Read up to 64 bytes as long as possible
           bytesRead = cdcBufferReadLen(frame, 64);
-          // debug_printf("%d,", bytesRead);
           USB_WriteEP (CDC_DEP_IN, frame, bytesRead);
           systickDelay(1);
         }

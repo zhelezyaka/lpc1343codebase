@@ -129,6 +129,11 @@ void CDC_Init (void)
   CDC_SerialState = CDC_GetSerialState();
 
   CDC_BUF_RESET(CDC_OutBuf);
+
+  // Initialise the CDC buffer.   This is required to buffer outgoing
+  // data (MCU to PC) since data can only be sent 64 bytes per frame
+  // with at least 1ms between frames.  To see how the buffer is used,
+  // see 'puts' in systeminit.c
   cdcBufferInit();
 }
 

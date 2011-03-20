@@ -98,10 +98,10 @@
         </folder>
         <folder Name="libc">
           <file file_name="../../core/libc/stdio.c">
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
           </file>
           <file file_name="../../core/libc/string.c">
-            <configuration Name="THUMB Flash Debug" build_exclude_from_build="Yes"/>
+            <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
           </file>
           <file file_name="../../core/libc/ctype.c"/>
         </folder>
@@ -161,6 +161,14 @@
               <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
             </file>
             <file file_name="../../drivers/sensors/pn532/pn532_drvr.c"/>
+          </folder>
+          <folder Name="tsl2561">
+            <file file_name="../../drivers/sensors/tsl2561/tsl2561.c">
+              <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
+            </file>
+          </folder>
+          <folder Name="tcs3414">
+            <file file_name="../../drivers/sensors/tcs3414/tcs3414.c"/>
           </folder>
         </folder>
         <folder Name="lcd" file_name="">

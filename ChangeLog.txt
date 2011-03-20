@@ -1,6 +1,11 @@
 v0.8.6 - Ongoing
 ================
 
+- Increased MAX_STRING_SIZE from 100 to 255 in stdio.c
+- Added driver for the TCS3414 RGB color sensor
+- Added driver for the TSL2561 digital light sensor
+- Added CFG_USBCDC_BUFFERSIZE to projectconfig.h
+  instead of cdc_buf.h.
 - Added a PWM example using a piezo buzzer (see
   'tools/examples/basics/pwm_piezobuzzer' for details)
 - Added ctype.c to 'core/libc'
@@ -23,9 +28,6 @@ v0.8.6 - Ongoing
   only, and only allows simple commands to be sent and received.
   By default, all data is fed out to the console via printf.
   Will be elaborated and expanded in future releases.
-- Added a preliminary ILI9328 driver while waiting for the
-  actual LCDs to arrive, though it seems to be almost identical
-  to the ILI9325.
 - Cleaned up the ILI9325 TFT LCD driver a bit, adding a proper
   enum for the commands, etc.
   

@@ -9,15 +9,13 @@
 
 #include "projectconfig.h"
 
-#define CFG_CDC_BUFFERSIZE 256
-
 // Buffer used for circular fifo
 typedef struct _cdc_buffer_t
 {
   volatile uint8_t len;
   volatile uint8_t wr_ptr;
   volatile uint8_t rd_ptr;
-  uint8_t buf[CFG_CDC_BUFFERSIZE];
+  uint8_t buf[CFG_USBCDC_BUFFERSIZE];
 } cdc_buffer_t;
 
 cdc_buffer_t * cdcGetBuffer();

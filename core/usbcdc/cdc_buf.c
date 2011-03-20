@@ -85,7 +85,7 @@ uint8_t cdcBufferRead()
   uint8_t data;
 
   data = cdcfifo.buf[cdcfifo.rd_ptr];
-  cdcfifo.rd_ptr = (cdcfifo.rd_ptr + 1) % CFG_CDC_BUFFERSIZE;
+  cdcfifo.rd_ptr = (cdcfifo.rd_ptr + 1) % CFG_USBCDC_BUFFERSIZE;
   cdcfifo.len--;
   return data;
 }
@@ -129,7 +129,7 @@ uint32_t cdcBufferReadLen(uint8_t* buf, uint32_t len)
 void cdcBufferWrite(uint8_t data)
 {
   cdcfifo.buf[cdcfifo.wr_ptr] = data;
-  cdcfifo.wr_ptr = (cdcfifo.wr_ptr + 1) % CFG_CDC_BUFFERSIZE;
+  cdcfifo.wr_ptr = (cdcfifo.wr_ptr + 1) % CFG_USBCDC_BUFFERSIZE;
   cdcfifo.len++;
 }
 
