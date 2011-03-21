@@ -164,7 +164,7 @@ firmware: $(OBJS) $(SYS_OBJS)
 	-@echo "  sram(rwx): ORIGIN = 0x10000000+$(SRAM_USB), LENGTH = $(SRAM)-$(SRAM_USB)" >> $(LD_TEMP)
 	-@echo "}" >> $(LD_TEMP)
 	-@echo "INCLUDE $(LD_SCRIPT)" >> $(LD_TEMP)
-	$(LD) $(LDFLAGS) -T $(LD_TEMP) -o $(OUTFILE).elf $(OBJS)
+	$(LD) $(LDFLAGS) -T $(LD_TEMP) -o $(OUTFILE).elf $(OBJS) -lm
 	-@echo ""
 	$(SIZE) $(OUTFILE).elf
 	-@echo ""

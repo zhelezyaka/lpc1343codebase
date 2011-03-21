@@ -100,6 +100,7 @@
 #define SCB_DEVICEID                              (*(pREG32 (0x400483F4)))    // Device ID
 #define SCB_MMFAR                                 (*(pREG32 (0xE000ED34)))    // Memory Manage Address Register (MMAR)
 #define SCB_BFAR                                  (*(pREG32 (0xE000ED38)))    // Bus Fault Manage Address Register (BFAR)
+#define SCB_DEMCR                                 (*(pREG32 (0xE000EDFC)))
 
 /*  CPU ID Base Register */
 #define SCB_CPUID                                 (*(pREG32 (0xE000ED00)))
@@ -1229,6 +1230,35 @@
 #define SCB_DEVICEID_LPC1342FHN33                 ((unsigned int) 0x3D01402B)
 #define SCB_DEVICEID_LPC1343FHN33                 ((unsigned int) 0x3D00002B)
 #define SCB_DEVICEID_LPC1343FBD48                 ((unsigned int) 0x3D00002B)
+
+/*##############################################################################
+## Data Watchpoint and Trace Unit (DWT)
+##############################################################################*/
+// For more information, see Cortex-M3 Technical Reference Manual 8.3
+// This block is optional and not all comparators or functionality may
+// be present on all chips, though basic DWT functionality is present
+// on the LPC1343 since CYCNT works
+
+#define DWT_CTRL                                  (*(pREG32 (0xE0001000)))    // Control register
+#define DWT_CYCCNT                                (*(pREG32 (0xE0001004)))    // Cycle counter (useful for rough performance testing)
+#define DWT_CPICNT                                (*(pREG32 (0xE0001008)))    // CPI Count Register
+#define DWT_EXCCNT                                (*(pREG32 (0xE000100C)))    // Exception overhead count register
+#define DWT_SLEEPCNT                              (*(pREG32 (0xE0001010)))    // Sleep count register
+#define DWT_LSUCNT                                (*(pREG32 (0xE0001014)))    // LSU count register
+#define DWT_FOLDCNT                               (*(pREG32 (0xE0001018)))    // Folder-instruction count register
+#define DWT_PCSR                                  (*(pREG32 (0xE000101C)))    // Program counter sample register
+#define DWT_COMP0                                 (*(pREG32 (0xE0001020)))    // Comparator register 0
+#define DWT_MASK0                                 (*(pREG32 (0xE0001024)))    // Mask register 0
+#define DWT_FUNCTION0                             (*(pREG32 (0xE0001028)))    // Function register 0
+#define DWT_COMP1                                 (*(pREG32 (0xE0001030)))    // Comparator register 1
+#define DWT_MASK1                                 (*(pREG32 (0xE0001034)))    // Mask register 1
+#define DWT_FUNCTION1                             (*(pREG32 (0xE0001038)))    // Function register 1
+#define DWT_COMP2                                 (*(pREG32 (0xE0001040)))    // Comparator register 2
+#define DWT_MASK2                                 (*(pREG32 (0xE0001044)))    // Mask register 2
+#define DWT_FUNCTION2                             (*(pREG32 (0xE0001048)))    // Function register 2
+#define DWT_COMP3                                 (*(pREG32 (0xE0001050)))    // Comparator register 3
+#define DWT_MASK3                                 (*(pREG32 (0xE0001054)))    // Mask register 3
+#define DWT_FUNCTION3                             (*(pREG32 (0xE0001058)))    // Function register 3
 
 /*##############################################################################
 ## Power Management Unit (PMU)

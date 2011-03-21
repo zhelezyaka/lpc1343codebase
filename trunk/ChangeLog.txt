@@ -1,6 +1,11 @@
 v0.8.6 - Ongoing
 ================
 
+- Added DWT section to LPC134x.h (see Cortex-M3
+  Technical Reference Manual section 8.3)
+- Added CPU_RESET_CYCLECOUNTER to cpu.c to do rough
+  in-code performance checks (counts CPU cycles)
+- Added '-lm' to linker in Makefile for math.c support
 - Increased MAX_STRING_SIZE from 100 to 255 in stdio.c
 - Added driver for the TCS3414 RGB color sensor
 - Added driver for the TSL2561 digital light sensor
@@ -9,7 +14,7 @@ v0.8.6 - Ongoing
 - Added a PWM example using a piezo buzzer (see
   'tools/examples/basics/pwm_piezobuzzer' for details)
 - Added ctype.c to 'core/libc'
-- Changed Crossworks project to only use libc files from
+- Changed Crossworks project to use libc files from
   'core/libc' and modified the USB CDC printf to be
   much faster by redirecting inside 'puts' rather than
   '__putchar' (see 'sysinit.c').

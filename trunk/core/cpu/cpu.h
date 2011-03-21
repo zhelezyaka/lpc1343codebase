@@ -41,6 +41,19 @@
 
 #include "projectconfig.h"
 
+// Macro to initialise, reset and enable the cycle counter.
+// This can be used for rough timing and performance tests
+// by resetting the cycle counter before a function, and 
+// then reading the value after with "int count = DWT_CYCCNT"
+//
+//    CPU_RESET_CYCLECOUNTER;
+//    ... do something
+//    int count = DWT_CYCCNT;
+//
+#define CPU_RESET_CYCLECOUNTER    do { SCB_DEMCR = SCB_DEMCR | 0x01000000;  \
+                                       DWT_CYCCNT = 0;                      \
+                                       DWT_CTRL = DWT_CTRL | 1 ; } while(0)
+
 /**************************************************************************/
 /*! 
     @brief Indicates the value for the PLL multiplier
