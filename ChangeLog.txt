@@ -1,5 +1,5 @@
-v0.8.6 - Ongoing
-================
+v0.8.6 - 21 March 2011
+======================
 
 - Added DWT section to LPC134x.h (see Cortex-M3
   Technical Reference Manual section 8.3)
