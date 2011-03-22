@@ -146,7 +146,8 @@ OBJS += $(TARGET)_handlers.o LPC1xxx_startup.o
 
 CFLAGS  = -c -g -Os $(INCLUDE_PATHS) -Wall -mthumb -ffunction-sections -fdata-sections -fmessage-length=0 -mcpu=$(CPU_TYPE) -DTARGET=$(TARGET) -fno-builtin
 ASFLAGS = -c -g -Os $(INCLUDE_PATHS) -Wall -mthumb -ffunction-sections -fdata-sections -fmessage-length=0 -mcpu=$(CPU_TYPE) -D__ASSEMBLY__ -x assembler-with-cpp
-LDFLAGS = -nostartfiles -mthumb -Wl,--gc-sections
+LDFLAGS = -nostartfiles -mthumb -mcpu=$(CPU_TYPE) -Wl,--gc-sections
+LDLIBS  = -lm
 OCFLAGS = --strip-unneeded
 
 all: firmware
@@ -164,7 +165,7 @@ firmware: $(OBJS) $(SYS_OBJS)
 	-@echo "  sram(rwx): ORIGIN = 0x10000000+$(SRAM_USB), LENGTH = $(SRAM)-$(SRAM_USB)" >> $(LD_TEMP)
 	-@echo "}" >> $(LD_TEMP)
 	-@echo "INCLUDE $(LD_SCRIPT)" >> $(LD_TEMP)
-	$(LD) $(LDFLAGS) -T $(LD_TEMP) -o $(OUTFILE).elf $(OBJS) -lm
+	$(LD) $(LDFLAGS) -T $(LD_TEMP) -o $(OUTFILE).elf $(OBJS) $(LDLIBS)
 	-@echo ""
 	$(SIZE) $(OUTFILE).elf
 	-@echo ""
