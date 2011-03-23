@@ -41,10 +41,8 @@
 
 #include "projectconfig.h"
 
-#define USB_VID		  0x1FC9
-
-#define USB_VENDOR_ID USB_VID 	// Vendor ID
-#define USB_PROD_ID   0x0003	// Product ID
+#define USB_VENDOR_ID CFG_USB_VID 	// Vendor ID
+#define USB_PROD_ID   CFG_USB_PID	// Product ID
 #define USB_DEVICE    0x0100	// Device ID
 
 #define WBVAL(x) ((x) & 0xFF),(((x) >> 8) & 0xFF)
