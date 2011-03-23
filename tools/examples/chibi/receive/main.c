@@ -44,6 +44,27 @@ static chb_rx_data_t rx_data;
 
 /**************************************************************************/
 /*! 
+    Converts the ED (Energy Detection) value to dBm using the following
+    formula: dBm = RSSI_BASE_VAL + 1.03 * ED
+
+    For more information see section 6.5 of the AT86RF212 datasheet
+*/
+/**************************************************************************/
+int edToDBM(uint32_t ed)
+{
+  #if CFG_CHIBI_MODE == 0 || CFG_CHIBI_MODE == 1 || CFG_CHIBI_MODE == 2
+    // Calculate for OQPSK (RSSI Base Value = -100)
+    int dbm = (103 * ed - 10000);
+  #else
+    // Calculate for BPSK (RSSI Base Value = -98)
+    int dbm = (103 * ed - 9800);
+  #endif
+
+  return dbm / 100;
+}
+
+/**************************************************************************/
+/*! 
     Constantly checks for incoming messages, and displays them using
     printf when they arrive.  This program will display messages sent
     to the global broadcast address (0xFFFF) or messages addressed to
@@ -84,7 +105,8 @@ int main(void)
       // make sure the length is nonzero
       if (rx_data.len)
       {
-        printf("Message received from node %02X: %s, len=%d, rssi=%02X.%s", rx_data.src_addr, rx_data.data, rx_data.len, pcb->ed, CFG_PRINTF_NEWLINE);
+        int dbm = edToDBM(pcb->ed);
+        printf("Message received from node %02X: %s, len=%d, dBm=%d.%s", rx_data.src_addr, rx_data.data, rx_data.len, dbm, CFG_PRINTF_NEWLINE);
       }
       // Disable LED
       gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF); 
