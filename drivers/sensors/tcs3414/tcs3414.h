@@ -123,6 +123,7 @@ tcs3414Error_e;
 tcs3414Error_e tcs3414Init(void);
 tcs3414Error_e tcs3414SetSensitivity(tcs3414Gain_t gain, tcs3414Prescalar_t prescalar);
 tcs3414Error_e tcs3414GetRGBL (uint16_t *red, uint16_t *green, uint16_t *blue, uint16_t *clear);
+uint32_t       tcs3414CalculateCCT (uint16_t red, uint16_t green, uint16_t blue);
 
 #endif
 

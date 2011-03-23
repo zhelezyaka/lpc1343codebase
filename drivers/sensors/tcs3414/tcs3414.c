@@ -2,6 +2,7 @@
 /*! 
     @file     tcs3414.c
     @author   K. Townsend (microBuilder.eu)
+              Morten Hjerde (tcs3414CalculateCCT)
 	
     @brief    Drivers for the TAOS TCS3414 I2C RGB sensor
 
@@ -213,3 +214,47 @@ tcs3414Error_e tcs3414GetRGBL(uint16_t *red, uint16_t *green, uint16_t *blue, ui
   return error;
 }
 
+/**************************************************************************/
+/*! 
+    @brief    Reads the RGB values from the TCS3414 color sensor and
+              calculates CCT (Correlated Color Temperature)
+
+    @return   The Correlated Color Temperature in Kelvin
+*/
+/**************************************************************************/
+uint32_t tcs3414CalculateCCT (uint16_t red, uint16_t green, uint16_t blue)
+{
+    volatile float R;
+    volatile float G;
+    volatile float B;
+    volatile float X;
+    volatile float Y;
+    volatile float Z;
+    volatile float x;
+    volatile float y;
+    volatile float n;
+    volatile float CCT;
+
+    // Convert RGB values to a 0-100 scale
+    R = (((float) red) / 65536) * 100;
+    G = (((float) green) / 65536) * 100;
+    B = (((float) blue)/ 65536) * 100;
+
+    //do matrix transformation
+    X = (-0.14282 * R) + (1.54924 * G) + (-0.95641 * B);
+    Y = (-0.32466 * R) + (1.57837 * G) + (-0.73191 * B);
+    Z = (-0.68202 * R) + (0.77073 * G) + (0.56332 * B);
+
+    //calc chromaticity coordinates
+    x = (X)/(X + Y + Z);
+    y = (Y)/(X + Y + Z);
+
+    //use McCamy’s formula to get CCT:
+    n = (x - 0.3320) / (0.1858 - y);
+    CCT =  (449 * n *  n * n);    // we don't have pow
+    CCT += (3525 * n * n);
+    CCT += (6823.3 * n);
+    CCT += 5520.33;
+
+    return ((uint32_t) CCT);
+}
