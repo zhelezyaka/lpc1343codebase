@@ -46,10 +46,13 @@
 #include "drivers/lcd/tft/drawing.h"
 #include "drivers/lcd/tft/lcd.h"
 
+// Only include read support if CFG_SDCARD is defined
 #ifdef CFG_SDCARD
   #include "drivers/fatfs/diskio.h"
   #include "drivers/fatfs/ff.h"
   static FATFS Fatfs[1];
+  static FILINFO Finfo;
+  static FIL bmpSDFile;
 
 /**************************************************************************/
 /*                                                                        */
@@ -198,4 +201,149 @@ bmp_error_t bmpDrawBitmap(uint16_t x, uint16_t y, const char* filename)
   return BMP_ERROR_NONE;
 }
 
-#endif
+#if defined CFG_SDCARD_READONLY && CFG_SDCARD_READONLY == 0
+/**************************************************************************/
+/*!
+    @brief  Writes the contents of the LCD screen to a 24-bit bitmap
+            images.  CFG_SDCARD_READONLY must be set to '0' to be able
+            to use this function.
+
+    @section Example
+
+    @code 
+
+    #include "drivers/lcd/tft/bmp.h"
+
+    bmp_error_t error;
+
+    // Note: The LED stays on while the image is being written since
+    //       it can take quite a while to read the entire screen
+    //       pixel by pixel and write the data to the SD card
+
+    // Turn the LED on to signal busy state
+    gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_ON); 
+    // Write the screen contents to a bitmap image
+    error = bmpSaveScreenshot("capture.bmp");
+    // Turn the LED off to indicate that the capture is complete
+    gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF); 
+
+    // Check 'error' for problems
+
+    @endcode
+*/
+/**************************************************************************/
+bmp_error_t bmpSaveScreenshot(const char* filename)
+{
+  DSTATUS stat;
+  bmp_error_t error = BMP_ERROR_NONE;
+  bmp_header_t header;
+  bmp_infoheader_t infoHeader;
+  uint32_t lcdWidth, lcdHeight, x, y, bgra32;
+  UINT bytesWritten;
+  uint16_t rgb565, eof;
+  uint8_t r, g, b;
+
+  // Create a new file (Crossworks only)
+  stat = disk_initialize(0);
+  if (stat & STA_NOINIT) 
+  {
+    return BMP_ERROR_SDINITFAIL;
+  }
+  if (stat & STA_NODISK) 
+  {
+    return BMP_ERROR_SDINITFAIL;
+  }
+  if (stat == 0)
+  {
+    // SD card sucessfully initialised
+    DSTATUS stat;
+    DWORD p2;
+    WORD w1;
+    BYTE res, b1;
+    DIR dir; 
+    // Try to mount drive
+    res = f_mount(0, &Fatfs[0]);
+    if (res != FR_OK) 
+    {
+      return BMP_ERROR_SDINITFAIL;
+    }
+    if (res == FR_OK)
+    {
+      // Create a file (overwriting any existing file!)
+      if(f_open(&bmpSDFile, filename, FA_READ | FA_WRITE | FA_CREATE_ALWAYS)!=FR_OK) 
+      {  
+        return BMP_ERROR_UNABLETOCREATEFILE; 
+      }
+    }
+  }
+
+  lcdWidth = lcdGetWidth();
+  lcdHeight = lcdGetHeight();
+
+  // Create header
+  header.type = 0x4d42;   // 'BM'
+  header.size = (lcdWidth * lcdHeight * 3) + sizeof(header) + sizeof(infoHeader);   // File size in bytes
+  header.reserved1 = 0;
+  header.reserved2 = 0;
+  header.offset = 0x36;   // Offset in bytes to the image data
+  
+  // Create infoheader
+  infoHeader.size = sizeof(infoHeader);
+  infoHeader.width = lcdWidth;
+  infoHeader.height = lcdHeight;
+  infoHeader.planes = 1;
+  infoHeader.bits = 24;
+  infoHeader.compression = BMP_COMPRESSION_NONE;
+  infoHeader.imagesize = (lcdWidth * lcdHeight * 3) + 2;  // 3 bytes per pixel + 2 bytes for EOF
+  infoHeader.xresolution = 0x0B12;
+  infoHeader.yresolution = 0x0B12;
+  infoHeader.ncolours = 0;
+  infoHeader.importantcolours = 0;
+
+  // Write header to disk
+  f_write(&bmpSDFile, &header.type, sizeof(header.type), &bytesWritten);
+  f_write(&bmpSDFile, &header.size, sizeof(header.size), &bytesWritten);
+  f_write(&bmpSDFile, &header.reserved1, sizeof(header.reserved1), &bytesWritten);
+  f_write(&bmpSDFile, &header.reserved2, sizeof(header.reserved2), &bytesWritten);
+  f_write(&bmpSDFile, &header.offset, sizeof(header.offset), &bytesWritten);
+  f_write(&bmpSDFile, &infoHeader.size, sizeof(infoHeader.size), &bytesWritten);
+  f_write(&bmpSDFile, &infoHeader.width, sizeof(infoHeader.width), &bytesWritten);
+  f_write(&bmpSDFile, &infoHeader.height, sizeof(infoHeader.height), &bytesWritten);
+  f_write(&bmpSDFile, &infoHeader.planes, sizeof(infoHeader.planes), &bytesWritten);
+  f_write(&bmpSDFile, &infoHeader.bits, sizeof(infoHeader.bits), &bytesWritten);
+  f_write(&bmpSDFile, &infoHeader.compression, sizeof(infoHeader.compression), &bytesWritten);
+  f_write(&bmpSDFile, &infoHeader.imagesize, sizeof(infoHeader.imagesize), &bytesWritten);
+  f_write(&bmpSDFile, &infoHeader.xresolution, sizeof(infoHeader.xresolution), &bytesWritten);
+  f_write(&bmpSDFile, &infoHeader.yresolution, sizeof(infoHeader.yresolution), &bytesWritten);
+  f_write(&bmpSDFile, &infoHeader.ncolours, sizeof(infoHeader.ncolours), &bytesWritten);
+  f_write(&bmpSDFile, &infoHeader.importantcolours, sizeof(infoHeader.importantcolours), &bytesWritten);
+
+  // Write image data to disk (starting from bottom row)
+  for (y = lcdHeight; y != 0; y--)
+  {
+    for (x = 0; x < lcdWidth; x++)
+    {
+      rgb565 = lcdGetPixel(x, y - 1);               // Get RGB565 pixel
+      bgra32 = drawRGB565toBGRA32(rgb565);          // Convert RGB565 to 24-bit color
+      r = (bgra32 & 0x00FF0000) >> 16;
+      g = (bgra32 & 0x0000FF00) >> 8;
+      b = (bgra32 & 0x000000FF);
+      f_write(&bmpSDFile, &b, 1, &bytesWritten);    // Write RGB data
+      f_write(&bmpSDFile, &g, 1, &bytesWritten);
+      f_write(&bmpSDFile, &r, 1, &bytesWritten);
+    }    
+  }
+  
+  // Write EOF (2 bytes)
+  eof = 0x0000;
+  f_write(&bmpSDFile, &eof, 2, &bytesWritten);
+
+  // Close the file
+  f_close(&bmpSDFile);
+
+  // Return OK signal
+  return BMP_ERROR_NONE;
+}
+#endif  // End of read-only check to write bitmaps
+
+#endif  // End of CFG_SDCARD check

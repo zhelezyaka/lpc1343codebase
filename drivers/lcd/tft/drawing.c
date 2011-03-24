@@ -662,6 +662,46 @@ uint16_t drawRGB24toRGB565(uint8_t r, uint8_t g, uint8_t b)
 
 /**************************************************************************/
 /*!
+    @brief  Converts a 16-bit RGB565 color to a standard 32-bit BGRA32
+            color (with alpha set to 0xFF)
+
+    @param[in]  color
+                16-bit rgb565 color
+
+    @section Example
+
+    @code 
+
+    // First convert 24-bit color to RGB565
+    uint16_t rgb565 = drawRGB24toRGB565(0xFF, 0x00, 0x00);
+  
+    // Convert RGB565 color back to BGRA32
+    uint32_t bgra32 = drawRGB565toBGRA32(rgb565);
+  
+    // Display results
+    printf("BGRA32: 0x%08X R: %u G: %u B: %u A: %u \r\n", 
+        bgra32, 
+        (bgra32 & 0x000000FF),        // Blue
+        (bgra32 & 0x0000FF00) >> 8,   // Green
+        (bgra32 & 0x00FF0000) >> 16,  // Red
+        (bgra32 & 0xFF000000) >> 24); // Alpha
+
+    @endcode
+*/
+/**************************************************************************/
+uint32_t drawRGB565toBGRA32(uint16_t color)
+{
+  uint32_t bits = (uint32_t)color;
+  uint32_t blue = bits & 0x001F;     // 5 bits blue
+  uint32_t green = bits & 0x07E0;    // 6 bits green
+  uint32_t red = bits & 0xF800;      // 5 bits red
+
+  // Return shifted bits with alpha set to 0xFF
+  return (red << 8) | (green << 5) | (blue << 3) | 0xFF000000;
+}
+
+/**************************************************************************/
+/*!
     @brief  Draws a progress bar with rounded corners
 
     @param[in]  x
