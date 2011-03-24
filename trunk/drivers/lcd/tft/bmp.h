@@ -133,6 +133,7 @@ typedef enum
   BMP_ERROR_NONE = 0,
   BMP_ERROR_SDINITFAIL = 1,
   BMP_ERROR_FILENOTFOUND = 2,
+  BMP_ERROR_UNABLETOCREATEFILE = 3,
   BMP_ERROR_NOTABITMAP = 10,          /* First two bytes of the image not 'BM' */
   BMP_ERROR_INVALIDBITDEPTH = 11,     /* Image is not 24-bits */
   BMP_ERROR_COMPRESSEDDATA = 12,      /* Image contains compressed data (not supported) */
@@ -141,5 +142,9 @@ typedef enum
 } bmp_error_t;
 
 bmp_error_t bmpDrawBitmap(uint16_t x, uint16_t y, const char* filename);
+
+#if defined CFG_SDCARD_READONLY && CFG_SDCARD_READONLY == 0
+bmp_error_t bmpSaveScreenshot(const char* filename);
+#endif
 
 #endif
