@@ -56,11 +56,12 @@ OBJS += dejavusans9.o dejavusansbold9.o dejavusanscondensed9.o
 OBJS += dejavusansmono8.o dejavusansmonobold8.o
 OBJS += veramono9.o veramonobold9.o veramono11.o veramonobold11.o 
 # LCD Driver (Only one can be included at a time!)
-OBJS += ILI9325.o
+OBJS += ILI9328.o
+# OBJS += ILI9325.o
 # OBJS += st7735.o
 # OBJS += st7783.o
 
-# Bitmap LCD support (ST7565, SSD1306, etc.)
+# Bitmap/Monochrome LCD support (ST7565, SSD1306, etc.)
 VPATH += drivers/lcd drivers/lcd/bitmap/st7565
 VPATH += drivers/lcd/bitmap/ssd1306
 OBJS += smallfonts.o st7565.o ssd1306.o

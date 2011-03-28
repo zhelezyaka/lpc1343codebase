@@ -458,12 +458,26 @@ void tsCalibrate(void)
 
     // Create an object to hold the eventual event data
     tsTouchData_t data;
-    int32_t error;
+    tsTouchError_t error;
 
-    // Cause a blocking delay until a touch event or 5s timeout
+    // Cause a blocking delay until a touch event occurs or 5s passes
     error = tsWaitForEvent(&data, 5000);
 
-    if (!error)
+    if (error)
+    {
+      switch(error)
+      {
+        case TS_ERROR_TIMEOUT:
+          printf("Timeout occurred %s", CFG_PRINTF_NEWLINE);
+          break;
+        case TS_ERROR_XYMISMATCH:
+          // X/Y double-check failed ... likely a faulty reading
+          printf("X/Y mismatch %s", CFG_PRINTF_NEWLINE);
+        default:
+          break;
+      }
+    }
+    else
     {
       // A valid touch event occurred ... parse data
       if (data.x > 100 && data.x < 200)
@@ -475,20 +489,16 @@ void tsCalibrate(void)
             CFG_PRINTF_NEWLINE);
       }
     }
-    else
-    {
-      // Timeout occurred with no touch event
-      printf("Timeout occurred %s", CFG_PRINTF_NEWLINE);
-    }
 
     @endcode
 */
 /**************************************************************************/
-int32_t tsWaitForEvent(tsTouchData_t* data, uint32_t timeoutMS)
+tsTouchError_t tsWaitForEvent(tsTouchData_t* data, uint32_t timeoutMS)
 {
   if (!_tsInitialised) tsInit();
 
-  uint32_t z1, z2, xRaw, yRaw;
+  uint32_t z1, z2;
+  uint32_t xRaw1, xRaw2, yRaw1, yRaw2;
   z1 = z2 = 0;
 
   // Handle timeout if delay > 0 milliseconds
@@ -504,7 +514,7 @@ int32_t tsWaitForEvent(tsTouchData_t* data, uint32_t timeoutMS)
         // Throw alert if timeout delay has been passed
         if ((systickGetTicks() < startTick) && (systickGetTicks() >= (timeoutMS - (0xFFFFFFFF - startTick))))
         {
-          return -1;
+          return TS_ERROR_TIMEOUT;
         }      
         tsReadZ(&z1, &z2);
       }
@@ -518,7 +528,7 @@ int32_t tsWaitForEvent(tsTouchData_t* data, uint32_t timeoutMS)
         // Throw timeout if delay has been passed
         if ((systickGetTicks() - startTick) > timeoutMS)
         {
-          return -1;
+          return TS_ERROR_TIMEOUT;
         }
         tsReadZ(&z1, &z2);
       }
@@ -534,17 +544,26 @@ int32_t tsWaitForEvent(tsTouchData_t* data, uint32_t timeoutMS)
   }
 
   // Get raw conversion results
-  xRaw = tsReadY();    // X and Y are reversed
-  yRaw = tsReadX();    // X and Y are reverse
+  // Each value is read twice and compared to avoid erroneous readings
+  xRaw1 = tsReadY();    // X and Y are reversed
+  xRaw2 = tsReadY();    // X and Y are reversed
+  yRaw1 = tsReadX();    // X and Y are reverse
+  yRaw2 = tsReadX();    // X and Y are reverse
+
+  // If both read attempts aren't identical, return mismatch error
+  if ((xRaw1 != xRaw2) || (yRaw1 != yRaw2))
+  {
+    return TS_ERROR_XYMISMATCH;
+  }
 
   // Normalise X
-  data->x = ((xRaw - _calibration.offsetLeft > TS_ADC_LIMIT ? 0 : xRaw - _calibration.offsetLeft) * 100) / _calibration.divisorX;
+  data->x = ((xRaw1 - _calibration.offsetLeft > TS_ADC_LIMIT ? 0 : xRaw1 - _calibration.offsetLeft) * 100) / _calibration.divisorX;
   if (data->x > lcdGetWidth() - 1) data->x = lcdGetWidth() - 1;
 
   // Normalise Y
-  data->y = ((yRaw - _calibration.offsetTop > TS_ADC_LIMIT ? 0 : yRaw - _calibration.offsetTop) * 100) / _calibration.divisorY;
+  data->y = ((yRaw1 - _calibration.offsetTop > TS_ADC_LIMIT ? 0 : yRaw1 - _calibration.offsetTop) * 100) / _calibration.divisorY;
   if (data->y > lcdGetHeight() - 1) data->y = lcdGetHeight() - 1;
 
-  // Indicate no timeout occurred
-  return 0;
+  // Indicate correct reading
+  return TS_ERROR_NONE;
 }

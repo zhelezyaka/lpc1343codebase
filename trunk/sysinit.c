@@ -204,7 +204,7 @@ void systemInit()
     // mcp24aaWriteBuffer(CFG_EEPROM_CHIBI_SHORTADDR, (uint8_t *)&addr_short, 2);
     // mcp24aaWriteBuffer(CFG_EEPROM_CHIBI_IEEEADDR, (uint8_t *)&addr_ieee, 8);
     chb_init();
-    chb_pcb_t *pcb = chb_get_pcb();
+    // chb_pcb_t *pcb = chb_get_pcb();
     // printf("%-40s : 0x%04X%s", "Chibi Initialised", pcb->src_addr, CFG_PRINTF_NEWLINE);
   #endif
 
@@ -276,4 +276,3 @@ int puts(const char * str)
 
   return 0;
 }
-

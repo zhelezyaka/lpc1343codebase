@@ -81,9 +81,16 @@ typedef struct
   uint16_t divisorY;
 } tsCalibrationData_t;
 
+typedef enum
+{
+  TS_ERROR_NONE         = 0,
+  TS_ERROR_TIMEOUT      = -1,   // Timeout occured before a valid reading
+  TS_ERROR_XYMISMATCH   = -2    // X/Y double-check failed
+} tsTouchError_t;
+
 // Method Prototypes
-void          tsInit ( void );
-void          tsCalibrate ( void );
-int32_t       tsWaitForEvent(tsTouchData_t* data, uint32_t timeoutMS);
+void           tsInit ( void );
+void           tsCalibrate ( void );
+tsTouchError_t tsWaitForEvent(tsTouchData_t* data, uint32_t timeoutMS);
 
 #endif

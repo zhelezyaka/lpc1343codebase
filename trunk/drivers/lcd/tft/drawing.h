@@ -67,6 +67,7 @@ void      drawProgressBar     ( uint16_t x, uint16_t y, uint16_t width, uint16_t
 void      drawButton          ( uint16_t x, uint16_t y, uint16_t width, uint16_t height, const FONT_INFO *fontInfo, uint16_t fontHeight, char* text, bool pressed );
 uint16_t  drawRGB24toRGB565   ( uint8_t r, uint8_t g, uint8_t b );
 uint32_t  drawRGB565toBGRA32  ( uint16_t color );
+uint16_t  drawBGR2RGB         ( uint16_t color );
 
 #if defined CFG_TFTLCD_INCLUDESMALLFONTS & CFG_TFTLCD_INCLUDESMALLFONTS == 1
 void      drawStringSmall     ( uint16_t x, uint16_t y, uint16_t color, char* text, struct FONT_DEF font );

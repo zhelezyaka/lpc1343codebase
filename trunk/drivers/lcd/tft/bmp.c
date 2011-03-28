@@ -51,8 +51,10 @@
   #include "drivers/fatfs/diskio.h"
   #include "drivers/fatfs/ff.h"
   static FATFS Fatfs[1];
-  static FILINFO Finfo;
-  static FIL bmpSDFile;
+  #if defined CFG_SDCARD_READONLY && CFG_SDCARD_READONLY == 0
+	static FILINFO Finfo;
+	static FIL bmpSDFile;
+  #endif
 
 /**************************************************************************/
 /*                                                                        */

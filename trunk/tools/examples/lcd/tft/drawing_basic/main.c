@@ -52,12 +52,6 @@
 #include "drivers/lcd/tft/fonts/dejavusansbold9.h"
 #include "drivers/lcd/tft/fonts/dejavusansmono8.h"
 
-#include "drivers/fatfs/diskio.h"
-#include "drivers/fatfs/ff.h"
-
-static FILINFO Finfo;
-static FATFS Fatfs[1];
-
 /**************************************************************************/
 /*! 
     Main program entry point.  After reset, normal code execution will
@@ -75,19 +69,19 @@ int main(void)
   #if defined CFG_INTERFACE
     #error "CFG_INTERFACE must be disabled in projectconfig.h for this test (to save space)"
   #endif
-  #if !defined CFG_SDCARD
-    #error "CFG_SDCARD must be enabled in projectconfig.h for this test"
-  #endif
   
   // Clear the screen
+  // ---------------------------------------------------------------------
   drawFill(COLOR_WHITE);
 
   // Render some text using DejaVu Sans 9 and Sans Mono 8
+  // ---------------------------------------------------------------------
   drawString(5, 10, COLOR_BLACK, &dejaVuSansBold9ptFontInfo, "DejaVu Sans 9 Bold");
   drawString(5, 30, COLOR_BLACK, &dejaVuSans9ptFontInfo, "DejaVu Sans 9");
   drawString(5, 50, COLOR_BLACK, &dejaVuSansMono8ptFontInfo, "DejaVu Sans Mono 8");
 
   // Change the LCD orientation to render text horizontally
+  // ---------------------------------------------------------------------
   lcdProperties_t lcdProperties = lcdGetProperties();
   // Check if the screen orientation can be changed
   if (lcdProperties.orientation)
@@ -103,6 +97,7 @@ int main(void)
   }
 
   // Draw some primitive shapes
+  // ---------------------------------------------------------------------
   drawLine(5, 65, 200, 65, COLOR_RED);
   drawLine(5, 67, 200, 67, COLOR_GREEN);
   drawLine(5, 69, 200, 69, COLOR_BLUE);
@@ -119,6 +114,7 @@ int main(void)
   drawRectangleFilled(100, 100, 160, 105, COLOR_PALEGRAY);
   
   // Draw some compound shapes
+  // ---------------------------------------------------------------------
   drawProgressBar(70, 140, 75, 12, COLOR_BLACK, COLOR_MEDIUMGRAY, 78);
   drawString(5, 144, COLOR_BLACK, &dejaVuSansBold9ptFontInfo, "Progress");
   drawString(155, 144, COLOR_BLACK, &dejaVuSans9ptFontInfo, "78%");
@@ -126,29 +122,41 @@ int main(void)
   drawButton(20, 180, 200, 25, &dejaVuSans9ptFontInfo, 7, "Click For Text Entry", false);
 
   // Wait for a valid touch event
+  // ---------------------------------------------------------------------
   tsTouchData_t data;
+  tsTouchError_t error = -1;
   bool success = false;
   while(!success)
   {
-    // Wait forever for a touch event to occur
-    tsWaitForEvent(&data, 0);
-    // Check if the touch event is within a specified X/Y range
+    // Wait forever for a valid touch event to occur (ignoring faulty readings)
+    while (error)
+    {
+      // Only exit this loop when '0' is returned
+      error = tsWaitForEvent(&data, 0);
+      // printf("Error: %d X: %u Y: %u \r\n", error, data.x, data.y);
+    }
+
+    // Reset error to an error state in case we got a valid reading, but it's not
+    // within the expected range
+    error = -1;
+
+    // Check if the captured touch event is within the specified X/Y range
     if (data.x > 20 && data.x < 220 && data.y > 180 && data.y < 205)
     {
-      // Wait a few milliseconds before resetting the button state
+      // Wait a few milliseconds then display the text input dialogue
       systickDelay(100);
-      // Show the text input dialogue
       char* results = alphaShowDialogue();
-      // Start blinky
+      // At this point, results contains the text from the dialogue ... 
+      // clear the screen and show the results
       drawFill(COLOR_WHITE);
       drawString(10, 10, COLOR_BLACK, &dejaVuSans9ptFontInfo, "You Entered:");
       drawString(10, 30, COLOR_BLACK, &dejaVuSansBold9ptFontInfo, results);
       drawString(10, 155, COLOR_BLACK, &dejaVuSans9ptFontInfo, "Thanks ... starting blinky!");
+      // Setting success to true allow the code to move in to blinky
       success = true;
     }
   }
 
-  // Blinky
   uint32_t currentSecond, lastSecond;
   currentSecond = lastSecond = 0;
 

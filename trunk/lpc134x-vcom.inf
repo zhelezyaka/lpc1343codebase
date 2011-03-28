@@ -22,7 +22,7 @@ DefaultDestDir=12
 [SourceDisksNames]
 
 [DeviceList] 
-%DESCRIPTION%=LPC134xUSB, USB\VID_1FC9&PID_0003 
+%DESCRIPTION%=LPC134xUSB, USB\VID_239A&PID_1002 
 
 ;------------------------------------------------------------------------------
 ;  Windows 2000/XP Sections

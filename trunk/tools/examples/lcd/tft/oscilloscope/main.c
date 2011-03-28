@@ -235,7 +235,7 @@ int main(void)
   while (1)
   {
     // Wait up to 5ms for a touch event
-    int error = tsWaitForEvent(&touch, 5);
+    tsTouchError_t error = tsWaitForEvent(&touch, 5);
     if (!error)
     {
       if (touch.x > 25 && touch.x < 100 && touch.y > 210)
