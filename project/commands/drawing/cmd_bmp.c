@@ -73,6 +73,9 @@ void cmd_bmp(uint8_t argc, char **argv)
     case BMP_ERROR_FILENOTFOUND:
       printf("File Not Found: '%s'%s", filename, CFG_PRINTF_NEWLINE);
       break;
+    case BMP_ERROR_UNABLETOCREATEFILE:
+      printf("Unable to create file: '%s'%s", filename, CFG_PRINTF_NEWLINE);
+      break;
     case BMP_ERROR_NOTABITMAP:
       printf("Not a Bitmap: '%s'%s", filename, CFG_PRINTF_NEWLINE);
       break;

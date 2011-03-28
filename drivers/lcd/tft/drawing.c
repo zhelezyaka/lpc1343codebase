@@ -410,16 +410,16 @@ void drawLine ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t col
     return;
   }
 
-  /*
-  if (x0 == x1)
-  {
-    // ToDo: This may actually be slower than drawing individual pixels on 
-    // short lines ... Set a minimum line size to use the 'optimised' method
-    // (which changes the screen orientation) ?
-    lcdDrawVLine(x0, y0, y1, color);
-    return;
-  }
-  */
+  // ToDo: This is currently buggy ... fix it
+
+  //  if (x0 == x1)
+  //  {
+  //    // ToDo: This may actually be slower than drawing individual pixels on 
+  //    // short lines ... Set a minimum line size to use the 'optimised' method
+  //    // (which changes the screen orientation) ?
+  //    lcdDrawVLine(x0, y0, y1, color);
+  //    return;
+  //  }
 
   // Draw non horizontal line
   int dy = y1 - y0;
@@ -699,6 +699,22 @@ uint32_t drawRGB565toBGRA32(uint16_t color)
   // Return shifted bits with alpha set to 0xFF
   return (red << 8) | (green << 5) | (blue << 3) | 0xFF000000;
 }
+
+/**************************************************************************/
+/*! 
+    @brief  Reverses a 16-bit color from BGR to RGB
+*/
+/**************************************************************************/
+uint16_t drawBGR2RGB(uint16_t color)
+{   
+  uint16_t r, g, b;   
+   
+  b = (color>>0)  & 0x1f;   
+  g = (color>>5)  & 0x3f;   
+  r = (color>>11) & 0x1f;   
+     
+  return( (b<<11) + (g<<5) + (r<<0) );
+}  
 
 /**************************************************************************/
 /*!

@@ -105,8 +105,8 @@
     FIRMWARE VERSION SETTINGS
     -----------------------------------------------------------------------*/
     #define CFG_FIRMWARE_VERSION_MAJOR            (0)
-    #define CFG_FIRMWARE_VERSION_MINOR            (8)
-    #define CFG_FIRMWARE_VERSION_REVISION         (6)
+    #define CFG_FIRMWARE_VERSION_MINOR            (9)
+    #define CFG_FIRMWARE_VERSION_REVISION         (0)
 /*=========================================================================*/
 
 
@@ -313,6 +313,9 @@
                               CDC (see 'puts' in systeminit.c).
 
     -----------------------------------------------------------------------*/
+    #define CFG_USB_VID                   (0x239A)
+    #define CFG_USB_PID                   (0x1002)
+
     #ifdef CFG_BRD_LPC1343_REFDESIGN
       // #define CFG_USBHID
       #define CFG_USBCDC

@@ -194,9 +194,13 @@ char alphaHandleTouchEvent(void)
   tsTouchData_t data;
   char result = '\0';
   uint8_t row, col;
+  int32_t tsError = -1;
 
-  // Blocking delay until a touch event occurs
-  tsWaitForEvent(&data, 0);
+  // Blocking delay until a valie touch event occurs
+  while (tsError)
+  {
+    tsError = tsWaitForEvent(&data, 0);
+  }
 
   // Attempt to convert touch data to char
   if ((data.y < ALPHA_ROW1_TOP) || (data.y > ALPHA_ROW6_TOP + ALPHA_BTN_HEIGHT))

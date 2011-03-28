@@ -33,19 +33,20 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 /**************************************************************************/
-#include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 
 #include "projectconfig.h"
 #include "sysinit.h"
 
 #include "core/gpio/gpio.h"
+#include "core/adc/adc.h"
 #include "core/systick/systick.h"
 
-#ifdef CFG_INTERFACE
-  #include "core/cmd/cmd.h"
-#endif
+#include "drivers/lcd/tft/lcd.h"
+#include "drivers/lcd/tft/drawing.h"
+#include "drivers/lcd/tft/touchscreen.h"
+#include "drivers/lcd/tft/fonts/dejavusans9.h"
+#include "drivers/lcd/tft/fonts/dejavusansbold9.h"
 
 /**************************************************************************/
 /*! 
@@ -55,33 +56,29 @@
 /**************************************************************************/
 int main(void)
 {
+  #if !defined CFG_TFTLCD
+    #error "CFG_TFTLCD must be enabled in projectconfig.h for this test"
+  #endif
+
   // Configure cpu and mandatory peripherals
   systemInit();
+  
+  tsTouchData_t touch;
+  tsTouchError_t error;
 
-  uint32_t currentSecond, lastSecond;
-  currentSecond = lastSecond = 0;
+  drawPixel(5, 5, COLOR_WHITE);
+  drawPixel(6, 6, COLOR_WHITE);
+  drawPixel(7, 7, COLOR_WHITE);
 
+  // Start reading
   while (1)
   {
-    // Toggle LED once per second ... rollover = 136 years :)
-    currentSecond = systickGetSecondsActive();
-    if (currentSecond != lastSecond)
+    // Wait for a valid touch event
+    error = tsWaitForEvent(&touch, 0);
+    if (!error)
     {
-      lastSecond = currentSecond;
-      if (gpioGetValue(CFG_LED_PORT, CFG_LED_PIN) == CFG_LED_OFF)
-      {
-        gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_ON); 
-      }
-      else
-      {
-        gpioSetValue (CFG_LED_PORT, CFG_LED_PIN, CFG_LED_OFF); 
-      }
+      drawPixel(touch.x, touch.y, COLOR_WHITE);
     }
-
-    // Poll for CLI input if CFG_INTERFACE is enabled in projectconfig.h
-    #ifdef CFG_INTERFACE 
-      cmdPoll(); 
-    #endif
   }
 
   return 0;

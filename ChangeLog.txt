@@ -1,3 +1,38 @@
+v0.9.0 - Ongoing
+================
+
+- Adjusted touch screen code to check ADC values twice
+  and compare.  If mismatch occurs, and error is returned.
+  This provides far more consistent TS values at the
+  expense of having to check the error results. See
+  'alphanumeric.c' for an example of doing this
+  correctly.
+- Added seperate driver for ILI9328 based displays, even
+  though it seems to be identical to the ILI9325.  Files
+  were seperated in case the initialisation needs to be
+  tweeked later or if incompatibilities are found.
+- Added the ability to write the contents of the LCD
+  to a bitmap image, though it's very slow reading data
+  pixel by pixel and converting it to 24-bit RGB values.
+  Performance can definately be improved.
+- Added 'drawRGB565toBGRA32' to drawing.c to convert
+  RGB565 colors back to the canonical BGRA32 format
+- Added gain controls to TSL2561 driver to increase or
+  decrease sensitivity.  Should be easy to implement
+  auto-gain functionality now.
+- Changed USB VID to a valid value.  Source files and
+  lpc134x-vcom.inf updated accordingly.
+- Moved USB VID and PID to projectconfig.h
+- Added '-mcpu' flag to the linker in Makefile (the wrong
+  libm was being linked because of this).
+
+  KNOWN ISSUES
+  ------------
+  The touch screen calibration needs to be improved to
+  provide more accurate X/Y readings away from the center.
+  Loading the 'touchscreen' example in /tools/examples/lcd
+  will show that it is off as you get closer to the edges.
+
 v0.8.6 - 21 March 2011
 ======================
 

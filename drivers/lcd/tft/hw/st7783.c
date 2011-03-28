@@ -149,18 +149,6 @@ void st7783Command(uint16_t command, uint16_t data)
 }
 
 /*************************************************/
-uint16_t st7783BGR2RGB(uint16_t color)   
-{   
-  uint16_t r, g, b;   
-   
-  b = (color>>0)  & 0x1f;   
-  g = (color>>5)  & 0x3f;   
-  r = (color>>11) & 0x1f;   
-     
-  return( (b<<11) + (g<<5) + (r<<0) );
-}  
-
-/*************************************************/
 /* Returns the 4-hexdigit controller code        */
 /*************************************************/
 uint16_t st7783Type(void)
