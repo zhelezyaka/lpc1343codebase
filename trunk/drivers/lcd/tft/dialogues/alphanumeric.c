@@ -196,7 +196,7 @@ char alphaHandleTouchEvent(void)
   uint8_t row, col;
   int32_t tsError = -1;
 
-  // Blocking delay until a valie touch event occurs
+  // Blocking delay until a valid touch event occurs
   while (tsError)
   {
     tsError = tsWaitForEvent(&data, 0);

@@ -470,9 +470,6 @@ void tsCalibrate(void)
         case TS_ERROR_TIMEOUT:
           printf("Timeout occurred %s", CFG_PRINTF_NEWLINE);
           break;
-        case TS_ERROR_XYMISMATCH:
-          // X/Y double-check failed ... likely a faulty reading
-          printf("X/Y mismatch %s", CFG_PRINTF_NEWLINE);
         default:
           break;
       }
@@ -499,7 +496,7 @@ tsTouchError_t tsWaitForEvent(tsTouchData_t* data, uint32_t timeoutMS)
 
   uint32_t z1, z2;
   uint32_t xRaw1, xRaw2, yRaw1, yRaw2;
-  z1 = z2 = 0;
+  z1 = z2 = xRaw1 = xRaw2 = yRaw1 = yRaw2 = 0;
 
   // Handle timeout if delay > 0 milliseconds
   if (timeoutMS)
@@ -543,17 +540,26 @@ tsTouchError_t tsWaitForEvent(tsTouchData_t* data, uint32_t timeoutMS)
     }
   }
 
-  // Get raw conversion results
-  // Each value is read twice and compared to avoid erroneous readings
-  xRaw1 = tsReadY();    // X and Y are reversed
-  xRaw2 = tsReadY();    // X and Y are reversed
-  yRaw1 = tsReadX();    // X and Y are reverse
-  yRaw2 = tsReadX();    // X and Y are reverse
+  //  // Get raw conversion results
+  //  // Each value is read twice and compared to avoid erroneous readings
+  //  xRaw1 = tsReadY();    // X and Y are reversed
+  //  xRaw2 = tsReadY();    // X and Y are reversed
+  //  yRaw1 = tsReadX();    // X and Y are reverse
+  //  yRaw2 = tsReadX();    // X and Y are reverse
+  //
+  //  // If both read attempts aren't identical, return mismatch error
+  //  if ((xRaw1 != xRaw2) || (yRaw1 != yRaw2))
+  //  {
+  //    return TS_ERROR_XYMISMATCH;
+  //  }
 
-  // If both read attempts aren't identical, return mismatch error
-  if ((xRaw1 != xRaw2) || (yRaw1 != yRaw2))
+  // Keep reading until we get two identical readings
+  while ((xRaw1 != xRaw2) || (yRaw1 != yRaw2))
   {
-    return TS_ERROR_XYMISMATCH;
+    xRaw1 = tsReadY();    // X and Y are reversed
+    xRaw2 = tsReadY();    // X and Y are reversed
+    yRaw1 = tsReadX();    // X and Y are reverse
+    yRaw2 = tsReadX();    // X and Y are reverse
   }
 
   // Normalise X

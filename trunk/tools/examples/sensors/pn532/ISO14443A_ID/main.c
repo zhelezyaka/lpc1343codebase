@@ -85,16 +85,18 @@ int main (void)
     // Send the command
     error = pn532Write(abtCommand, sizeof(abtCommand));
 
-    // Brief delay before checking for a response
-    systickDelay(25);
-
     // Wait until we get a response or an unexpected error message
     do
     {
       error = pn532Read(response, &responseLen);
       systickDelay(25);
     }
+    #ifdef PN532_UART
     while (error == PN532_ERROR_RESPONSEBUFFEREMPTY);
+    #endif
+    #ifdef PN532_SPI
+    while ((error == PN532_ERROR_RESPONSEBUFFEREMPTY) || (error = PN532_ERROR_SPIREADYSTATUSTIMEOUT));
+    #endif
 
     // Print the card details if possible
     if (!error)

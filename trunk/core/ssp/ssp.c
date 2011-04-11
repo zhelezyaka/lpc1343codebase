@@ -152,7 +152,7 @@ void sspInit (uint8_t portNum, sspClockPolarity_t polarity, sspClockPhase_t phas
     SCB_SYSAHBCLKCTRL |= (SCB_SYSAHBCLKCTRL_SSP0);
   
     /* Divide by 1 (SSPCLKDIV also enables to SSP CLK) */
-    SCB_SSP0CLKDIV = SCB_SSP0CLKDIV_DIV1;  // 1 = 4.0MHz
+    SCB_SSP0CLKDIV = SCB_SSP0CLKDIV_DIV1;
   
     /* Set P0.8 to SSP MISO */
     IOCON_PIO0_8 &= ~IOCON_PIO0_8_FUNC_MASK;

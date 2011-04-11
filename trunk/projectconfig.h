@@ -412,7 +412,7 @@
                               selected.
     -----------------------------------------------------------------------*/
     #ifdef CFG_BRD_LPC1343_REFDESIGN
-      #define CFG_INTERFACE
+      // #define CFG_INTERFACE
       #define CFG_INTERFACE_MAXMSGSIZE    (256)
       #define CFG_INTERFACE_PROMPT        "LPC1343 >> "
       #define CFG_INTERFACE_SILENTMODE    (0)

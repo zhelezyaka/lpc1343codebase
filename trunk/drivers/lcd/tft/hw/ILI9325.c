@@ -357,6 +357,8 @@ void lcdInit(void)
   // Initialize the display
   ili9325InitDisplay();
 
+  systickDelay(50);
+
   // Set lcd to default orientation
   lcdSetOrientation(lcdOrientation);
 
