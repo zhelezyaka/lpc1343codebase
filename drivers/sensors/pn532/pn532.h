@@ -32,7 +32,8 @@ typedef enum pn532_error_e
   PN532_ERROR_EXTENDEDFRAME           = 0x07,   // Extended frames currently unsupported
   PN532_ERROR_LENCHECKSUMMISMATCH     = 0x08,
   PN532_ERROR_RESPONSEBUFFEREMPTY     = 0x09,   // No response data received
-  PN532_ERROR_WAITINGFORIRQ           = 0x0A    // Waiting for IRQ pin to indicate response ready
+  PN532_ERROR_SPIREADYSTATUSTIMEOUT   = 0x0A    // Timeout waiting for 'ready' status (SPI only)
+
 } pn532_error_t;
 
 typedef enum pn532_modulation_e

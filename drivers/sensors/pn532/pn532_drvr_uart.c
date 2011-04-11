@@ -1,12 +1,15 @@
 /**************************************************************************/
 /*! 
-    @file     pn532_drvr.c
+    @file   pn532_drvr_uart.c
 */
 /**************************************************************************/
 #include <string.h>
 
 #include "pn532.h"
 #include "pn532_drvr.h"
+
+#ifdef PN532_UART
+
 #include "core/systick/systick.h"
 #include "core/gpio/gpio.h"
 #include "core/uart/uart.h"
@@ -21,10 +24,15 @@ void pn532HWInit(void)
   PN532_DEBUG("Initialising UART (%d)%s", PN532_UART_BAUDRATE, CFG_PRINTF_NEWLINE);
   uartInit(PN532_UART_BAUDRATE);
 
-  // Set IRQ pin as input
-  gpioSetDir(PN532_IRQ_PORT, PN532_IRQ_PORT, gpioDirection_Input);
+  // Set reset pin as output and reset device
+  gpioSetDir(PN532_RSTPD_PORT, PN532_RSTPD_PIN, gpioDirection_Output);
+  PN532_DEBUG("Resetting the PN532...\r\n");
+  gpioSetValue(PN532_RSTPD_PORT, PN532_RSTPD_PIN, 0);
+  systickDelay(400);
+  gpioSetValue(PN532_RSTPD_PORT, PN532_RSTPD_PIN, 1);
 
-  // ToDo: Reset PN532
+  // Wait for the PN532 to finish booting
+  systickDelay(100);
 }
 
 /**************************************************************************/
@@ -60,7 +68,7 @@ pn532_error_t pn532BuildFrame(byte_t * pbtFrame, size_t * pszFrame, const byte_t
 
   // DCS - Calculate data payload checksum
   byte_t btDCS = (256 - 0xD4);
-      size_t szPos;
+  size_t szPos;
   for (szPos = 0; szPos < szData; szPos++) 
   {
     btDCS -= pbtData[szPos];
@@ -265,3 +273,4 @@ pn532_error_t pn532Wakeup(void)
   return PN532_ERROR_NONE;
 }
 
+#endif  // #ifdef PN532_UART

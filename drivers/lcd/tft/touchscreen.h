@@ -84,8 +84,7 @@ typedef struct
 typedef enum
 {
   TS_ERROR_NONE         = 0,
-  TS_ERROR_TIMEOUT      = -1,   // Timeout occured before a valid reading
-  TS_ERROR_XYMISMATCH   = -2    // X/Y double-check failed
+  TS_ERROR_TIMEOUT      = -1    // Timeout occured before a valid reading
 } tsTouchError_t;
 
 // Method Prototypes

@@ -10,10 +10,15 @@
 #include "projectconfig.h"
 #include "pn532.h"
 
+#define PN532_UART
+// #define PN532_SPI
+
 #define PN532_DEBUG(fmt, args...)             printf(fmt, ##args) 
 
-#define PN532_IRQ_PORT                        (1)
-#define PN532_IRQ_PIN                         (1)
+#define PN532_RSTPD_PORT                      (2)
+#define PN532_RSTPD_PIN                       (2)
+#define PN532_SPI_CSPORT                      (0)
+#define PN532_SPI_CSPIN                       (2)
 
 #define PN532_NORMAL_FRAME__DATA_MAX_LEN      (254)
 #define PN532_NORMAL_FRAME__OVERHEAD          (8)
