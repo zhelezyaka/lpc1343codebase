@@ -57,7 +57,14 @@ void cmd_tswait(uint8_t argc, char **argv)
   int32_t delay;
   int32_t error = 0;
 
-  getNumber (argv[0], &delay);
+  if (argc == 1)
+  {
+    getNumber (argv[0], &delay);
+  }
+  else
+  {
+    delay = 0;
+  }
 
   // Validate delay
   if (delay < 0)
@@ -67,7 +74,7 @@ void cmd_tswait(uint8_t argc, char **argv)
   }
 
   // Blocking delay until a valid touch event occurs
-  error = tsWaitForEvent(&data, delay > 0 ? delay : 0);
+  error = tsWaitForEvent(&data, delay > 0 ? (uint32_t)delay : 0);
 
   if (error == TS_ERROR_NONE)
   {

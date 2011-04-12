@@ -48,8 +48,8 @@
     are using by enabling one of the following definitions. The code base
     will then try to configure itself accordingly for that board.
     -----------------------------------------------------------------------*/
-    #define CFG_BRD_LPC1343_REFDESIGN
-    // #define CFG_BRD_LPC1343_TFTLCDSTANDALONE
+    // #define CFG_BRD_LPC1343_REFDESIGN
+    #define CFG_BRD_LPC1343_TFTLCDSTANDALONE
     // #define CFG_BRD_LPC1343_802154USBSTICK
 /*=========================================================================*/
 
@@ -547,7 +547,7 @@
           ===============================
           0 1 2 3 4 5 6 7 8 9 A B C D E F
     000x  x x x x x x x x . x x . . . . .   Chibi
-    001x  x x x x x x x x x x x x x . . .   Touch Screen Calibration
+    001x  x x x x x x x x x x x x x x . .   Touch Screen Calibration
     002x  x x x x . . . . . . . . . . . .   UART
     003x  . . . . . . . . . . . . . . . .
     004x  . . . . . . . . . . . . . . . .
@@ -574,6 +574,7 @@
     #define CFG_EEPROM_TOUCHSCREEN_OFFSET_BOT   (uint16_t)(0x0017)    // 2
     #define CFG_EEPROM_TOUCHSCREEN_OFFSET_DIVX  (uint16_t)(0x0019)    // 2
     #define CFG_EEPROM_TOUCHSCREEN_OFFSET_DIVY  (uint16_t)(0x001B)    // 2
+    #define CFG_EEPROM_TOUCHSCREEN_THRESHHOLD   (uint16_t)(0x001D)    // 1
     #define CFG_EEPROM_UART_SPEED               (uint32_t)(0x0020)    // 4
 /*=========================================================================*/
 
@@ -675,11 +676,13 @@
                                 support for larger fonts generated with
                                 Dot Factory 
                                 http://www.pavius.net/downloads/tools/53-the-dot-factory
-    CFG_TFTLCD_TS_THRESHOLD     Minimum threshold to trigger a touch event
-                                with the touch screen (and exit from
-                                'tsWaitForEvent' in touchscreen.c).  Should
-                                be an 8-bit value somewhere between 8 and 32
-                                in normal circumstances.
+    CFG_TFTLCD_TS_DEFAULTTHRESHOLD  Default minimum threshold to trigger a
+                                touch event with the touch screen (and exit
+                                from 'tsWaitForEvent' in touchscreen.c).
+                                Should be an 8-bit value somewhere between
+                                8 and 64 in normal circumstances.  This is
+                                the default value and may be overriden by
+                                a value stored in EEPROM.
     CFG_TFTLCD_TS_KEYPADDELAY   The delay in milliseconds between key
                                 presses in dialogue boxes
 
@@ -693,21 +696,21 @@
     #ifdef CFG_BRD_LPC1343_REFDESIGN
       // #define CFG_TFTLCD
       #define CFG_TFTLCD_INCLUDESMALLFONTS   (0)
-      #define CFG_TFTLCD_TS_THRESHOLD        (40)
+      #define CFG_TFTLCD_TS_DEFAULTTHRESHOLD (50)
       #define CFG_TFTLCD_TS_KEYPADDELAY      (200)
     #endif
 
     #ifdef CFG_BRD_LPC1343_TFTLCDSTANDALONE
       #define CFG_TFTLCD
       #define CFG_TFTLCD_INCLUDESMALLFONTS   (0)
-      #define CFG_TFTLCD_TS_THRESHOLD        (40)
+      #define CFG_TFTLCD_TS_DEFAULTTHRESHOLD (50)
       #define CFG_TFTLCD_TS_KEYPADDELAY      (200)
     #endif
 
     #ifdef CFG_BRD_LPC1343_802154USBSTICK
       // #define CFG_TFTLCD
       #define CFG_TFTLCD_INCLUDESMALLFONTS   (0)
-      #define CFG_TFTLCD_TS_THRESHOLD        (40)
+      #define CFG_TFTLCD_TS_DEFAULTTHRESHOLD (50)
       #define CFG_TFTLCD_TS_KEYPADDELAY      (200)
     #endif
 /*=========================================================================*/
