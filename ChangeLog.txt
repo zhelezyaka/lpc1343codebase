@@ -1,6 +1,13 @@
 v0.9.0 - Ongoing
 ================
 
+- Fixed a bug in cmd_tswait.c when no delay was passed.
+- Added CLI command to set touch screen threshold 
+  to register a touch event (since this can vary from
+  screen to screen).  Type 'x' at the CLI to get/set
+  the value.  The setting is persisted to EEPROM, and if
+  no value is found on EEPROM CFG_TFTLCD_TS_DEFAULTTHRESHOLD
+  from projectconfig.h is used.
 - Adjusted touch screen code to check ADC values twice
   and compare.  If mismatch occurs, and error is returned.
   This provides far more consistent TS values at the

@@ -52,6 +52,7 @@
 
 static bool _tsInitialised = FALSE;
 static tsCalibrationData_t _calibration;
+static uint8_t _tsThreshhold = CFG_TFTLCD_TS_DEFAULTTHRESHOLD;
 
 /**************************************************************************/
 /*                                                                        */
@@ -270,7 +271,7 @@ void tsRenderCalibrationScreen(uint16_t x, uint16_t y, uint16_t radius)
   // Wait for touch
   uint32_t z1, z2;
   z1 = z2 = 0;
-  while (z2 < CFG_TFTLCD_TS_THRESHOLD) 
+  while (z2 < _tsThreshhold) 
     tsReadZ(&z1, &z2);
 }
 
@@ -293,6 +294,7 @@ void tsInit(void)
 
   // Set initialisation flag
   _tsInitialised = TRUE;
+  _tsThreshhold = tsGetThreshhold();
 
   // Check if the touch-screen has been calibrated
   if (eepromReadU8(CFG_EEPROM_TOUCHSCREEN_CALIBRATED) == 1)
@@ -506,7 +508,7 @@ tsTouchError_t tsWaitForEvent(tsTouchData_t* data, uint32_t timeoutMS)
     if (startTick > 0xFFFFFFFF - timeoutMS)
     {
       // Wait for timeout or touch event
-      while (z2 < CFG_TFTLCD_TS_THRESHOLD)
+      while (z2 < _tsThreshhold)
       {
         // Throw alert if timeout delay has been passed
         if ((systickGetTicks() < startTick) && (systickGetTicks() >= (timeoutMS - (0xFFFFFFFF - startTick))))
@@ -520,7 +522,7 @@ tsTouchError_t tsWaitForEvent(tsTouchData_t* data, uint32_t timeoutMS)
     else
     {
       // Wait in infinite loop
-      while (z2 < CFG_TFTLCD_TS_THRESHOLD)
+      while (z2 < _tsThreshhold)
       {
         // Throw timeout if delay has been passed
         if ((systickGetTicks() - startTick) > timeoutMS)
@@ -534,32 +536,26 @@ tsTouchError_t tsWaitForEvent(tsTouchData_t* data, uint32_t timeoutMS)
   // No timeout requested ... wait forever
   else
   {
-    while (z2 < CFG_TFTLCD_TS_THRESHOLD)
+    while (z2 < _tsThreshhold)
     {
       tsReadZ(&z1, &z2);
     }
   }
 
-  //  // Get raw conversion results
-  //  // Each value is read twice and compared to avoid erroneous readings
-  //  xRaw1 = tsReadY();    // X and Y are reversed
-  //  xRaw2 = tsReadY();    // X and Y are reversed
-  //  yRaw1 = tsReadX();    // X and Y are reverse
-  //  yRaw2 = tsReadX();    // X and Y are reverse
-  //
-  //  // If both read attempts aren't identical, return mismatch error
-  //  if ((xRaw1 != xRaw2) || (yRaw1 != yRaw2))
-  //  {
-  //    return TS_ERROR_XYMISMATCH;
-  //  }
-
   // Keep reading until we get two identical readings
-  while ((xRaw1 != xRaw2) || (yRaw1 != yRaw2))
+  // Divide values by ten to make it a bit less 'fine grain'
+  uint8_t attempts = 0;
+  while ((xRaw1/10 != xRaw2/10) || (yRaw1/10 != yRaw2/10) || (yRaw1 == 0))
   {
     xRaw1 = tsReadY();    // X and Y are reversed
     xRaw2 = tsReadY();    // X and Y are reversed
     yRaw1 = tsReadX();    // X and Y are reverse
     yRaw2 = tsReadX();    // X and Y are reverse
+    // Abort after 100 failed attempts
+    if (attempts++ == 100)
+    {
+      return TS_ERROR_XYMISMATCH;
+    }
   }
 
   // Normalise X
@@ -572,4 +568,50 @@ tsTouchError_t tsWaitForEvent(tsTouchData_t* data, uint32_t timeoutMS)
 
   // Indicate correct reading
   return TS_ERROR_NONE;
+}
+
+/**************************************************************************/
+/*!
+    @brief  Updates the touch screen threshhold level and saves it
+            to EEPROM
+*/
+/**************************************************************************/
+int tsSetThreshhold(uint8_t value)
+{
+  if ((value < 0) || (value > 254))
+  {
+    return -1;
+  }
+
+  // Update threshhold value
+  _tsThreshhold = value;
+
+  // Persist to EEPROM
+  eepromWriteU8(CFG_EEPROM_TOUCHSCREEN_THRESHHOLD, value);
+
+  return 0;
+}
+
+/**************************************************************************/
+/*!
+    @brief  Gets the current touch screen threshhold level from EEPROM
+            (if present) or returns the default value from projectconfig.h
+*/
+/**************************************************************************/
+uint8_t tsGetThreshhold(void)
+{
+  // Check if custom threshold has been set in eeprom
+  uint8_t thold = eepromReadU8(CFG_EEPROM_TOUCHSCREEN_THRESHHOLD);
+  if (thold != 0xFF)
+  {
+    // Use value from EEPROM
+    _tsThreshhold = thold;
+  }
+  else
+  {
+    // Use the default value from projectconfig.h
+    _tsThreshhold = CFG_TFTLCD_TS_DEFAULTTHRESHOLD;
+  }
+
+  return _tsThreshhold;
 }

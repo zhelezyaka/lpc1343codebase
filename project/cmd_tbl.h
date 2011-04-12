@@ -63,6 +63,7 @@ void cmd_calibrate(uint8_t argc, char **argv);
 void cmd_orientation(uint8_t argc, char **argv);
 void cmd_text(uint8_t argc, char **argv);
 void cmd_textw(uint8_t argc, char **argv);
+void cmd_tsthreshhold(uint8_t argc, char **argv);
 void cmd_tswait(uint8_t argc, char **argv);
 #ifdef CFG_SDCARD
 void cmd_bmp(uint8_t argc, char **argv);
@@ -129,6 +130,7 @@ cmd_t cmd_tbl[] =
   { "t",    5, 99,  0, cmd_text              , "Text"                           , "'t <x> <y> <color> <font#> <msg>'" },
   { "T",    0,  0,  0, cmd_gettext           , "Text Dialogue"                  , CMD_NOPARAMS },
   { "W",    0,  1,  0, cmd_tswait            , "Wait for Touch"                 , "'W [<ms>]'" },
+  { "x",    0,  1,  0, cmd_tsthreshhold      , "Touch Threshold"                , "'x [<0..254>]'" },
   #endif
 
   #ifdef CFG_CHIBI
