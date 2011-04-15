@@ -243,9 +243,12 @@ void lcdInit(void)
   lcdBacklight(TRUE);
 
   // Reset display
+  SET_RES;
+  systickDelay(50);
   CLR_RES;
   systickDelay(50);
   SET_RES;
+  systickDelay(50);
 
   // Run LCD init sequence
   st7735InitDisplay();
@@ -259,9 +262,11 @@ void lcdBacklight(bool state)
 {
   // Set the backlight
   if (state)
-    CLR_BL;
-  else
+    // CLR_BL;
     SET_BL;
+  else
+    // SET_BL;
+    CLR_BL;
 }
 
 /*************************************************/

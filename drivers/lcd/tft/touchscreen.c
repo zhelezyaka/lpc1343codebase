@@ -296,7 +296,7 @@ void tsInit(void)
   _tsInitialised = TRUE;
   _tsThreshhold = tsGetThreshhold();
 
-  // Check if the touch-screen has been calibrated
+  // Load values from EEPROM if touch screen has already been calibrated
   if (eepromReadU8(CFG_EEPROM_TOUCHSCREEN_CALIBRATED) == 1)
   {
     // Load calibration data
@@ -306,11 +306,6 @@ void tsInit(void)
     _calibration.offsetBottom = eepromReadU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_BOT);
     _calibration.divisorX     = eepromReadU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_DIVX);
     _calibration.divisorY     = eepromReadU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_DIVY);
-  }
-  else
-  {
-    // Start touch-screen calibration
-    tsCalibrate();
   }
 }
 
@@ -543,9 +538,9 @@ tsTouchError_t tsWaitForEvent(tsTouchData_t* data, uint32_t timeoutMS)
   }
 
   // Keep reading until we get two identical readings
-  // Divide values by ten to make it a bit less 'fine grain'
+  // Divide values by three to make it a bit less 'fine grain'
   uint8_t attempts = 0;
-  while ((xRaw1/10 != xRaw2/10) || (yRaw1/10 != yRaw2/10) || (yRaw1 == 0))
+  while ((xRaw1/3 != xRaw2/3) || (yRaw1/3 != yRaw2/3) || (yRaw1 == 0))
   {
     xRaw1 = tsReadY();    // X and Y are reversed
     xRaw2 = tsReadY();    // X and Y are reversed
