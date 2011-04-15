@@ -1,6 +1,9 @@
 v0.9.0 - Ongoing
 ================
 
+- Calibration process no longer starts automatically when
+  calibration data is not found in EEPROM.  tsCalibrate()
+  now needs to called manually or from the CLI.
 - Fixed a bug in cmd_tswait.c when no delay was passed.
 - Added CLI command to set touch screen threshold 
   to register a touch event (since this can vary from
