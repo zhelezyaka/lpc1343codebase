@@ -48,8 +48,8 @@
     are using by enabling one of the following definitions. The code base
     will then try to configure itself accordingly for that board.
     -----------------------------------------------------------------------*/
-    // #define CFG_BRD_LPC1343_REFDESIGN
-    #define CFG_BRD_LPC1343_TFTLCDSTANDALONE
+    #define CFG_BRD_LPC1343_REFDESIGN
+    // #define CFG_BRD_LPC1343_TFTLCDSTANDALONE
     // #define CFG_BRD_LPC1343_802154USBSTICK
 /*=========================================================================*/
 
@@ -412,7 +412,7 @@
                               selected.
     -----------------------------------------------------------------------*/
     #ifdef CFG_BRD_LPC1343_REFDESIGN
-      // #define CFG_INTERFACE
+      #define CFG_INTERFACE
       #define CFG_INTERFACE_MAXMSGSIZE    (256)
       #define CFG_INTERFACE_PROMPT        "LPC1343 >> "
       #define CFG_INTERFACE_SILENTMODE    (0)
@@ -547,10 +547,10 @@
           ===============================
           0 1 2 3 4 5 6 7 8 9 A B C D E F
     000x  x x x x x x x x . x x . . . . .   Chibi
-    001x  x x x x x x x x x x x x x x . .   Touch Screen Calibration
+    001x  . . . . . . . . . . . . . . . .   
     002x  x x x x . . . . . . . . . . . .   UART
-    003x  . . . . . . . . . . . . . . . .
-    004x  . . . . . . . . . . . . . . . .
+    003x  x x x x x x x x x x x x x x x x   Touch Screen Calibration
+    004x  x x x x x x x x x x x x x x . .   Touch Screen Calibration
     005x  . . . . . . . . . . . . . . . .
     006x  . . . . . . . . . . . . . . . .
     007x  . . . . . . . . . . . . . . . .
@@ -567,15 +567,16 @@
     #define CFG_EEPROM_RESERVED                 (0x00FF)              // Protect first 256 bytes of memory
     #define CFG_EEPROM_CHIBI_IEEEADDR           (uint16_t)(0x0000)    // 8
     #define CFG_EEPROM_CHIBI_SHORTADDR          (uint16_t)(0x0009)    // 2
-    #define CFG_EEPROM_TOUCHSCREEN_CALIBRATED   (uint16_t)(0x0010)    // 1
-    #define CFG_EEPROM_TOUCHSCREEN_OFFSET_LEFT  (uint16_t)(0x0011)    // 2
-    #define CFG_EEPROM_TOUCHSCREEN_OFFSET_RIGHT (uint16_t)(0x0013)    // 2
-    #define CFG_EEPROM_TOUCHSCREEN_OFFSET_TOP   (uint16_t)(0x0015)    // 2
-    #define CFG_EEPROM_TOUCHSCREEN_OFFSET_BOT   (uint16_t)(0x0017)    // 2
-    #define CFG_EEPROM_TOUCHSCREEN_OFFSET_DIVX  (uint16_t)(0x0019)    // 2
-    #define CFG_EEPROM_TOUCHSCREEN_OFFSET_DIVY  (uint16_t)(0x001B)    // 2
-    #define CFG_EEPROM_TOUCHSCREEN_THRESHHOLD   (uint16_t)(0x001D)    // 1
-    #define CFG_EEPROM_UART_SPEED               (uint32_t)(0x0020)    // 4
+    #define CFG_EEPROM_TOUCHSCREEN_CALIBRATED   (uint16_t)(0x0030)    // 1
+    #define CFG_EEPROM_TOUCHSCREEN_CAL_AN       (uint16_t)(0x0031)    // 4
+    #define CFG_EEPROM_TOUCHSCREEN_CAL_BN       (uint16_t)(0x0035)    // 4
+    #define CFG_EEPROM_TOUCHSCREEN_CAL_CN       (uint16_t)(0x0039)    // 4
+    #define CFG_EEPROM_TOUCHSCREEN_CAL_DN       (uint16_t)(0x003D)    // 4
+    #define CFG_EEPROM_TOUCHSCREEN_CAL_EN       (uint16_t)(0x0041)    // 4
+    #define CFG_EEPROM_TOUCHSCREEN_CAL_FN       (uint16_t)(0x0045)    // 4
+    #define CFG_EEPROM_TOUCHSCREEN_CAL_DIVIDER  (uint16_t)(0x0049)    // 4
+    #define CFG_EEPROM_TOUCHSCREEN_THRESHHOLD   (uint16_t)(0x004D)    // 1
+    #define CFG_EEPROM_UART_SPEED               (uint16_t)(0x0020)    // 4
 /*=========================================================================*/
 
 
@@ -680,7 +681,7 @@
                                 touch event with the touch screen (and exit
                                 from 'tsWaitForEvent' in touchscreen.c).
                                 Should be an 8-bit value somewhere between
-                                8 and 64 in normal circumstances.  This is
+                                8 and 75 in normal circumstances.  This is
                                 the default value and may be overriden by
                                 a value stored in EEPROM.
     CFG_TFTLCD_TS_KEYPADDELAY   The delay in milliseconds between key
@@ -703,7 +704,7 @@
     #ifdef CFG_BRD_LPC1343_TFTLCDSTANDALONE
       #define CFG_TFTLCD
       #define CFG_TFTLCD_INCLUDESMALLFONTS   (0)
-      #define CFG_TFTLCD_TS_DEFAULTTHRESHOLD (50)
+      #define CFG_TFTLCD_TS_DEFAULTTHRESHOLD (80)        // Approx ILI9328 value
       #define CFG_TFTLCD_TS_KEYPADDELAY      (200)
     #endif
 

@@ -1,9 +1,9 @@
 /**************************************************************************/
 /*! 
-    @file     cmd_tswait.c
+    @file     cmd_tsthreshhold.c
     @author   K. Townsend (microBuilder.eu)
 
-    @brief    Code to execute for cmd_tswait in the 'core/cmd'
+    @brief    Code to execute for cmd_tsthreshhold in the 'core/cmd'
               command-line interpretter.
 
     @section LICENSE
@@ -44,49 +44,39 @@
 #include "project/commands.h"       // Generic helper functions
 
 #ifdef CFG_TFTLCD    
+  #include "drivers/eeprom/eeprom.h"
   #include "drivers/lcd/tft/touchscreen.h"
 
 /**************************************************************************/
 /*! 
-    Waits for a touch screen event and returns the co-ordinates
+    Gets or sets the touch screen 'touch event' threshhold
 */
 /**************************************************************************/
-void cmd_tswait(uint8_t argc, char **argv)
+void cmd_tsthreshhold(uint8_t argc, char **argv)
 {
-  tsTouchData_t data;
-  int32_t delay;
-  int32_t error = 0;
-
-  if (argc == 1)
-  {
-    getNumber (argv[0], &delay);
-  }
-  else
-  {
-    delay = 0;
-  }
-
-  // Validate delay
-  if (delay < 0)
-  {
-    printf("Invalid timeout%s", CFG_PRINTF_NEWLINE);
+  int32_t input;
+  uint8_t value;
+  
+  if (argc == 0)
+  {    
+    // Display default threshold (from projectconfig.h)
+    value = tsGetThreshhold();
+    printf("%u%s", value, CFG_PRINTF_NEWLINE);
     return;
   }
 
-  // Blocking delay until a valid touch event occurs
-  error = tsWaitForEvent(&data, delay > 0 ? (uint32_t)delay : 0);
-
-  if (error == TS_ERROR_NONE)
+  // Convert supplied parameters
+  getNumber (argv[0], &input);
+  if ((input < 0) || (input > 254))
   {
-    // A valid touch event occurred ... parse data
-    printf("%d, %d%s",(int)data.xlcd, (int)data.ylcd, CFG_PRINTF_NEWLINE);
+    printf("Invalid value: Enter 0..254%s", CFG_PRINTF_NEWLINE);
+    return;
   }
-  else
-  {
-    // Display error code
-    printf("%d %s", (int)error, CFG_PRINTF_NEWLINE);
-  }
-
+  
+  // Store value in EEPROM and update the TS
+  tsSetThreshhold((uint8_t)input);
+  value = tsGetThreshhold();
+  printf("Set to %u%s", (uint8_t)value, CFG_PRINTF_NEWLINE);
   return;
 }
 

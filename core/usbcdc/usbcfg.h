@@ -101,7 +101,7 @@
 #define USB_SUSPEND_EVENT   1
 #define USB_RESUME_EVENT    1
 #define USB_WAKEUP_EVENT    0
-#define USB_SOF_EVENT       0
+#define USB_SOF_EVENT       1
 #define USB_ERROR_EVENT     0
 #define USB_EP_EVENT        0x000B
 #define USB_CONFIGURE_EVENT 1

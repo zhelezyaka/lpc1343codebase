@@ -163,6 +163,7 @@
             <file file_name="../../drivers/sensors/pn532/pn532_drvr_uart.c">
               <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
             </file>
+            <file file_name="../../drivers/sensors/pn532/pn532_drvr_spi.c"/>
           </folder>
           <folder Name="tsl2561">
             <file file_name="../../drivers/sensors/tsl2561/tsl2561.c">
@@ -226,6 +227,7 @@
             </file>
             <file file_name="../../drivers/lcd/tft/touchscreen.c">
               <configuration Name="THUMB Flash Debug" build_exclude_from_build="No"/>
+              <configuration Name="THUMB Flash Release" build_exclude_from_build="No"/>
             </file>
             <file file_name="../../drivers/lcd/tft/bmp.c"/>
             <folder Name="dialogues">
@@ -323,6 +325,7 @@
             </file>
             <file file_name="../../project/commands/drawing/cmd_orientation.c"/>
             <file file_name="../../project/commands/drawing/cmd_rectangle.c"/>
+            <file file_name="../../project/commands/drawing/cmd_tsthreshhold.c"/>
           </folder>
           <file file_name="../../project/commands/cmd_uart.c"/>
         </folder>

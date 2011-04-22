@@ -261,6 +261,9 @@ void lcdInit(void)
 void lcdBacklight(bool state)
 {
   // Set the backlight
+  // Note: Depending on the type of transistor used
+  // to control the backlight, you made need to invert
+  // the values below
   if (state)
     // CLR_BL;
     SET_BL;

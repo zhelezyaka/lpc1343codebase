@@ -3,6 +3,8 @@
     @file     touchscreen.c
     @author   K. Townsend (microBuilder.eu)
 
+    Parts copyright (c) 2001, Carlos E. Vidales. All rights reserved.
+
     @section LICENSE
 
     Software License Agreement (BSD License)
@@ -43,16 +45,15 @@
 #include "drivers/lcd/tft/drawing.h"
 #include "drivers/lcd/tft/fonts/dejavusans9.h"
 
-#define TS_CALIBRATION_OUTOFRANGE (300)     // Maximum value for calibration
-#define TS_ADC_LIMIT              (0x03FF)  // 10-bit ADC = 0..1023
-
-#define TS_LINE1                  "Touch the center of"
-#define TS_LINE2                  "the red circle using"
-#define TS_LINE3                  "a pen or stylus"
+#define TS_LINE1 "Touch the center of"
+#define TS_LINE2 "the red circle using"
+#define TS_LINE3 "a pen or stylus"
 
 static bool _tsInitialised = FALSE;
-static tsCalibrationData_t _calibration;
 static uint8_t _tsThreshhold = CFG_TFTLCD_TS_DEFAULTTHRESHOLD;
+tsPoint_t _tsLCDPoints[3]; 
+tsPoint_t _tsTSPoints[3]; 
+tsMatrix_t _tsMatrix;
 
 /**************************************************************************/
 /*                                                                        */
@@ -69,29 +70,35 @@ void tsReadZ(uint32_t* z1, uint32_t* z2)
 {
   if (!_tsInitialised) tsInit();
 
-  // Make sure that X+/Y- are set to GPIO
-  TS_XP_FUNC_GPIO;
+  // XP = ADC
+  // XM = GPIO Output Low
+  // YP = GPIO Output High
+  // YM = GPIO Input
+
+  TS_XM_FUNC_GPIO;
+  TS_YP_FUNC_GPIO;
   TS_YM_FUNC_GPIO;
 
-  // Set X- and Y+ to inputs (necessary?)
-  gpioSetDir (TS_XM_PORT, TS_XM_PIN, 0);
-  gpioSetDir (TS_YP_PORT, TS_YP_PIN, 0);
+  gpioSetDir (TS_XM_PORT, TS_XM_PIN, 1);
+  gpioSetDir (TS_YP_PORT, TS_YP_PIN, 1);
+  gpioSetDir (TS_YM_PORT, TS_YM_PIN, 0);
 
-  // Set X+ and Y- to output
-  gpioSetDir (TS_XP_PORT, TS_XP_PIN, 1);
-  gpioSetDir (TS_YM_PORT, TS_YM_PIN, 1);
+  gpioSetValue(TS_XM_PORT, TS_XM_PIN, 0);   // GND
+  gpioSetValue(TS_YP_PORT, TS_YP_PIN, 1);   // 3.3V
 
-  // X+ goes low, Y- goes high
-  gpioSetValue(TS_XP_PORT, TS_XP_PIN, 0);   // GND
-  gpioSetValue(TS_YM_PORT, TS_YM_PIN, 1);   // 3.3V
+  TS_XP_FUNC_ADC;
+  *z1 = adcRead(TS_XP_ADC_CHANNEL);
 
-  // Set X- and Y+ to ADC
-  TS_XM_FUNC_ADC;  
-  TS_YP_FUNC_ADC;  
+  // XP = GPIO Input
+  // XM = GPIO Output Low
+  // YP = GPIO Output High
+  // YM = ADC
 
-  // Get ADC results
-  *z1 = adcRead(TS_YP_ADC_CHANNEL);     // Z1 (Read Y+)
-  *z2 = adcRead(TS_XM_ADC_CHANNEL);     // Z2 (Read X-)
+  TS_XP_FUNC_GPIO;
+  gpioSetDir (TS_YM_PORT, TS_YM_PIN, 0);
+
+  TS_YM_FUNC_ADC;
+  *z2 = adcRead(TS_YM_ADC_CHANNEL);
 }
 
 /**************************************************************************/
@@ -103,57 +110,26 @@ uint32_t tsReadX(void)
 {
   if (!_tsInitialised) tsInit();
 
-  lcdOrientation_t orientation;
-  orientation = lcdGetOrientation();
+  // XP = GPIO Output High
+  // XM = GPIO Output Low
+  // YP = ADC
+  // YM = GPIO Input
 
-  if (orientation == LCD_ORIENTATION_LANDSCAPE)
-  {
-    // Make sure X+/X- are set to GPIO
-    TS_XP_FUNC_GPIO;
-    TS_XM_FUNC_GPIO;
-  
-    // Set Y- and Y+ to inputs
-    gpioSetDir (TS_YM_PORT, TS_YM_PIN, 0);
-    gpioSetDir (TS_YP_PORT, TS_YP_PIN, 0);
-    
-    // Set X- and X+ to output
-    gpioSetDir (TS_XM_PORT, TS_XM_PIN, 1);
-    gpioSetDir (TS_XP_PORT, TS_XP_PIN, 1);
-  
-    // X+ goes low, X- goes high
-    gpioSetValue(TS_XP_PORT, TS_XP_PIN, 0);   // GND
-    gpioSetValue(TS_XM_PORT, TS_XM_PIN, 1);   // 3.3V
-  
-    // Set pin 0.11 (Y+) to ADC0
-    TS_YP_FUNC_ADC;
-  
-    // Return the ADC results
-    return adcRead(TS_YP_ADC_CHANNEL);
-  }
-  else
-  {
-    // Make sure Y+/Y- are set to GPIO
-    TS_YP_FUNC_GPIO;
-    TS_YM_FUNC_GPIO;
-  
-    // Set X- and X+ to inputs
-    gpioSetDir (TS_XM_PORT, TS_XM_PIN, 0);
-    gpioSetDir (TS_XP_PORT, TS_XP_PIN, 0);
-    
-    // Set Y- and Y+ to output
-    gpioSetDir (TS_YM_PORT, TS_YM_PIN, 1);
-    gpioSetDir (TS_YP_PORT, TS_YP_PIN, 1);
-  
-    // Y+ goes high, Y- goes low
-    gpioSetValue(TS_YP_PORT, TS_YP_PIN, 1);   // 3.3V
-    gpioSetValue(TS_YM_PORT, TS_YM_PIN, 0);   // GND
-  
-    // Set pin 1.0 (X+) to ADC1
-    TS_XP_FUNC_ADC;  
-  
-    // Return the ADC results
-    return adcRead(TS_XP_ADC_CHANNEL);
-  }
+  TS_XP_FUNC_GPIO;
+  TS_XM_FUNC_GPIO;
+  TS_YM_FUNC_GPIO;
+
+  gpioSetDir (TS_XP_PORT, TS_XP_PIN, 1);
+  gpioSetDir (TS_XM_PORT, TS_XM_PIN, 1);
+  gpioSetDir (TS_YM_PORT, TS_YM_PIN, 0);
+
+  gpioSetValue(TS_XP_PORT, TS_XP_PIN, 1);   // 3.3V
+  gpioSetValue(TS_XM_PORT, TS_XM_PIN, 0);   // GND
+
+  TS_YP_FUNC_ADC;  
+
+  // Return the ADC results
+  return adcRead(TS_YP_ADC_CHANNEL);
 }
 
 /**************************************************************************/
@@ -165,81 +141,26 @@ uint32_t tsReadY(void)
 {
   if (!_tsInitialised) tsInit();
 
-  lcdOrientation_t orientation;
-  orientation = lcdGetOrientation();
+  // YP = GPIO Output High
+  // YM = GPIO Output Low
+  // XP = GPIO Input
+  // XM = ADC
 
-  if (orientation == LCD_ORIENTATION_LANDSCAPE)
-  {
-    // Make sure Y+/Y- are set to GPIO
-    TS_YP_FUNC_GPIO;
-    TS_YM_FUNC_GPIO;
-  
-    // Set X- and X+ to inputs
-    gpioSetDir (TS_XM_PORT, TS_XM_PIN, 0);
-    gpioSetDir (TS_XP_PORT, TS_XP_PIN, 0);
-    
-    // Set Y- and Y+ to output
-    gpioSetDir (TS_YM_PORT, TS_YM_PIN, 1);
-    gpioSetDir (TS_YP_PORT, TS_YP_PIN, 1);
-  
-    // Y+ goes high, Y- goes low
-    gpioSetValue(TS_YP_PORT, TS_YP_PIN, 1);   // 3.3V
-    gpioSetValue(TS_YM_PORT, TS_YM_PIN, 0);   // GND
-  
-    // Set pin 1.0 (X+) to ADC1
-    TS_XP_FUNC_ADC;  
-  
-    // Return the ADC results
-    return adcRead(TS_XP_ADC_CHANNEL);
-  }
-  else
-  {
-    // Make sure X+/X- are set to GPIO
-    TS_XP_FUNC_GPIO;
-    TS_XM_FUNC_GPIO;
-  
-    // Set Y- and Y+ to inputs
-    gpioSetDir (TS_YM_PORT, TS_YM_PIN, 0);
-    gpioSetDir (TS_YP_PORT, TS_YP_PIN, 0);
-    
-    // Set X- and X+ to output
-    gpioSetDir (TS_XM_PORT, TS_XM_PIN, 1);
-    gpioSetDir (TS_XP_PORT, TS_XP_PIN, 1);
-  
-    // X+ goes high, X- goes low
-    gpioSetValue(TS_XP_PORT, TS_XP_PIN, 1);   // 3.3V
-    gpioSetValue(TS_XM_PORT, TS_XM_PIN, 0);   // GND
-  
-    // Set pin 0.11 (Y+) to ADC0
-    TS_YP_FUNC_ADC;
-  
-    // Return the ADC results
-    return adcRead(TS_YP_ADC_CHANNEL);
-  }
-}
+  TS_YP_FUNC_GPIO;
+  TS_YM_FUNC_GPIO;
+  TS_XP_FUNC_GPIO;
 
-/**************************************************************************/
-/*!
-    @brief  Converts Z variables into 'pressure' value (0..255)
-*/
-/**************************************************************************/
-uint8_t tsCalculatePressure(uint32_t x, uint32_t z1, uint32_t z2)
-{
-  // Calculate pressure level
-  int32_t t = z2 * x / z1;
-  t-=64;
-  if (t < 0)
-  {
-    return 0;
-  }
-  else if (t > 255)
-  {
-    return 255;
-  }
-  else
-  {
-    return (uint8_t)t;
-  }
+  gpioSetDir (TS_YP_PORT, TS_YP_PIN, 1);
+  gpioSetDir (TS_YM_PORT, TS_YM_PIN, 1);
+  gpioSetDir (TS_XP_PORT, TS_XP_PIN, 0);
+
+  gpioSetValue(TS_YP_PORT, TS_YP_PIN, 1);   // 3.3V
+  gpioSetValue(TS_YM_PORT, TS_YM_PIN, 0);   // GND
+
+  TS_XM_FUNC_ADC;
+
+  // Return the ADC results
+  return adcRead(TS_XM_ADC_CHANNEL);
 }
 
 /**************************************************************************/
@@ -258,9 +179,8 @@ void tsCalibCenterText(char* text, uint16_t y, uint16_t color)
             placed test point and waits for a touch event
 */
 /**************************************************************************/
-void tsRenderCalibrationScreen(uint16_t x, uint16_t y, uint16_t radius)
+tsTouchData_t tsRenderCalibrationScreen(uint16_t x, uint16_t y, uint16_t radius)
 {
-
   drawFill(COLOR_WHITE);
   tsCalibCenterText(TS_LINE1, 50, COLOR_DARKGRAY);
   tsCalibCenterText(TS_LINE2, 65, COLOR_DARKGRAY);
@@ -268,11 +188,134 @@ void tsRenderCalibrationScreen(uint16_t x, uint16_t y, uint16_t radius)
   drawCircle(x, y, radius, COLOR_RED);
   drawCircle(x, y, radius + 2, COLOR_MEDIUMGRAY);
 
-  // Wait for touch
-  uint32_t z1, z2;
-  z1 = z2 = 0;
-  while (z2 < _tsThreshhold) 
-    tsReadZ(&z1, &z2);
+  // Wait for a valid touch events
+  tsTouchData_t data;
+  tsTouchError_t error;
+  bool valid = false;
+  while (!valid)
+  {    
+    error = tsRead(&data);
+    if (!error && data.valid)
+    {
+      valid = true;
+    }
+  }
+
+  return data;
+}
+
+/**************************************************************************/
+/*!
+    @brief Calculates the difference between the touch screen and the
+           actual screen co-ordinates, taking into account misalignment
+           and any physical offset of the touch screen.
+
+    @note  This is based on the public domain touch screen calibration code
+           written by Carlos E. Vidales (copyright (c) 2001).
+
+           For more inforormation, see the following app notes:
+
+           - AN2173 - Touch Screen Control and Calibration
+             Svyatoslav Paliy, Cypress Microsystems
+           - Calibration in touch-screen systems
+             Wendy Fang and Tony Chang,
+             Analog Applications Journal, 3Q 2007 (Texas Instruments)
+*/
+/**************************************************************************/
+int setCalibrationMatrix( tsPoint_t * displayPtr, tsPoint_t * screenPtr, tsMatrix_t * matrixPtr)
+{
+  int  retValue = 0;
+  
+  matrixPtr->Divider = ((screenPtr[0].x - screenPtr[2].x) * (screenPtr[1].y - screenPtr[2].y)) - 
+                       ((screenPtr[1].x - screenPtr[2].x) * (screenPtr[0].y - screenPtr[2].y)) ;
+  
+  if( matrixPtr->Divider == 0 )
+  {
+    retValue = -1 ;
+  }
+  else
+  {
+    matrixPtr->An = ((displayPtr[0].x - displayPtr[2].x) * (screenPtr[1].y - screenPtr[2].y)) - 
+                    ((displayPtr[1].x - displayPtr[2].x) * (screenPtr[0].y - screenPtr[2].y)) ;
+  
+    matrixPtr->Bn = ((screenPtr[0].x - screenPtr[2].x) * (displayPtr[1].x - displayPtr[2].x)) - 
+                    ((displayPtr[0].x - displayPtr[2].x) * (screenPtr[1].x - screenPtr[2].x)) ;
+  
+    matrixPtr->Cn = (screenPtr[2].x * displayPtr[1].x - screenPtr[1].x * displayPtr[2].x) * screenPtr[0].y +
+                    (screenPtr[0].x * displayPtr[2].x - screenPtr[2].x * displayPtr[0].x) * screenPtr[1].y +
+                    (screenPtr[1].x * displayPtr[0].x - screenPtr[0].x * displayPtr[1].x) * screenPtr[2].y ;
+  
+    matrixPtr->Dn = ((displayPtr[0].y - displayPtr[2].y) * (screenPtr[1].y - screenPtr[2].y)) - 
+                    ((displayPtr[1].y - displayPtr[2].y) * (screenPtr[0].y - screenPtr[2].y)) ;
+  
+    matrixPtr->En = ((screenPtr[0].x - screenPtr[2].x) * (displayPtr[1].y - displayPtr[2].y)) - 
+                    ((displayPtr[0].y - displayPtr[2].y) * (screenPtr[1].x - screenPtr[2].x)) ;
+  
+    matrixPtr->Fn = (screenPtr[2].x * displayPtr[1].y - screenPtr[1].x * displayPtr[2].y) * screenPtr[0].y +
+                    (screenPtr[0].x * displayPtr[2].y - screenPtr[2].x * displayPtr[0].y) * screenPtr[1].y +
+                    (screenPtr[1].x * displayPtr[0].y - screenPtr[0].x * displayPtr[1].y) * screenPtr[2].y ;
+
+    // Persist data to EEPROM
+    eepromWriteS32(CFG_EEPROM_TOUCHSCREEN_CAL_AN, matrixPtr->An);
+    eepromWriteS32(CFG_EEPROM_TOUCHSCREEN_CAL_BN, matrixPtr->Bn);
+    eepromWriteS32(CFG_EEPROM_TOUCHSCREEN_CAL_CN, matrixPtr->Cn);
+    eepromWriteS32(CFG_EEPROM_TOUCHSCREEN_CAL_DN, matrixPtr->Dn);
+    eepromWriteS32(CFG_EEPROM_TOUCHSCREEN_CAL_EN, matrixPtr->En);
+    eepromWriteS32(CFG_EEPROM_TOUCHSCREEN_CAL_FN, matrixPtr->Fn);
+    eepromWriteS32(CFG_EEPROM_TOUCHSCREEN_CAL_FN, matrixPtr->Fn);
+    eepromWriteS32(CFG_EEPROM_TOUCHSCREEN_CAL_DIVIDER, matrixPtr->Divider);
+    eepromWriteU8(CFG_EEPROM_TOUCHSCREEN_CALIBRATED, 1);
+  }
+
+  return( retValue ) ;
+} 
+
+/**************************************************************************/
+/*!
+    @brief  Converts the supplied touch screen location (screenPtr) to
+            a pixel location on the display (displayPtr) using the
+            supplied matrix.  The screen orientation is also taken into
+            account when converting the touch screen co-ordinate to
+            a pixel location on the LCD.
+
+    @note  This is based on the public domain touch screen calibration code
+           written by Carlos E. Vidales (copyright (c) 2001).
+*/
+/**************************************************************************/
+int getDisplayPoint( tsPoint_t * displayPtr, tsPoint_t * screenPtr, tsMatrix_t * matrixPtr )
+{
+  int  retValue = 0 ;
+  
+  if( matrixPtr->Divider != 0 )
+  {
+    displayPtr->x = ( (matrixPtr->An * screenPtr->x) + 
+                      (matrixPtr->Bn * screenPtr->y) + 
+                       matrixPtr->Cn 
+                    ) / matrixPtr->Divider ;
+
+    displayPtr->y = ( (matrixPtr->Dn * screenPtr->x) + 
+                      (matrixPtr->En * screenPtr->y) + 
+                       matrixPtr->Fn 
+                    ) / matrixPtr->Divider ;
+  }
+  else
+  {
+    retValue = -1 ;
+  }
+
+  // Adjust value if the screen is in landscape mode
+  lcdOrientation_t orientation;
+  orientation = lcdGetOrientation();
+  if (orientation == LCD_ORIENTATION_LANDSCAPE)
+  {
+      uint32_t oldx, oldy;
+      oldx = displayPtr->x;
+      oldy = displayPtr->y;
+      displayPtr->x = oldy;
+      displayPtr->y = lcdGetHeight() - oldx;
+  }
+  
+  return( retValue ) ;
 }
 
 /**************************************************************************/
@@ -300,13 +343,70 @@ void tsInit(void)
   if (eepromReadU8(CFG_EEPROM_TOUCHSCREEN_CALIBRATED) == 1)
   {
     // Load calibration data
-    _calibration.offsetLeft   = eepromReadU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_LEFT);
-    _calibration.offsetRight  = eepromReadU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_RIGHT);
-    _calibration.offsetTop    = eepromReadU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_TOP);
-    _calibration.offsetBottom = eepromReadU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_BOT);
-    _calibration.divisorX     = eepromReadU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_DIVX);
-    _calibration.divisorY     = eepromReadU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_DIVY);
+    _tsMatrix.An = eepromReadS32(CFG_EEPROM_TOUCHSCREEN_CAL_AN);
+    _tsMatrix.Bn = eepromReadS32(CFG_EEPROM_TOUCHSCREEN_CAL_BN);
+    _tsMatrix.Cn = eepromReadS32(CFG_EEPROM_TOUCHSCREEN_CAL_CN);
+    _tsMatrix.Dn = eepromReadS32(CFG_EEPROM_TOUCHSCREEN_CAL_DN);
+    _tsMatrix.En = eepromReadS32(CFG_EEPROM_TOUCHSCREEN_CAL_EN);
+    _tsMatrix.Fn = eepromReadS32(CFG_EEPROM_TOUCHSCREEN_CAL_FN);
+    _tsMatrix.Divider = eepromReadS32(CFG_EEPROM_TOUCHSCREEN_CAL_DIVIDER);
   }
+}
+
+/**************************************************************************/
+/*!
+    @brief  Reads the current X, Y and Z co-ordinates of the touch screen
+*/
+/**************************************************************************/
+tsTouchError_t tsRead(tsTouchData_t* data)
+{
+  uint32_t x1, x2, y1, y2, z1, z2;
+
+  // Assign pressure levels regardless of touch state
+  tsReadZ(&z1, &z2);
+  data->z1 = z1;
+  data->z2 = z2;
+  data->xraw = 0;
+  data->yraw = 0;
+  data->xlcd = 0;
+  data->ylcd = 0;
+
+  // Abort if the screen is not being touched (0 levels reported)
+  if (z1 < _tsThreshhold)
+  {
+    data->valid = false;
+    return TS_ERROR_NONE;
+  }
+
+  // Get two X/Y readings and compare results
+  x1 = tsReadX();
+  x2 = tsReadX();
+  y1 = tsReadY();
+  y2 = tsReadY();
+
+  // Throw an error if both readings aren't identical
+  if (x1 != x2 || y1 != y2)
+  {
+    data->valid = false;
+    data->xraw = x1;
+    data->yraw = y1;
+    return TS_ERROR_XYMISMATCH;
+  }
+
+  // X/Y seems to be valid and reading has been confirmed twice
+  data->xraw = x1;
+  data->yraw = y1;
+
+  // Convert x/y values to pixel location with matrix multiply
+  tsPoint_t location, touch;
+  touch.x = x1;
+  touch.y = y1;
+  getDisplayPoint( &location, &touch, &_tsMatrix) ;
+  data->xlcd = location.x;
+  data->ylcd = location.y;
+  data->valid = true;
+
+  return TS_ERROR_NONE;
 }
 
 /**************************************************************************/
@@ -318,127 +418,47 @@ void tsInit(void)
 /**************************************************************************/
 void tsCalibrate(void)
 {
-  lcdOrientation_t orientation;
-  uint16_t right2, top2, left2, bottom2;
-  bool passed = false;
+  tsTouchData_t data;
 
-  // Determine screen orientation before starting calibration
-  orientation = lcdGetOrientation();
-
-  /* -------------- Welcome Screen --------------- */
-  tsRenderCalibrationScreen(lcdGetWidth() / 2, lcdGetHeight() / 2, 5);
-
-  // Delay to avoid multiple touch events
+  /* --------------- Welcome Screen --------------- */
+  data = tsRenderCalibrationScreen(lcdGetWidth() / 2, lcdGetHeight() / 2, 5);
   systickDelay(250);
 
-  /* -------------- CALIBRATE TOP-LEFT --------------- */
-  passed = false;
-  while (!passed)
-  {
-    // Read X/Y depending on screen orientation
-    tsRenderCalibrationScreen(3, 3, 5);
-    _calibration.offsetLeft = orientation == LCD_ORIENTATION_LANDSCAPE ? tsReadY() : tsReadX();
-    _calibration.offsetTop = orientation == LCD_ORIENTATION_LANDSCAPE ? tsReadX() : tsReadY();
-  
-    // Make sure values are in range
-    if (_calibration.offsetLeft < TS_CALIBRATION_OUTOFRANGE && _calibration.offsetTop < TS_CALIBRATION_OUTOFRANGE)
-      passed = true;
-  }
-
-  // Delay to avoid multiple touch events
+  /* ----------------- First Dot ------------------ */
+  // 10% over and 10% down
+  data = tsRenderCalibrationScreen(lcdGetWidth() / 10, lcdGetHeight() / 10, 5);
+  _tsLCDPoints[0].x = lcdGetWidth() / 10;
+  _tsLCDPoints[0].y = lcdGetHeight() / 10;
+  _tsTSPoints[0].x = data.xraw;
+  _tsTSPoints[0].y = data.yraw;
+  printf("Point 1 - LCD X:%04d Y:%04d TS X:%04d Y:%04d \r\n", 
+        (int)_tsLCDPoints[0].x, (int)_tsLCDPoints[0].y, (int)_tsTSPoints[0].x, (int)_tsTSPoints[0].y);
   systickDelay(250);
 
-  /* -------------- CALIBRATE BOTTOM-RIGHT  --------------- */
-  passed = false;
-  while (!passed)
-  {
-    tsRenderCalibrationScreen(lcdGetWidth() - 4, lcdGetHeight() - 4, 5);
-  
-    // Read X/Y depending on screen orientation
-    _calibration.offsetRight = orientation == LCD_ORIENTATION_LANDSCAPE ? TS_ADC_LIMIT - tsReadY() : TS_ADC_LIMIT - tsReadX();
-    _calibration.offsetBottom = orientation == LCD_ORIENTATION_LANDSCAPE ? TS_ADC_LIMIT - tsReadX() : TS_ADC_LIMIT - tsReadY();
-  
-    // Redo test if value is out of range
-    if (_calibration.offsetRight < TS_CALIBRATION_OUTOFRANGE && _calibration.offsetBottom < TS_CALIBRATION_OUTOFRANGE)
-      passed = true;
-  }
-
-  // Delay to avoid multiple touch events
+  /* ---------------- Second Dot ------------------ */
+  // 50% over and 90% down
+  data = tsRenderCalibrationScreen(lcdGetWidth() / 2, lcdGetHeight() - lcdGetHeight() / 10, 5);
+  _tsLCDPoints[1].x = lcdGetWidth() / 2;
+  _tsLCDPoints[1].y = lcdGetHeight() - lcdGetHeight() / 10;
+  _tsTSPoints[1].x = data.xraw;
+  _tsTSPoints[1].y = data.yraw;
+  printf("Point 2 - LCD X:%04d Y:%04d TS X:%04d Y:%04d \r\n", 
+       (int)_tsLCDPoints[1].x, (int)_tsLCDPoints[1].y, (int)_tsTSPoints[1].x, (int)_tsTSPoints[1].y);
   systickDelay(250);
 
-  /* -------------- CALIBRATE TOP-RIGHT  --------------- */
-  passed = false;
-  while (!passed)
-  {
-    tsRenderCalibrationScreen(lcdGetWidth() - 4, 3, 5);
-  
-    if (orientation == LCD_ORIENTATION_LANDSCAPE)
-    {
-      right2 = TS_ADC_LIMIT - tsReadY();
-      top2 = tsReadX();
-    }
-    else
-    {
-      right2 = tsReadX();
-      top2 = TS_ADC_LIMIT - tsReadY();
-    }
-  
-    // Redo test if value is out of range
-    if (right2 < TS_CALIBRATION_OUTOFRANGE && top2 < TS_CALIBRATION_OUTOFRANGE)
-      passed = true;  
-  }
-
-  // Average readings
-  _calibration.offsetRight = (_calibration.offsetRight + right2) / 2;
-  _calibration.offsetTop = (_calibration.offsetTop + top2) / 2;
-
-  // Delay to avoid multiple touch events
+  /* ---------------- Third Dot ------------------- */
+  // 90% over and 50% down
+  data = tsRenderCalibrationScreen(lcdGetWidth() - lcdGetWidth() / 10, lcdGetHeight() / 2, 5);
+  _tsLCDPoints[2].x = lcdGetWidth() - lcdGetWidth() / 10;
+  _tsLCDPoints[2].y = lcdGetHeight() / 2;
+  _tsTSPoints[2].x = data.xraw;
+  _tsTSPoints[2].y = data.yraw;
+  printf("Point 3 - LCD X:%04d Y:%04d TS X:%04d Y:%04d \r\n", 
+        (int)_tsLCDPoints[2].x, (int)_tsLCDPoints[2].y, (int)_tsTSPoints[2].x, (int)_tsTSPoints[2].y);
   systickDelay(250);
 
-  /* -------------- CALIBRATE BOTTOM-LEFT --------------- */
-  passed = false;
-  while (!passed)
-  {
-    tsRenderCalibrationScreen(3, lcdGetHeight() - 4, 5);
-  
-    if (orientation == LCD_ORIENTATION_LANDSCAPE)
-    {
-      left2 = tsReadY();
-      bottom2 = TS_ADC_LIMIT - tsReadX();
-    }
-    else
-    {
-      left2 = TS_ADC_LIMIT - tsReadX();
-      bottom2 = tsReadY();
-    }
-  
-    // Redo test if value is out of range
-    if (left2 < TS_CALIBRATION_OUTOFRANGE && bottom2 < TS_CALIBRATION_OUTOFRANGE)
-      passed = true;
-  }
-
-  // Average readings
-  _calibration.offsetLeft = (_calibration.offsetLeft + left2) / 2;
-  _calibration.offsetBottom = (_calibration.offsetBottom + bottom2) / 2;
-
-  // Delay to avoid multiple touch events
-  systickDelay(250);
-
-  _calibration.divisorX = ((TS_ADC_LIMIT - (_calibration.offsetLeft + _calibration.offsetRight)) * 100) / lcdGetWidth();
-  _calibration.divisorY = ((TS_ADC_LIMIT - (_calibration.offsetTop + _calibration.offsetBottom)) * 100) / lcdGetHeight();
-
-  /* -------------- Persist Data --------------- */
-  // Persist data to EEPROM
-  eepromWriteU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_LEFT, _calibration.offsetLeft);
-  eepromWriteU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_RIGHT, _calibration.offsetRight);
-  eepromWriteU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_TOP, _calibration.offsetTop);
-  eepromWriteU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_BOT, _calibration.offsetBottom);
-  eepromWriteU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_DIVX, _calibration.divisorX);
-  eepromWriteU16(CFG_EEPROM_TOUCHSCREEN_OFFSET_DIVY, _calibration.divisorY);
-  eepromWriteU8(CFG_EEPROM_TOUCHSCREEN_CALIBRATED, 1);
-
-  // Clear the screen
-  drawFill(COLOR_BLACK);
+  // Do matrix calculations for calibration and store to EEPROM
+  setCalibrationMatrix(&_tsLCDPoints[0], &_tsTSPoints[0], &_tsMatrix);
 }
 
 /**************************************************************************/
@@ -452,34 +472,32 @@ void tsCalibrate(void)
 
     @code 
     #include "drivers/lcd/tft/touchscreen.h"
-
-    // Create an object to hold the eventual event data
+    ...
     tsTouchData_t data;
     tsTouchError_t error;
-
-    // Cause a blocking delay until a touch event occurs or 5s passes
-    error = tsWaitForEvent(&data, 5000);
-
-    if (error)
+  
+    while (1)
     {
-      switch(error)
+      // Cause a blocking delay until a touch event occurs or 5s passes
+      error = tsWaitForEvent(&data, 5000);
+  
+      if (error)
       {
-        case TS_ERROR_TIMEOUT:
-          printf("Timeout occurred %s", CFG_PRINTF_NEWLINE);
-          break;
-        default:
-          break;
+        switch(error)
+        {
+          case TS_ERROR_TIMEOUT:
+            printf("Timeout occurred %s", CFG_PRINTF_NEWLINE);
+            break;
+          default:
+            break;
+        }
       }
-    }
-    else
-    {
-      // A valid touch event occurred ... parse data
-      if (data.x > 100 && data.x < 200)
+      else
       {
-        // Do something
-        printf("Touch Event: X = %d, Y = %d %s", 
-            (int)data.x, 
-            (int)data.y, 
+        // A valid touch event occurred ... display data
+        printf("Touch Event: X = %04u, Y = %04u %s", 
+            data.xlcd, 
+            data.ylcd, 
             CFG_PRINTF_NEWLINE);
       }
     }
@@ -491,9 +509,13 @@ tsTouchError_t tsWaitForEvent(tsTouchData_t* data, uint32_t timeoutMS)
 {
   if (!_tsInitialised) tsInit();
 
-  uint32_t z1, z2;
-  uint32_t xRaw1, xRaw2, yRaw1, yRaw2;
-  z1 = z2 = xRaw1 = xRaw2 = yRaw1 = yRaw2 = 0;
+  tsRead(data);
+
+  // Return the results right away if reading is valid
+  if (data->valid)
+  {
+    return TS_ERROR_NONE;
+  }
 
   // Handle timeout if delay > 0 milliseconds
   if (timeoutMS)
@@ -502,64 +524,39 @@ tsTouchError_t tsWaitForEvent(tsTouchData_t* data, uint32_t timeoutMS)
     // Systick rollover may occur while waiting for timeout
     if (startTick > 0xFFFFFFFF - timeoutMS)
     {
-      // Wait for timeout or touch event
-      while (z2 < _tsThreshhold)
+      while (data->valid == false)
       {
         // Throw alert if timeout delay has been passed
         if ((systickGetTicks() < startTick) && (systickGetTicks() >= (timeoutMS - (0xFFFFFFFF - startTick))))
         {
           return TS_ERROR_TIMEOUT;
         }      
-        tsReadZ(&z1, &z2);
+        tsRead(data);
       }
     }
     // No systick rollover will occur ... calculate timeout the simple way
     else
     {
       // Wait in infinite loop
-      while (z2 < _tsThreshhold)
+      while (data->valid == false)
       {
         // Throw timeout if delay has been passed
         if ((systickGetTicks() - startTick) > timeoutMS)
         {
           return TS_ERROR_TIMEOUT;
         }
-        tsReadZ(&z1, &z2);
+        tsRead(data);
       }
     }
   }
   // No timeout requested ... wait forever
   else
   {
-    while (z2 < _tsThreshhold)
+    while (data->valid == false)
     {
-      tsReadZ(&z1, &z2);
+      tsRead(data);
     }
   }
-
-  // Keep reading until we get two identical readings
-  // Divide values by three to make it a bit less 'fine grain'
-  uint8_t attempts = 0;
-  while ((xRaw1/3 != xRaw2/3) || (yRaw1/3 != yRaw2/3) || (yRaw1 == 0))
-  {
-    xRaw1 = tsReadY();    // X and Y are reversed
-    xRaw2 = tsReadY();    // X and Y are reversed
-    yRaw1 = tsReadX();    // X and Y are reverse
-    yRaw2 = tsReadX();    // X and Y are reverse
-    // Abort after 100 failed attempts
-    if (attempts++ == 100)
-    {
-      return TS_ERROR_XYMISMATCH;
-    }
-  }
-
-  // Normalise X
-  data->x = ((xRaw1 - _calibration.offsetLeft > TS_ADC_LIMIT ? 0 : xRaw1 - _calibration.offsetLeft) * 100) / _calibration.divisorX;
-  if (data->x > lcdGetWidth() - 1) data->x = lcdGetWidth() - 1;
-
-  // Normalise Y
-  data->y = ((yRaw1 - _calibration.offsetTop > TS_ADC_LIMIT ? 0 : yRaw1 - _calibration.offsetTop) * 100) / _calibration.divisorY;
-  if (data->y > lcdGetHeight() - 1) data->y = lcdGetHeight() - 1;
 
   // Indicate correct reading
   return TS_ERROR_NONE;

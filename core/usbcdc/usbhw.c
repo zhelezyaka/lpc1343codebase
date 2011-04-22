@@ -552,7 +552,7 @@ void USB_IRQHandler (void)
   {
     USB_DEVINTCLR = FRAME_INT;
     USB_SOF_Event();
-    SOFIRQCount++;
+    // SOFIRQCount++;
   }
 #endif
 

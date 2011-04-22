@@ -203,37 +203,37 @@ char alphaHandleTouchEvent(void)
   }
 
   // Attempt to convert touch data to char
-  if ((data.y < ALPHA_ROW1_TOP) || (data.y > ALPHA_ROW6_TOP + ALPHA_BTN_HEIGHT))
+  if ((data.ylcd < ALPHA_ROW1_TOP) || (data.ylcd > ALPHA_ROW6_TOP + ALPHA_BTN_HEIGHT))
   {
     return result;
   }
 
   // Get column
-  if ((data.x > alphaBtnX[0]) && (data.x < alphaBtnX[0] + ALPHA_BTN_WIDTH))
+  if ((data.xlcd > alphaBtnX[0]) && (data.xlcd < alphaBtnX[0] + ALPHA_BTN_WIDTH))
     col = 0;
-  else if ((data.x > alphaBtnX[1]) && (data.x < alphaBtnX[1] + ALPHA_BTN_WIDTH))
+  else if ((data.xlcd > alphaBtnX[1]) && (data.xlcd < alphaBtnX[1] + ALPHA_BTN_WIDTH))
     col = 1;
-  else if ((data.x > alphaBtnX[2]) && (data.x < alphaBtnX[2] + ALPHA_BTN_WIDTH))
+  else if ((data.xlcd > alphaBtnX[2]) && (data.xlcd < alphaBtnX[2] + ALPHA_BTN_WIDTH))
     col = 2;
-  else if ((data.x > alphaBtnX[3]) && (data.x < alphaBtnX[3] + ALPHA_BTN_WIDTH))
+  else if ((data.xlcd > alphaBtnX[3]) && (data.xlcd < alphaBtnX[3] + ALPHA_BTN_WIDTH))
     col = 3;
-  else if ((data.x > ALPHA_COL5_LEFT) && (data.x < ALPHA_COL5_LEFT + ALPHA_BTN_WIDTH))
+  else if ((data.xlcd > ALPHA_COL5_LEFT) && (data.xlcd < ALPHA_COL5_LEFT + ALPHA_BTN_WIDTH))
     col = 4;
   else
     return result;
 
   // Get row
-  if ((data.y > ALPHA_ROW1_TOP) && (data.y < ALPHA_ROW1_TOP + ALPHA_BTN_HEIGHT))
+  if ((data.ylcd > ALPHA_ROW1_TOP) && (data.ylcd < ALPHA_ROW1_TOP + ALPHA_BTN_HEIGHT))
     row = 0;
-  else if ((data.y > ALPHA_ROW2_TOP) && (data.y < ALPHA_ROW2_TOP + ALPHA_BTN_HEIGHT))
+  else if ((data.ylcd > ALPHA_ROW2_TOP) && (data.ylcd < ALPHA_ROW2_TOP + ALPHA_BTN_HEIGHT))
     row = 1;
-  else if ((data.y > ALPHA_ROW3_TOP) && (data.y < ALPHA_ROW3_TOP + ALPHA_BTN_HEIGHT))
+  else if ((data.ylcd > ALPHA_ROW3_TOP) && (data.ylcd < ALPHA_ROW3_TOP + ALPHA_BTN_HEIGHT))
     row = 2;
-  else if ((data.y > ALPHA_ROW4_TOP) && (data.y < ALPHA_ROW4_TOP + ALPHA_BTN_HEIGHT))
+  else if ((data.ylcd > ALPHA_ROW4_TOP) && (data.ylcd < ALPHA_ROW4_TOP + ALPHA_BTN_HEIGHT))
     row = 3;
-  else if ((data.y > ALPHA_ROW5_TOP) && (data.y < ALPHA_ROW5_TOP + ALPHA_BTN_HEIGHT))
+  else if ((data.ylcd > ALPHA_ROW5_TOP) && (data.ylcd < ALPHA_ROW5_TOP + ALPHA_BTN_HEIGHT))
     row = 4;
-  else if ((data.y > ALPHA_ROW6_TOP) && (data.y < ALPHA_ROW6_TOP + ALPHA_BTN_HEIGHT))
+  else if ((data.ylcd > ALPHA_ROW6_TOP) && (data.ylcd < ALPHA_ROW6_TOP + ALPHA_BTN_HEIGHT))
     row = 5;
   else
     return result;
