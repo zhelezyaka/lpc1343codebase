@@ -66,6 +66,7 @@
 #include "adc.h"
 
 static bool _adcInitialised = false;
+static uint8_t _adcLastChannel = 0;
 
 /**************************************************************************/
 /*! 
@@ -99,11 +100,11 @@ uint32_t adcRead (uint8_t channelNum)
     channelNum = 0;
   }
 
-  /* deselect all channels */
+  /* Deselect all channels */
   ADC_AD0CR &= ~ADC_AD0CR_SEL_MASK;
 
-  /* switch channel and start converting */
-  ADC_AD0CR |= (ADC_AD0CR_START_STARTNOW | (1 << channelNum));	
+  /* Start converting now on the appropriate channel */
+  ADC_AD0CR |= ADC_AD0CR_START_STARTNOW | (1 << channelNum);
 				
   /* wait until end of A/D convert */
   while ( 1 )			
@@ -139,14 +140,6 @@ uint32_t adcRead (uint8_t channelNum)
         regVal = (*(pREG32(ADC_AD0DR0)));
         break;
     }
-
-    // Set channel in AD0CR
-    ADC_AD0CR = ((1 << channelNum) |                     /* SEL=1,select channelon ADC0 */
-                (((CFG_CPU_CCLK / SCB_SYSAHBCLKDIV) / 1000000 - 1 ) << 8) |   /* CLKDIV = Fpclk / 1000000 - 1 */ 
-                ADC_AD0CR_BURST_SWMODE |                 /* BURST = 0, no BURST, software controlled */
-                ADC_AD0CR_CLKS_10BITS |                  /* CLKS = 0, 11 clocks/10 bits */
-                ADC_AD0CR_START_NOSTART |                /* START = 0 A/D conversion stops */
-                ADC_AD0CR_EDGE_RISING);                  /* EDGE = 0 (CAP/MAT signal falling, trigger A/D conversion) */ 
 
     /* read result of A/D conversion */
     if (regVal & ADC_DR_DONE)
@@ -227,6 +220,9 @@ void adcInit (void)
 
   /* Set initialisation flag */
   _adcInitialised = true;
+
+  /* Set last channel flag to 0 (initialised above) */
+  _adcLastChannel = 0;
 
   return;
 }

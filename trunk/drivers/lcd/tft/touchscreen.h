@@ -38,36 +38,57 @@
 
 #include "projectconfig.h"
 
-// Macros to select the function of the X- and X+ pins
-#define TS_XM_FUNC_GPIO   do {IOCON_JTAG_TDO_PIO1_1 &= ~IOCON_JTAG_TDO_PIO1_1_FUNC_MASK; IOCON_JTAG_TDO_PIO1_1 |= IOCON_JTAG_TDO_PIO1_1_FUNC_GPIO;} while (0)
-#define TS_XM_FUNC_ADC    do {IOCON_JTAG_TDO_PIO1_1 &= ~IOCON_JTAG_TDO_PIO1_1_FUNC_AD2; IOCON_JTAG_TDO_PIO1_1 |= IOCON_JTAG_TDO_PIO1_1_FUNC_AD2 & IOCON_JTAG_TDO_PIO1_1_ADMODE_ANALOG;} while (0)
-#define TS_XP_FUNC_GPIO   do {IOCON_JTAG_TMS_PIO1_0 &= ~IOCON_JTAG_TMS_PIO1_0_FUNC_MASK; IOCON_JTAG_TMS_PIO1_0 |= IOCON_JTAG_TMS_PIO1_0_FUNC_GPIO;} while (0)
-#define TS_XP_FUNC_ADC    do {IOCON_JTAG_TMS_PIO1_0 &= ~IOCON_JTAG_TMS_PIO1_0_FUNC_AD1; IOCON_JTAG_TMS_PIO1_0 |= IOCON_JTAG_TMS_PIO1_0_FUNC_AD1 & IOCON_JTAG_TMS_PIO1_0_ADMODE_ANALOG;} while (0)
-
-// Macros to select the function of the Y- and Y+ pins
-#define TS_YM_FUNC_GPIO   do {IOCON_JTAG_nTRST_PIO1_2 &= ~IOCON_JTAG_nTRST_PIO1_2_FUNC_MASK; IOCON_JTAG_nTRST_PIO1_2 |= IOCON_JTAG_nTRST_PIO1_2_FUNC_GPIO;} while (0)
-#define TS_YM_FUNC_ADC    do {IOCON_JTAG_nTRST_PIO1_2 &= ~IOCON_JTAG_nTRST_PIO1_2_FUNC_MASK; IOCON_JTAG_nTRST_PIO1_2 |= IOCON_JTAG_nTRST_PIO1_2_FUNC_AD3 & IOCON_JTAG_nTRST_PIO1_2_ADMODE_ANALOG;} while (0)
-#define TS_YP_FUNC_GPIO   do {IOCON_JTAG_TDI_PIO0_11 &= ~IOCON_JTAG_TDI_PIO0_11_FUNC_MASK; IOCON_JTAG_TDI_PIO0_11 |= IOCON_JTAG_TDI_PIO0_11_FUNC_GPIO;} while (0)
-#define TS_YP_FUNC_ADC    do {IOCON_JTAG_TDI_PIO0_11 &= ~IOCON_JTAG_TDI_PIO0_11_FUNC_MASK; IOCON_JTAG_TDI_PIO0_11 |= IOCON_JTAG_TDI_PIO0_11_FUNC_AD0 & IOCON_JTAG_TDI_PIO0_11_ADMODE_ANALOG;} while (0)
-
 #define TS_XP_PORT        (1)
 #define TS_XP_PIN         (0)
+#define TS_XP_FUNC_GPIO   do {IOCON_JTAG_TMS_PIO1_0 &= ~(IOCON_JTAG_TMS_PIO1_0_FUNC_MASK | IOCON_JTAG_TMS_PIO1_0_ADMODE_MASK); IOCON_JTAG_TMS_PIO1_0 |= IOCON_JTAG_TMS_PIO1_0_FUNC_GPIO;} while (0)
+#define TS_XP_FUNC_ADC    do {IOCON_JTAG_TMS_PIO1_0 &= ~(IOCON_JTAG_TMS_PIO1_0_FUNC_MASK | IOCON_JTAG_TMS_PIO1_0_ADMODE_MASK); IOCON_JTAG_TMS_PIO1_0 |= IOCON_JTAG_TMS_PIO1_0_FUNC_AD1;} while (0)
+  
 #define TS_XM_PORT        (1)
 #define TS_XM_PIN         (1)
+#define TS_XM_FUNC_GPIO   do {IOCON_JTAG_TDO_PIO1_1 &= ~(IOCON_JTAG_TDO_PIO1_1_FUNC_MASK | IOCON_JTAG_TDO_PIO1_1_ADMODE_MASK); IOCON_JTAG_TDO_PIO1_1 |= IOCON_JTAG_TDO_PIO1_1_FUNC_GPIO;} while (0)
+#define TS_XM_FUNC_ADC    do {IOCON_JTAG_TDO_PIO1_1 &= ~(IOCON_JTAG_TDO_PIO1_1_FUNC_MASK | IOCON_JTAG_TDO_PIO1_1_ADMODE_MASK); IOCON_JTAG_TDO_PIO1_1 |= IOCON_JTAG_TDO_PIO1_1_FUNC_AD2;} while (0)
+  
 #define TS_YP_PORT        (0)
 #define TS_YP_PIN         (11)
+#define TS_YP_FUNC_GPIO   do {IOCON_JTAG_TDI_PIO0_11 &= ~(IOCON_JTAG_TDI_PIO0_11_FUNC_MASK | IOCON_JTAG_TDI_PIO0_11_ADMODE_MASK); IOCON_JTAG_TDI_PIO0_11 |= IOCON_JTAG_TDI_PIO0_11_FUNC_GPIO;} while (0)
+#define TS_YP_FUNC_ADC    do {IOCON_JTAG_TDI_PIO0_11 &= ~(IOCON_JTAG_TDI_PIO0_11_FUNC_MASK | IOCON_JTAG_TDI_PIO0_11_ADMODE_MASK); IOCON_JTAG_TDI_PIO0_11 |= IOCON_JTAG_TDI_PIO0_11_FUNC_AD0;} while (0)
+  
 #define TS_YM_PORT        (1)
 #define TS_YM_PIN         (2)
-
+#define TS_YM_FUNC_GPIO   do {IOCON_JTAG_nTRST_PIO1_2 &= ~(IOCON_JTAG_nTRST_PIO1_2_FUNC_MASK | IOCON_JTAG_nTRST_PIO1_2_ADMODE_MASK); IOCON_JTAG_nTRST_PIO1_2 |= IOCON_JTAG_nTRST_PIO1_2_FUNC_GPIO;} while (0)
+#define TS_YM_FUNC_ADC    do {IOCON_JTAG_nTRST_PIO1_2 &= ~(IOCON_JTAG_nTRST_PIO1_2_FUNC_MASK | IOCON_JTAG_nTRST_PIO1_2_ADMODE_MASK); IOCON_JTAG_nTRST_PIO1_2 |= IOCON_JTAG_nTRST_PIO1_2_FUNC_AD3;} while (0)
+  
 #define TS_YP_ADC_CHANNEL   (0)   // ADC0.0
 #define TS_XP_ADC_CHANNEL   (1)   // ADC0.1
 #define TS_XM_ADC_CHANNEL   (2)   // ADC0.2
 #define TS_YM_ADC_CHANNEL   (3)   // ADC0.3
 
+typedef struct Point 
+{
+  int32_t x;
+  int32_t y;
+} tsPoint_t;
+
+typedef struct Matrix 
+{
+  int32_t An,
+          Bn,
+          Cn,
+          Dn,
+          En,
+          Fn,
+          Divider ;
+} tsMatrix_t;
+
 typedef struct
 {
-  uint32_t x;
-  uint32_t y;
+  uint32_t xraw;  // Touch screen x
+  uint32_t yraw;  // Touch screen Y
+  uint16_t xlcd;  // LCD co-ordinate X
+  uint16_t ylcd;  // LCD co-ordinate Y
+  uint32_t z1;
+  uint32_t z2;
+  bool valid;     // Whether this is a valid reading or not
 } tsTouchData_t;
 
 typedef struct
@@ -94,5 +115,12 @@ void           tsCalibrate ( void );
 tsTouchError_t tsWaitForEvent(tsTouchData_t* data, uint32_t timeoutMS);
 int            tsSetThreshhold(uint8_t value);
 uint8_t        tsGetThreshhold(void);
+
+
+tsTouchError_t tsRead(tsTouchData_t* data);
+
+uint32_t       tsReadX(void);
+uint32_t       tsReadY(void);
+void           tsReadZ(uint32_t* z1, uint32_t* z2);
 
 #endif

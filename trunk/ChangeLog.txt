@@ -1,6 +1,8 @@
 v0.9.0 - Ongoing
 ================
 
+- Completely rewrote the touch screen calibration code to
+  be much more accurate.
 - Calibration process no longer starts automatically when
   calibration data is not found in EEPROM.  tsCalibrate()
   now needs to called manually or from the CLI.
@@ -36,12 +38,12 @@ v0.9.0 - Ongoing
 - Added '-mcpu' flag to the linker in Makefile (the wrong
   libm was being linked because of this).
 
-  KNOWN ISSUES
-  ------------
-  The touch screen calibration needs to be improved to
-  provide more accurate X/Y readings away from the center.
-  Loading the 'touchscreen' example in /tools/examples/lcd
-  will show that it is off as you get closer to the edges.
+  WARNING
+  --------------------------------------------------------
+- Some config settings in EEPROM were relocated in v0.90+
+  of the LPC1343 Code Base to take into account the new
+  touch screen calibration code.  See projectconfig.h
+  for more details of the new EEPROM layout.
 
 v0.8.6 - 21 March 2011
 ======================
