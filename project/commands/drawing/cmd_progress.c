@@ -53,7 +53,7 @@
 /**************************************************************************/
 void cmd_progress(uint8_t argc, char **argv)
 {
-  int32_t x, y, w, h, percent, border, fill;
+  int32_t x, y, w, h, percent, border, borderfill, progressborder, progressfill;
 
   // Convert supplied parameters
   getNumber (argv[0], &x);
@@ -62,10 +62,12 @@ void cmd_progress(uint8_t argc, char **argv)
   getNumber (argv[3], &h);
   getNumber (argv[4], &percent);
   getNumber (argv[5], &border);
-  getNumber (argv[6], &fill);
+  getNumber (argv[6], &borderfill);
+  getNumber (argv[7], &progressborder);
+  getNumber (argv[8], &progressfill);
 
   // ToDo: Validate data!
-  if (border < 0 || border > 0xFFFF || fill < 0 || fill > 0xFFFF)
+  if (border < 0 || border > 0xFFFF || borderfill < 0 || borderfill > 0xFFFF || progressborder < 0 || progressborder > 0xFFFF || progressfill < 0 || progressfill > 0xFFFF)
   {
     printf("Invalid Color%s", CFG_PRINTF_NEWLINE);
     return;
@@ -76,8 +78,8 @@ void cmd_progress(uint8_t argc, char **argv)
     return;
   }
 
-  // Draw the progress bar
-  drawProgressBar(x, y, w, h, border, fill, percent);
+  // Draw the progress bar (always use rounded corners for simplicity sake)
+  drawProgressBar(x, y, w, h, DRAW_ROUNDEDCORNERS_ALL, DRAW_ROUNDEDCORNERS_ALL, border, borderfill, progressborder, progressfill, percent);
 }
 
 #endif  

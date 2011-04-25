@@ -91,17 +91,6 @@ typedef struct
   bool valid;     // Whether this is a valid reading or not
 } tsTouchData_t;
 
-typedef struct
-{
-  bool calibrated;
-  uint16_t offsetLeft;
-  uint16_t offsetRight;
-  uint16_t offsetTop;
-  uint16_t offsetBottom;
-  uint16_t divisorX;
-  uint16_t divisorY;
-} tsCalibrationData_t;
-
 typedef enum
 {
   TS_ERROR_NONE         = 0,
@@ -111,16 +100,10 @@ typedef enum
 
 // Method Prototypes
 void           tsInit ( void );
+tsTouchError_t tsRead(tsTouchData_t* data);
 void           tsCalibrate ( void );
 tsTouchError_t tsWaitForEvent(tsTouchData_t* data, uint32_t timeoutMS);
 int            tsSetThreshhold(uint8_t value);
 uint8_t        tsGetThreshhold(void);
-
-
-tsTouchError_t tsRead(tsTouchData_t* data);
-
-uint32_t       tsReadX(void);
-uint32_t       tsReadY(void);
-void           tsReadZ(uint32_t* z1, uint32_t* z2);
 
 #endif

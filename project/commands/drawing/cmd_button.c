@@ -60,7 +60,7 @@
 /**************************************************************************/
 void cmd_button(uint8_t argc, char **argv)
 {
-  int32_t x, y, w, h, pressed;
+  int32_t x, y, w, h, border, fill, font;
   
   // ToDo: Validate data!
 
@@ -69,29 +69,31 @@ void cmd_button(uint8_t argc, char **argv)
   getNumber (argv[1], &y);
   getNumber (argv[2], &w);
   getNumber (argv[3], &h);
-  getNumber (argv[4], &pressed);
+  getNumber (argv[4], &border);
+  getNumber (argv[5], &fill);
+  getNumber (argv[6], &font);
 
-  if (argc == 5)
+  if (argc == 7)
   {
     // Render the button with no text
-    drawButton(x, y, w, h, &dejaVuSans9ptFontInfo, 7, NULL, pressed ? TRUE : FALSE);
+    drawButton(x, y, w, h, &dejaVuSans9ptFontInfo, 7, (uint16_t)border, (uint16_t)fill, (uint16_t)font, NULL);
   }
   else
   {
     // Get text contents
     uint8_t i, len, *data_ptr, data[50];
     data_ptr = data;
-    for (i = 0; i < argc - 5; i++)
+    for (i = 0; i < argc - 7; i++)
     {
-      len = strlen(argv[i + 5]);
-      strcpy((char *)data_ptr, (char *)argv[i + 5]);
+      len = strlen(argv[i + 7]);
+      strcpy((char *)data_ptr, (char *)argv[i + 7]);
       data_ptr += len;
       *data_ptr++ = ' ';
     }
     *data_ptr++ = '\0';
 
     // Render the button with text
-    drawButton(x, y, w, h, &dejaVuSans9ptFontInfo, 7, (char *)&data, pressed ? TRUE : FALSE);
+    drawButton(x, y, w, h, &dejaVuSans9ptFontInfo, 7, (uint16_t)border, (uint16_t)fill, (uint16_t)font, (char *)&data);
   }
 }
 

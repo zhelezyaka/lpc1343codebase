@@ -51,30 +51,56 @@
   #include "bmp.h"
 #endif
 
-void      drawTestPattern     ( void );
-void      drawPixel           ( uint16_t x, uint16_t y, uint16_t color );
-void      drawFill            ( uint16_t color );
-void      drawString          ( uint16_t x, uint16_t y, uint16_t color, const FONT_INFO *fontInfo, char *str );
-uint16_t  drawGetStringWidth  ( const FONT_INFO *fontInfo, char *str );
-void      drawLine            ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color );
-void      drawRectangle       ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color );
-void      drawCircle          ( uint16_t xCenter, uint16_t yCenter, uint16_t radius, uint16_t color );
-void      drawCircleFilled    ( uint16_t xCenter, uint16_t yCenter, uint16_t radius, uint16_t color );
-void      drawRectangle       ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color );
-void      drawRectangleFilled ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color );
-void      drawImage           ( uint16_t x, uint16_t y, uint16_t *data );
-void      drawProgressBar     ( uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t barBorderColor, uint16_t barFillColor, uint8_t progress );
-void      drawButton          ( uint16_t x, uint16_t y, uint16_t width, uint16_t height, const FONT_INFO *fontInfo, uint16_t fontHeight, char* text, bool pressed );
-uint16_t  drawRGB24toRGB565   ( uint8_t r, uint8_t g, uint8_t b );
-uint32_t  drawRGB565toBGRA32  ( uint16_t color );
-uint16_t  drawBGR2RGB         ( uint16_t color );
+typedef struct
+{
+  uint8_t red;
+  uint8_t green;
+  uint8_t blue;
+} drawColorRGB24_t;
+
+typedef enum
+{
+  DRAW_ROUNDEDCORNERS_NONE,
+  DRAW_ROUNDEDCORNERS_ALL,
+  DRAW_ROUNDEDCORNERS_TOP,
+  DRAW_ROUNDEDCORNERS_BOTTOM,
+  DRAW_ROUNDEDCORNERS_LEFT,
+  DRAW_ROUNDEDCORNERS_RIGHT
+} drawRoundedCorners_t;
+
+typedef enum
+{
+  DRAW_DIRECTION_LEFT,
+  DRAW_DIRECTION_RIGHT,
+  DRAW_DIRECTION_UP,
+  DRAW_DIRECTION_DOWN
+} drawDirection_t;
+
+void      drawTestPattern      ( void );
+void      drawPixel            ( uint16_t x, uint16_t y, uint16_t color );
+void      drawFill             ( uint16_t color );
+void      drawString           ( uint16_t x, uint16_t y, uint16_t color, const FONT_INFO *fontInfo, char *str );
+uint16_t  drawGetStringWidth   ( const FONT_INFO *fontInfo, char *str );
+void      drawLine             ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color );
+void      drawCircle           ( uint16_t xCenter, uint16_t yCenter, uint16_t radius, uint16_t color );
+void      drawCircleFilled     ( uint16_t xCenter, uint16_t yCenter, uint16_t radius, uint16_t color );
+void      drawArrow            ( uint16_t x, uint16_t y, uint16_t size, drawDirection_t, uint16_t color );
+void      drawRectangle        ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color );
+void      drawRectangleFilled  ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color );
+void      drawRectangleRounded ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color, uint16_t radius, drawRoundedCorners_t corners );
+void      drawImage            ( uint16_t x, uint16_t y, uint16_t *data );
+void      drawProgressBar      ( uint16_t x, uint16_t y, uint16_t width, uint16_t height, drawRoundedCorners_t borderCorners, drawRoundedCorners_t progressCorners, uint16_t borderColor, uint16_t borderFillColor, uint16_t progressBorderColor, uint16_t progressFillColor, uint8_t progress );
+void      drawButton           ( uint16_t x, uint16_t y, uint16_t width, uint16_t height, const FONT_INFO *fontInfo, uint16_t fontHeight, uint16_t borderclr, uint16_t fillclr, uint16_t fontclr, char* text );
+uint16_t  drawRGB24toRGB565    ( uint8_t r, uint8_t g, uint8_t b );
+uint32_t  drawRGB565toBGRA32   ( uint16_t color );
+uint16_t  drawBGR2RGB          ( uint16_t color );
 
 #if defined CFG_TFTLCD_INCLUDESMALLFONTS & CFG_TFTLCD_INCLUDESMALLFONTS == 1
-void      drawStringSmall     ( uint16_t x, uint16_t y, uint16_t color, char* text, struct FONT_DEF font );
+void      drawStringSmall      ( uint16_t x, uint16_t y, uint16_t color, char* text, struct FONT_DEF font );
 #endif
 
 #if defined CFG_SDCARD
-bmp_error_t   drawBitmapImage ( uint16_t x, uint16_t y, char *filename );
+bmp_error_t   drawBitmapImage  ( uint16_t x, uint16_t y, char *filename );
 #endif
 
 #endif

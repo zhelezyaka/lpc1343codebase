@@ -66,10 +66,6 @@ int main(void)
   tsTouchData_t touch;
   tsTouchError_t error;
 
-  drawPixel(5, 5, COLOR_WHITE);
-  drawPixel(6, 6, COLOR_WHITE);
-  drawPixel(7, 7, COLOR_WHITE);
-
   // Start reading
   while (1)
   {
@@ -77,7 +73,7 @@ int main(void)
     error = tsWaitForEvent(&touch, 0);
     if (!error)
     {
-      drawPixel(touch.x, touch.y, COLOR_WHITE);
+      drawCircleFilled(touch.xlcd, touch.ylcd, 2, COLOR_WHITE);
     }
   }
 
