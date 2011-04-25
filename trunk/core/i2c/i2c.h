@@ -2,7 +2,7 @@
  *   i2c.h:  Header file for NXP LPC11xx Family Microprocessors
  *
  *   Copyright(C) 2006, NXP Semiconductor
- *   parts of this code are (C) 2010, MyVoice CAD/CAM Services
+ *   Parts of this code are (C) 2010, MyVoice CAD/CAM Services
  *   All rights reserved.
  *
  *   History

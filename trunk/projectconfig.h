@@ -71,7 +71,7 @@
     PWM         . X  .  .     . . . . . . . . .     . . . .
     STEPPER     . .  .  .     . . . . . . . . .     X X X X
     CHIBI       X X  X  .     . . . . . . . . .     . . . .
-    ILI9325     X X  X  X     X X X X X X X X X     . . . X
+    ILI9325/8   X X  X  X     X X X X X X X X X     . . . X
     ST7565      X X  X  X     X X X X X X X X X     . . . X
     ST7735      . .  .  .     X X X X X X . . .     . . . .
     SSD1306     . .  .  .     X X X . X X . . .     . . . .
@@ -87,7 +87,7 @@
     USB         .     .     .     X       .       . . . .     .
     STEPPER     .     .     X     .       .       . . . .     .
     CHIBI       x     .     .     .       X       . . . .     .
-    ILI9325     .     .     .     .       .       X X X X     .
+    ILI9325/8   .     .     .     .       .       X X X X     .
     ST7565      .     .     .     .       .       X X X X     .
     ST7535      .     .     .     .       .       . . . .     .
     SSD1306     .     .     .     .       .       . . . .     .
@@ -106,7 +106,7 @@
     -----------------------------------------------------------------------*/
     #define CFG_FIRMWARE_VERSION_MAJOR            (0)
     #define CFG_FIRMWARE_VERSION_MINOR            (9)
-    #define CFG_FIRMWARE_VERSION_REVISION         (0)
+    #define CFG_FIRMWARE_VERSION_REVISION         (2)
 /*=========================================================================*/
 
 
@@ -698,21 +698,21 @@
       // #define CFG_TFTLCD
       #define CFG_TFTLCD_INCLUDESMALLFONTS   (0)
       #define CFG_TFTLCD_TS_DEFAULTTHRESHOLD (50)
-      #define CFG_TFTLCD_TS_KEYPADDELAY      (200)
+      #define CFG_TFTLCD_TS_KEYPADDELAY      (100)
     #endif
 
     #ifdef CFG_BRD_LPC1343_TFTLCDSTANDALONE
       #define CFG_TFTLCD
       #define CFG_TFTLCD_INCLUDESMALLFONTS   (0)
-      #define CFG_TFTLCD_TS_DEFAULTTHRESHOLD (80)        // Approx ILI9328 value
-      #define CFG_TFTLCD_TS_KEYPADDELAY      (200)
+      #define CFG_TFTLCD_TS_DEFAULTTHRESHOLD (50)
+      #define CFG_TFTLCD_TS_KEYPADDELAY      (100)
     #endif
 
     #ifdef CFG_BRD_LPC1343_802154USBSTICK
       // #define CFG_TFTLCD
       #define CFG_TFTLCD_INCLUDESMALLFONTS   (0)
       #define CFG_TFTLCD_TS_DEFAULTTHRESHOLD (50)
-      #define CFG_TFTLCD_TS_KEYPADDELAY      (200)
+      #define CFG_TFTLCD_TS_KEYPADDELAY      (100)
     #endif
 /*=========================================================================*/
 

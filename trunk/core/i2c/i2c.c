@@ -2,13 +2,13 @@
  *   i2c.c:  I2C C file for NXP LPC11xx/13xx Family Microprocessors
  *
  *   Copyright(C) 2008, NXP Semiconductor
- *   parts of this code are (C) 2010, MyVoice CAD/CAM Services
+ *   Parts of this code are (C) 2010, MyVoice CAD/CAM Services
  *   All rights reserved.
  *
  *   History
  *   2009.12.07  ver 1.00    Preliminary version, first Release
  *   2010.07.19  ver 1.10    Rob Jansen - MyVoice CAD/CAM Services:
- *                           Major cleaning an a rewrite of some functions
+ *                           Major cleaning and a rewrite of some functions
  *                           - adding ACK/NACK handling to the state machine
  *                           - adding a return result to the I2CEngine()
  *

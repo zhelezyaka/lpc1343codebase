@@ -56,6 +56,19 @@
 #include "drivers/lcd/tft/touchscreen.h"
 #include "drivers/lcd/tft/fonts/dejavusans9.h"
 
+// Background and text input region colors
+#define ALPHA_COLOR_BACKGROUND    COLOR_GRAY_15
+#define ALPHA_COLOR_INPUTFILL     COLOR_GRAY_30
+#define ALPHA_COLOR_INPUTTEXT     COLOR_WHITE
+// Button colors
+#define ALPHA_COLOR_BTN_BORDER    COLOR_GRAY_30
+#define ALPHA_COLOR_BTN_FILL      COLOR_GRAY_30
+#define ALPHA_COLOR_BTN_FONT      COLOR_WHITE
+// Active button colors
+#define ALPHA_COLOR_BTNEN_BORDER  COLOR_THEME_DEFAULT_DARKER
+#define ALPHA_COLOR_BTNEN_FILL    COLOR_THEME_DEFAULT_BASE
+#define ALPHA_COLOR_BTNEN_FONT    COLOR_BLACK
+
 /* This kind of messes with your head, but defining the pixel locations
    this way allows the calculator example to be rendered on another
    TFT LCD with a different screen resolution or orientation without 
@@ -63,7 +76,7 @@
 
 #define ALPHA_BTN_SPACING   (5)
 #define ALPHA_BTN_WIDTH     ((lcdGetWidth() - (ALPHA_BTN_SPACING * 6)) / 5)
-#define ALPHA_KEYPAD_TOP    ((lcdGetHeight() / 6) + (ALPHA_BTN_SPACING * 2))
+#define ALPHA_KEYPAD_TOP    ((lcdGetHeight() / 7) + (ALPHA_BTN_SPACING * 2))
 #define ALPHA_BTN_HEIGHT    (((lcdGetHeight() - ALPHA_KEYPAD_TOP) - (ALPHA_BTN_SPACING * 7)) / 6)
 // #define ALPHA_BTN_WIDTH     ((240 - (ALPHA_BTN_SPACING * 6)) / 5)
 // #define ALPHA_KEYPAD_TOP    ((320 / 6) + (ALPHA_BTN_SPACING * 2))
@@ -137,6 +150,21 @@ char alphaKeys[4][6][5] =  {  {  { 'A', 'B', 'C', 'D', '<' },
 /**************************************************************************/
 void alphaRenderButton(uint8_t alphaPage, uint8_t col, uint8_t row, bool selected)
 {
+  // Set colors depending on button state
+  uint16_t border, fill, font;
+  if (selected)
+  {
+    border = ALPHA_COLOR_BTNEN_BORDER;
+    fill = ALPHA_COLOR_BTNEN_FILL;
+    font = ALPHA_COLOR_BTNEN_FONT;
+  }
+  else
+  {
+    border = ALPHA_COLOR_BTN_BORDER;
+    fill = ALPHA_COLOR_BTN_FILL;
+    font = ALPHA_COLOR_BTN_FONT;
+  }
+
   char c = alphaKeys[alphaPage][row][col];
   char key[2] = { alphaKeys[alphaPage][row][col], '\0' };
   // Handle special characters
@@ -144,19 +172,20 @@ void alphaRenderButton(uint8_t alphaPage, uint8_t col, uint8_t row, bool selecte
   {
     case '<':
       // Backspace
-      drawButton (alphaBtnX[col], alphaBtnY[row], ALPHA_BTN_WIDTH, ALPHA_BTN_HEIGHT, &dejaVuSans9ptFontInfo, 7, "<", selected); 
+      drawButton (alphaBtnX[col], alphaBtnY[row], ALPHA_BTN_WIDTH, ALPHA_BTN_HEIGHT, &dejaVuSans9ptFontInfo, 7, border, fill, font, NULL); 
+      drawArrow (alphaBtnX[col] + ALPHA_BTN_WIDTH / 2 - 3, alphaBtnY[row] + ALPHA_BTN_HEIGHT / 2, 7, DRAW_DIRECTION_LEFT, font);
       break;
     case '*':
       // Page Shift
-      drawButton (alphaBtnX[col], alphaBtnY[row], ALPHA_BTN_WIDTH, ALPHA_BTN_HEIGHT, &dejaVuSans9ptFontInfo, 7, "^", selected); 
+      drawButton (alphaBtnX[col], alphaBtnY[row], ALPHA_BTN_WIDTH, ALPHA_BTN_HEIGHT, &dejaVuSans9ptFontInfo, 7, border, fill, font, "^"); 
       break;
     case '>':
       // OK
-      drawButton (alphaBtnX[col], alphaBtnY[row], ALPHA_BTN_WIDTH, ALPHA_BTN_HEIGHT, &dejaVuSans9ptFontInfo, 7, "OK", selected); 
+      drawButton (alphaBtnX[col], alphaBtnY[row], ALPHA_BTN_WIDTH, ALPHA_BTN_HEIGHT, &dejaVuSans9ptFontInfo, 7, border, fill, font, "OK"); 
       break;
     default:
       // Standard character
-      drawButton (alphaBtnX[col], alphaBtnY[row], ALPHA_BTN_WIDTH, ALPHA_BTN_HEIGHT, &dejaVuSans9ptFontInfo, 7, key, selected); 
+      drawButton (alphaBtnX[col], alphaBtnY[row], ALPHA_BTN_WIDTH, ALPHA_BTN_HEIGHT, &dejaVuSans9ptFontInfo, 7, border, fill, font, key); 
       break;
   }
 }
@@ -180,8 +209,8 @@ void alphaRefreshScreen(void)
   }
 
   /* Render Text */
-  drawRectangleFilled(0, 0, lcdGetWidth() - 1, ALPHA_KEYPAD_TOP - (ALPHA_BTN_SPACING * 2), 0xFFFF);
-  drawString(ALPHA_BTN_SPACING, ALPHA_BTN_SPACING, COLOR_BLACK, &dejaVuSans9ptFontInfo, (char *)&alphaString);
+  drawRectangleRounded(ALPHA_BTN_SPACING, ALPHA_BTN_SPACING, lcdGetWidth() - 1 - ALPHA_BTN_SPACING, ALPHA_KEYPAD_TOP - ALPHA_BTN_SPACING, ALPHA_COLOR_INPUTFILL, 10, DRAW_ROUNDEDCORNERS_ALL);
+  drawString(ALPHA_BTN_SPACING * 3, ALPHA_BTN_SPACING * 3, ALPHA_COLOR_INPUTTEXT, &dejaVuSans9ptFontInfo, (char *)&alphaString);
 }
 
 /**************************************************************************/
@@ -322,9 +351,7 @@ char* alphaShowDialogue(void)
   alphaPage = 0;
 
   /* Draw the background and render the buttons */
-  drawFill(COLOR_WHITE);
-  drawRectangleFilled(0, ALPHA_KEYPAD_TOP - ALPHA_BTN_SPACING, lcdGetWidth() - 1, lcdGetHeight() - 1, COLOR_DARKGRAY);
-  drawLine(0, (ALPHA_KEYPAD_TOP - ALPHA_BTN_SPACING) + 1, lcdGetWidth() - 1, (ALPHA_KEYPAD_TOP - ALPHA_BTN_SPACING) + 1, COLOR_LIGHTGRAY);
+  drawFill(ALPHA_COLOR_BACKGROUND);
   alphaRefreshScreen();
 
   /* Capture results until the 'OK' button is pressed */

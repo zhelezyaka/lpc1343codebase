@@ -113,7 +113,7 @@ cmd_t cmd_tbl[] =
   #endif
 
   #ifdef CFG_TFTLCD
-  { "b",    5,  99, 0, cmd_button            , "Button"                         , "'b <x> <y> <w> <h> <enbld> [<txt>]'" },
+  { "b",    7,  99, 0, cmd_button            , "Button"                         , "'b <x> <y> <w> <h> <brdrclr> <fillclr> <fontclr> [<txt>]'" },
   #ifdef CFG_SDCARD
   { "B",    3,  3,  0, cmd_bmp               , "Bitmap (SD Card)"               , "'B <x> <y> <file>'" },
   #endif
@@ -123,7 +123,7 @@ cmd_t cmd_tbl[] =
   { "l",    5,  5,  0, cmd_line              , "Line"                           , "'L <x1> <y1> <x2> <y2> <color>'" },
   { "o",    0,  1,  0, cmd_orientation       , "LCD Orientation"                , "'o [<0|1>]'" },
   { "p",    3,  3,  0, cmd_pixel             , "Draw Pixel"                     , "'p <x> <y> <color>'" },
-  { "P",    7,  7,  0, cmd_progress          , "Progress Bar"                   , "'P <x> <y> <w> <h> <%> <bcolor> <fcolor>'" },
+  { "P",    9,  9,  0, cmd_progress          , "Progress Bar"                   , "'P <x> <y> <w> <h> <%> <bclr> <bfillclr> <pbrdclr> <pfillclr>'" },
   { "r",    5,  7,  0, cmd_rectangle         , "Rectangle"                      , "'r <x1> <y1> <x2> <y2> <color> [<filled[0|1]> <bcolor>]'" },
   { "R",    2,  2,  0, cmd_getpixel          , "Read Pixel"                     , "'R <x> <y>'" },
   { "s",    2, 99,  0, cmd_textw             , "Text Width"                     , "'s <font#> <msg>'" },

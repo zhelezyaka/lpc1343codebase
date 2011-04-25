@@ -182,11 +182,11 @@ void tsCalibCenterText(char* text, uint16_t y, uint16_t color)
 tsTouchData_t tsRenderCalibrationScreen(uint16_t x, uint16_t y, uint16_t radius)
 {
   drawFill(COLOR_WHITE);
-  tsCalibCenterText(TS_LINE1, 50, COLOR_DARKGRAY);
-  tsCalibCenterText(TS_LINE2, 65, COLOR_DARKGRAY);
-  tsCalibCenterText(TS_LINE3, 80, COLOR_DARKGRAY);
+  tsCalibCenterText(TS_LINE1, 50, COLOR_GRAY_50);
+  tsCalibCenterText(TS_LINE2, 65, COLOR_GRAY_50);
+  tsCalibCenterText(TS_LINE3, 80, COLOR_GRAY_50);
   drawCircle(x, y, radius, COLOR_RED);
-  drawCircle(x, y, radius + 2, COLOR_MEDIUMGRAY);
+  drawCircle(x, y, radius + 2, COLOR_GRAY_128);
 
   // Wait for a valid touch events
   tsTouchData_t data;

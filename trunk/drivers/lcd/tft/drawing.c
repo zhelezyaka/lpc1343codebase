@@ -403,7 +403,7 @@ uint16_t drawGetStringWidth(const FONT_INFO *fontInfo, char *str)
 /**************************************************************************/
 void drawLine ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color )
 {
-  // Check if we can used the optimised horizontal line method
+  // Check if we can use the optimised horizontal line method
   if (y0 == y1)
   {
     lcdDrawHLine(x0, x1, y0, color);
@@ -540,11 +540,68 @@ void drawCircleFilled (uint16_t xCenter, uint16_t yCenter, uint16_t radius, uint
     f += ddF_x;
 
     // ToDo: This will cause pixel flooding if radius is bigger than
-    // screen dimenstions (due to integer value overflow)!
+    // screen dimensions (due to integer value overflow)!
     drawLine(xCenter+x, yCenter-y, xCenter+x, (yCenter-y) + (2*y), color);
     drawLine(xCenter-x, yCenter-y, xCenter-x, (yCenter-y) + (2*y), color);
     drawLine(xCenter+y, yCenter-x, xCenter+y, (yCenter-x) + (2*x), color);
     drawLine(xCenter-y, yCenter-x, xCenter-y, (yCenter-x) + (2*x), color);
+  }
+}
+
+/**************************************************************************/
+/*!
+    @brief  Draws a simple arrow of the specified width
+
+    @param[in]  x
+                X co-ordinate of the smallest point of the arrow
+    @param[in]  y
+                Y co-ordinate of the smallest point of the arrow
+    @param[in]  size
+                Total width/height of the arrow in pixels
+    @param[in]  direction
+                The direction that the arrow is pointing
+    @param[in]  color
+                Color used when drawing
+*/
+/**************************************************************************/
+void drawArrow(uint16_t x, uint16_t y, uint16_t size, drawDirection_t direction, uint16_t color)
+{
+  drawPixel(x, y, color);
+
+  if (size == 1)
+  {
+    return;
+  }
+
+  uint32_t i;
+  switch (direction)
+  {
+    case DRAW_DIRECTION_LEFT:
+      for (i = 1; i<size; i++)
+      {
+        drawLine(x+i, y-i, x+i, y+i, color);
+      }
+      break;
+    case DRAW_DIRECTION_RIGHT:
+      for (i = 1; i<size; i++)
+      {
+        drawLine(x-i, y-i, x-i, y+i, color);
+      }
+      break;
+    case DRAW_DIRECTION_UP:
+      for (i = 1; i<size; i++)
+      {
+        drawLine(x-i, y+i, x+i, y+i, color);
+      }
+      break;
+    case DRAW_DIRECTION_DOWN:
+      for (i = 1; i<size; i++)
+      {
+        drawLine(x-i, y-i, x+i, y-i, color);
+      }
+      break;
+    default:
+      break;
   }
 }
 
@@ -570,7 +627,7 @@ void drawRectangle ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_
 
   if (y1 < y0)
   {
-    // Swich y1 and y0
+    // Switch y1 and y0
     y = y1;
     y1 = y0;
     y0 = y;
@@ -578,7 +635,7 @@ void drawRectangle ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_
 
   if (x1 < x0)
   {
-    // Swich x1 and x0
+    // Switch x1 and x0
     x = x1;
     x1 = x0;
     x0 = x;
@@ -631,6 +688,104 @@ void drawRectangleFilled ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, u
   for (height = y0; y1 > height - 1; ++height)
   {
     drawLine(x0, height, x1, height, color);
+  }
+}
+
+/**************************************************************************/
+/*!
+    @brief  Draws a filled rectangle with rounded corners
+
+    @param[in]  x0
+                Starting x co-ordinate
+    @param[in]  y0
+                Starting y co-ordinate
+    @param[in]  x1
+                Ending x co-ordinate
+    @param[in]  y1
+                Ending y co-ordinate
+    @param[in]  color
+                Color used when drawing
+    @param[in]  radius
+                Corner radius in pixels
+    @param[in]  corners
+                Which corners to round
+*/
+/**************************************************************************/
+void drawRectangleRounded ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color, uint16_t radius, drawRoundedCorners_t corners )
+{
+  int height;
+  uint16_t y;
+
+  if (corners == DRAW_ROUNDEDCORNERS_NONE)
+  {
+    drawRectangleFilled(x0, y0, x1, y1, color);
+    return;
+  }
+
+  // Calculate height
+  if (y1 < y0)
+  {
+    y = y1;
+    y1 = y0;
+    y0 = y;
+  }
+  height = y1 - y0;
+
+  // Check radius
+  if (radius > height / 2)
+  {
+    radius = height / 2;
+  }
+  radius -= 1;
+
+  // Draw body  
+  drawRectangleFilled(x0 + radius, y0, x1 - radius, y1, color);
+
+  switch (corners)
+  {
+    case DRAW_ROUNDEDCORNERS_ALL:
+      drawCircleFilled(x0 + radius, y0 + radius, radius, color);
+      drawCircleFilled(x1 - radius, y0 + radius, radius, color);
+      drawCircleFilled(x0 + radius, y1 - radius, radius, color);
+      drawCircleFilled(x1 - radius, y1 - radius, radius, color);
+      if (radius*2+1 < height)
+      {
+        drawRectangleFilled(x0, y0 + radius, x0 + radius, y1 - radius, color);
+        drawRectangleFilled(x1 - radius, y0 + radius, x1, y1 - radius, color);
+      }
+      break;
+    case DRAW_ROUNDEDCORNERS_TOP:
+      drawCircleFilled(x0 + radius, y0 + radius, radius, color);
+      drawCircleFilled(x1 - radius, y0 + radius, radius, color);
+      drawRectangleFilled(x0, y0 + radius, x0 + radius, y1, color); 
+      drawRectangleFilled(x1 - radius, y0 + radius, x1, y1, color); 
+      break;
+    case DRAW_ROUNDEDCORNERS_BOTTOM:
+      drawCircleFilled(x0 + radius, y1 - radius, radius, color);
+      drawCircleFilled(x1 - radius, y1 - radius, radius, color);
+      drawRectangleFilled(x0, y0, x0 + radius, y1 - radius, color);
+      drawRectangleFilled(x1 - radius, y0, x1, y1 - radius, color);
+      break;
+    case DRAW_ROUNDEDCORNERS_LEFT:
+      drawCircleFilled(x0 + radius, y0 + radius, radius, color);
+      drawCircleFilled(x0 + radius, y1 - radius, radius, color);
+      if (radius*2+1 < height)
+      {
+        drawRectangleFilled(x0, y0 + radius, x0 + radius, y1 - radius, color);
+      }
+      drawRectangleFilled(x1 - radius, y0, x1, y1, color);
+      break;
+    case DRAW_ROUNDEDCORNERS_RIGHT:
+      drawCircleFilled(x1 - radius, y0 + radius, radius, color);
+      drawCircleFilled(x1 - radius, y1 - radius, radius, color);
+      if (radius*2+1 < height)
+      {
+        drawRectangleFilled(x1 - radius, y0 + radius, x1, y1 - radius, color);
+      }
+      drawRectangleFilled(x0, y0, x0 + radius, y1, color);
+      break;
+    default:
+      break;
   }
 }
 
@@ -726,9 +881,19 @@ uint16_t drawBGR2RGB(uint16_t color)
                 Starting y location
     @param[in]  width
                 Total width of the progress bar in pixels
-    @param[in]  barBorderColor
-                16-bit color for the inner bar's border
-    @param[in]  barFillColor
+    @param[in]  height
+                Total height of the progress bar in pixels
+    @param[in]  borderCorners
+                The type of rounded corners to render with the progress bar border
+    @param[in]  progressCorners
+                The type of rounded corners to render with the inner progress bar
+    @param[in]  borderColor
+                16-bit color for the outer border
+    @param[in]  borderFillColor
+                16-bit color for the interior of the outer border
+    @param[in]  progressBorderColor
+                16-bit color for the progress bar's border
+    @param[in]  progressFillColor
                 16-bit color for the inner bar's fill
     @param[in]  progress
                 Progress percentage (between 0 and 100)
@@ -738,39 +903,18 @@ uint16_t drawBGR2RGB(uint16_t color)
     @code 
     #include "drivers/lcd/tft/drawing.h"
 
-    // Draw a the progress bar
-    drawProgressBar(10, 200, 100, 20, COLOR_BLACK, COLOR_BLUE, 90);
+    // Draw a the progress bar (150x15 pixels large, starting at X:10, Y:195
+    // with rounded corners on the top and showing 72% progress)
+    drawProgressBar(10, 195, 150, 15, DRAW_ROUNDEDCORNERS_TOP, DRAW_ROUNDEDCORNERS_TOP, COLOR_DARKERGRAY, COLOR_DARKGRAY, COLOR_LIMEGREENDIM, COLOR_LIMEGREEN, 72 );
 
     @endcode
 */
 /**************************************************************************/
-void drawProgressBar ( uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t barBorderColor, uint16_t barFillColor, uint8_t progress )
+void drawProgressBar ( uint16_t x, uint16_t y, uint16_t width, uint16_t height, drawRoundedCorners_t borderCorners, drawRoundedCorners_t progressCorners, uint16_t borderColor, uint16_t borderFillColor, uint16_t progressBorderColor, uint16_t progressFillColor, uint8_t progress )
 {
-  // Note: Color definitions are contained in 'colors.h'
-  uint16_t bg1, bg2,  border;
-
-  // Set colors
-  bg1       = COLOR_PROGRESSBAR_BACKGROUND1;
-  bg2       = COLOR_PROGRESSBAR_BACKGROUND2;
-  border    = COLOR_PROGRESSBAR_BORDER;
-
   // Draw border with rounded corners
-  drawLine(x+2, y, x + width - 2, y, border);
-  drawLine(x + width, y + 2, x + width, y + height - 2, border);
-  drawLine(x + width - 2, y + height, x + 2, y + height, border);
-  drawLine(x, y + height - 2, x, y + 2, border);
-  drawPixel(x + 1, y + 1, border);
-  drawPixel(x + width - 1, y + 1, border);
-  drawPixel(x + 1, y + height - 1, border);
-  drawPixel(x + width - 1, y + height - 1, border);
-
-  // Fill outer container
-  drawLine(x+1, y+2, x+1, y+height-2, bg1);
-  drawLine(x+2, y+height-1, x+width-2, y+height-1, bg2);
-  drawLine(x+width-1, y+height-2, x+width-1, y+2, bg1);
-  drawLine(x+width-2, y+1, x+2, y+1, bg1);
-  drawRectangleFilled(x+2, y+2, x+width-2, y+height-2, bg1);
-  drawRectangleFilled(x+2, y+(height/2), x+width-2, y+height-2, bg2);
+  drawRectangleRounded(x, y, x + width, y + height, borderColor, 5, borderCorners);
+  drawRectangleRounded(x+1, y+1, x + width - 1, y + height - 1, borderFillColor, 5, borderCorners);
 
   // Progress bar
   if (progress > 0 && progress <= 100)
@@ -782,8 +926,8 @@ void drawProgressBar ( uint16_t x, uint16_t y, uint16_t width, uint16_t height, 
     {
       bw = (bw * progress) / 100;
     } 
-    drawRectangle(x + 3, y + 3, bw + x + 3, y + height - 3, barBorderColor);
-    drawRectangleFilled(x + 4, y + 4, bw + x + 3 - 1, y + height - 4, barFillColor);
+    drawRectangleRounded(x + 3, y + 3, bw + x + 3, y + height - 3, progressBorderColor, 5, progressCorners);
+    drawRectangleRounded(x + 4, y + 4, bw + x + 3 - 1, y + height - 4, progressFillColor, 5, progressCorners);
   }
 }
 
@@ -803,61 +947,45 @@ void drawProgressBar ( uint16_t x, uint16_t y, uint16_t width, uint16_t height, 
                 Pointer to the FONT_INFO used to render the button text
     @param[in]  fontHeight
                 The height in pixels of the font (used for centering)
+    @param[in]  borderclr
+                The rgb565 border color
+    @param[in]  fillclr
+                The rgb565 background color
+    @param[in]  fontclr
+                The rgb565 font color
     @param[in]  text
                 The text to render on the button
-    @param[in]  pressed
-                Whether the button should be rendered in its 'pressed'
-                (TRUE) or 'default' (FALSE) state.
 
     @section Example
 
     @code 
 
     #include "drivers/lcd/tft/drawing.h"  
-    #include "drivers/lcd/tft/fonts/veramono9.h"
+    #include "drivers/lcd/tft/fonts/dejavusansbold9.h"
 
-    // Draw two buttons using Vera Mono 9
-    drawButton(20, 20, 200, 35, &bitstreamVeraSansMono9ptFontInfo, 7, "System Settings", FALSE);
-    drawButton(20, 65, 200, 35, &bitstreamVeraSansMono9ptFontInfo, 7, "Refresh", FALSE);
+    // Draw two buttons using Vera Sans Bold 9
+    drawButton(20, 195, 200, 35, &dejaVuSansBold9ptFontInfo, 7, COLOR_DARKERGRAY, COLOR_DARKERGRAY, COLOR_WHITE, "System Settings");
+    drawButton(20, 235, 200, 35, &dejaVuSansBold9ptFontInfo, 7, COLOR_LIMEGREENDIM, COLOR_LIMEGREEN, COLOR_BLACK, "System Settings");
 
     @endcode
 */
 /**************************************************************************/
-void drawButton(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const FONT_INFO *fontInfo, uint16_t fontHeight, char* text, bool pressed)
+void drawButton(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const FONT_INFO *fontInfo, uint16_t fontHeight, uint16_t borderclr, uint16_t fillclr, uint16_t fontclr, char* text)
 {
-  // Note: Color definitions are contained in 'colors.h'
-  uint16_t bgactive1, bg1, bgactive2, bg2, border, highlight, highlightdarker, font, fontactive;
+  uint16_t border, fill, font, activeborder, activefill, activefont;
 
   // Set colors
-  bgactive1       = COLOR_BUTTON_BACKGROUNDACTIVE1;
-  bg1             = COLOR_BUTTON_BACKGROUND1;
-  bgactive2       = COLOR_BUTTON_BACKGROUNDACTIVE2;
-  bg2             = COLOR_BUTTON_BACKGROUND2;
-  border          = COLOR_BUTTON_BORDER;
-  highlight       = COLOR_BUTTON_HIGHLIGHT;
-  highlightdarker = COLOR_BUTTON_HIGHLIGHTDARKER;
-  font            = COLOR_BUTTON_FONT;
-  fontactive      = COLOR_BUTTON_FONTACTIVE;
+  border            = COLOR_GRAY_30;
+  fill              = COLOR_GRAY_30;
+  font              = COLOR_WHITE;
+  activeborder      = COLOR_THEME_DEFAULT_DARKER;
+  activefill        = COLOR_THEME_DEFAULT_BASE;
+  activefont        = COLOR_BLACK;
 
-  // Draw background
-  drawRectangleFilled(x + 1, y + 1, x + width - 1, y + height - 1, pressed ? bgactive1 : bg1);
-  drawRectangleFilled(x + 1, y + (height / 2), x + width - 1, y + height - 1, pressed ? bgactive2 : bg2);
-
-  // Draw outer border
-  drawLine(x + 2, y, x + width - 2, y, border);
-  drawLine(x, y + 2, x, y + height - 2, border);
-  drawLine(x + 2, y + height, x + width - 2, y + height, border);
-  drawLine(x + width, y + height - 2, x + width, y + 2, border);
-  drawPixel(x + 1, y + 1, border);
-  drawPixel(x + width - 1, y + 1, border);
-  drawPixel(x + 1, y + height - 1, border);
-  drawPixel(x + width - 1, y + height - 1, border);
-
-  // Draw highlights
-  drawLine(x + 2, y + 1, x + width - 2, y + 1, highlight);
-  drawLine(x + width - 1, y + 2, x + width - 1, y + height - 2, highlight);
-  drawLine(x + 1, y + 2, x + 1, y + height - 2, highlightdarker);
-  drawLine(x + 2, y + height - 1, x + width - 2, y + height - 1, highlightdarker);
+  // Border
+  drawRectangleRounded(x, y, x + width, y + height, borderclr, 5, DRAW_ROUNDEDCORNERS_ALL);
+  // Fill
+  drawRectangleRounded(x+2, y+2, x+width-2, y+height-2, fillclr, 5, DRAW_ROUNDEDCORNERS_ALL);
 
   // Render text
   if (text != NULL)
@@ -865,7 +993,7 @@ void drawButton(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const F
     uint16_t textWidth = drawGetStringWidth(&*fontInfo, text);
     uint16_t xStart = x + (width / 2) - (textWidth / 2);
     uint16_t yStart = y + (height / 2) - (fontHeight / 2) + 1;
-    drawString(xStart, yStart, pressed ? fontactive : font, &*fontInfo, text);
+    drawString(xStart, yStart, fontclr, &*fontInfo, text);
   }
 }
 
