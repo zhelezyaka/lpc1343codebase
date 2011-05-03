@@ -308,6 +308,23 @@ void lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color)
   st7735WriteData(color);
 }
 
+/**************************************************************************/
+/*! 
+    @brief  Draws an array of consecutive RGB565 pixels (much
+            faster than addressing each pixel individually)
+*/
+/**************************************************************************/
+void lcdDrawPixels(uint16_t x, uint16_t y, uint16_t *data, uint32_t len)
+{
+  // ToDo: Optimise this function ... currently only a placeholder
+  uint32_t i = 0;
+  do
+  {
+    lcdDrawPixel(x+i, y, data[i]);
+    i++;
+  } while (i<len);
+}
+
 /*************************************************/
 void lcdDrawHLine(uint16_t x0, uint16_t x1, uint16_t y, uint16_t color)
 {

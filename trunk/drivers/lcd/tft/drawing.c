@@ -295,7 +295,7 @@ void drawString(uint16_t x, uint16_t y, uint16_t color, const FONT_INFO *fontInf
   uint16_t currentX, charWidth, characterToOutput;
   const FONT_CHAR_INFO *charInfo;
   uint16_t charOffset;
-  
+
   // set current x, y to that of requested
   currentX = x;
 
@@ -330,7 +330,7 @@ void drawString(uint16_t x, uint16_t y, uint16_t color, const FONT_INFO *fontInf
     }        
     
     // Send individual characters
-    drawCharBitmap(currentX, y + 1, color, &fontInfo->data[charOffset], fontInfo->heightPages, charWidth);
+    drawCharBitmap(currentX, y, color, &fontInfo->data[charOffset], fontInfo->heightPages, charWidth);
 
     // next char X
     currentX += charWidth + 1;
@@ -385,9 +385,7 @@ uint16_t drawGetStringWidth(const FONT_INFO *fontInfo, char *str)
 
 /**************************************************************************/
 /*!
-    @brief  Draws a Bresenham line
-
-    Based on: http://www.cs.unc.edu/~mcmillan/comp136/Lecture6/Lines.html
+    @brief  Draws a bresenham line
 
     @param[in]  x0
                 Starting x co-ordinate
@@ -403,35 +401,83 @@ uint16_t drawGetStringWidth(const FONT_INFO *fontInfo, char *str)
 /**************************************************************************/
 void drawLine ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color )
 {
+  drawLineDotted(x0, y0, x1, y1, 0, 1, color);
+}
+
+/**************************************************************************/
+/*!
+    @brief  Draws a bresenham line with a fixed pattern of empty
+            and solid pixels
+
+    Based on: http://www.cs.unc.edu/~mcmillan/comp136/Lecture6/Lines.html
+
+    @param[in]  x0
+                Starting x co-ordinate
+    @param[in]  y0
+                Starting y co-ordinate
+    @param[in]  x1
+                Ending x co-ordinate
+    @param[in]  y1
+                Ending y co-ordinate
+    @param[in]  empty
+                The number of 'empty' pixels to render
+    @param[in]  solid
+                The number of 'solid' pixels to render
+    @param[in]  color
+                Color used when drawing
+*/
+/**************************************************************************/
+void drawLineDotted ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t empty, uint16_t solid, uint16_t color )
+{
+  if (solid == 0)
+  {
+    return;
+  }
+
+  // If a negative y int was passed in it will overflow to 65K something
+  // Ugly, but drawCircleFilled() can pass in negative values so we need
+  // to check the values here
+  y0 = y0 > 65000 ? 0 : y0;
+  y1 = y1 > 65000 ? 0 : y1;
+
   // Check if we can use the optimised horizontal line method
-  if (y0 == y1)
+  if ((y0 == y1) && (empty == 0))
   {
     lcdDrawHLine(x0, x1, y0, color);
     return;
   }
 
-  // ToDo: This is currently buggy ... fix it
+  // Check if we can use the optimised vertical line method.
+  // This can make a huge difference in performance, but may
+  // not work properly on every LCD controller:
+  // ex.: drawCircleFilled(120, 160, 50, COLOR_RED);
+  //      = 678834 cycles using lcdDrawVLine w/ILI9328   =  9.43mS @ 72MHz
+  //      = 7546261 w/o lcdDrawVLine, setting each pixel = 104.8mS @ 72MHz
+  if ((x0 == x1) && (empty == 0))
+  {
+    // Warning: This may actually be slower than drawing individual pixels on 
+    // short lines ... Set a minimum line size to use the 'optimised' method
+    // (which changes the screen orientation) ?
+    lcdDrawVLine(x0, y0, y1, color);
+    return;
+  }
 
-  //  if (x0 == x1)
-  //  {
-  //    // ToDo: This may actually be slower than drawing individual pixels on 
-  //    // short lines ... Set a minimum line size to use the 'optimised' method
-  //    // (which changes the screen orientation) ?
-  //    lcdDrawVLine(x0, y0, y1, color);
-  //    return;
-  //  }
-
-  // Draw non horizontal line
+  // Draw non-horizontal or dotted line
   int dy = y1 - y0;
   int dx = x1 - x0;
   int stepx, stepy;
+  int emptycount, solidcount;
 
   if (dy < 0) { dy = -dy;  stepy = -1; } else { stepy = 1; }
   if (dx < 0) { dx = -dx;  stepx = -1; } else { stepx = 1; }
   dy <<= 1;                               // dy is now 2*dy
   dx <<= 1;                               // dx is now 2*dx
 
-  drawPixel(x0, y0, color);
+  emptycount = empty;
+  solidcount = solid;
+
+  drawPixel(x0, y0, color);               // always start with solid pixels
+  solidcount--;
   if (dx > dy) 
   {
     int fraction = dy - (dx >> 1);        // same as 2*dy - dx
@@ -444,7 +490,30 @@ void drawLine ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t col
       }
       x0 += stepx;
       fraction += dy;                     // same as fraction -= 2*dy
-      drawPixel(x0, y0, color);
+      if (empty == 0)
+      {
+        // always draw a pixel ... no dotted line requested
+        drawPixel(x0, y0, color);
+      }
+      else if (solidcount)
+      {
+        // Draw solid pxiel and decrement counter
+        drawPixel(x0, y0, color);
+        solidcount--;
+      }
+      else if(emptycount)
+      {
+        // Empty pixel ... don't draw anything an decrement counter
+        emptycount--;
+      }
+      else
+      {
+        // Reset counters and draw solid pixel
+        emptycount = empty;
+        solidcount = solid;
+        drawPixel(x0, y0, color);
+        solidcount--;
+      }
     }
   } 
   else 
@@ -459,7 +528,30 @@ void drawLine ( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t col
       }
       y0 += stepy;
       fraction += dx;
-      drawPixel(x0, y0, color);
+      if (empty == 0)
+      {
+        // always draw a pixel ... no dotted line requested
+        drawPixel(x0, y0, color);
+      }
+      if (solidcount)
+      {
+        // Draw solid pxiel and decrement counter
+        drawPixel(x0, y0, color);
+        solidcount--;
+      }
+      else if(emptycount)
+      {
+        // Empty pixel ... don't draw anything an decrement counter
+        emptycount--;
+      }
+      else
+      {
+        // Reset counters and draw solid pixel
+        emptycount = empty;
+        solidcount = solid;
+        drawPixel(x0, y0, color);
+        solidcount--;
+      }
     }
   }
 }
@@ -524,8 +616,10 @@ void drawCircleFilled (uint16_t xCenter, uint16_t yCenter, uint16_t radius, uint
   int16_t ddF_y = -2 * radius;
   int16_t x = 0;
   int16_t y = radius;
+  int16_t xc_px, yc_my, xc_mx, xc_py, yc_mx, xc_my;
+  int16_t lcdWidth = lcdGetWidth();
 
-  drawLine(xCenter, yCenter-radius, xCenter, (yCenter-radius) + (2*radius), color);
+  if (xCenter < lcdWidth) drawLine(xCenter, yCenter-radius < 0 ? 0 : yCenter-radius, xCenter, (yCenter-radius) + (2*radius), color);
   
   while (x<y) 
   {
@@ -539,12 +633,19 @@ void drawCircleFilled (uint16_t xCenter, uint16_t yCenter, uint16_t radius, uint
     ddF_x += 2;
     f += ddF_x;
 
-    // ToDo: This will cause pixel flooding if radius is bigger than
-    // screen dimensions (due to integer value overflow)!
-    drawLine(xCenter+x, yCenter-y, xCenter+x, (yCenter-y) + (2*y), color);
-    drawLine(xCenter-x, yCenter-y, xCenter-x, (yCenter-y) + (2*y), color);
-    drawLine(xCenter+y, yCenter-x, xCenter+y, (yCenter-x) + (2*x), color);
-    drawLine(xCenter-y, yCenter-x, xCenter-y, (yCenter-x) + (2*x), color);
+    xc_px = xCenter+x;
+    xc_mx = xCenter-x;
+    xc_py = xCenter+y;
+    xc_my = xCenter-y;
+    yc_mx = yCenter-x;
+    yc_my = yCenter-y;
+
+    // Make sure X positions are not negative or too large or the pixels will
+    // overflow.  Y overflow is handled in drawLine().
+    if ((xc_px < lcdWidth) && (xc_px >= 0)) drawLine(xc_px, yc_my, xc_px, yc_my + 2*y, color);
+    if ((xc_mx < lcdWidth) && (xc_mx >= 0)) drawLine(xc_mx, yc_my, xc_mx, yc_my + 2*y, color);
+    if ((xc_py < lcdWidth) && (xc_py >= 0)) drawLine(xc_py, yc_mx, xc_py, yc_mx + 2*x, color);
+    if ((xc_my < lcdWidth) && (xc_my >= 0)) drawLine(xc_my, yc_mx, xc_my, yc_mx + 2*x, color);
   }
 }
 
@@ -994,6 +1095,60 @@ void drawButton(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const F
     uint16_t xStart = x + (width / 2) - (textWidth / 2);
     uint16_t yStart = y + (height / 2) - (fontHeight / 2) + 1;
     drawString(xStart, yStart, fontclr, &*fontInfo, text);
+  }
+}
+
+/**************************************************************************/
+/*! 
+    @brief  Renders a 16x16 monochrome icon using the supplied uint16_t
+            array.
+
+    @param[in]  x
+                The horizontal location to start rendering from
+    @param[in]  x
+                The vertical location to start rendering from
+    @param[in]  color
+                The RGB565 color to use when rendering the icon
+    @param[in]  icon
+                The uint16_t array containing the 16x16 image data
+
+    @section Example
+
+    @code 
+
+    #include "drivers/lcd/tft/drawing.h"  
+    #include "drivers/lcd/icons16.h"
+
+    // Renders the info icon, which has two seperate parts ... the exterior
+    // and a seperate interior mask if you want to fill the contents with a
+    // different color
+    drawIcon16(132, 202, COLOR_BLUE, icons16_info);
+    drawIcon16(132, 202, COLOR_WHITE, icons16_info_interior);
+
+    @endcode
+*/
+/**************************************************************************/
+void drawIcon16(uint16_t x, uint16_t y, uint16_t color, uint16_t icon[])
+{
+  int i;
+  for (i = 0; i<16; i++)
+  {
+    if (icon[i] & (0X8000)) drawPixel(x, y+i, color);
+    if (icon[i] & (0X4000)) drawPixel(x+1, y+i, color);
+    if (icon[i] & (0X2000)) drawPixel(x+2, y+i, color);
+    if (icon[i] & (0X1000)) drawPixel(x+3, y+i, color);
+    if (icon[i] & (0X0800)) drawPixel(x+4, y+i, color);
+    if (icon[i] & (0X0400)) drawPixel(x+5, y+i, color);
+    if (icon[i] & (0X0200)) drawPixel(x+6, y+i, color);
+    if (icon[i] & (0X0100)) drawPixel(x+7, y+i, color);
+    if (icon[i] & (0X0080)) drawPixel(x+8, y+i, color);
+    if (icon[i] & (0x0040)) drawPixel(x+9, y+i, color);
+    if (icon[i] & (0X0020)) drawPixel(x+10, y+i, color);
+    if (icon[i] & (0X0010)) drawPixel(x+11, y+i, color);
+    if (icon[i] & (0X0008)) drawPixel(x+12, y+i, color);
+    if (icon[i] & (0X0004)) drawPixel(x+13, y+i, color);
+    if (icon[i] & (0X0002)) drawPixel(x+14, y+i, color);
+    if (icon[i] & (0X0001)) drawPixel(x+15, y+i, color);
   }
 }
 

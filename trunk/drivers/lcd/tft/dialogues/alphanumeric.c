@@ -177,7 +177,8 @@ void alphaRenderButton(uint8_t alphaPage, uint8_t col, uint8_t row, bool selecte
       break;
     case '*':
       // Page Shift
-      drawButton (alphaBtnX[col], alphaBtnY[row], ALPHA_BTN_WIDTH, ALPHA_BTN_HEIGHT, &dejaVuSans9ptFontInfo, 7, border, fill, font, "^"); 
+      drawButton (alphaBtnX[col], alphaBtnY[row], ALPHA_BTN_WIDTH, ALPHA_BTN_HEIGHT, &dejaVuSans9ptFontInfo, 7, border, fill, font, NULL); 
+      drawArrow (alphaBtnX[col] + ALPHA_BTN_WIDTH / 2, (alphaBtnY[row] + ALPHA_BTN_HEIGHT / 2) - 3, 7, DRAW_DIRECTION_UP, font);
       break;
     case '>':
       // OK

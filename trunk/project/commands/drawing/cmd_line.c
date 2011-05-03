@@ -53,7 +53,7 @@
 /**************************************************************************/
 void cmd_line(uint8_t argc, char **argv)
 {
-  int32_t x1, y1, x2, y2, c;
+  int32_t x1, y1, x2, y2, c, empty, solid;
 
   // Convert supplied parameters
   getNumber (argv[0], &x1);
@@ -61,6 +61,16 @@ void cmd_line(uint8_t argc, char **argv)
   getNumber (argv[2], &x2);
   getNumber (argv[3], &y2);
   getNumber (argv[4], &c);
+  if (argc > 5)
+  {
+    getNumber (argv[5], &empty);
+    getNumber (argv[6], &solid);
+  }
+  else
+  {
+    empty = 0;
+    solid = 1;
+  }
 
   // ToDo: Validate data!
   if (c < 0 || c > 0xFFFF)
@@ -69,7 +79,7 @@ void cmd_line(uint8_t argc, char **argv)
     return;
   }
 
-  drawLine(x1, y1, x2, y2, (uint16_t)c);
+  drawLineDotted(x1, y1, x2, y2, empty, solid, (uint16_t)c);
 }
 
 #endif  

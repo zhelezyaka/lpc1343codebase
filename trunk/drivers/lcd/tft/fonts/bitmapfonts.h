@@ -65,4 +65,3 @@ typedef struct
 } FONT_INFO;
 
 #endif
-

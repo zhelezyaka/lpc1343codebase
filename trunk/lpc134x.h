@@ -120,6 +120,22 @@
 #define SCB_SCR_SEVONPEND_MASK                    ((unsigned int) 0x00000010) // Wake up from WFE is new int is pended regardless of priority
 #define SCB_SCR_SEVONPEND                         ((unsigned int) 0x00000010)
 
+/*  Application Interrupt and Reset Control Register */
+
+#define SCB_AIRCR                                 (*(pREG32 (0xE000ED0C)))
+#define SCB_AIRCR_VECTKEY_VALUE                   ((unsigned int) 0x05FA0000) // Vect key needs to be set to 05FA for reset to work
+#define SCB_AIRCR_VECTKEY_MASK                    ((unsigned int) 0xFFFF0000)
+#define SCB_AIRCR_ENDIANESS                       ((unsigned int) 0x00008000) // Read Endianness (1=Big, 0=Little)
+#define SCB_AIRCR_ENDIANESS_MASK                  ((unsigned int) 0x00008000)
+#define SCB_AIRCR_PRIGROUP                        ((unsigned int) 0x00000700)
+#define SCB_AIRCR_PRIGROUP_MASK                   ((unsigned int) 0x00000700)
+#define SCB_AIRCR_SYSRESETREQ                     ((unsigned int) 0x00000004) // Request system reset
+#define SCB_AIRCR_SYSRESETREQ_MASK                ((unsigned int) 0x00000004)
+#define SCB_AIRCR_VECTCLRACTIVE                   ((unsigned int) 0x00000002) // Used to prevent accidental reset
+#define SCB_AIRCR_VECTCLRACTIVE_MASK              ((unsigned int) 0x00000002)
+#define SCB_AIRCR_VECTRESET                       ((unsigned int) 0x00000001)
+#define SCB_AIRCR_VECTRESET_MASK                  ((unsigned int) 0x00000001)
+
 /*  Memory Management Fault Status Register */
 
 #define SCB_MMFSR                                 (*(pREG32 (0xE000ED28)))    
@@ -3498,5 +3514,21 @@ static inline void NVIC_DisableIRQ(IRQn_t IRQn)
 */
 /**************************************************************************/
 static inline uint32_t RBIT(uint32_t value)     { uint32_t result=0; __asm volatile ("rbit %0, %1" : "=r" (result) : "r" (value) ); return(result); }
+
+/**************************************************************************/
+/*! 
+    @brief  Causes a system reset and enters the USB Bootloader
+
+    Resets the system using the AIRCR register, and waits in a loop until
+    reset occurs.  The resistor/divider on the LPC1343 Reference Design
+    Base Board [1] causes the AIRCR reset to enter the bootloader rather
+    than executing the existing firmware.  If you wish to reset and execute
+    the existing firmware, you need to use the watchdog timer to reset
+    (see "wdt/wdt.c").
+
+    [1] http://www.microbuilder.eu/Projects/LPC1343ReferenceDesign.aspx
+*/
+/**************************************************************************/
+static inline void __resetBootloader()          { __disable_irq(); SCB_AIRCR = SCB_AIRCR_VECTKEY_VALUE | SCB_AIRCR_SYSRESETREQ; while(1); }
 
 #endif

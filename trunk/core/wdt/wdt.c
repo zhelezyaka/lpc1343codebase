@@ -17,9 +17,13 @@
     #include "core/wdt/wdt.h"
     ...
     cpuInit();
-    wdtInit();
+
+    // Initialise wdt with no reset on timeout
+    wdtInit(false);
+
+    // Pat the watchdog (to start the timer)
     wdtFeed();
-    ...
+
     while (1)
     {
       // Keep the watchdog happy by regularly feeding it
@@ -110,7 +114,7 @@ static void wdtClockSetup (void)
     Initialises the watchdog timer and sets up the interrupt.
 */
 /**************************************************************************/
-void wdtInit (void)
+void wdtInit (bool reset)
 {
   /* Setup the WDT clock */
   wdtClockSetup();
@@ -128,7 +132,7 @@ void wdtInit (void)
 
   /* Enable the watchdog timer (without system reset) */
   WDT_WDMOD = WDT_WDMOD_WDEN_ENABLED |
-              WDT_WDMOD_WDRESET_DISABLED;
+              reset ? WDT_WDMOD_WDRESET_ENABLED : WDT_WDMOD_WDRESET_DISABLED ;
 }
 
 /**************************************************************************/
