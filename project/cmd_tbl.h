@@ -120,7 +120,7 @@ cmd_t cmd_tbl[] =
   { "c",    4,  6,  0, cmd_circle            , "Circle"                         , "'c <x> <y> <radius> <color> [<filled[0|1]> <bcolor>]'" },
   { "C",    0,  0,  0, cmd_calibrate         , "Calibrate Touch Screen"         , CMD_NOPARAMS },
   { "F",    0,  1,  0, cmd_clear             , "Fill"                           , "'F [<color>]'" },
-  { "l",    5,  5,  0, cmd_line              , "Line"                           , "'L <x1> <y1> <x2> <y2> <color>'" },
+  { "l",    5,  7,  0, cmd_line              , "Line"                           , "'l <x1> <y1> <x2> <y2> <color> [<empty> <solid>]'" },
   { "o",    0,  1,  0, cmd_orientation       , "LCD Orientation"                , "'o [<0|1>]'" },
   { "p",    3,  3,  0, cmd_pixel             , "Draw Pixel"                     , "'p <x> <y> <color>'" },
   { "P",    9,  9,  0, cmd_progress          , "Progress Bar"                   , "'P <x> <y> <w> <h> <%> <bclr> <bfillclr> <pbrdclr> <pfillclr>'" },

@@ -283,35 +283,13 @@ void ili9328Home(void)
     @brief  Sets the window confines
 */
 /**************************************************************************/
-void ili9328SetWindow(uint16_t x, uint16_t y, uint16_t height, uint16_t width)
+void ili9328SetWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
 {
-  // Window horizontal RAM address start
-  if (x >= height)
-  {
-    ili9328Command(ILI9328_COMMANDS_HORIZONTALADDRESSSTARTPOSITION, (x - height + 1));
-  }
-  else
-  {
-    ili9328Command(ILI9328_COMMANDS_HORIZONTALADDRESSSTARTPOSITION, 0);
-  }
-
-  // Window horizontal GRAM address end
-  ili9328Command(ILI9328_COMMANDS_HORIZONTALADDRESSENDPOSITION, x);
-
-  // Window vertical GRAM address start
-  if (y >= width)
-  {
-    ili9328Command(ILI9328_COMMANDS_VERTICALADDRESSSTARTPOSITION, (y - width + 1));
-  }
-  else
-  {
-    ili9328Command(ILI9328_COMMANDS_VERTICALADDRESSSTARTPOSITION, 0);
-  }
-
-  // Window vertical GRAM address end
-  ili9328Command(ILI9328_COMMANDS_VERTICALADDRESSENDPOSITION, y);
-
-  ili9328SetCursor(x, y);
+  ili9328Command(ILI9328_COMMANDS_HORIZONTALADDRESSSTARTPOSITION, x0);
+  ili9328Command(ILI9328_COMMANDS_HORIZONTALADDRESSENDPOSITION, x1);
+  ili9328Command(ILI9328_COMMANDS_VERTICALADDRESSSTARTPOSITION, y0);
+  ili9328Command(ILI9328_COMMANDS_VERTICALADDRESSENDPOSITION, y1);
+  ili9328SetCursor(x0, y0);
 }
 
 /*************************************************/
@@ -426,6 +404,24 @@ void lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color)
   ili9328SetCursor(x, y);
   ili9328WriteCmd(ILI9328_COMMANDS_WRITEDATATOGRAM);  // Write Data to GRAM (R22h)
   ili9328WriteData(color);
+}
+
+/**************************************************************************/
+/*! 
+    @brief  Draws an array of consecutive RGB565 pixels (much
+            faster than addressing each pixel individually)
+*/
+/**************************************************************************/
+void lcdDrawPixels(uint16_t x, uint16_t y, uint16_t *data, uint32_t len)
+{
+  uint32_t i = 0;
+  ili9328SetCursor(x, y);
+  ili9328WriteCmd(ILI9328_COMMANDS_WRITEDATATOGRAM);
+  do
+  {
+    ili9328WriteData(data[i]);
+    i++;
+  } while (i<len);
 }
 
 /**************************************************************************/

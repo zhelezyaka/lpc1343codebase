@@ -363,6 +363,24 @@ void lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color)
   st7783WriteData(color);
 }
 
+/**************************************************************************/
+/*! 
+    @brief  Draws an array of consecutive RGB565 pixels (much
+            faster than addressing each pixel individually)
+*/
+/**************************************************************************/
+void lcdDrawPixels(uint16_t x, uint16_t y, uint16_t *data, uint32_t len)
+{
+  uint32_t i = 0;
+  st7783SetCursor(x, y);
+  st7783WriteCmd(0x0022);  // Write Data to GRAM (R22h)
+  do
+  {
+    st7783WriteData(data[i]);
+    i++;
+  } while (i<len);
+}
+
 /*************************************************/
 void lcdDrawHLine(uint16_t x0, uint16_t x1, uint16_t y, uint16_t color)
 {

@@ -1,5 +1,35 @@
 v0.9.2 - Ongoing
 ================
+
+- Added lcdDrawPixels() to lcd.h and the current lcd
+  drivers to render rows of raw lcd data much quicker
+  than addressing consecutive pixels individually.
+  Can be used with windowing in future for fast
+  animation, continuously writing raw pixels in a
+  32x32 pixel frame, etc.
+- Fixed ili9328SetWindow() and ili9325SetWindow(). 
+  They can now be used for fast screen paints of
+  restricted areas of the screen, such as animations
+  where raw pixel data is constantly fed to the LCD.
+- Fixed pixel overflow bugs in drawCircleFilled(). Any
+  pixels that exceed screen limits will now be dropped,
+  though at the expense of slightly slower code.
+- Added drawLineDotted() to drawing.c to draw lines with
+  a fixed pattern of empty and solid pixels
+- Added __resetBootloader() macro to lpc134x.h to
+  reset and enter the USB bootloader (LPC1343 Reference
+  Design Base Board only since this depends on the
+  existance of the RC combination on the ISP pin).
+  To reset and executre code normally, the watchdog
+  time can be used (see "core/wdt").
+- Added AIRCR register to lpc134x.h (Application Interrupt
+  and Reset Control Register).
+- Added drawIcon16() to drawing.c to render monochrome
+  16x16 pixel icons from a byte array.
+- Added a handful of common 16x16 icon definitions in
+  /drivers/lcd/icons16.h ... adapted from Gentleface
+  Toolbar Icon Set.  For license terms see
+  http://www.gentleface.com/free_icon_set.html
 - Added a few basic RGB565 color schemes to colors.h and
   an image file showing the colors in /tools/colors_h.png
 - Updated alphanumeric dialogue form to use new buttons.

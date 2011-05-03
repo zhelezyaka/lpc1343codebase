@@ -41,7 +41,7 @@
 
 #include "projectconfig.h"
 
-void wdtInit (void);
+void wdtInit (bool reset);
 void wdtFeed (void);
 
 #endif
